@@ -1,0 +1,56 @@
+{% extends 'main.html' %}
+
+{% load allauth i18n %}
+{% block head_title %}
+    {% trans "Sign Out" %}
+{% endblock head_title %}
+{% block content %}
+    <main class="delete-item layout">
+    <div class="container">
+    <div class="layout__box">
+    <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+        <a href="{{request.META.HTTP_REFERER}}">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+            >
+              <title>arrow-left</title>
+              <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z"
+              ></path>
+            </svg>
+          </a>
+          <h3>Back</h3>
+        </div>
+      </div>
+    <div class="layout__body">
+    {% url 'account_logout' as action_url %}
+    {% element form method="post" action=action_url no_visible_fields=True %}
+        {% slot body %}
+            {% csrf_token %}
+            <div class="form__group">
+            <p>{% trans 'Are you sure you want to sign out?' %}</p>
+            </div>
+            <div class="form__group form__group">
+            {% if redirect_field_value %}
+                <input type="hidden"
+                       name="{{ redirect_field_name }}"
+                       value="{{ redirect_field_value }}" />
+            {% endif %}
+            </div>
+        {% endslot %}
+        {% slot actions %}
+          <div class="for__group">
+            <input class="btn btn--main" type="submit" value="Sign Out" />
+          </div>
+        {% endslot %}
+    {% endelement %}
+    </div>
+    </div>
+    </div>
+    </main>
+{% endblock content %}
