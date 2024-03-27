@@ -1,9 +1,7 @@
 {% extends 'main.html' %}
-
-{% load i18n %}
-{% load allauth account %}
+{% load allauth i18n %}
 {% block head_title %}
-    {% trans "Sign In" %}
+    {% trans "Signup" %}
 {% endblock head_title %}
 {% block content %}
 <main class="auth layout">
@@ -12,27 +10,27 @@
     <div class="layout__boxHeader">
         <div class="layout__boxTitle">
         {% element h1 %}
-            <h3>{% trans "Sign In" %}</h3>
+            <h3>{% trans "Sign Up" %}</h3>
         {% endelement %}
         </div>
     </div>
     <div class="layout__body">
-      <h2 class="auth__tagline">{% blocktrans %}If you have not created an account yet, then please <a href="{{ signup_url }} ">sign up</a> first.{% endblocktrans %}</h2>
-      {% url 'account_login' as login_url %}
-      {% element form form=form method="post" action=login_url tags="entrance,login" %}
-        {% slot body %}
-            {% csrf_token %}
-            <div class="form__group form__group">
-            {% element fields form=form unlabeled=True %}
-            {% endelement %}
-            {% if redirect_field_value %}
-                <input type="hidden"
-                       name="{{ redirect_field_name }}"
-                       value="{{ redirect_field_value }}" />
-            {% endif %}
-            </div>
-        {% endslot %}
-        {% slot actions %}
+        <h2 class="auth__tagline">{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %} </h2>
+        {% url 'account_signup' as action_url %}
+        {% element form form=form method="post" action=action_url tags="entrance,signup" %}
+            {% slot body %}
+                {% csrf_token %}
+                <div class="form__group form__group">
+                {% element fields form=form unlabeled=True %}
+                {% endelement %}
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                        name="{{ redirect_field_name }}"
+                        value="{{ redirect_field_value }}" />
+                {% endif %}
+                </div>
+            {% endslot %}
+            {% slot actions %}
             <button class="btn btn--main" type="submit">
             <svg
               version="1.1"
@@ -49,15 +47,15 @@
                 d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z"
               ></path>
             </svg>
-                {% trans "Sign In" %}
+                {% trans "Sign Up" %}
             </button>
-        {% endslot %}
-    {% endelement %}
+            {% endslot %}
+        {% endelement %}
     {% if SOCIALACCOUNT_ENABLED %}
         {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
     {% endif %}
     </div>
     </div>
-  </div>
+    </div>
 </main>
 {% endblock content %}

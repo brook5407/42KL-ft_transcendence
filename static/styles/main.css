@@ -1,3 +1,52 @@
 body{
     background-color: aquamarine;
 }
+
+.pong-logo {
+  display: inline-block;
+  padding: 0;
+  position: relative;
+}
+
+.pong-logo .top-line,
+.pong-logo .bottom-line {
+  position: absolute;
+  height: 0.55rem;
+  width: 2.2rem; 
+  background-color: black;
+}
+
+.pong-logo .top-line {
+  left: 0;
+  top: 0;
+  animation: left-to-right 5s linear infinite alternate;
+}
+
+.pong-logo .bottom-line {
+  right: 0;
+  bottom: 0;
+  animation: right-to-left 5s linear infinite alternate;
+}
+
+.pong-logo .text {
+  text-transform: uppercase;
+  font-size: 2.75rem;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.pong-logo .red {
+  color: #ff0202;
+}
+
+@keyframes left-to-right {
+  0% { left: 0; }
+  50% { left: calc(100% - 2.2rem); }
+  100% { left: 0; }
+}
+
+@keyframes right-to-left {
+  0% { right: 0; }
+  50% { right: calc(100% - 2.2rem); }
+  100% { right: 0; }
+}

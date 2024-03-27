@@ -496,7 +496,7 @@ a {
 }
 
 .form__group label {
-  display: block;
+  display: inline;
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
@@ -512,6 +512,12 @@ a {
   color: var(--color-light);
   font-weight: 500;
   outline: none;
+}
+
+.form__group input[type="checkbox" i]{
+  display: inline;
+  width: auto;
+  height: auto;
 }
 
 .form__group input:focus,
@@ -827,11 +833,20 @@ a {
   margin-bottom: 3rem;
   color: var(--color-main);
   font-weight: 500;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
 }
 .auth .layout__boxHeader {
   text-align: center;
   justify-content: center;
+}
+
+.auth__tagline a {
+  color: var(--color-main);
+  font-weight: 700;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .auth__action {
