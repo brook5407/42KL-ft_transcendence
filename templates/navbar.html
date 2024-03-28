@@ -51,9 +51,9 @@
         </a>
         <a href="{% url 'user_profile' request.user.id %}">
           <div class="avatar avatar--medium active">
-            <img src="{{user_avatar.url}}" />
+            <img src="{{request.user.profile.avatar.url}}" />
           </div>
-          <p>{{request.user.name}} <span>@{{request.user.username}}</span></p>
+          <p>{{request.user.profile.nickname}} <span>@{{request.user.username}}</span></p>
         </a>
         <button class="dropdown-button">
           <svg

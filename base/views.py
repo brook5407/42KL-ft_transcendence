@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import CustomUserChangeForm, ProfileUpdateForm
@@ -18,12 +18,19 @@ def userProfile(request, pk):
 
 @login_required
 def profileUpdateView(request):
-    u_form = CustomUserChangeForm(instance=request.user)
+    user = request.user
+    # u_form = CustomUserChangeForm(instance=request.user)
     p_form = ProfileUpdateForm(instance=request.user.profile)
 
     context = {
-        'u_form': u_form,
+        # 'u_form': u_form,
         'p_form': p_form
     }
 
-    return render(request, 'account/update_profile.html', context)
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('user_profile', pk=user.id)
+
+    return render(request, 'update_profile.html', context)
