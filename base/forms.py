@@ -13,7 +13,7 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = get_user_model()
-        fields = ['username', 'email']
+        fields = ['email', 'password']
 
 
 class ProfileUpdateForm(ModelForm):

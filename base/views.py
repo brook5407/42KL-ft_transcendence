@@ -19,18 +19,17 @@ def userProfile(request, pk):
 @login_required
 def profileUpdateView(request):
     user = request.user
-    # u_form = CustomUserChangeForm(instance=request.user)
     p_form = ProfileUpdateForm(instance=request.user.profile)
-
-    context = {
-        # 'u_form': u_form,
-        'p_form': p_form
-    }
+    context = {'p_form': p_form}
 
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
             return redirect('user_profile', pk=user.id)
-
     return render(request, 'update_profile.html', context)
+
+
+@login_required
+def settings(request):
+    return render(request, 'settings.html')
