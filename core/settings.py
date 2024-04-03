@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'base'
+    'base',
+    'provider',
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,17 @@ AUTHENTICATION_BACKENDS = [
 SOCIALACCOUNT_PROVIDERS = {}
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+OAUTH_SERVER_BASEURL = 'https://api.intra.42.fr'
+
+SOCIALACCOUNT_ENABLED = True
+
+SOCIALACCOUNT_PROVIDERS = {
+  '42': {
+    'APP': {
+      'client_id': 'u-s4t2ud-c54860141cd7e4afbb2b7f4f6fdaed8483360fba16e5acf438a021964386f8e6',
+        'secret': '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',
+        'key': ''
+    }
+    }
+}
