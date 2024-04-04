@@ -23,16 +23,15 @@ class FortyTwoOAuth2Client(OAuth2Client):
         
         params = {
             'client_id': self.client_id,
-            'redirect_uri': quote(self.redirect_uri, safe=''),
+            'redirect_uri': self.callback_url,
             'response_type': self.response_type,
         }
         if self.state:
             params["state"] = self.state
         params.update(extra_params)
-        print(params)
         return "%s?%s" % (authorization_url, urlencode(params))
 
-    def get_access_token(self, code):
+    def get_access_token(self, code, pkce_code_verifier=None):
         """
         Request access token from the provider using the code returned by the
         Returns:
@@ -47,17 +46,25 @@ class FortyTwoOAuth2Client(OAuth2Client):
         """
 
         data = {
-            "grant_type": "client_credentials",
-            "client_id": self.consumer_key,
-            "client_secret": self.consumer_secret,
+            "grant_type": "authorization_code",
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "code": code,
+            "redirect_uri": self.callback_url
         }
+        params = None
+        self._strip_empty_keys(data)
+        url = self.access_token_url
+        if self.access_token_method == "GET":
+            params = data
+            data = None
 
-        resp = requests.request(self.token_url, method='POST', data=data)
-
+        resp = requests.request(self.access_token_method, url, params=params, 
+                                data=json.dumps(data), headers={'Content-Type': 'application/json'})
         access_token = None
         if resp.status_code == 200:
-            access_token = resp.json()['access_token']
+            access_token = resp.json()
         else:
             raise OAuth2Error("Error retrieving app access token: %s" % resp.content)
         
-        return access_token['access_token']
+        return access_token

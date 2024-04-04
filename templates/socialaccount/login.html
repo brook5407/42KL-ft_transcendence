@@ -1,0 +1,48 @@
+{% extends 'main.html' %}
+{% load i18n %}
+{% load allauth %}
+{% block head_title %}
+    {% trans "Sign In" %}
+{% endblock head_title %}
+{% block content %}
+<main class="auth layout">
+    <div class="container">
+    <div class="layout__box">
+    {% if process == "connect" %}
+    <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+        {% element h1 %}
+            <h3>{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h3>
+        {% endelement %}
+        </div>
+    </div>
+    <div class="layout__body">
+        <h2 class="auth__tagline">
+            {% blocktrans with provider.name as provider %}You are about to connect a new third-party account from {{ provider }}.{% endblocktrans %}
+        </h2>
+    {% else %}
+    <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+        {% element h1 %}
+            <h3>{% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}</h3>
+        {% endelement %}
+        </div>
+    </div>
+    <div class="layout__body">
+        <h2 class="auth__tagline">
+            {% blocktrans with provider.name as provider %}You are about to sign in using a third-party account from {{ provider }}.{% endblocktrans %}
+        </h2>
+    {% endif %}
+    {% element form method="post" no_visible_fields=True %}
+        {% slot actions %}
+            {% csrf_token %}
+            <button class="btn btn--main" type="submit">
+                {% trans "Continue" %}
+            </button>
+        {% endslot %}
+    {% endelement %}
+    </div>
+    </div>
+    </div>
+</main>
+{% endblock content %}

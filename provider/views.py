@@ -19,10 +19,16 @@ from .provider import FortyTwoProvider
 
 class FortyTwoOAuth2Adapter(OAuth2Adapter):
     provider_id = FortyTwoProvider.id
-    
+    redirect_uri_protocol = None
+    access_token_method = "POST"
     access_token_url = f'{settings.OAUTH_SERVER_BASEURL}/oauth/token'
     profile_url = f'{settings.OAUTH_SERVER_BASEURL}/v2/me'
     authorize_url = f'{settings.OAUTH_SERVER_BASEURL}/oauth/authorize'
+
+    def get_callback_url(self, request, app):
+        callback_url = reverse(self.provider_id + "_callback")
+        protocol = self.redirect_uri_protocol
+        return build_absolute_uri(request, callback_url, protocol)
 
     def complete_login(self, request, app, token, **kwargs):
         openid = kwargs.get("response", {}).get("openid")
@@ -33,22 +39,12 @@ class FortyTwoOAuth2Adapter(OAuth2Adapter):
                       'Accept':'application/json'},
         )
         extra_data = resp.json()
-        print(extra_data)
-        if extra_data['code'] != 0:
-            raise OAuth2Error("Error retrieving code: %s" % resp.content)
-        extra_data = extra_data['data']
-
         return self.get_provider().sociallogin_from_response(request, extra_data)
 
 
 class FortyTwoOAuth2ClientMixin(object):
     def get_client(self, request, app):
-        callback_url = reverse(self.adapter.provider_id + "_callback")
-        protocol = (
-            self.adapter.redirect_uri_protocol or app_settings.DEFAULT_HTTP_PROTOCOL
-        )
-        callback_url = build_absolute_uri(request, callback_url, protocol=protocol)
-        print(callback_url)
+        callback_url = self.adapter.get_callback_url(request, app)
         provider = self.adapter.get_provider()
         scope = provider.get_scope(request)
         client = FortyTwoOAuth2Client(
