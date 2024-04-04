@@ -30,7 +30,7 @@ To start the application, follow the steps below:
 ### Web
 - [x] Major module: Use a Framework as backend.
 - [x] Minor module: Use a front-end framework or toolkit.
-- [x] Minor module: Use a database for the backend.
+- [ ] Minor module: Use a database for the backend.
 - [ ] Major module: Store the score of a tournament in the Blockchain.
 
 ### User Management
