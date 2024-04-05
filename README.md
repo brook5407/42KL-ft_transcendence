@@ -1,7 +1,7 @@
 # Ft_transcendence
 
 - Python Version: 3.12.0
-- Created by: <b>Brook, Qixeo, Joseph</b>
+- Created by: <b>Brook, Qixeo, Joseph, Xuerui, Peiyun</b>
 
 ## Setup
 To start the application, follow the steps below:
@@ -76,3 +76,9 @@ Data Management, and Account Deletion.
 an API.
 - [ ] Major module: Enabling Pong Gameplay via CLI against Web Users with
 API Integration.
+
+## Reference
+
+AllAuth Provider - 
+https://www.chenshiyang.com/archives/696
+
