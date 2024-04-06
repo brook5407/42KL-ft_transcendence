@@ -1,7 +1,7 @@
 # Ft_transcendence
 
 - Python Version: 3.12.0
-- Created by: <b>Brook, Qixeo, Joseph, Xuerui, Peiyun</b>
+- Created by: <b>Brook, Qixeo, Joseph, Xuerui</b>
 
 ## Setup
 To start the application, follow the steps below:
