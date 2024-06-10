@@ -40,3 +40,7 @@ myproject/local_settings.py
 *.swp
 *~
 
+# .env
+.env
+.env*.local
+
