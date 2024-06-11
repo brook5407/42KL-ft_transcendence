@@ -176,8 +176,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SOCIALACCOUNT_ENABLED = True
 
-# need to grab the value from the .env file
-FT_OAUTH_SERVER_BASE_URL = 'https://api.intra.42.fr'
+FT_OAUTH_SERVER_BASE_URL = os.environ.get('FT_OAUTH_SERVER_BASE_URL')
 
 SOCIALACCOUNT_PROVIDERS = {
 	'42': {
