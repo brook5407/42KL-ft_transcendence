@@ -21,9 +21,9 @@ class FortyTwoOAuth2Adapter(OAuth2Adapter):
     provider_id = FortyTwoProvider.id
     redirect_uri_protocol = None
     access_token_method = "POST"
-    access_token_url = f'{settings.OAUTH_SERVER_BASEURL}/oauth/token'
-    profile_url = f'{settings.OAUTH_SERVER_BASEURL}/v2/me'
-    authorize_url = f'{settings.OAUTH_SERVER_BASEURL}/oauth/authorize'
+    access_token_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/oauth/token'
+    profile_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/v2/me'
+    authorize_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/oauth/authorize'
 
     def get_callback_url(self, request, app):
         callback_url = reverse(self.provider_id + "_callback")

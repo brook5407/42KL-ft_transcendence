@@ -172,20 +172,17 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SOCIALACCOUNT_PROVIDERS = {}
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SOCIALACCOUNT_ENABLED = True
 
-# need to grab the value from the .env file
-OAUTH_SERVER_BASEURL = 'https://api.intra.42.fr'
+FT_OAUTH_SERVER_BASE_URL = os.environ.get('FT_OAUTH_SERVER_BASE_URL')
 
 SOCIALACCOUNT_PROVIDERS = {
-  '42': {
-    'APP': {
-      'client_id': 'u-s4t2ud-c54860141cd7e4afbb2b7f4f6fdaed8483360fba16e5acf438a021964386f8e6',
-        'secret': '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',
-    }
+	'42': {
+		'APP': {
+			'client_id': os.environ.get('42OAUTH_CLIENT_ID'),
+            'secret': os.environ.get('42OAUTH_SECRET')
+        }
     }
 }

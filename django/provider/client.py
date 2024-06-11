@@ -12,8 +12,8 @@ from allauth.socialaccount.providers.oauth2.client import (
 
 class FortyTwoOAuth2Client(OAuth2Client):
 
-    base_url = f'{settings.OAUTH_SERVER_BASEURL}/oauth/authorize'
-    token_url = f'{settings.OAUTH_SERVER_BASEURL}/oauth/token'
+    base_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/oauth/authorize'
+    token_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/oauth/token'
     redirect_uri = 'http://127.0.0.1:8000/42/login/callback/'
     response_type = 'code'
     
