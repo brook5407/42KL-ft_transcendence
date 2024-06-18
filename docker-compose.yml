@@ -2,10 +2,7 @@ services:
   django:
     build: ./django
     container_name: tcd_django
-    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- python manage.py runserver 0.0.0.0:8000  # for development
-    # command: daphne -b 0.0.0.0 -p 8000 core.asgi:application # for production
-    volumes:
-      - ./django:/app
+    command: daphne -b 0.0.0.0 -p 8000 core.asgi:application
     env_file:
       - .env
     depends_on:
@@ -16,14 +13,13 @@ services:
         aliases:
           - web
 
-
   db:
     image: postgres:latest
     container_name: tcd_postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: tcd_database
+      DB_NAME: tcd_database
     env_file:
       - .env
     networks:
@@ -31,7 +27,7 @@ services:
         aliases:
           - db
     healthcheck:
-      test: pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+      test: pg_isready -U $${DB_USER} -d $${DB_NAME}
       interval: 5s
       timeout: 3s
       retries: 3
