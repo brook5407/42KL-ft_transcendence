@@ -27,6 +27,7 @@ DEBUG = True
 
 # WARNING: '*' is for development only
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
 
 
 # Application definition
@@ -175,6 +176,8 @@ AUTHENTICATION_BACKENDS = [
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SOCIALACCOUNT_ENABLED = True
+
+APP_URL = os.environ.get('APP_URL', 'http://localhost:8000')
 
 FT_OAUTH_SERVER_BASE_URL = os.environ.get('FT_OAUTH_SERVER_BASE_URL')
 
