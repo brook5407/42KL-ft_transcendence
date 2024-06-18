@@ -20,16 +20,19 @@
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
-        <li</li>{{ message }}</li>
+        <li>{{ message }}</li>
         {% endfor %}
     </ul>
     {% endif %}
+
+    <div id="root"></div>
 
     {% block content %}
     
     {% endblock %}
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'script.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/spa/ajax.js' %}"></script>
   </body>
 </html>
 
