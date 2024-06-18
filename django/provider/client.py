@@ -14,14 +14,14 @@ class FortyTwoOAuth2Client(OAuth2Client):
 
     base_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/oauth/authorize'
     token_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/oauth/token'
-    redirect_uri = 'http://127.0.0.1:8000/42/login/callback/'
+    redirect_uri = f'{settings.APP_URL}/42/login/callback/'
     response_type = 'code'
     
     def get_redirect_url(self, authorization_url, extra_params):
         
         params = {
             'client_id': self.consumer_key,
-            'redirect_uri': self.callback_url,
+            'redirect_uri': self.redirect_uri,
             'response_type': self.response_type,
         }
         if self.state:
@@ -48,7 +48,7 @@ class FortyTwoOAuth2Client(OAuth2Client):
             "client_id": self.consumer_key,
             "client_secret": self.consumer_secret,
             "code": code,
-            "redirect_uri": self.callback_url
+            "redirect_uri": self.redirect_uri
         }
         params = None
         self._strip_empty_keys(data)

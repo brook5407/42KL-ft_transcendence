@@ -42,8 +42,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
-      - "8080:80"
-      - "4430:443"
+      - "8000:80"
     depends_on:
       - django
     networks:
