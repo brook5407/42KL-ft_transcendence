@@ -12,6 +12,8 @@ services:
       default_network:
         aliases:
           - web
+    volumes:
+      - static_files:/app/static_files
 
   db:
     image: postgres:latest
@@ -37,6 +39,7 @@ services:
     container_name: tcd_nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_files:/var/www/html/static
     ports:
       - "8000:80"
     depends_on:
@@ -49,6 +52,7 @@ services:
 
 volumes:
   postgres_data:
+  static_files:
 
 
 networks:
