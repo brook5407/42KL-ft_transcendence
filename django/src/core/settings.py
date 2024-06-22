@@ -15,11 +15,11 @@ import os
 
 if os.environ.get('APP_ENV') is None:
     from dotenv import load_dotenv
+
     load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -32,7 +32,6 @@ DEBUG = True if os.environ.get('APP_ENV') == 'dev' else False
 # WARNING: '*' is for development only
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
-
 
 # Application definition
 
@@ -81,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 APP_URL = os.environ.get('APP_URL', 'http://localhost:8000')
 APP_ENV = os.environ.get('APP_ENV', 'dev')
 
@@ -95,7 +93,6 @@ DB_USER = os.environ.get("DB_USER")
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 
-
 DATABASES = {
     "default": {
         "ENGINE": DB_ENGINE,
@@ -108,11 +105,10 @@ DATABASES = {
 }
 
 if APP_ENV == 'dev' or DB_ENGINE is None:
-	DATABASES['default'] = {
+    DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -132,7 +128,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -143,7 +138,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -159,7 +153,6 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_ROOT = BASE_DIR / 'static_files/images'
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -194,9 +187,9 @@ SOCIALACCOUNT_ENABLED = True
 FT_OAUTH_SERVER_BASE_URL = os.environ.get('FT_OAUTH_SERVER_BASE_URL')
 
 SOCIALACCOUNT_PROVIDERS = {
-	'42': {
-		'APP': {
-			'client_id': os.environ.get('42OAUTH_CLIENT_ID'),
+    '42': {
+        'APP': {
+            'client_id': os.environ.get('42OAUTH_CLIENT_ID'),
             'secret': os.environ.get('42OAUTH_SECRET')
         }
     }

@@ -51,11 +51,9 @@ services:
         aliases:
           - nginx
 
-
 volumes:
   postgres_data:
   static_files:
-
 
 networks:
   default_network:
