@@ -21,7 +21,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      DB_NAME: tcd_database
+      POSTGRES_DB: tcd_database
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     env_file:
       - .env
     networks:
