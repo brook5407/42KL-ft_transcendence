@@ -14,6 +14,7 @@ services:
           - web
     volumes:
       - static_files:/app/static_files
+      - media_files:/app/media
 
   db:
     image: postgres:latest

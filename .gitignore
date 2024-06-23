@@ -20,7 +20,7 @@ db.*
 staticfiles/
 
 # Ignore media files directory
-media/
+media/avatars/
 
 # Ignore local development settings
 myproject/local_settings.py
