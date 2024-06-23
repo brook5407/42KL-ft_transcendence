@@ -93,7 +93,15 @@ DB_USER = os.environ.get("DB_USER")
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 
-DATABASES = {
+if APP_ENV == 'dev' or DB_ENGINE is None:
+	DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
     "default": {
         "ENGINE": DB_ENGINE,
         "NAME": DB_NAME,
@@ -105,7 +113,7 @@ DATABASES = {
 }
 
 if APP_ENV == 'dev' or DB_ENGINE is None:
-    DATABASES['default'] = {
+	DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
@@ -144,7 +152,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = '/assets/'
+MEDIA_URL = '/media/'
 
 STATIC_ROOT = BASE_DIR / 'static_files'
 
@@ -152,7 +160,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-MEDIA_ROOT = BASE_DIR / 'static_files/images'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

@@ -42,6 +42,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - static_files:/var/www/html/static
+      - media_files:/var/www/html/media
     ports:
       - "8000:80"
     depends_on:
@@ -54,6 +55,7 @@ services:
 volumes:
   postgres_data:
   static_files:
+  media_files:
 
 networks:
   default_network:
