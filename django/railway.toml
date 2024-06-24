@@ -1,11 +1,11 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "/django/Dockerfile"
+dockerfilePath = "./Dockerfile"
 watchPatterns = [
-    "/django/requirements.txt",
-    "/django/src/**",
+    "requirements.txt",
+    "src/**",
     "railway.toml",
-    "/django/Dockerfile",
+    "Dockerfile",
 ]
 
 [deploy]
