@@ -2,7 +2,6 @@ services:
   django:
     build: ./django
     container_name: tcd_django
-    command: daphne -b 0.0.0.0 -p 8000 core.asgi:application
     env_file:
       - .env
     depends_on:
