@@ -31,7 +31,7 @@ DEBUG = True if os.environ.get('APP_ENV') == 'dev' else False
 
 # WARNING: '*' is for development only
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://42pong.brookchin.tech']
 
 # Application definition
 
