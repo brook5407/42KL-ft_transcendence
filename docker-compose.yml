@@ -12,7 +12,7 @@ services:
         aliases:
           - web
     volumes:
-      - static_files:/app/static_files
+      - static_files:/app/staticfiles
       - media_files:/app/media
 
   db:
