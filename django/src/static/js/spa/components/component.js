@@ -1,18 +1,30 @@
-const ROOT_ELEMENT = document.getElementById('root');
+import { ajax } from '../ajax.js';
 
-class Component {
-	constructor({ props = {}, children = [], className = '', state = {} }) {
+export const ROOT_ELEMENT = document.getElementById('root');
+
+export class Component {
+	constructor({
+		props = {},
+		children = [],
+		className = '',
+		state = {},
+		url = '',
+	}) {
 		this.element = null;
 		this.props = props;
 		this.className = className;
 		this.state = state;
 		this.children = children;
+		this.url = url;
 	}
 
-	async fetchHtml(url, options) {
+	async fetchHtml(url) {
 		try {
-			const response = await fetch(url, options);
+			const response = await ajax(url, {
+				method: 'GET',
+			});
 			const html = await response.text();
+			console.log(html);
 			return html;
 		} catch {
 			return null;
@@ -20,12 +32,12 @@ class Component {
 	}
 
 	// render the component
-	async render(url = '') {
+	async render() {
 		const wrapper = document.createElement('div');
 		wrapper.className = this.className;
 
-		if (url) {
-			const html = await this.fetchHtml(url);
+		if (this.url !== '') {
+			const html = await this.fetchHtml(this.url);
 			wrapper.innerHTML = html;
 		} else {
 			wrapper.innerHTML = this.template();

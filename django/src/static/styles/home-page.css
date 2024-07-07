@@ -1,0 +1,71 @@
+/* .logo {
+	font-family: 'Pacifico', cursive;
+	color: var(--logo-text-color);
+	font-size: 5.5rem;
+	text-align: center;
+	margin-top: 2rem;
+} */
+
+@keyframes shine {
+	from {
+		background-position: 200%;
+	}
+	to {
+		background-position: -200%;
+	}
+}
+
+.logo {
+	font-family: 'Pacifico', cursive;
+	color: transparent;
+	background-image: linear-gradient(
+		90deg,
+		rgba(255, 255, 255, 0) 0%,
+		var(--logo-text-color) 50%,
+		rgba(255, 255, 255, 0) 100%
+	);
+	background-clip: text;
+	display: inline-block;
+	animation: shine 2s linear infinite;
+	background-size: 200% 100%;
+	line-height: 2;
+	font-size: 5.5rem;
+	position: absolute;
+	top: 2.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.snowflake {
+	position: fixed;
+	width: 20px;
+	height: 20px;
+	opacity: 0.5;
+}
+
+@keyframes fall {
+	0% {
+		top: -100px;
+	}
+	100% {
+		top: 100vh;
+	}
+}
+
+@keyframes spin-clockwise {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes spin-anticlockwise {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(-360deg);
+	}
+}
