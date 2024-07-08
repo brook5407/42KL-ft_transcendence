@@ -1,8 +1,20 @@
 import { Component } from './component.js';
+import { Snowfall } from '../../animation/snow.js';
 
 export class HomePage extends Component {
 	constructor(params) {
 		super(params);
+	}
+
+	initComponent() {
+		super.initComponent();
+		this.snowfall = new Snowfall();
+		this.snowfall.startSnowfall();
+	}
+
+	cleanupComponent() {
+		super.cleanupComponent();
+		this.snowfall.stopSnowfall();
 	}
 
 	template() {

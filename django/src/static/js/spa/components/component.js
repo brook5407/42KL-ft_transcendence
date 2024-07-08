@@ -24,7 +24,6 @@ export class Component {
 				method: 'GET',
 			});
 			const html = await response.text();
-			console.log(html);
 			return html;
 		} catch {
 			return null;
@@ -49,14 +48,14 @@ export class Component {
 			wrapper.appendChild(childElement);
 		});
 
-		this.addEventListeners();
+		this.initComponent();
 		return wrapper;
 	}
 
 	// Destroy element
 	destroy() {
 		if (this.element) {
-			this.element.destroyEventListeners();
+			this.cleanupComponent();
 			this.element.remove();
 		}
 		this.children.forEach((child) => child.destroy());
@@ -77,11 +76,11 @@ export class Component {
 		}
 	}
 
-	addEventListeners() {
+	initComponent() {
 		// To be implemented by subclasses
 	}
 
-	destroyEventListeners() {
+	cleanupComponent() {
 		// To be implemented by subclasses
 	}
 
