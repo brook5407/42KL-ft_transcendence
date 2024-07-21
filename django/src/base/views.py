@@ -11,5 +11,5 @@ def index(request):
 
 def home(request):
     if is_ajax_request(request):
-        return render(request, 'components/home.html')
+        return render(request, 'components/pages/home.html')
     return render(request, 'index.html')

@@ -1,5 +1,5 @@
-import { Component } from './component.js';
-import { Snowfall } from '../../animation/snow.js';
+import { Component } from '../component.js';
+import { Snowfall } from '../../../animation/snow.js';
 
 export class HomePage extends Component {
 	constructor(params) {

@@ -1,7 +1,7 @@
-import { HomePage } from './components/home.js';
-import { NotFoundPage } from './components/not_found.js';
+import { HomePage } from './components/pages/home.js';
+import { NotFoundPage } from './components/pages/not_found.js';
 import { ROOT_ELEMENT } from './components/component.js';
-import { PongPage } from './components/pong.js';
+import { PongPage } from './components/pages/pong.js';
 
 export const ROUTES = {
 	'/': new HomePage({ url: 'home' }),

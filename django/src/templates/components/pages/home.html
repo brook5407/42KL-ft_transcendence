@@ -1,0 +1,26 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/sidebar.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/signin-buttons.css' %}" />
+
+<div class="snow-container"></div>
+
+<h1 class="logo">IcePong</h1>
+
+{% if user.is_authenticated %}
+    {% comment %} <a href="/logout" class="signin-button">Logout</a> {% endcomment %}
+{% else %}
+	<div class="sidebar sidebar-locked">
+		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon">
+	</div>
+
+	<div class="center-buttons-container">
+		<a class="signin-button" data-modal>Sign In</a>
+		<a class="oauth-button">
+			<img src="{% static 'images/icons/42_Logo.svg' %}" width="42px" height="42px" alt="Lock Icon">
+		</a>
+	</div>
+{% endif %}
+
+{% comment %} <a href="/pong" class="btn btn-primary" data-link>Play</a> {% endcomment %}
