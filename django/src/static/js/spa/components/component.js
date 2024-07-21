@@ -1,6 +1,7 @@
 import { ajax } from '../ajax.js';
 
 export const ROOT_ELEMENT = document.getElementById('root');
+export const MODAL_CONTAINER = document.getElementById('modal-container');
 
 export class Component {
 	constructor({

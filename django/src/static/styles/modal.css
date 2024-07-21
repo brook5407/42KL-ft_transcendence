@@ -1,0 +1,42 @@
+.modal-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	visibility: hidden;
+	opacity: 0;
+}
+
+.modal-overlay.modal-active {
+	visibility: visible;
+	opacity: 1;
+}
+
+.modal-container {
+	position: fixed;
+	top: -50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #e5f7fc;
+	border: 2px solid #83def7;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	border-radius: 32px;
+	width: 720px;
+	height: 650px;
+	transition: top 0.5s ease;
+}
+
+.modal-container.modal-active {
+	top: 50%;
+}
+
+.modal-close-btn {
+	border: none;
+	line-height: 18px;
+	float: right;
+	font-size: 28px;
+	cursor: pointer;
+}

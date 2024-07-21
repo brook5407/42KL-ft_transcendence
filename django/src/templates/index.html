@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/global.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/not-found.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
 
     <title>IcePong</title>
   </head>
@@ -19,7 +20,10 @@
 
     <div id="root"></div>
 
+    <div id="modal-container"></div>
+
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     <script type="module" src="{% static 'js/script.js' %}"></script>
+    <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
   </body>
 </html>

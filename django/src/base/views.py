@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -13,3 +13,8 @@ def home(request):
     if is_ajax_request(request):
         return render(request, 'components/pages/home.html')
     return render(request, 'index.html')
+
+def signin(request):
+    if is_ajax_request(request):
+        return render(request, 'components/modals/signin.html')
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
