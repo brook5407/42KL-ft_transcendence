@@ -40,3 +40,46 @@
 	font-size: 28px;
 	cursor: pointer;
 }
+
+.modal-header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.modal-header h2 {
+	margin: 0;
+	font-size: 64px;
+	color: #010c0c;
+	font-family: 'Denk One', sans-serif;
+}
+
+.modal-body {
+	margin-bottom: 20px;
+}
+
+.input-group {
+	position: relative;
+	margin: 20px 0; /* Adjust spacing around each form group */
+}
+
+.input-group label {
+	position: absolute;
+	font-family: 'Denk One', sans-serif;
+	top: -10px; /* Adjust to move label up to overlay on input's top border */
+	left: 10px; /* Adjust based on padding of input to align with text start */
+	background-color: #e5f7fc; /* Match the form or page background */
+	padding: 0 5px; /* Add some padding around the label text */
+	z-index: 6; /* Ensure the label is on top of the input */
+}
+
+.input-group input {
+	background-color: #e6f7ff; /* Light blue background */
+	border: 3px solid #4fcdf0; /* Blue border */
+	border-radius: 4px; /* Rounded corners for the input box */
+	padding: 10px; /* Padding inside the input box */
+	width: 100%; /* Full width of its parent */
+	box-sizing: border-box; /* Include padding and border in the element's total width and height */
+	/* z-index: 5; */
+}
