@@ -1,0 +1,26 @@
+.signin-button,
+.oauth-button {
+	border: none;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+	border-radius: 12px;
+	width: 280px;
+	height: 80px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.oauth-button {
+	background-color: #e4eded;
+	color: black;
+}
+
+.signin-button {
+	background-color: #83def7;
+	color: #e4eded;
+	font-size: 32px;
+	font-family: 'Denk One', sans-serif;
+}

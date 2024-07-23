@@ -1,0 +1,12 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/components.css' %}" />
+
+<div id="modalOverlay" class="modal-overlay"></div>
+
+<div id="modal" class="modal-container">
+	<span id="closeModalBtn" class="modal-close-btn">&times;</span>
+	{% block modalContent %}
+	{% endblock %}
+</div>

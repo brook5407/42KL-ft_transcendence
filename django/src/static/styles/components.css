@@ -1,0 +1,22 @@
+.submit-button {
+	box-sizing: border-box;
+
+	width: 200px;
+	height: 42px;
+
+	background: #1edddd;
+	border: 1px solid #83def7;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: 12px;
+
+	font-family: 'Denk One', sans-serif;
+	font-style: bold;
+	font-size: 24px;
+	color: #e5f7fc;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

@@ -1,17 +1,29 @@
-const ROOT_ELEMENT = document.getElementById('root');
+import { ajax } from '../ajax.js';
 
-class Component {
-	constructor({ props = {}, children = [], className = '', state = {} }) {
+export const ROOT_ELEMENT = document.getElementById('root');
+export const MODAL_CONTAINER = document.getElementById('modal-container');
+
+export class Component {
+	constructor({
+		props = {},
+		children = [],
+		className = '',
+		state = {},
+		url = '',
+	}) {
 		this.element = null;
 		this.props = props;
 		this.className = className;
 		this.state = state;
 		this.children = children;
+		this.url = url;
 	}
 
-	async fetchHtml(url, options) {
+	async fetchHtml(url) {
 		try {
-			const response = await fetch(url, options);
+			const response = await ajax(url, {
+				method: 'GET',
+			});
 			const html = await response.text();
 			return html;
 		} catch {
@@ -20,12 +32,12 @@ class Component {
 	}
 
 	// render the component
-	async render(url = '') {
+	async render() {
 		const wrapper = document.createElement('div');
 		wrapper.className = this.className;
 
-		if (url) {
-			const html = await this.fetchHtml(url);
+		if (this.url !== '') {
+			const html = await this.fetchHtml(this.url);
 			wrapper.innerHTML = html;
 		} else {
 			wrapper.innerHTML = this.template();
@@ -37,14 +49,14 @@ class Component {
 			wrapper.appendChild(childElement);
 		});
 
-		this.addEventListeners();
+		this.initComponent();
 		return wrapper;
 	}
 
 	// Destroy element
 	destroy() {
 		if (this.element) {
-			this.element.destroyEventListeners();
+			this.cleanupComponent();
 			this.element.remove();
 		}
 		this.children.forEach((child) => child.destroy());
@@ -65,11 +77,11 @@ class Component {
 		}
 	}
 
-	addEventListeners() {
+	initComponent() {
 		// To be implemented by subclasses
 	}
 
-	destroyEventListeners() {
+	cleanupComponent() {
 		// To be implemented by subclasses
 	}
 

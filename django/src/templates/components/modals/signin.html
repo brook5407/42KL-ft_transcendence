@@ -1,0 +1,26 @@
+{% extends "components/modals/modal-center.html" %}
+
+{% block modalContent %}
+	<div class="modal-header">
+		<h2>Sign In</h2>
+	</div>
+	<div class="auth-alt-text">
+		New user? Register <a data-modal="signup" id="signupLink">here</a>
+	</div>
+	<div class="modal-body">
+		<form class="spa-form" action="/signin">
+			{% csrf_token %}
+			<div class="input-group">
+				<label for="email-or-username">Email or Username</label>
+				<input type="text" id="email-or-username" name="email-or-username" class="form-control" required />
+			</div>
+			<div class="input-group">
+				<label for="password">Password</label>
+				<input type="password" id="password" name="password" class="form-control" required />
+			</div>
+			<div class="center">
+				<button type="submit" class="submit-button ">Submit</button>
+			</div>
+		</form>
+	</div>
+{% endblock %}

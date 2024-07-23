@@ -1,0 +1,11 @@
+.not-found {
+	font-family: var(--font-secondary);
+	font-size: 2rem;
+	color: var(--logo-text-color);
+	text-align: center;
+	margin-top: 20%;
+  }
+  
+  .not-found h1 {
+	font-size: 3rem;
+  }

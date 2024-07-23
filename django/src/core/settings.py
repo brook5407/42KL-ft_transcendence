@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'base',
     'provider',
 ]
@@ -212,4 +213,10 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': os.environ.get('42OAUTH_SECRET')
         }
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
