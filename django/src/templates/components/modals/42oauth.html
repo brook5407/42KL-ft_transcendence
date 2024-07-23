@@ -1,5 +1,9 @@
 {% extends "components/modals/modal-center.html" %}
 
+{% load allauth account %}
+{% load allauth %}
+{% load socialaccount %}
+
 {% block modalContent %}
 	<div class="modal-header">
 		<h2>42 OAuth</h2>
@@ -8,10 +12,10 @@
 		Want username and password sign in? Click <a data-modal="signup" id="signupLink">here</a>
 	</div>
 	<div class="modal-body">
-		<form id="42oauth-form" class="spa-form" action="/auth/42oauth">
+		<form method="post" action="{% provider_login_url "42" process="connect" %}">
 			{% csrf_token %}
 			<div class="center">
-				<button type="submit" class="submit-button ">42 Login</button>
+				<button type="submit" class="submit-button">42 Login</button>
 			</div>
 		</form>
 	</div>

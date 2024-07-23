@@ -27,7 +27,7 @@ document.body.addEventListener('click', (e) => {
 });
 
 export async function router() {
-	const match = ROUTES[window.location.pathname];
+	let match = ROUTES[window.location.pathname];
 	if (!match) {
 		match = ROUTES['/404'];
 	}

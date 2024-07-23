@@ -14,7 +14,7 @@ class FortyTwoOAuth2Client(OAuth2Client):
 
     base_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/oauth/authorize'
     token_url = f'{settings.FT_OAUTH_SERVER_BASE_URL}/oauth/token'
-    redirect_uri = f'{settings.APP_URL}/42/login/callback/'
+    redirect_uri = f'{settings.APP_URL}/accounts/42/login/callback/'
     response_type = 'code'
     
     def get_redirect_url(self, authorization_url, extra_params):
