@@ -52,7 +52,9 @@ export async function ajax_with_auth(url, options) {
 	const response = await fetch(url, fetchOptions);
 	if (response.status === 401) {
 		// Access token might be expired, try refreshing it
-		const refreshResponse = await fetch('/api/token/refresh/', {
+		const refreshToken = localStorage.getItem('refresh_token');
+
+		const refreshResponse = await ajax('/auth/token/refresh/', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

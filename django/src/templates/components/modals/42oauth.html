@@ -1,0 +1,18 @@
+{% extends "components/modals/modal-center.html" %}
+
+{% block modalContent %}
+	<div class="modal-header">
+		<h2>42 OAuth</h2>
+	</div>
+	<div class="auth-alt-text">
+		Want username and password sign in? Click <a data-modal="signup" id="signupLink">here</a>
+	</div>
+	<div class="modal-body">
+		<form id="42oauth-form" class="spa-form" action="/auth/42oauth">
+			{% csrf_token %}
+			<div class="center">
+				<button type="submit" class="submit-button ">42 Login</button>
+			</div>
+		</form>
+	</div>
+{% endblock %}
