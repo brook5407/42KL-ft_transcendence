@@ -9,7 +9,8 @@
 <h1 class="logo">IcePong</h1>
 
 {% if user.is_authenticated %}
-    {% comment %} <a href="/logout" class="signin-button">Logout</a> {% endcomment %}
+	<h1>Welcome, {{ user.username }}</h1>
+	<a id="logout-button" class="signin-button">Logout</a>
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin">
 		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
@@ -17,8 +18,8 @@
 
 	<div class="center-buttons-container">
 		<a class="signin-button" data-modal="signin">Sign In</a>
-		<a class="oauth-button" data-modal="42oauth">
-			<img src="{% static 'images/icons/42_Logo.svg' %}" width="42px" height="42px" alt="Lock Icon" data-modal="42oauth">
+		<a class="oauth-button" data-modal="oauth42">
+			<img src="{% static 'images/icons/42_Logo.svg' %}" width="42px" height="42px" alt="Lock Icon" data-modal="oauth42">
 		</a>
 	</div>
 {% endif %}

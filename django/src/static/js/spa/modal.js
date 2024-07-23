@@ -1,10 +1,12 @@
 import { MODAL_CONTAINER } from './components/component.js';
 import { SignIn } from './components/modals/signin.js';
 import { SignUp } from './components/modals/signup.js';
+import { Oauth42 } from './components/modals/42oauth.js';
 
 export const MODALS = {
 	signin: new SignIn({ url: '/signin-modal' }),
 	signup: new SignUp({ url: '/signup-modal' }),
+	oauth42: new Oauth42({ url: '/oauth42-modal' }),
 };
 
 // open modal buttons handler
@@ -30,16 +32,23 @@ export async function openModal(modalName) {
 	}
 }
 
+export function closeModal() {
+	const modalOverlay = document.getElementById('modalOverlay');
+	const modal = document.getElementById('modal');
+	modalOverlay.classList.remove('modal-active');
+	modal.classList.remove('modal-active');
+}
+
 function activateModal() {
 	const modalOverlay = document.getElementById('modalOverlay');
 	const modal = document.getElementById('modal');
 	modalOverlay.classList.add('modal-active');
 	modal.classList.add('modal-active');
 
-	function closeModal() {
-		modalOverlay.classList.remove('modal-active');
-		modal.classList.remove('modal-active');
-	}
+	// function closeModal() {
+	// 	modalOverlay.classList.remove('modal-active');
+	// 	modal.classList.remove('modal-active');
+	// }
 
 	document
 		.getElementById('closeModalBtn')

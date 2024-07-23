@@ -26,3 +26,7 @@ export function showSuccessMessage(message) {
 export function showErrorMessage(message) {
 	showMessage(message, 'error');
 }
+
+export function showInfoMessage(message) {
+	showMessage(message, 'info');
+}
