@@ -2,18 +2,23 @@ export class Snowfall {
 	constructor() {
 		this.intervalId = null;
 
-		document.addEventListener('click', this.snowflakeClickEffect.bind(this));
+		this.snowflakeImage = new Image();
+		this.snowflakeImage.src =
+			'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/White_Snowflake.svg/2048px-White_Snowflake.svg.png';
+		this.snowflakeImage.alt = 'Snowflake';
+
+		// document.addEventListener('click', this.snowflakeClickEffect.bind(this));
 	}
 
 	startSnowfall() {
 		if (this.intervalId === null) {
-			this.intervalId = setInterval(this.createSnowflake, 100);
+			this.intervalId = setInterval(this.createSnowflake.bind(this), 100);
 		}
 	}
 
 	createSnowflake() {
 		const randomSeed = Math.random();
-		const snowflake = document.createElement('div');
+		const snowflake = this.snowflakeImage.cloneNode(true);
 
 		snowflake.classList.add('snowflake');
 		snowflake.style.left = Math.random() * 100 + 'vw';
@@ -25,8 +30,6 @@ export class Snowfall {
 		snowflake.style.opacity = randomSeed;
 		snowflake.style.width = snowflake.style.height =
 			randomSeed * 30 + 10 + 'px';
-		snowflake.innerHTML =
-			'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/White_Snowflake.svg/2048px-White_Snowflake.svg.png" alt="Snowflake" style="width: 100%; height: 100%;">';
 
 		document.body.appendChild(snowflake);
 

@@ -12,11 +12,13 @@
     <link rel="stylesheet" href="{% static 'styles/global.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/not-found.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/message.css' %}" />
 
     <title>IcePong</title>
   </head>
 
   <body>
+    <div id="message-container"></div>
 
     <div id="root"></div>
 
@@ -24,6 +26,8 @@
 
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     <script type="module" src="{% static 'js/script.js' %}"></script>
+    <script type="module" src="{% static 'js/message.js' %}"></script>
     <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
+    <script type="module" src="{% static 'js/spa/form.js' %}"></script>
   </body>
 </html>

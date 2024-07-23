@@ -1,0 +1,29 @@
+#message-container {
+	position: fixed; /* Or absolute, depending on your layout */
+	top: 20px; /* Adjust based on your needs */
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1000; /* Ensure it's above other content */
+}
+
+.message-box {
+	padding: 10px 20px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	color: #fff;
+	text-align: center;
+	opacity: 0;
+	transition: opacity 0.5s ease-in-out;
+}
+
+.success {
+	background-color: #4caf50; /* Green */
+}
+
+.error {
+	background-color: #f44336; /* Red */
+}
+
+.fade-in {
+	opacity: 1;
+}

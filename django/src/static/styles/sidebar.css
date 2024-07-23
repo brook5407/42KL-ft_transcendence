@@ -17,6 +17,7 @@
 
 .sidebar-locked {
 	width: 80px;
+	cursor: pointer;
 }
 
 @keyframes float {

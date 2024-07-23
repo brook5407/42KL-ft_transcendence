@@ -83,3 +83,19 @@
 	box-sizing: border-box; /* Include padding and border in the element's total width and height */
 	/* z-index: 5; */
 }
+
+.input-group input:focus {
+	background-color: transparent;
+}
+
+.auth-alt-text {
+	text-align: center;
+	color: black;
+	font-family: 'Denk One', sans-serif;
+}
+
+#signupLink {
+	color: #1fb5e4;
+	text-decoration: underline;
+	cursor: pointer;
+}

@@ -1,8 +1,10 @@
 import { MODAL_CONTAINER } from './components/component.js';
 import { SignIn } from './components/modals/signin.js';
+import { SignUp } from './components/modals/signup.js';
 
 export const MODALS = {
-	signin: new SignIn({ url: '/signin' }),
+	signin: new SignIn({ url: '/signin-modal' }),
+	signup: new SignUp({ url: '/signup-modal' }),
 };
 
 // open modal buttons handler
@@ -20,7 +22,9 @@ export async function openModal(modalName) {
 		const element = await modal.render();
 		MODAL_CONTAINER.innerHTML = '';
 		MODAL_CONTAINER.appendChild(element);
-		activateModal();
+		setTimeout(() => {
+			activateModal();
+		}, 100);
 	} else {
 		console.error('Modal not found:', modalName);
 	}
