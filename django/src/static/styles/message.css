@@ -24,6 +24,10 @@
 	background-color: #f44336; /* Red */
 }
 
+.info {
+	background-color: #4fcdf0; /* Red */
+}
+
 .fade-in {
 	opacity: 1;
 }

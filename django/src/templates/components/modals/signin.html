@@ -8,11 +8,11 @@
 		New user? Register <a data-modal="signup" id="signupLink">here</a>
 	</div>
 	<div class="modal-body">
-		<form class="spa-form" action="/signin">
+		<form id="signin-form" class="spa-form" action="/auth/signin">
 			{% csrf_token %}
 			<div class="input-group">
-				<label for="email-or-username">Email or Username</label>
-				<input type="text" id="email-or-username" name="email-or-username" class="form-control" required />
+				<label for="username">Username</label>
+				<input type="text" id="username" name="username" class="form-control" required />
 			</div>
 			<div class="input-group">
 				<label for="password">Password</label>

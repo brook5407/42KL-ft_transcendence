@@ -1,4 +1,4 @@
-import { ajax } from '../ajax.js';
+import { ajax, ajax_with_auth } from '../ajax.js';
 
 export const ROOT_ELEMENT = document.getElementById('root');
 export const MODAL_CONTAINER = document.getElementById('modal-container');
@@ -21,7 +21,7 @@ export class Component {
 
 	async fetchHtml(url) {
 		try {
-			const response = await ajax(url, {
+			const response = await ajax_with_auth(url, {
 				method: 'GET',
 			});
 			const html = await response.text();

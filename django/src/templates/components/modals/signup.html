@@ -8,7 +8,7 @@
 		Already gave an account? Login <a data-modal="signin" id="signupLink">here</a>
 	</div>
 	<div class="modal-body">
-		<form class="spa-form" action="/signup">
+		<form id="signup-form" class="spa-form" action="/auth/signup">
 			{% csrf_token %}
 			<div class="input-group">
 				<label for="email">Email</label>
@@ -23,7 +23,7 @@
 				<input type="password" id="password" name="password" class="form-control" required />
 			</div>
 			<div class="input-group">
-				<label for="confirm-password">Password</label>
+				<label for="confirm-password">Confirm Password</label>
 				<input type="password" id="confirm-password" name="confirm-password" class="form-control" required />
 			</div>
 			<div class="center">

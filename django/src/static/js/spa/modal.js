@@ -30,16 +30,23 @@ export async function openModal(modalName) {
 	}
 }
 
+export function closeModal() {
+	const modalOverlay = document.getElementById('modalOverlay');
+	const modal = document.getElementById('modal');
+	modalOverlay.classList.remove('modal-active');
+	modal.classList.remove('modal-active');
+}
+
 function activateModal() {
 	const modalOverlay = document.getElementById('modalOverlay');
 	const modal = document.getElementById('modal');
 	modalOverlay.classList.add('modal-active');
 	modal.classList.add('modal-active');
 
-	function closeModal() {
-		modalOverlay.classList.remove('modal-active');
-		modal.classList.remove('modal-active');
-	}
+	// function closeModal() {
+	// 	modalOverlay.classList.remove('modal-active');
+	// 	modal.classList.remove('modal-active');
+	// }
 
 	document
 		.getElementById('closeModalBtn')
