@@ -2,23 +2,46 @@
 
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}" />
-<link rel="stylesheet" href="{% static 'styles/signin-buttons.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/components.css' %}" />
 
 <div class="snow-container"></div>
 
 <h1 class="logo">IcePong</h1>
 
 {% if user.is_authenticated %}
-	<h1>Welcome, {{ user.username }}</h1>
+	<div class="sidebar-wrapper">
+		<div class="sidebar sidebar-normal" data-modal="signin">
+			<div>
+				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			</div>
+			<div>
+				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			</div>
+			<div>
+				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			</div>
+			<div>
+				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			</div>
+			<div>
+				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			</div>
+		</div>
+	</div>
 	<a id="logout-button" class="signin-button">Logout</a>
+
+	<div class="center-buttons-container">
+		<a href="/pong/pvp" class="center-button pvp-button" data-link>PVP</a>
+		<a href="/pong/pve" class="center-button pve-button" data-link>PVE</a>
+	</div>
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin">
 		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
 	</div>
 
 	<div class="center-buttons-container">
-		<a class="signin-button" data-modal="signin">Sign In</a>
-		<a class="oauth-button" data-modal="oauth42">
+		<a class="center-button signin-button" data-modal="signin">Sign In</a>
+		<a class="center-button oauth-button" data-modal="oauth42">
 			<img src="{% static 'images/icons/42_Logo.svg' %}" width="42px" height="42px" alt="Lock Icon" data-modal="oauth42">
 		</a>
 	</div>
