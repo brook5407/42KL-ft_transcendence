@@ -33,7 +33,27 @@ function submitForm(form, callback) {
 			// Additional headers can be added here
 		},
 	})
-		.then((response) => response.json())
+		.then((response) => {
+			if (!response.ok && response.status != 204) {
+				// Handle non-200 responses
+				return response.json().then((errorData) => {
+					// Extract error message(s)
+					let errorMessage = 'An error occurred';
+					if (errorData.non_field_errors) {
+						errorMessage = errorData.non_field_errors.join(' ');
+					} else {
+						// Handle field-specific errors
+						const fieldErrors = [];
+						for (const [field, messages] of Object.entries(errorData)) {
+							fieldErrors.push(`${messages.join('')}`);
+						}
+						errorMessage = fieldErrors.join('\n');
+					}
+					throw new Error(errorMessage);
+				});
+			}
+			return response.json();
+		})
 		.then((data) => {
 			if (callback) {
 				callback(data);

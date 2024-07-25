@@ -8,7 +8,7 @@
 		New user? Register <a data-modal="signup" id="signupLink">here</a>
 	</div>
 	<div class="modal-body">
-		<form id="signin-form" class="spa-form" action="/auth/signin">
+		<form id="signin-form" class="spa-form" action="{% url 'signin' %}">
 			{% csrf_token %}
 			<div class="input-group">
 				<label for="username">Username</label>
@@ -19,7 +19,7 @@
 				<input type="password" id="password" name="password" class="form-control" required />
 			</div>
 			<div class="center">
-				<button type="submit" class="submit-button ">Submit</button>
+				<button type="submit" class="submit-button">Submit</button>
 			</div>
 		</form>
 	</div>
