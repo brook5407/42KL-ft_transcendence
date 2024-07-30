@@ -8,6 +8,8 @@ from .models import Profile
 def home(request):
     return render(request, 'home.html')
 
+def pong(request):
+    return render(request, 'pong.html')
 
 def userProfile(request, pk):
     user = User.objects.get(id=pk)
