@@ -3,13 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import CustomUserChangeForm, ProfileUpdateForm
 from .models import Profile
-
+import uuid
 
 def home(request):
     return render(request, 'home.html')
-
-def pong(request):
-    return render(request, 'pong.html')
 
 def userProfile(request, pk):
     user = User.objects.get(id=pk)
@@ -35,3 +32,20 @@ def profileUpdateView(request):
 @login_required
 def settings(request):
     return render(request, 'settings.html')
+
+
+def lobby(request):
+    return render(request, 'lobby.html')
+
+def pong(request):
+    return render(request, 'pong.html')
+
+def game(request, room_name):
+    return render(request, 'pong.html', {
+        'room_name': room_name
+    })
+
+def create_room(request):
+    # Generate a unique room name
+    room_name = uuid.uuid4().hex[:6].upper()
+    return redirect('game', room_name=room_name)

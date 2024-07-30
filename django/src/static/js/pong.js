@@ -9,6 +9,33 @@ const boardBackground = "black";
 let pause = true;
 let animationID;
 
+const roomName = "{{ room_name }}";
+const gameSocket = new WebSocket(
+	'ws://' + window.location.host + '/ws/game/' + roomName + '/'
+);
+
+gameSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    // Handle incoming game state data
+    if (data.paddle1) {
+        paddle1.y = data.paddle1.y;
+    }
+    if (data.paddle2) {
+        paddle2.y = data.paddle2.y;
+    }
+    if (data.ball) {
+        ball.x = data.ball.x;
+        ball.y = data.ball.y;
+        ball.xDirection = data.ball.xDirection;
+        ball.yDirection = data.ball.yDirection;
+        ball.speed = data.ball.speed;
+    }
+};
+
+gameSocket.onclose = function(e) {
+	console.error('Game socket closed unexpectedly');
+};
+
 const paddle = {
 	color1: "white",
 	color2: "white",
@@ -219,6 +246,19 @@ function update() {
 		paddle2.y = 0;
 	if(paddle2.y > gameHeight - paddle2.height)
 		paddle2.y = gameHeight - paddle1.height;
+
+	// Send updated state to the server
+	gameSocket.send(JSON.stringify({
+		paddle1: { y: paddle1.y },
+		paddle2: { y: paddle2.y },
+		ball: {
+			x: ball.x,
+			y: ball.y,
+			xDirection: ball.xDirection,
+			yDirection: ball.yDirection,
+			speed: ball.speed
+		}
+	}));
 };
 
 function drawBall(x, y) {

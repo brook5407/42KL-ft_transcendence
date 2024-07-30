@@ -41,6 +41,21 @@
             </svg>
             Create Room
           </a>
+          <h1>Lobby</h1>
+          <input type="text" id="room-name-input" placeholder="Enter room name">
+          <button id="join-room-button">Join Room</button>
+          <button id="create-room-button">Create Room</button>
+      
+          <script type="text/javascript">
+              document.querySelector('#join-room-button').onclick = function() {
+                  const roomName = document.querySelector('#room-name-input').value;
+                  window.location.pathname = '/game/' + roomName + '/';
+              };
+      
+              document.querySelector('#create-room-button').onclick = function() {
+                  window.location.pathname = '/create_room/';
+              };
+          </script>
         </div>
 {#        {% include 'base/feed_component.html' %}#}
       </div>

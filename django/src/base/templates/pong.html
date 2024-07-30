@@ -14,7 +14,7 @@
 </head>
 
 <body style="background-color: rgb(42, 42, 42);">
-    <div id="gameContainer">
+    <div id="gameContainer" style="padding-top: 100px;">
         <!-- <h1>Pong Game</h1> -->
         <canvas id="gameCanvas" height="500" width="750"></canvas>
         <div id="scoreBoard">0 : 0</div>
@@ -34,6 +34,7 @@
     </div>
     <!-- <script src="script.js"></script> -->
     <script type="module" src="{% static 'js/pong.js' %}"></script>
+    <script type="module" src="{% static 'js/game.js' %}"></script>
 </body>
 </html>
 {% endblock %}
