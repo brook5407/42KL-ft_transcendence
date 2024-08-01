@@ -24,7 +24,7 @@
 				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
 			</div>
 			<div>
-				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+				<img id="logout-button" src="{% static 'images/icons/sign-out.svg' %}" width="42px" height="42px" alt="Signout Icon">
 			</div>
 		</div>
 	</div>
@@ -33,10 +33,6 @@
 		<a href="/pong/pvp" class="center-button pvp-button" data-link>PVP</a>
 		<a href="/pong/pve" class="center-button pve-button" data-link>PVE</a>
 	</div>
-
-	<h1>Welcome, {{ user.username }}</h1>
-	<button id="logout-button" class="signin-button">Logout</button>
-
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin">
 		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
@@ -49,5 +45,3 @@
 		</a>
 	</div>
 {% endif %}
-
-{% comment %} <a href="/pong" class="btn btn-primary" data-link>Play</a> {% endcomment %}

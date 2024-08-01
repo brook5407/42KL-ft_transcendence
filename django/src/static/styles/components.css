@@ -47,6 +47,10 @@
 	font-family: 'Denk One', sans-serif;
 }
 
+#logout-button {
+	cursor: pointer;
+}
+
 .pvp-button {
 	background-color: #83def7;
 	color: #e4eded;

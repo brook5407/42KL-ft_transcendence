@@ -15,7 +15,9 @@ function showMessage(message, type) {
 	// Remove the message after 5 seconds
 	setTimeout(() => {
 		messageBox.classList.remove('fade-in');
-		setTimeout(() => MESSAGE_CONTAINER.removeChild(messageBox), 500); // Wait for fade out to finish
+		setTimeout(() => {
+			MESSAGE_CONTAINER.contains(messageBox) && MESSAGE_CONTAINER.removeChild(messageBox);
+		}, 500); // Wait for fade out to finish
 	}, 3000);
 }
 
