@@ -10,7 +10,8 @@
 
 {% if user.is_authenticated %}
 	<h1>Welcome, {{ user.username }}</h1>
-	<a id="logout-button" class="signin-button">Logout</a>
+	{% csrf_token %}
+	<button type="submit" id="logout-button" class="signin-button">Logout</button>
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin">
 		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
