@@ -7,12 +7,62 @@ export class Snowfall {
 			'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/White_Snowflake.svg/2048px-White_Snowflake.svg.png';
 		this.snowflakeImage.alt = 'Snowflake';
 
-		// document.addEventListener('click', this.snowflakeClickEffect.bind(this));
+		this.snowfallInterval = 100; // Milliseconds
+		this.frameTimes = [];
+		this.maxFrameTimes = 60;
+
+		// adjust snowfall intensity based on frame rate every second
+		setInterval(this.measureFrameRate.bind(this), 1000);
+	}
+
+	measureFrameRate() {
+		let lastFrameTime = performance.now();
+
+		const frame = () => {
+			const now = performance.now();
+			const delta = now - lastFrameTime;
+			lastFrameTime = now;
+
+			this.frameTimes.push(delta);
+			if (this.frameTimes.length > this.maxFrameTimes) {
+				this.frameTimes.shift();
+			}
+
+			const averageFrameTime =
+				this.frameTimes.reduce((a, b) => a + b, 0) / this.frameTimes.length;
+			const fps = 1000 / averageFrameTime;
+
+			this.adjustSnowfallIntensity(fps);
+		};
+
+		requestAnimationFrame(frame);
+	}
+
+	adjustSnowfallIntensity(fps) {
+		if (fps < 30) {
+			this.snowfallInterval = Math.min(this.snowfallInterval + 10, 500); // Increase interval to reduce snowfall
+		} else if (fps > 50) {
+			this.snowfallInterval = Math.max(this.snowfallInterval - 10, 50); // Decrease interval to increase snowfall
+		}
+
+		console.log('fps:', fps);
+		console.log('snowflake interval ms:', this.snowfallInterval);
+
+		if (this.intervalId !== null) {
+			clearInterval(this.intervalId);
+			this.intervalId = setInterval(
+				this.createSnowflake.bind(this),
+				this.snowfallInterval
+			);
+		}
 	}
 
 	startSnowfall() {
 		if (this.intervalId === null) {
-			this.intervalId = setInterval(this.createSnowflake.bind(this), 100);
+			this.intervalId = setInterval(
+				this.createSnowflake.bind(this),
+				this.snowfallInterval
+			);
 		}
 	}
 
