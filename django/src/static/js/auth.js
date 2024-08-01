@@ -1,6 +1,7 @@
 import { showSuccessMessage, showInfoMessage } from './message.js';
 import { closeModal } from './spa/modal.js';
 import { router } from './spa/navigation.js';
+import { ajax } from './spa/ajax.js';
 
 export function signup(data) {
 	closeModal();
@@ -27,7 +28,14 @@ export function logout() {
 document.addEventListener('DOMContentLoaded', function () {
 	document.body.addEventListener('click', function (event) {
 		if (event.target.matches('#logout-button')) {
-			logout();
+			ajax('/auth/signout', {
+				method: 'POST',
+			})
+			.then((response) => {
+				if (response.ok) {
+					logout();
+				}
+			});
 		}
 	});
 });

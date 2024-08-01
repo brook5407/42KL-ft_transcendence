@@ -28,12 +28,15 @@
 			</div>
 		</div>
 	</div>
-	<a id="logout-button" class="signin-button">Logout</a>
 
 	<div class="center-buttons-container">
 		<a href="/pong/pvp" class="center-button pvp-button" data-link>PVP</a>
 		<a href="/pong/pve" class="center-button pve-button" data-link>PVE</a>
 	</div>
+
+	<h1>Welcome, {{ user.username }}</h1>
+	<button id="logout-button" class="signin-button">Logout</button>
+
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin">
 		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
