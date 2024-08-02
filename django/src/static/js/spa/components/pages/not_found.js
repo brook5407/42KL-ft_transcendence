@@ -3,6 +3,9 @@ import { Component } from '../component.js';
 export class NotFoundPage extends Component {
 	constructor(params) {
 		super(params);
+		if (this.url === '') {
+			this.url = '/not-found';
+		}
 	}
 
 	template() {

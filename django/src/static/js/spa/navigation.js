@@ -21,7 +21,6 @@ window.addEventListener('popstate', router);
 document.body.addEventListener('click', (e) => {
 	if (e.target.matches('[data-link]')) {
 		e.preventDefault();
-		console.log('click');
 		navigateTo(e.target.href);
 	}
 });

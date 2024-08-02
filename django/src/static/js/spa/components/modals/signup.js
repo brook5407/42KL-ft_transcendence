@@ -3,6 +3,9 @@ import { Component } from '../component.js';
 export class SignUp extends Component {
 	constructor(params) {
 		super(params);
+		if (this.url === '') {
+			this.url = '/modal/signup-modal';
+		}
 	}
 
 	initComponent() {

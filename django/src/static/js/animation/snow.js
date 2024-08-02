@@ -45,8 +45,8 @@ export class Snowfall {
 			this.snowfallInterval = Math.max(this.snowfallInterval - 10, 50); // Decrease interval to increase snowfall
 		}
 
-		console.log('fps:', fps);
-		console.log('snowflake interval ms:', this.snowfallInterval);
+		// console.log('fps:', fps);
+		// console.log('snowflake interval ms:', this.snowfallInterval);
 
 		if (this.intervalId !== null) {
 			clearInterval(this.intervalId);
@@ -80,6 +80,7 @@ export class Snowfall {
 		snowflake.style.opacity = randomSeed;
 		snowflake.style.width = snowflake.style.height =
 			randomSeed * 30 + 10 + 'px';
+		snowflake.style.zIndex = Math.min(Math.floor(randomSeed * 100), 1000);
 
 		document.body.appendChild(snowflake);
 

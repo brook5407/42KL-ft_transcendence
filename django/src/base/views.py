@@ -33,3 +33,9 @@ def oauth42_modal(request):
     if is_ajax_request(request):
         return render(request, 'components/modals/42oauth.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
+@api_view(['GET'])
+def profile_drawer(request):
+    if is_ajax_request(request):
+        return render(request, 'components/drawers/profile.html')
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
