@@ -7,6 +7,11 @@
   --font-logo: 'Pacifico', cursive;
   --font-primary: 'Ubuntu', sans-serif;
   --font-secondary: 'Denk One', sans-serif;
+
+  --drawer-bg-color: #1A9EC7;
+
+  --drawer-width: 450px;
+  --drawer-height: 80%;
 }
 
 body {

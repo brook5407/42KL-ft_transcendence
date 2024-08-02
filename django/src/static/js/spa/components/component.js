@@ -2,6 +2,7 @@ import { ajax, ajax_with_auth } from '../ajax.js';
 
 export const ROOT_ELEMENT = document.getElementById('root');
 export const MODAL_CONTAINER = document.getElementById('modal-container');
+export const DRAWER_CONTAINER = document.getElementById('drawer-container');
 
 export class Component {
 	constructor({

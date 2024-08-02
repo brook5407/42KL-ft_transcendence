@@ -4,8 +4,16 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
 	path('home', views.home, name='home'),
-	path('signin-modal', views.signin_modal, name='signin-modal'),
-	path('signup-modal', views.signup_modal, name='signup-modal'),
-	path('oauth42-modal', views.oauth42_modal, name='oauth42-modal'),
+
+	# modals
+	path('modal/signin-modal', views.signin_modal, name='signin-modal'),
+	path('modal/signup-modal', views.signup_modal, name='signup-modal'),
+	path('modal/oauth42-modal', views.oauth42_modal, name='oauth42-modal'),
+
+	# drawers
+	path('drawer/profile', views.profile_drawer, name='profile-drawer'),
+	path('drawer/settings', views.settings_drawer, name='settings-drawer'),
+
+	# catch all
     re_path(r'^(?!accounts/).*$', views.index, name='catchall'),
 ]

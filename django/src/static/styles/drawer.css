@@ -1,0 +1,51 @@
+.drawer-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	visibility: hidden;
+	opacity: 0;
+}
+
+.drawer-overlay.drawer-active {
+	visibility: visible;
+	opacity: 1;
+}
+
+.drawer-container {
+    height: var(--drawer-height);
+    width: var(--drawer-width);
+    position: fixed;
+    top: 50%;
+    left: calc(-1 * var(--drawer-width)); /* Hide the drawer initially */
+    background-color: var(--drawer-bg-color);
+    overflow-x: hidden;
+    transition: left 0.5s ease; /* Transition effect */
+    padding-top: 60px;
+    color: white;
+	transform: translateY(-50%); /* Center the drawer vertically */
+	border-radius: 0 32px 32px 0;
+	border: 2px solid #FFF;
+	border-left: 0;
+	padding: 10px;
+}
+
+.drawer-container.drawer-active {
+    left: 0; /* Show the drawer */
+}
+
+.drawer-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 20px 0 20px 10px;
+}
+
+.drawer-header h2 {
+	margin: 0;
+	font-size: 48px;
+	color: #FFF;
+	font-family: 'Denk One', sans-serif;
+}

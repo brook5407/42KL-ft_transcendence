@@ -1,0 +1,17 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/drawer.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/components.css' %}" />
+
+<div id="drawerOverlay" class="drawer-overlay"></div>
+
+<div id="drawer" class="drawer-container">
+	<div class="drawer-header">
+		{% block drawerHeader %}
+		{% endblock %}
+	</div>
+	<div class="drawer-body">
+		{% block drawerContent %}
+		{% endblock %}
+	</div>
+</div>

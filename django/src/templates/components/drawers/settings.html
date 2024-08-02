@@ -1,0 +1,11 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerHeader %}
+	<h2>Settings</h2>
+{% endblock %}
+
+{% block drawerContent %}
+	<img id="logout-button" class="clickable" src="{% static 'images/icons/sign-out.svg' %}" width="42px" height="42px" alt="Log out" />
+{% endblock %}

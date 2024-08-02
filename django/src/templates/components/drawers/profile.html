@@ -1,0 +1,21 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/profile.css' %}" />
+
+{% block drawerHeader %}
+	<h2>Profile</h2>
+{% endblock %}
+
+{% block drawerContent %}
+	<div class="profile-info">
+		<div class="profile-info-item">
+			<h3>Username</h3>
+			<p>{{ user.username }}</p>
+		</div>
+		<div class="profile-info-item">
+			<h3>Email</h3>
+			<p>{{ user.email }}</p>
+		</div>
+	</div>
+{% endblock %}

@@ -11,20 +11,20 @@
 {% if user.is_authenticated %}
 	<div class="sidebar-wrapper">
 		<div class="sidebar sidebar-normal" data-modal="signin">
-			<div>
-				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			<div class="clickable sidebar-option">
+				<img src="{% static 'images/icons/profile.svg' %}" width="42px" height="42px" alt="Profile Icon" data-drawer="profile">
 			</div>
-			<div>
-				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			<div class="clickable sidebar-option">
+				<img src="{% static 'images/icons/user-group.svg' %}" width="42px" height="42px" alt="Friend list Icon" data-drawer="friend-list">
 			</div>
-			<div>
-				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			<div class="clickable sidebar-option">
+				<img src="{% static 'images/icons/message.svg' %}" width="42px" height="42px" alt="Chat Icon" data-drawer="chat">
 			</div>
-			<div>
-				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			<div class="clickable sidebar-option">
+				<img src="{% static 'images/icons/pong.svg' %}" width="42px" height="42px" alt="Pong Icon" data-drawer="pong">
 			</div>
-			<div>
-				<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+			<div class="clickable sidebar-option">
+				<img src="{% static 'images/icons/settings.svg' %}" width="42px" height="42px" alt="Settings Icon" data-drawer="settings">
 			</div>
 		</div>
 	</div>
@@ -33,10 +33,6 @@
 		<a href="/pong/pvp" class="center-button pvp-button" data-link>PVP</a>
 		<a href="/pong/pve" class="center-button pve-button" data-link>PVE</a>
 	</div>
-
-	<h1>Welcome, {{ user.username }}</h1>
-	<button id="logout-button" class="signin-button">Logout</button>
-
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin">
 		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
@@ -49,5 +45,3 @@
 		</a>
 	</div>
 {% endif %}
-
-{% comment %} <a href="/pong" class="btn btn-primary" data-link>Play</a> {% endcomment %}

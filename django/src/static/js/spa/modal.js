@@ -4,9 +4,9 @@ import { SignUp } from './components/modals/signup.js';
 import { Oauth42 } from './components/modals/42oauth.js';
 
 export const MODALS = {
-	signin: new SignIn({ url: '/signin-modal' }),
-	signup: new SignUp({ url: '/signup-modal' }),
-	oauth42: new Oauth42({ url: '/oauth42-modal' }),
+	signin: new SignIn({ url: '/modal/signin-modal' }),
+	signup: new SignUp({ url: '/modal/signup-modal' }),
+	oauth42: new Oauth42({ url: '/modal/oauth42-modal' }),
 };
 
 // open modal buttons handler
@@ -44,11 +44,6 @@ function activateModal() {
 	const modal = document.getElementById('modal');
 	modalOverlay.classList.add('modal-active');
 	modal.classList.add('modal-active');
-
-	// function closeModal() {
-	// 	modalOverlay.classList.remove('modal-active');
-	// 	modal.classList.remove('modal-active');
-	// }
 
 	document
 		.getElementById('closeModalBtn')
