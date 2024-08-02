@@ -27,7 +27,6 @@
     color: white;
 	transform: translateY(-50%); /* Center the drawer vertically */
 	border-radius: 0 32px 32px 0;
-	/* box-shadow: 2cm 2cm 2cm rgba(0, 0, 0, 0.5); */
 	border: 2px solid #FFF;
 	border-left: 0;
 	padding: 10px;
