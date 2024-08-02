@@ -44,6 +44,19 @@ export class Component {
 			wrapper.innerHTML = this.template();
 		}
 
+		// Find and execute all script tags
+		const scripts = wrapper.getElementsByTagName('script');
+		for (let i = 0; i < scripts.length; i++) {
+			const script = document.createElement('script');
+			script.type = 'text/javascript';
+			if (scripts[i].src) {
+				script.src = scripts[i].src;
+			} else {
+				script.text = scripts[i].innerHTML;
+			}
+			document.body.appendChild(script);
+		}
+
 		this.element = wrapper;
 		this.children.forEach((child) => {
 			const childElement = child.render();

@@ -31,7 +31,7 @@
 
 	<div class="center-buttons-container">
 		<a href="/pong/pvp" class="center-button pvp-button" data-link>PVP</a>
-		<a href="/pong/pve" class="center-button pve-button" data-link>PVE</a>
+		<a href="{% url 'pong' %}" class="center-button pve-button" data-link>PVE</a>
 	</div>
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin">
