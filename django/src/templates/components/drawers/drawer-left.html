@@ -6,6 +6,12 @@
 <div id="drawerOverlay" class="drawer-overlay"></div>
 
 <div id="drawer" class="drawer-container">
-	{% block drawerContent %}
-	{% endblock %}
+	<div class="drawer-header">
+		{% block drawerHeader %}
+		{% endblock %}
+	</div>
+	<div class="drawer-body">
+		{% block drawerContent %}
+		{% endblock %}
+	</div>
 </div>

@@ -36,3 +36,17 @@
 .drawer-container.drawer-active {
     left: 0; /* Show the drawer */
 }
+
+.drawer-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 20px 0 20px 10px;
+}
+
+.drawer-header h2 {
+	margin: 0;
+	font-size: 48px;
+	color: #FFF;
+	font-family: 'Denk One', sans-serif;
+}

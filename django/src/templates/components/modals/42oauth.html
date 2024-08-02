@@ -4,19 +4,19 @@
 {% load allauth %}
 {% load socialaccount %}
 
+{% block modalHeader %}
+	<h2>42 OAuth</h2>
+{% endblock %}
+
+{% block modalAuthAltText %}
+	Want username and password sign in? Click <a data-modal="signup" id="signupLink">here</a>
+{% endblock %}
+
 {% block modalContent %}
-	<div class="modal-header">
-		<h2>42 OAuth</h2>
-	</div>
-	<div class="auth-alt-text">
-		Want username and password sign in? Click <a data-modal="signup" id="signupLink">here</a>
-	</div>
-	<div class="modal-body">
-		<form method="post" action="{% provider_login_url "42" process="connect" %}">
-			{% csrf_token %}
-			<div class="center">
-				<button type="submit" class="submit-button">42 Login</button>
-			</div>
-		</form>
-	</div>
+	<form method="post" action="{% provider_login_url "42" process="connect" %}">
+		{% csrf_token %}
+		<div class="center">
+			<button type="submit" class="submit-button">42 Login</button>
+		</div>
+	</form>
 {% endblock %}
