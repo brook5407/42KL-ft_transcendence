@@ -1,8 +1,10 @@
 import { DRAWER_CONTAINER } from './components/component.js';
 import { Profile } from './components/drawer/profile.js';
+import { Settings } from './components/drawer/settings.js';
 
 export const DRAWERS = {
 	profile: new Profile({ url: '/drawer/profile' }),
+	settings: new Settings({ url: '/drawer/settings' }),
 };
 
 // open drawer buttons handler

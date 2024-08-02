@@ -47,10 +47,6 @@
 	font-family: 'Denk One', sans-serif;
 }
 
-.sidebar-icon {
-	cursor: pointer;
-}
-
 .pvp-button {
 	background-color: #83def7;
 	color: #e4eded;
@@ -63,4 +59,8 @@
 	color: #e4eded;
 	font-size: 32px;
 	font-family: 'Denk One', sans-serif;
+}
+
+.clickable {
+	cursor: pointer;
 }

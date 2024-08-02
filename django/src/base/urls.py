@@ -12,6 +12,7 @@ urlpatterns = [
 
 	# drawers
 	path('drawer/profile', views.profile_drawer, name='profile-drawer'),
+	path('drawer/settings', views.settings_drawer, name='settings-drawer'),
 
 	# catch all
     re_path(r'^(?!accounts/).*$', views.index, name='catchall'),

@@ -39,3 +39,9 @@ def profile_drawer(request):
     if is_ajax_request(request):
         return render(request, 'components/drawers/profile.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
+@api_view(['GET'])
+def settings_drawer(request):
+    if is_ajax_request(request):
+        return render(request, 'components/drawers/settings.html')
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
