@@ -39,10 +39,10 @@ export class Snowfall {
 	}
 
 	adjustSnowfallIntensity(fps) {
-		if (fps < 30) {
+		if (fps < 100) {
 			this.snowfallInterval = Math.min(this.snowfallInterval + 10, 500); // Increase interval to reduce snowfall
-		} else if (fps > 50) {
-			this.snowfallInterval = Math.max(this.snowfallInterval - 10, 50); // Decrease interval to increase snowfall
+		} else if (fps > 150) {
+			this.snowfallInterval = Math.max(this.snowfallInterval - 10, 100); // Decrease interval to increase snowfall
 		}
 
 		// console.log('fps:', fps);
