@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block modalContent %}
-	<form method="post" action="{% provider_login_url "42" process="connect" %}">
+	<form method="post" action="{% provider_login_url "42" process="login" %}">
 		{% csrf_token %}
 		<div class="center">
 			<button type="submit" class="submit-button">42 Login</button>
