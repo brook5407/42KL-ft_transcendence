@@ -1,5 +1,5 @@
 {% extends "components/modals/modal-center.html" %}
-
+{% load i18n %}
 {% load allauth account %}
 {% load allauth %}
 {% load socialaccount %}
@@ -12,7 +12,7 @@
 		Want username and password sign in? Click <a data-modal="signup" id="signupLink">here</a>
 	</div>
 	<div class="modal-body">
-		<form method="post" action="{% provider_login_url "42" process="connect" %}">
+		<form method="post" action="{% provider_login_url "42" process="login" %}">
 			{% csrf_token %}
 			<div class="center">
 				<button type="submit" class="submit-button">42 Login</button>
