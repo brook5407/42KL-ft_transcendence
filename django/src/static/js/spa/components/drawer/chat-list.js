@@ -1,19 +1,11 @@
 import { Component } from '../component.js';
 
-export class Chat extends Component {
+export class ChatList extends Component {
 	constructor(params) {
 		super(params);
 		if (this.url === '') {
-			this.url = '/chat/chat-list';
+			this.url = '/drawer/chat-list';
 		}
-	}
-
-	initComponent() {
-		super.initComponent();
-	}
-
-	cleanupComponent() {
-		super.cleanupComponent();
 	}
 
 	template() {

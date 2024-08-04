@@ -9,8 +9,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email']
 
 class ChatMessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)
-    room = UserSerializer(read_only=True)
+    # sender = UserSerializer(read_only=True)
+    # room = UserSerializer(read_only=True)
 
     class Meta:
         model = ChatMessage

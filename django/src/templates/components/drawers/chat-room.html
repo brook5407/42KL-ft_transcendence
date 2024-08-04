@@ -1,0 +1,18 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/chat-room.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>{{ room_name }}</h2>
+{% endblock %}
+
+{% block drawerContent %}
+	TODO: Chat room content
+{% endblock %}
+
+{% block drawerScripts %}
+{% endblock %}

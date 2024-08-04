@@ -13,7 +13,8 @@ urlpatterns = [
 	# drawers
 	path('drawer/profile', views.profile_drawer, name='profile-drawer'),
 	path('drawer/settings', views.settings_drawer, name='settings-drawer'),
-	path('drawer/chat', views.chat_drawer, name='chat-drawer'),
+	path('drawer/chat-list', views.chat_list_drawer, name='chat-list-drawer'),
+	path('drawer/chat-room', views.chat_room_drawer, name='chat-room-drawer'),
 
 	# catch all
     re_path(r'^(?!accounts/|admin/|static/|media/).*$', views.index, name='catchall'),

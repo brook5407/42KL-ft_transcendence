@@ -8,14 +8,6 @@ export class Oauth42 extends Component {
 		}
 	}
 
-	initComponent() {
-		super.initComponent();
-	}
-
-	cleanupComponent() {
-		super.cleanupComponent();
-	}
-
 	template() {
 		return `
 			<div>

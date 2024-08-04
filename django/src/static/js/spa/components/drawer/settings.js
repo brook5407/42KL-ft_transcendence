@@ -8,14 +8,6 @@ export class Settings extends Component {
 		}
 	}
 
-	initComponent() {
-		super.initComponent();
-	}
-
-	cleanupComponent() {
-		super.cleanupComponent();
-	}
-
 	template() {
 		return `
 			<div>

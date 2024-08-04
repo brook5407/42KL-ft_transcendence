@@ -5,24 +5,18 @@ export const MODAL_CONTAINER = document.getElementById('modal-container');
 export const DRAWER_CONTAINER = document.getElementById('drawer-container');
 
 export class Component {
-	constructor({
-		props = {},
-		children = [],
-		className = '',
-		state = {},
-		url = '',
-	}) {
+	constructor({ state = {}, url = '' }) {
 		this.element = null;
-		this.props = props;
-		this.className = className;
 		this.state = state;
-		this.children = children;
+		this.queryParams = {};
 		this.url = url;
 	}
 
-	async fetchHtml(url) {
+	async fetchHtml(url, queryParams = {}) {
 		try {
-			const response = await ajax_with_auth(url, {
+			const urlParams = new URLSearchParams(queryParams);
+			const urlWithParams = url + '?' + urlParams.toString();
+			const response = await ajax_with_auth(urlWithParams, {
 				method: 'GET',
 			});
 			const html = await response.text();
@@ -38,7 +32,7 @@ export class Component {
 		wrapper.className = this.className;
 
 		if (this.url !== '') {
-			const html = await this.fetchHtml(this.url);
+			const html = await this.fetchHtml(this.url, this.queryParams);
 			wrapper.innerHTML = html;
 		} else {
 			wrapper.innerHTML = this.template();
@@ -47,7 +41,7 @@ export class Component {
 		// Find and execute all script tags
 		const scripts = wrapper.getElementsByTagName('script');
 		for (let i = 0; i < scripts.length; i++) {
-			console.log('executing script', scripts[i].src);
+			console.log('executing script', scripts[i].src || 'custom script');
 			const script = document.createElement('script');
 			script.type = scripts[i].type || 'text/javascript';
 			if (scripts[i].src) {
@@ -59,10 +53,6 @@ export class Component {
 		}
 
 		this.element = wrapper;
-		this.children.forEach((child) => {
-			const childElement = child.render();
-			wrapper.appendChild(childElement);
-		});
 
 		this.initComponent();
 		return wrapper;
@@ -74,13 +64,14 @@ export class Component {
 			this.cleanupComponent();
 			this.element.remove();
 		}
-		this.children.forEach((child) => child.destroy());
 	}
 
 	// Set the state and re-render the component
-	setState(newState) {
+	setState(newState, options = { update: true }) {
 		this.state = { ...this.state, ...newState };
-		this.update();
+		if (options.update === true) {
+			this.update();
+		}
 	}
 
 	// Update the component
