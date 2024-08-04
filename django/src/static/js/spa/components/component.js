@@ -45,10 +45,12 @@ export class Component {
 		}
 
 		// Find and execute all script tags
+		console.log(wrapper);
 		const scripts = wrapper.getElementsByTagName('script');
 		for (let i = 0; i < scripts.length; i++) {
+			console.log('executing script', scripts[i].src);
 			const script = document.createElement('script');
-			script.type = 'text/javascript';
+			script.type = scripts[i].type || 'text/javascript';
 			if (scripts[i].src) {
 				script.src = scripts[i].src;
 			} else {

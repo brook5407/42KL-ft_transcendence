@@ -1,6 +1,5 @@
 import { Component } from '../component.js';
 import { Snowfall } from '../../../animation/snow.js';
-// import {} from '../../../pong/pong.js';
 
 export class PongPage extends Component {
 	constructor(params) {
