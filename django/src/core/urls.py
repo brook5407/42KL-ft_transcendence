@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/', include('allauth.socialaccount.urls')),
     path('accounts/', include('provider.urls')),
     path('pong/', include('pong.urls')),
+    path('chat/', include('chat.urls')),
     path('', include('base.urls')),
 ]
 

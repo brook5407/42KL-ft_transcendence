@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'channels',
+    'daphne',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -57,6 +58,8 @@ INSTALLED_APPS = [
     'base',
     'provider',
     'drf_auth',
+    'chat',
+    'pong',
 ]
 
 MIDDLEWARE = [
@@ -89,7 +92,8 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 APP_URL = os.environ.get('APP_URL', 'http://localhost:8000')
 APP_ENV = os.environ.get('APP_ENV', 'dev')
