@@ -45,7 +45,6 @@ export class Component {
 		}
 
 		// Find and execute all script tags
-		console.log(wrapper);
 		const scripts = wrapper.getElementsByTagName('script');
 		for (let i = 0; i < scripts.length; i++) {
 			console.log('executing script', scripts[i].src);

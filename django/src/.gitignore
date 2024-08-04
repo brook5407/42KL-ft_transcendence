@@ -21,6 +21,7 @@ staticfiles/
 
 # Ignore media files directory
 media/avatars/
+media/chatroom_covers/
 
 # Ignore local development settings
 myproject/local_settings.py

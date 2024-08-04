@@ -1,10 +1,12 @@
 import { DRAWER_CONTAINER } from './components/component.js';
 import { Profile } from './components/drawer/profile.js';
 import { Settings } from './components/drawer/settings.js';
+import { Chat } from './components/drawer/chat.js';
 
 export const DRAWERS = {
 	profile: new Profile({ url: '/drawer/profile' }),
 	settings: new Settings({ url: '/drawer/settings' }),
+	chat: new Chat({ url: '/drawer/chat' }),
 };
 
 // open drawer buttons handler
@@ -17,6 +19,10 @@ document.body.addEventListener('click', (e) => {
 	}
 });
 
+function dispatchDrawerOpenedEvent(e = null) {
+	document.dispatchEvent(new CustomEvent('drawer-opened', e));
+}
+
 export async function openDrawer(drawerName) {
 	const drawer = DRAWERS[drawerName];
 	if (drawer) {
@@ -25,6 +31,9 @@ export async function openDrawer(drawerName) {
 		DRAWER_CONTAINER.appendChild(element);
 		setTimeout(() => {
 			activateDrawer();
+			dispatchDrawerOpenedEvent({
+				detail: { drawerName },
+			});
 		}, 100);
 	} else {
 		console.error('Drawer not found:', drawerName);
@@ -48,5 +57,7 @@ function activateDrawer() {
 	// 	.getElementById('closeDrawerBtn')
 	// 	.addEventListener('click', closeDrawer);
 
-	document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+	document
+		.getElementById('drawerOverlay')
+		.addEventListener('click', closeDrawer);
 }

@@ -2,6 +2,8 @@
 
 <link rel="stylesheet" href="{% static 'styles/drawer.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/components.css' %}" />
+{% block drawerStyles %}
+{% endblock %}
 
 <div id="drawerOverlay" class="drawer-overlay"></div>
 
@@ -15,3 +17,6 @@
 		{% endblock %}
 	</div>
 </div>
+
+{% block drawerScripts %}
+{% endblock %}
