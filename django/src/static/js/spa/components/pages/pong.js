@@ -1,4 +1,6 @@
 import { Component } from '../component.js';
+import { Snowfall } from '../../../animation/snow.js';
+// import {} from '../../../pong/pong.js';
 
 export class PongPage extends Component {
 	constructor(params) {
@@ -10,10 +12,13 @@ export class PongPage extends Component {
 
 	initComponent() {
 		super.initComponent();
+		this.snowfall = new Snowfall();
+		this.snowfall.startSnowfall();
 	}
 
 	cleanupComponent() {
 		super.cleanupComponent();
+		this.snowfall.stopSnowfall();
 	}
 
 	template() {

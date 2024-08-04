@@ -31,6 +31,8 @@ export async function router() {
 		match = ROUTES['/404'];
 	}
 
+	console.log(match);
+
 	window.currentRootComponent = match;
 	const element = await match.render();
 	ROOT_ELEMENT.innerHTML = '';
