@@ -37,6 +37,7 @@ export async function router() {
 
 	// console.log(match);
 
+	window.currentRootComponent?.destroy();
 	window.currentRootComponent = match;
 	const element = await match.render();
 	ROOT_ELEMENT.innerHTML = '';
@@ -44,7 +45,6 @@ export async function router() {
 }
 
 export function navigateTo(url, title = 'IcePong') {
-	window.currentRootComponent?.destroy();
 	history.pushState(null, null, url);
 	router();
 	document.title = title;
