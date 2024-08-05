@@ -45,19 +45,19 @@
 	</div>
 
 	<div class="center-buttons-container">
-		<a href="/pong/pvp" class="center-button pvp-button" data-link>PVP</a>
+		<a href="{% url 'pong' %}" class="center-button pvp-button" data-link>PVP</a>
 		<a href="{% url 'pong' %}" class="center-button pve-button" data-link>PVE</a>
 	</div>
 {% else %}
-	<div class="sidebar sidebar-locked" data-modal="signin" data-modal-url={% url 'signup-modal'  %}>
+	<div class="sidebar sidebar-locked" data-modal="signin" data-modal-url={% url 'signin-modal'  %}>
 		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock"
 			width="42px" height="42px" alt="Lock Icon"
-			data-modal="signin" data-modal-url={% url 'signup-modal'  %}
+			data-modal="signin" data-modal-url={% url 'signin-modal'  %}
 		/>
 	</div>
 
 	<div class="center-buttons-container">
-		<a class="center-button signin-button" data-modal="signin" data-modal-url={% url 'signup-modal'  %}>
+		<a class="center-button signin-button" data-modal="signin" data-modal-url={% url 'signin-modal'  %}>
 			Sign In
 		</a>
 		<a class="center-button oauth-button" data-modal="oauth42" data-modal-url={% url 'oauth42-modal' %}>

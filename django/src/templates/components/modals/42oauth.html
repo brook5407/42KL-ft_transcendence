@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block modalAuthAltText %}
-	Want username and password sign in? Click <a data-modal="signup" id="signupLink">here</a>
+	Want username and password sign in? Click <a data-modal="signin" id="signinLink" data-modal-url={% url 'signin-modal'  %}>here</a>
 {% endblock %}
 
 {% block modalContent %}

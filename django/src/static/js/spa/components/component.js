@@ -10,6 +10,7 @@ export class Component {
 		this.state = state;
 		this.queryParams = {};
 		this.url = url;
+		this.scripts = [];
 	}
 
 	async fetchHtml(url, queryParams = {}) {
@@ -50,6 +51,7 @@ export class Component {
 				script.text = scripts[i].innerHTML;
 			}
 			document.body.appendChild(script);
+			this.scripts.push(script);
 		}
 
 		this.element = wrapper;
@@ -83,12 +85,13 @@ export class Component {
 		}
 	}
 
-	initComponent() {
-		// To be implemented by subclasses
-	}
+	initComponent() {}
 
 	cleanupComponent() {
-		// To be implemented by subclasses
+		this.scripts.forEach((script) => {
+			console.log('removing script', script.src || 'custom script');
+			script.remove();
+		});
 	}
 
 	// Template method (override this method in subclasses)
