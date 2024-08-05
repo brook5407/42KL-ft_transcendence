@@ -4,7 +4,7 @@ import { Snowfall } from '../../../animation/snow.js';
 export class PongPage extends Component {
 	constructor(params) {
 		super(params);
-		if (this.url === '') {
+		if (this.url === '' || this.url === null) {
 			this.url = '/pong';
 		}
 	}

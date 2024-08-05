@@ -53,32 +53,3 @@ def settings_drawer(request):
     if is_ajax_request(request):
         return render(request, 'components/drawers/settings.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def chat_list_drawer(request):
-    if is_ajax_request(request):
-        return render(request, 'components/drawers/chat-list.html', {
-        'public_chats': ChatRoom.objects.filter(is_public=True),
-        'private_chats': ChatRoom.get_private_chats(request.user)
-	})
-    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def chat_room_drawer(request):
-    if not is_ajax_request(request):
-        return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
-
-    room_id = request.GET.get('room_id')
-    if not room_id:
-        return HttpResponseBadRequest("Error: Room ID is required.")
-    
-    room = get_object_or_404(ChatRoom, id=room_id)
-    # messages = ChatMessage.objects.filter(room=room).order_by('-timestamp')
-    
-    return render(request, 'components/drawers/chat-room.html', {
-        'room': room,
-        'room_name': room.get_room_name(request.user),
-        # 'messages': ChatMessageSerializer(messages, many=True).data
-    })

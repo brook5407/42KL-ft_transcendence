@@ -5,13 +5,10 @@ import { ChatList } from './components/drawer/chat-list.js';
 import { ChatRoom } from './components/drawer/chat-room.js';
 
 export const DRAWERS = {
-	profile: new Profile({ url: '/drawer/profile' }),
-	settings: new Settings({ url: '/drawer/settings' }),
-	'chat-list': new ChatList({ url: '/drawer/chat-list' }),
-	'chat-room': new ChatRoom({
-		url: '/drawer/chat-room',
-		state: { roomId: null },
-	}),
+	profile: Profile,
+	settings: Settings,
+	'chat-list': ChatList,
+	'chat-room': ChatRoom,
 };
 
 // open drawer buttons handler
@@ -19,7 +16,8 @@ document.body.addEventListener('click', (e) => {
 	if (e.target.matches('[data-drawer]')) {
 		e.preventDefault();
 		const drawerName = e.target.getAttribute('data-drawer');
-		openDrawer(drawerName);
+		const drawerUrl = e.target.getAttribute('data-drawer-url') || '';
+		openDrawer(drawerName, { url: drawerUrl });
 	}
 });
 
@@ -34,13 +32,11 @@ function dispatchDrawerOpenedEvent(e = null) {
 }
 
 export async function openDrawer(drawerName, data = {}) {
-	const drawer = DRAWERS[drawerName];
-
-	if (Object.keys(data).length > 0) {
-		drawer.setState(data, {
-			update: false,
-		});
-	}
+	const drawerClass = DRAWERS[drawerName];
+	const drawer = new drawerClass({
+		url: data.url,
+		state: data.state,
+	});
 
 	console.log('drawerName:', drawerName);
 
