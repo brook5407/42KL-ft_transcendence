@@ -131,15 +131,6 @@ function pauseOverlay() {
 	}
 }
 
-// difficultySelect.addEventListener('change', function() {
-// 	if (difficultySelect.value === 'Easy')
-// 		difficultySpeed = 3;
-// 	if (difficultySelect.value === 'Normal')
-// 		difficultySpeed = 4;
-// 	if (difficultySelect.value === 'Hard')
-// 		difficultySpeed = 5;
-// };
-
 function updateAIPaddle() {
 	const paddleCenter = paddle2.y + paddle2.height / 2;
 
@@ -204,21 +195,6 @@ function update() {
 	if (paddle2.y < 0) paddle2.y = 0;
 	if (paddle2.y > gameHeight - paddle2.height)
 		paddle2.y = gameHeight - paddle1.height;
-
-	// Send updated state to the server
-	gameSocket.send(
-		JSON.stringify({
-			paddle1: { y: paddle1.y },
-			paddle2: { y: paddle2.y },
-			ball: {
-				x: ball.x,
-				y: ball.y,
-				xDirection: ball.xDirection,
-				yDirection: ball.yDirection,
-				speed: ball.speed,
-			},
-		})
-	);
 }
 
 function drawBall(x, y) {

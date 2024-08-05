@@ -1,0 +1,77 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/chat-list.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>Chat</h2>
+{% endblock %}
+
+{% block drawerContent %}
+<div class="chat-list">
+	<div class="public-chat">
+		<h3>Public Chat</h3>
+		{% for chat in public_chats %}
+			<div class="chat-list-item" data-drawer="chat-room" data-roomid={{ chat.id }}>
+				<div class="chat-image chat-image-public">
+					<img src="{{ chat.cover_image.url|default:'https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg' }}"
+						alt="{{ chat.name }} cover image"
+						width="50"
+						height="50"
+					/>
+				</div>
+				<div class="chat-details">
+					<div class="chat-name">{{ chat.name }}</div>
+					<div class="last-message-container">
+						<div class="last-message-sender">{{ chat.get_last_message.sender.username }}: </div>
+						<div class="last-message">{{ chat.get_last_message.message }}</div>
+					</div>
+				</div>
+				<div class="chat-time" data-timestamp="{{ chat.get_last_message.timestamp|date:'c' }}"></div>
+			</div>
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}
+
+{% block drawerScripts %}
+<script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+<script>
+	document.addEventListener('drawer-opened', (e) => {
+		const timeElements = document.querySelectorAll('.chat-time');
+		timeElements.forEach((el) => {
+			const timestamp = el.getAttribute('data-timestamp');
+			const date = new Date(timestamp);
+			const now = new Date();
+			const formattedTime = dateFns.formatDistanceToNow(date, {
+				addSuffix: true,
+			});
+			el.textContent = formattedTime;
+		});
+	
+		function dispatchOpenDrawerEvent(drawerName, data) {
+			const event = new CustomEvent('open-drawer', {
+				detail: {
+					drawerName,
+					data,
+				},
+			});
+			document.dispatchEvent(event);
+	
+		}
+		const chatList = document.querySelector('.chat-list');
+
+		chatList?.addEventListener('click', (e) => {
+			const chatListItem = e.target.closest('.chat-list-item');
+			if (chatListItem) {
+				const roomId = chatListItem.getAttribute('data-roomid');
+				dispatchOpenDrawerEvent('chat-room', { roomId });
+			}
+		});
+	});
+
+</script>
+{% endblock %}

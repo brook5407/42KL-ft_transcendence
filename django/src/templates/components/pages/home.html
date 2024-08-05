@@ -10,38 +10,61 @@
 
 {% if user.is_authenticated %}
 	<div class="sidebar-wrapper">
-		<div class="sidebar sidebar-normal" data-modal="signin">
+		<div class="sidebar sidebar-normal">
 			<div class="clickable sidebar-option">
-				<img src="{% static 'images/icons/profile.svg' %}" width="42px" height="42px" alt="Profile Icon" data-drawer="profile">
+				<img src="{% static 'images/icons/profile.svg' %}"
+					width="42px" height="42px" alt="Profile Icon"
+					data-drawer="profile" data-drawer-url={% url 'profile-drawer' %}
+				/>
 			</div>
 			<div class="clickable sidebar-option">
-				<img src="{% static 'images/icons/user-group.svg' %}" width="42px" height="42px" alt="Friend list Icon" data-drawer="friend-list">
+				<img src="{% static 'images/icons/user-group.svg' %}"
+					width="42px" height="42px" alt="Friend list Icon"
+					data-drawer="friend-list" 
+				/>
 			</div>
 			<div class="clickable sidebar-option">
-				<img src="{% static 'images/icons/message.svg' %}" width="42px" height="42px" alt="Chat Icon" data-drawer="chat">
+				<img src="{% static 'images/icons/message.svg' %}"
+					width="42px" height="42px" alt="Chat Icon"
+					data-drawer="chat-list" data-drawer-url={% url 'chat-list-drawer' %}
+				/>
 			</div>
 			<div class="clickable sidebar-option">
-				<img src="{% static 'images/icons/pong.svg' %}" width="42px" height="42px" alt="Pong Icon" data-drawer="pong">
+				<img src="{% static 'images/icons/pong.svg' %}"
+					width="42px" height="42px" alt="Pong Icon"
+					data-drawer="pong"
+				/>
 			</div>
 			<div class="clickable sidebar-option">
-				<img src="{% static 'images/icons/settings.svg' %}" width="42px" height="42px" alt="Settings Icon" data-drawer="settings">
+				<img src="{% static 'images/icons/settings.svg' %}"
+					width="42px" height="42px" alt="Settings Icon"
+					data-drawer="settings" data-drawer-url={% url 'settings-drawer' %}
+				/>
 			</div>
 		</div>
 	</div>
 
 	<div class="center-buttons-container">
-		<a href="/pong/pvp" class="center-button pvp-button" data-link>PVP</a>
+		<a href="{% url 'pong' %}" class="center-button pvp-button" data-link>PVP</a>
 		<a href="{% url 'pong' %}" class="center-button pve-button" data-link>PVE</a>
 	</div>
 {% else %}
-	<div class="sidebar sidebar-locked" data-modal="signin">
-		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock" width="42px" height="42px" alt="Lock Icon" data-modal="signin">
+	<div class="sidebar sidebar-locked" data-modal="signin" data-modal-url={% url 'signin-modal'  %}>
+		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock"
+			width="42px" height="42px" alt="Lock Icon"
+			data-modal="signin" data-modal-url={% url 'signin-modal'  %}
+		/>
 	</div>
 
 	<div class="center-buttons-container">
-		<a class="center-button signin-button" data-modal="signin">Sign In</a>
-		<a class="center-button oauth-button" data-modal="oauth42">
-			<img src="{% static 'images/icons/42_Logo.svg' %}" width="42px" height="42px" alt="Lock Icon" data-modal="oauth42">
+		<a class="center-button signin-button" data-modal="signin" data-modal-url={% url 'signin-modal'  %}>
+			Sign In
+		</a>
+		<a class="center-button oauth-button" data-modal="oauth42" data-modal-url={% url 'oauth42-modal' %}>
+			<img src="{% static 'images/icons/42_Logo.svg' %}"
+				width="42px" height="42px" alt="Lock Icon"
+				data-modal="oauth42" data-modal-url={% url 'oauth42-modal' %}
+			/>
 		</a>
 	</div>
 {% endif %}

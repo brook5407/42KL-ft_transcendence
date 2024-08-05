@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block modalAuthAltText %}
-	New user? Register <a data-modal="signup" id="signupLink">here</a>
+	New user? Register <a data-modal="signup" id="signupLink" data-modal-url={% url 'signup-modal'  %}>here</a>
 {% endblock %}
 
 {% block modalContent %}

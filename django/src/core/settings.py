@@ -40,20 +40,26 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'channels',
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'rest_framework_simplejwt',
+
     'base',
     'provider',
     'drf_auth',
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
+    'chat',
+    'pong',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'core.middleware.Custom404Middleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -87,6 +94,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 APP_URL = os.environ.get('APP_URL', 'http://localhost:8000')
 APP_ENV = os.environ.get('APP_ENV', 'dev')
@@ -235,4 +243,10 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'access_token',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
     'JWT_AUTH_HTTPONLY': False,
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }

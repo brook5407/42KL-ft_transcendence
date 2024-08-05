@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Ignore Django's settings file
+myproject/settings.py
+
+# Ignore database
+*.sqlite3
+db.*
+
+# Ignore static files directory
+staticfiles/
+
+# Ignore media files directory
+media/avatars/
+media/chatroom_covers/
+
+# Ignore local development settings
+myproject/local_settings.py
+
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Ignore logs
+*.log
+
+# Ignore configuration files
+*.ini
+
+# Ignore backup files
+*.bak
+*.swp
+*~
+
+# .env
+.env
+.env*.local
+

@@ -1,7 +1,10 @@
 {% extends "components/drawers/drawer-left.html" %}
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'styles/profile.css' %}" />
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/profile.css' %}" />
+{% endblock %}
 
 {% block drawerHeader %}
 	<h2>Profile</h2>
@@ -10,12 +13,13 @@
 {% block drawerContent %}
 	<div class="profile-info">
 		<div class="profile-info-item">
-			<h3>Username</h3>
-			<p>{{ user.username }}</p>
+			<img src="{% static 'images/avatar.svg' %}" alt="Profile Image" width="100" height="100" />
 		</div>
 		<div class="profile-info-item">
-			<h3>Email</h3>
-			<p>{{ user.email }}</p>
+			<p>@{{ user.username }}</p>
+		</div>
+		<div class="profile-info-item">
+			<p>#{{ user.email }}</p>
 		</div>
 	</div>
 {% endblock %}

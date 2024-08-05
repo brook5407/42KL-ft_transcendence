@@ -45,8 +45,8 @@ export class Snowfall {
 			this.snowfallInterval = Math.max(this.snowfallInterval - 10, 100); // Decrease interval to increase snowfall
 		}
 
-		console.log('fps:', fps);
-		console.log('snowflake interval ms:', this.snowfallInterval);
+		// console.log('fps:', fps);
+		// console.log('snowflake interval ms:', this.snowfallInterval);
 
 		if (this.intervalId !== null) {
 			clearInterval(this.intervalId);

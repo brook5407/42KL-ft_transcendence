@@ -15,5 +15,5 @@ urlpatterns = [
 	path('drawer/settings', views.settings_drawer, name='settings-drawer'),
 
 	# catch all
-    re_path(r'^(?!accounts/).*$', views.index, name='catchall'),
+    # re_path(r'^(?!accounts/|admin/|static/|media/).*$', views.index, name='catchall'),
 ]
