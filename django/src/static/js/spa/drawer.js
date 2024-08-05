@@ -35,10 +35,11 @@ export async function openDrawer(drawerName, data = {}) {
 	const drawerClass = DRAWERS[drawerName];
 	const drawer = new drawerClass({
 		url: data.url,
-		state: data.state,
+		state: data.state || {},
 	});
-
+	
 	console.log('drawerName:', drawerName);
+	console.log(data);
 
 	if (drawer) {
 		const element = await drawer.render();
