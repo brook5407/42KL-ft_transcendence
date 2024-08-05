@@ -34,6 +34,7 @@ function submitForm(form, callback) {
 		},
 	})
 		.then((response) => {
+			console.log(response);
 			if (!response.ok && response.status != 204) {
 				// Handle non-200 responses
 				return response.json().then((errorData) => {

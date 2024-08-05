@@ -43,15 +43,15 @@ export async function openModal(modalName, data = {}) {
 export function closeModal() {
 	const modalOverlay = document.getElementById('modalOverlay');
 	const modal = document.getElementById('modal');
-	modalOverlay.classList.remove('modal-active');
-	modal.classList.remove('modal-active');
+	modalOverlay?.classList.remove('modal-active');
+	modal?.classList.remove('modal-active');
 }
 
 function activateModal() {
 	const modalOverlay = document.getElementById('modalOverlay');
 	const modal = document.getElementById('modal');
-	modalOverlay.classList.add('modal-active');
-	modal.classList.add('modal-active');
+	modalOverlay?.classList.add('modal-active');
+	modal?.classList.add('modal-active');
 
 	document
 		.getElementById('closeModalBtn')
