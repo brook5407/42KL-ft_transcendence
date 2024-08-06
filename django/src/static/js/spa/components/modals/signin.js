@@ -3,9 +3,6 @@ import { Component } from '../component.js';
 export class SignIn extends Component {
 	constructor(params) {
 		super(params);
-		if (this.url === '' || this.url === null) {
-			this.url = '/modal/signin-modal';
-		}
 	}
 
 	template() {

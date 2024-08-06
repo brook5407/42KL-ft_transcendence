@@ -24,7 +24,6 @@ export function logout() {
 	localStorage.removeItem('refresh_token');
 	showInfoMessage('You have successfully logged out!');
 	closeDrawer();
-	closeModal();
 	router();
 }
 

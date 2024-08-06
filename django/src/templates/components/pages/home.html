@@ -14,7 +14,7 @@
 			<div class="clickable sidebar-option">
 				<img src="{% static 'images/icons/profile.svg' %}"
 					width="42px" height="42px" alt="Profile Icon"
-					data-drawer="profile" data-drawer-url={% url 'profile-drawer' %}
+					data-drawer="profile" data-drawer-url={% url 'profile.drawer' %}
 				/>
 			</div>
 			<div class="clickable sidebar-option">
@@ -26,7 +26,7 @@
 			<div class="clickable sidebar-option">
 				<img src="{% static 'images/icons/message.svg' %}"
 					width="42px" height="42px" alt="Chat Icon"
-					data-drawer="chat-list" data-drawer-url={% url 'chat-list-drawer' %}
+					data-drawer="chat-list" data-drawer-url={% url 'chat.list-drawer' %}
 				/>
 			</div>
 			<div class="clickable sidebar-option">
@@ -38,7 +38,7 @@
 			<div class="clickable sidebar-option">
 				<img src="{% static 'images/icons/settings.svg' %}"
 					width="42px" height="42px" alt="Settings Icon"
-					data-drawer="settings" data-drawer-url={% url 'settings-drawer' %}
+					data-drawer="settings" data-drawer-url={% url 'base.settings-drawer' %}
 				/>
 			</div>
 		</div>
@@ -49,21 +49,21 @@
 		<a href="{% url 'pong' %}" class="center-button pve-button" data-link>PVE</a>
 	</div>
 {% else %}
-	<div class="sidebar sidebar-locked" data-modal="signin" data-modal-url={% url 'signin-modal'  %}>
+	<div class="sidebar sidebar-locked" data-modal="signin" data-modal-url={% url 'base.signin-modal'  %}>
 		<img src="{% static 'images/icons/lock.svg' %}" id="sidebar-lock"
 			width="42px" height="42px" alt="Lock Icon"
-			data-modal="signin" data-modal-url={% url 'signin-modal'  %}
+			data-modal="signin" data-modal-url={% url 'base.signin-modal'  %}
 		/>
 	</div>
 
 	<div class="center-buttons-container">
-		<a class="center-button signin-button" data-modal="signin" data-modal-url={% url 'signin-modal'  %}>
+		<a class="center-button signin-button" data-modal="signin" data-modal-url={% url 'base.signin-modal'  %}>
 			Sign In
 		</a>
-		<a class="center-button oauth-button" data-modal="oauth42" data-modal-url={% url 'oauth42-modal' %}>
+		<a class="center-button oauth-button" data-modal="oauth42" data-modal-url={% url 'base.oauth42-modal' %}>
 			<img src="{% static 'images/icons/42_Logo.svg' %}"
 				width="42px" height="42px" alt="Lock Icon"
-				data-modal="oauth42" data-modal-url={% url 'oauth42-modal' %}
+				data-modal="oauth42" data-modal-url={% url 'base.oauth42-modal' %}
 			/>
 		</a>
 	</div>

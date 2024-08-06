@@ -4,6 +4,9 @@ import { Component } from '../component.js';
 export class ChatRoom extends Component {
 	constructor(params) {
 		super(params);
+		this.queryParams = {
+			room_id: this.state.roomId,
+		};
 	}
 
 	initComponent() {

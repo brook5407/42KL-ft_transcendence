@@ -23,10 +23,13 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('drf_auth.urls')),
+    path('auth/', include('dj_rest_auth.urls')),
+    path('auth/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.socialaccount.urls')),
     path('accounts/', include('provider.urls')),
     path('pong/', include('pong.urls')),
     path('chat/', include('chat.urls')),
+    path('profiles/', include('profiles.urls')),
     path('', include('base.urls')),
 ]
 

@@ -4,6 +4,8 @@ import { Settings } from './components/drawer/settings.js';
 import { ChatList } from './components/drawer/chat-list.js';
 import { ChatRoom } from './components/drawer/chat-room.js';
 
+let currentDrawer = null;
+
 export const DRAWERS = {
 	profile: Profile,
 	settings: Settings,
@@ -35,12 +37,14 @@ export async function openDrawer(drawerName, data = {}) {
 	const drawerClass = DRAWERS[drawerName];
 	const drawer = new drawerClass({
 		url: data.url,
-		state: data.state,
+		state: data.state || {},
 	});
-
+	
 	console.log('drawerName:', drawerName);
+	console.log(data);
 
 	if (drawer) {
+		currentDrawer = drawer;
 		const element = await drawer.render();
 		DRAWER_CONTAINER.innerHTML = '';
 		DRAWER_CONTAINER.appendChild(element);
@@ -61,6 +65,8 @@ export function closeDrawer() {
 	const drawer = document.getElementById('drawer');
 	drawerOverlay.classList.remove('drawer-active');
 	drawer.classList.remove('drawer-active');
+	DRAWER_CONTAINER.innerHTML = '';
+	currentDrawer?.destroy();
 }
 
 function activateDrawer() {

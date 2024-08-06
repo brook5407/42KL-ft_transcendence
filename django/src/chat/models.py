@@ -21,14 +21,8 @@ class ChatRoom(models.Model):
 		super().save(*args, **kwargs)
 
 	def get_last_message(self):
-		last_message = self.messages.order_by('-timestamp').first()
-		if last_message:
-			return last_message
-		return {
-			'sender': None,
-			'message': 'No messages yet',
-			'timestamp': None
-		}
+		return self.messages.order_by('-timestamp').first()
+		
 
 	def get_private_chats(user):
 		return ChatRoom.objects.filter(members=user, is_public=False)

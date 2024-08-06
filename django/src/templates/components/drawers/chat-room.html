@@ -11,8 +11,19 @@
 {% endblock %}
 
 {% block drawerContent %}
-	TODO: Chat room content
+<div class="chat-container">
+    <div class="chat-messages" id="chat-messages">
+        <!-- Messages will be appended here dynamically -->
+    </div>
+    <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Type a message..." />
+        <button id="send-button">
+			<img src="{% static 'images/icons/send.svg' %}" alt="Send" />
+		</button>
+    </div>
+</div>
 {% endblock %}
 
 {% block drawerScripts %}
+	<script src="{% static 'js/chat/chat.js' %}"></script>
 {% endblock %}

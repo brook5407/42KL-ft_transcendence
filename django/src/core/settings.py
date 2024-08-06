@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'drf_auth',
     'chat',
     'pong',
+    'profiles',
 ]
 
 MIDDLEWARE = [
