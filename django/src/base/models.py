@@ -18,11 +18,3 @@ class Profile(models.Model):
             self.nickname = self.user.username
         super().save(*args, **kwargs)
 
-
-class Friend(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    friends = models.ManyToManyField(User, related_name='friends')
-    block = models.ManyToManyField(User, related_name='block')
-
-    def __str__(self):
-        return f'{self.user.username} Friends'

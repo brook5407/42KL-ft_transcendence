@@ -28,6 +28,7 @@ urlpatterns = [
     path('pong/', include('pong.urls')),
     path('chat/', include('chat.urls')),
     path('', include('base.urls')),
+    path('', include('friend.urls')),
 ]
 
 if settings.DEBUG == True:
