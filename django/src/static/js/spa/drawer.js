@@ -65,8 +65,10 @@ export function closeDrawer() {
 	const drawer = document.getElementById('drawer');
 	drawerOverlay.classList.remove('drawer-active');
 	drawer.classList.remove('drawer-active');
-	DRAWER_CONTAINER.innerHTML = '';
-	currentDrawer?.destroy();
+	setTimeout(() => {
+		DRAWER_CONTAINER.innerHTML = '';
+		currentDrawer?.destroy();
+	}, 500);
 }
 
 function activateDrawer() {
