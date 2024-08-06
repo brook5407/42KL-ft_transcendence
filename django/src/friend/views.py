@@ -64,3 +64,27 @@ class AcceptRequestView(APIView):
         friend_relation.save()
 
         return Response({"message": "Friend added successfully."}, status=status.HTTP_200_OK)
+    
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FriendRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user_relations = UserRelation.objects.filter(friend=user, accepted=False)
+        serializer = UserRelationSerializer(user_relations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FriendListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user_relations = UserRelation.objects.filter(user=user, accepted=True)
+        serializer = UserRelationSerializer(user_relations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
