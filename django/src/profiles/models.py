@@ -15,3 +15,8 @@ class Profile(models.Model):
         if not self.nickname:
             self.nickname = self.user.username
         super().save(*args, **kwargs)
+
+    def get_avatar_url(self):
+        if not self.avatar:
+            return 'https://www.gravatar.com/avatar/'
+        return self.avatar.url

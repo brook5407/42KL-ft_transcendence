@@ -3,6 +3,8 @@ import { SignIn } from './components/modals/signin.js';
 import { SignUp } from './components/modals/signup.js';
 import { Oauth42 } from './components/modals/42oauth.js';
 
+let currentModal = null;
+
 export const MODALS = {
 	signin: SignIn,
 	signup: SignUp,
@@ -29,6 +31,7 @@ export async function openModal(modalName, data = {}) {
 	console.log('modalName:', modalName);
 
 	if (modal) {
+		currentModal = modal;
 		const element = await modal.render();
 		MODAL_CONTAINER.innerHTML = '';
 		MODAL_CONTAINER.appendChild(element);
@@ -45,6 +48,8 @@ export function closeModal() {
 	const modal = document.getElementById('modal');
 	modalOverlay?.classList.remove('modal-active');
 	modal?.classList.remove('modal-active');
+	MODAL_CONTAINER.innerHTML = '';
+	currentModal?.destroy();
 }
 
 function activateModal() {
