@@ -5,7 +5,7 @@ import { ajax } from './spa/ajax.js';
 
 export function signup(data) {
 	closeModal();
-	showSuccessMessage('You have successfully signed up!');
+	showSuccessMessage('Please check your email to verify your account!');
 	router();
 }
 
