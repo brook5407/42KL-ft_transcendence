@@ -18,6 +18,10 @@
   </head>
 
   <body>
+    {% for message in messages %}
+      <input type="hidden" class="dj-flash-message" value="{{ message.message }}" data-message-type="{{ message.tags }}">
+    {% endfor %}
+
     <div id="message-container"></div>
 
     <div id="root"></div>
