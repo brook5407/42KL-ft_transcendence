@@ -11,13 +11,16 @@
 {% endblock %}
 
 {% block drawerContent %}
+<div id="app-config" data-nickname="{{ user.profile.nickname }}" data-room="8888" style="display:none;"></div>
+{% comment %} <div id="app-config" data-nickname="{{ user.profile.nickname }}" data-room="{{ chat.id }}" style="display:none;"></div> {% endcomment %}
+
 <div class="chat-container">
     <div class="chat-messages" id="chat-messages">
         <!-- Messages will be appended here dynamically -->
     </div>
     <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Type a message..." />
-        <button id="send-button">
+        <input type="text" id="message-input" onKeyPress=handleMessage(event)  placeholder="Type a message..." />
+        <button id="send-button" onclick="sendMessage()">
 			<img src="{% static 'images/icons/send.svg' %}" alt="Send" />
 		</button>
     </div>

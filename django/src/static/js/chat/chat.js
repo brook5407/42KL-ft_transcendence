@@ -1,11 +1,18 @@
 const host = window.location.hostname;
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
-const name = encodeURIComponent(nickname);
 
-let currentUrl = window.location.href;
-let url = new URL(currentUrl);
-let group_num = url.searchParams.get('room') || 123;
+
+const appConfigElement = document.getElementById('app-config');
+const nickname = appConfigElement.getAttribute('data-nickname');// 
+console.log('nickname: ' + nickname);
+
+const ChatListConfigElement = document.getElementById('chat-list-item');
+const group_num = ChatListConfigElement.getAttribute('room-id') || 123;
+
+// let currentUrl = window.location.href;
+// let url = new URL(currentUrl);
+// let group_num = url.searchParams.get('room') || 123;
 
 const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${name}`;
 let socket = null;
@@ -70,7 +77,9 @@ function handleSocketClose() {
 	appendStatusMessage('连接关闭', 'red', '你没朋友了 ｡ﾟ･ (>﹏<) ･ﾟ｡\n');
 }
 
-document.getElementById('fileInput').addEventListener('change', handleUpload);
+//dun have upload plceholder
+// document.getElementById('fileInput').addEventListener('change', handleUpload);
+
 function handleUpload() {
 	const fileInput = document.getElementById('fileInput');
 	const file = fileInput.files[0];
@@ -107,7 +116,7 @@ function handleUpload() {
 }
 
 function displayImage(imageUrl, name) {
-	const imageContainer = document.getElementById('message-container');
+	const imageContainer = document.getElementById('chat-messages');
 
 	// Create a container for the image and username
 	const messageWrapper = document.createElement('div');
@@ -246,7 +255,7 @@ function appendStatusMessage(status, color, message) {
 }
 
 function scrollToBottom() {
-	var messageContainer = document.getElementById('message-container');
+	var messageContainer = document.getElementById('chat-messages');
 	messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
