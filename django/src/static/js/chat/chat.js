@@ -310,6 +310,7 @@ function logMessage(message, style = 'default') {
 	console.log(`%c${message}`, styles[style]);
 }
 
+
 function socket_state(socket) {
 	if (socket.readyState === WebSocket.OPEN) {
 		logMessage('The connection is open', 'warning');
@@ -324,11 +325,13 @@ function socket_state(socket) {
 	}
 }
 
+
 function handleMessage(event) {
 	if (event.key === 'Enter') {
 		sendMessage();
 	}
 }
+
 
 function dataURLToBlob(dataURL) {
 	const BASE64_MARKER = ';base64,';
