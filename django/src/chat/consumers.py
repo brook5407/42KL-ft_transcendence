@@ -34,8 +34,15 @@ def is_online_image_url(url):
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def websocket_connect(self, message):
-        self.chat_room = '123'
-        # self.chat_room = self.scope['url_route']['kwargs']['room_name']
+        # self.chat_room = '123'
+        self.chat_room = self.scope['url_route']['kwargs']['room_name']
+        
+        query_params = parse_qs(self.scope['query_string'].decode())
+        self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
+        
+        
+        # self.customer_name = self.scope['url_route']['kwargs']['nickname']
+        # self.customer_name = self.scope['user'].profile.nickname
         
         await self.accept()
         if self.channel_layer is not None:

@@ -1,13 +1,49 @@
 const host = window.location.hostname;
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
-const name = encodeURIComponent(nickname);
 
-let currentUrl = window.location.href;
-let url = new URL(currentUrl);
-let group_num = url.searchParams.get('room') || 123;
+const appConfigElement = document.getElementById('chat-config');
+const nickname = appConfigElement.getAttribute('data-nickname'); //
+const group_num = appConfigElement.getAttribute('data-room') || 123;
+console.log('nickname: ' + nickname);
 
-const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${name}`;
+// const ChatListConfigElement = document.getElementById('chat-list-item');
+// const group_num = ChatListConfigElement.getAttribute('data-roomid') || 123;
+
+// let currentUrl = window.location.href;
+// let url = new URL(currentUrl);
+// let group_num = url.searchParams.get('room') || 123;
+
+async function fetchToken() {
+	const queryString = new URLSearchParams({
+		group_num: group_num ? group_num : '123',
+		nickname: 'JohnDoe',
+		// nickname: nickname ? nickname : 'JohnDoe'
+	}).toString();
+
+	const response = await fetch('/chat?' + queryString);
+	// console.log('/chat?' + queryString);
+	const chat_data = await response.json();
+	return chat_data.token;
+}
+
+async function initialize() {
+	try {
+		// Fetch the token
+		const token = await fetchToken();
+
+		// Use the token
+		console.log('Retrieved token:', token);
+
+		// Further actions with the token, e.g., decode or use in application
+		// Note: Ensure any sensitive operations are done securely
+	} catch (error) {
+		console.error('Error initializing:', error);
+	}
+}
+initialize();
+
+const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${nickname}`;
 let socket = null;
 
 function newSocket() {
@@ -170,7 +206,7 @@ function displayImage(imageUrl, name) {
 
 function sendMessage() {
 	if (socket.readyState === WebSocket.OPEN) {
-		let message = document.getElementById('txt').value.trim();
+		let message = document.getElementById('message-input').value.trim();
 		// message.focus();
 		// message.setSelectionRange(7, 7);
 		if (message !== '') {
@@ -181,7 +217,7 @@ function sendMessage() {
 					message: message,
 				})
 			);
-			document.getElementById('txt').value = '';
+			document.getElementById('message-input').value = '';
 		}
 	} else {
 		socket_state(socket);
@@ -226,7 +262,7 @@ function displayChatMessage(data, name) {
 		message.appendChild(placeholderContainer);
 	}
 
-	let messageContainer = document.querySelector('.message');
+	let messageContainer = document.querySelector('.chat-messages');
 	if (messageContainer) {
 		messageContainer.appendChild(message);
 	} else {
@@ -239,7 +275,7 @@ function appendStatusMessage(status, color, message) {
 	tag.innerText = status;
 	tag.style.color = color;
 	tag.append(`\t${message}`);
-	let message_sect = document.querySelector('.message');
+	let message_sect = document.querySelector('.chat-messages');
 	if (message_sect) {
 		message_sect.appendChild(tag);
 	}
