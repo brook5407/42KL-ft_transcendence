@@ -11,8 +11,8 @@
 {% endblock %}
 
 {% block drawerContent %}
-<div id="app-config" data-nickname="{{ user.profile.nickname }}" data-room="8888" style="display:none;"></div>
-{% comment %} <div id="app-config" data-nickname="{{ user.profile.nickname }}" data-room="{{ chat.id }}" style="display:none;"></div> {% endcomment %}
+{% comment %} <div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="8888" style="display:none;"></div> {% endcomment %}
+<div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="{{ chat.id }}" style="display:none;"></div>
 
 <div class="chat-container">
     <div class="chat-messages" id="chat-messages">
