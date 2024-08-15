@@ -48,9 +48,12 @@ let paddle2 = {
 };
 
 document.addEventListener('keydown', (event) => {
+	if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+		event.preventDefault();
+	}
 	// console.log(keyPressed);
 	switch (event.key) {
-		case 'Escape':
+		case 'z':
 			togglePause();
 			break;
 		default:
