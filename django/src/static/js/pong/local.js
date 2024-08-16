@@ -83,6 +83,8 @@ const gameModeSelect = document.getElementById('gameMode');
 const difficultySelect = document.getElementById('difficulty');
 let difficultySpeed = 0;
 
+gameLoop();
+
 gameModeSelect.addEventListener('change', function () {
 	if (gameModeSelect.value == 'Player') {
 		// difficultySelect.style.display = 'none'; // Hide difficulty select
