@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('message', models.TextField()),
-                ('timestamp', models.DateTimeField(default=django.utils.timezone.now)),
-                ('receiver', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='received_messages', to=settings.AUTH_USER_MODEL)),
+                ('timestamp', models.DateTimeField(default=django.utils.timezone.now, db_index=True)),
+                ('receiver', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='received_messages', to=settings.AUTH_USER_MODEL, db_index=True)),
                 ('sender', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sent_messages', to=settings.AUTH_USER_MODEL)),
             ],
         ),
@@ -37,3 +37,22 @@ class Migration(migrations.Migration):
             ],
         ),
     ]
+
+
+
+
+# from django.contrib import admin
+# from models import ChatMessage, ChatRoom
+
+# admin.site.register(ChatMessage, ChatMessageAdmin)
+
+# @admin.register(ChatRoom)
+# class ChatRoomAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'is_public', 'cover_image')
+#     filter_horizontal = ('members', 'messages')
+    
+# @admin.register(ChatMessage)
+# class ChatMessageAdmin(admin.ModelAdmin):
+#     list_display = ('sender', 'receiver', 'timestamp', 'message')
+#     search_fields = ('message',)
+
