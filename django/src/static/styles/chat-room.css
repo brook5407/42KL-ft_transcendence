@@ -15,9 +15,22 @@
     min-height: 300px; /* Set a minimum height to prevent shrinking */
 }
 
-.chat-message {
+/* .chat-message {
     margin-bottom: 10px;
     padding: 10px;
+} */
+
+.chat-row {
+    flex-grow: 1;
+    display: flex-inline;
+    white-space: pre-wrap; /* Preserve whitespace and wrap text */
+    overflow-wrap: break-word; /* Break long words onto the next line */
+    word-wrap: break-word; /* For older browsers */
+    word-break: break-word; /* Ensure word breaks properly */
+    max-width: 100%; /* Ensure the row doesn't exceed the container width */
+    text-align: left;
+    /* background-color: #00b3b3; */
+    /* padding: 0px 5px 0px 0px; Proper padding format */
 }
 
 /* .chat-message.sent {
