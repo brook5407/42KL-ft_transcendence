@@ -249,7 +249,7 @@ function displayChatMessage(data, name) {
 	}
 
 	let message = document.createElement('div');
-	message.style.display = 'flex';
+	message.style.display = 'flex-inline';
 	message.style.padding = '0px 0px 5px 0px';
 	message.style.lineHeight = '1.3';
 	message.style.width = '100%';
