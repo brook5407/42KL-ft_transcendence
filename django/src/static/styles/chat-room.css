@@ -33,6 +33,22 @@
 	/* padding: 0px 5px 0px 0px; Proper padding format */
 }
 
+.chat-row {
+	white-space: pre-wrap; /* Preserve whitespace and wrap text */
+	overflow-wrap: break-word; /* Break long words onto the next line */
+	word-wrap: break-word; /* For older browsers */
+	max-width: 100%; /* Adjust as needed */
+	background-color: #00b3b3;
+}
+
+.chat-row {
+	white-space: pre-wrap; /* Preserve whitespace and wrap text */
+	overflow-wrap: break-word; /* Break long words onto the next line */
+	word-wrap: break-word; /* For older browsers */
+	max-width: 100%; /* Adjust as needed */
+	background-color: #00b3b3;
+}
+
 /* .chat-message.sent {
     background-color: #d1e7dd;
     align-self: flex-end;
