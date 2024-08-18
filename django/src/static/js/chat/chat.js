@@ -249,21 +249,22 @@ function displayChatMessage(data, name) {
 	}
 
 	let message = document.createElement('div');
-	message.style.display = 'flex';
+	message.style.display = 'flex-inline';
 	message.style.padding = '0px 0px 5px 0px';
-	message.style.lineHeight = '0.8';
-
+	message.style.lineHeight = '1.3';
+	
 	if (data) {
 		let username = document.createElement('span');
+		username.style.display = 'inline-block';
 		username.textContent = name;
-		username.textContent = name + ' :';
+		username.append(':');
 		username.style.color = 'blue';
 		username.style.fontWeight = 'bold';
 		username.style.width = '70px';
 		username.style.marginRight = '10px';
 
 		let placeholderContainer = document.createElement('span');
-		placeholderContainer.classList.add('chatPlaceholder');
+		placeholderContainer.classList.add('chat-row');
 
 		let content = data;
 		placeholderContainer.innerHTML = content;
