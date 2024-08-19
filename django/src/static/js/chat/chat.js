@@ -170,9 +170,9 @@ function displayImage(imageUrl, name) {
 	// Create and style the username element
 	const username = document.createElement('span');
 	username.textContent = name;
-	username.textContent.endsWith(': ')
+	username.textContent.endsWith(':')
 		? username.textContent
-		: (username.textContent += '：');
+		: (username.textContent += ':');
 	username.style.color = 'blue';
 	username.style.fontWeight = 'bold';
 	// username.style.width = "auto";
@@ -182,9 +182,9 @@ function displayImage(imageUrl, name) {
 	// Create the image element
 	const imgElement = document.createElement('img');
 	imgElement.src = imageUrl;
-	imgElement.style.maxWidth = '100px'; // Adjust styling as needed
+	imgElement.style.maxWidth = '80px'; // Adjust styling as needed
 	imgElement.style.height = 'auto'; // Maintain aspect ratio
-	imgElement.style.display = 'inline-block';
+	// imgElement.style.display = 'inline-block';
 
 	// Add a placeholder for the image
 	const placeholderUrl = 'static/images/meme/miku_impatient.png'; // Path to placeholder image
@@ -249,14 +249,18 @@ function displayChatMessage(data, name) {
 	}
 
 	let message = document.createElement('div');
-	message.style.display = 'flex-inline';
+	message.style.display = 'inline-flex';
+
+
+	// message.style.display = 'inline-table';
+	// message.style.display = 'block';
 	message.style.padding = '0px 0px 5px 0px';
 	message.style.lineHeight = '1.3';
 	message.style.width = '100%';
 	
 	if (data) {
 		let username = document.createElement('span');
-		username.style.display = 'inline-block';
+		// username.style.display = 'inline';
 		username.textContent = name+':';
 		username.style.color = 'blue';
 		username.style.fontWeight = 'bold';
@@ -265,7 +269,7 @@ function displayChatMessage(data, name) {
 		username.style.textAlign = 'left';
 
 		let placeholderContainer = document.createElement('span');
-		placeholderContainer.classList.add('chat-row');
+		placeholderContainer.classList.add('chat-text');
 
 		// let content = data;
 		placeholderContainer.innerHTML = data;
