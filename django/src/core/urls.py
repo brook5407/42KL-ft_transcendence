@@ -27,9 +27,9 @@ urlpatterns = [
     path('auth/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.socialaccount.urls')),
     path('accounts/', include('provider.urls')),
-    path('pong/', include('pong.urls')),
-    path('chat/', include('chat.urls')),
-    path('profiles/', include('profiles.urls')),
+    path('', include('pong.urls')),
+    path('', include('chat.urls')),
+    path('', include('profiles.urls')),
     path('', include('base.urls')),
 ]
 
