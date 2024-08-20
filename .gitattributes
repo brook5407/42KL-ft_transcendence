@@ -1,0 +1,27 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Ensure all files use LF (Unix) line endings
+* eol=lf
+
+# Declare files that will always have Unix-style LF line endings and are text files
+*.txt text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+
+# Declare binary files that should not be modified (Git will not attempt any normalization)
+*.png binary
+*.jpg binary
+*.gif binary
+
+# # Set specific handling for files in a directory
+# docs/*.txt text eol=lf
+
+# Specify merge strategy for specific files
+*.docx merge=word
+
+# Ignore whitespace differences in certain files
+*.css diff=css
+
+# Set custom attributes for specific files
+special_file.txt -text merge=binary

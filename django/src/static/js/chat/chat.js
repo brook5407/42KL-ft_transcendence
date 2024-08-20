@@ -1,13 +1,169 @@
 const host = window.location.hostname;
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
-const name = encodeURIComponent(nickname);
 
-let currentUrl = window.location.href;
-let url = new URL(currentUrl);
-let group_num = url.searchParams.get('room') || 123;
+const appConfigElement = document.getElementById('chat-config');
+const nickname = appConfigElement.getAttribute('data-nickname'); //
+const group_num = appConfigElement.getAttribute('data-room') || 123;
+console.log('nickname: ' + nickname);
 
-const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${name}`;
+// const ChatListConfigElement = document.getElementById('chat-list-item');
+// const group_num = ChatListConfigElement.getAttribute('data-roomid') || 123;
+
+// let currentUrl = window.location.href;
+// let url = new URL(currentUrl);
+// let group_num = url.searchParams.get('room') || 123;
+
+//Testing purpose
+async function fetchToken() {
+	const queryString = new URLSearchParams({
+		group_num: group_num ? group_num : '123',
+		nickname: 'JohnDoe',
+		// nickname: nickname ? nickname : 'JohnDoe'
+	}).toString();
+
+	const response = await fetch('/chat?' + queryString);
+	// console.log('/chat?' + queryString);
+	const chat_data = await response.json();
+	return chat_data.token;
+}
+
+async function initialize() {
+	try {
+		// Fetch the token
+		const token = await fetchToken();
+
+		// Use the token
+		console.log('Retrieved token:', token);
+
+		// Further actions with the token, e.g., decode or use in application
+		// Note: Ensure any sensitive operations are done securely
+	} catch (error) {
+		console.error('Error initializing:', error);
+	}
+}
+initialize();
+
+//Testing purpose
+async function fetchToken() {
+	const queryString = new URLSearchParams({
+		group_num: group_num ? group_num : '123',
+		nickname: 'JohnDoe',
+		// nickname: nickname ? nickname : 'JohnDoe'
+	}).toString();
+
+	const response = await fetch('/chat?' + queryString);
+	// console.log('/chat?' + queryString);
+	const chat_data = await response.json();
+	return chat_data.token;
+}
+
+async function initialize() {
+	try {
+		// Fetch the token
+		const token = await fetchToken();
+
+		// Use the token
+		console.log('Retrieved token:', token);
+
+		// Further actions with the token, e.g., decode or use in application
+		// Note: Ensure any sensitive operations are done securely
+	} catch (error) {
+		console.error('Error initializing:', error);
+	}
+}
+initialize();
+
+//Testing purpose
+async function fetchToken() {
+	const queryString = new URLSearchParams({
+		group_num: group_num ? group_num : '123',
+		nickname: 'JohnDoe',
+		// nickname: nickname ? nickname : 'JohnDoe'
+	}).toString();
+
+	const response = await fetch('/chat?' + queryString);
+	// console.log('/chat?' + queryString);
+	const chat_data = await response.json();
+	return chat_data.token;
+}
+
+async function initialize() {
+	try {
+		// Fetch the token
+		const token = await fetchToken();
+
+		// Use the token
+		console.log('Retrieved token:', token);
+
+		// Further actions with the token, e.g., decode or use in application
+		// Note: Ensure any sensitive operations are done securely
+	} catch (error) {
+		console.error('Error initializing:', error);
+	}
+}
+initialize();
+
+//Testing purpose
+async function fetchToken() {
+	const queryString = new URLSearchParams({
+		group_num: group_num ? group_num : '123',
+		nickname: 'JohnDoe',
+		// nickname: nickname ? nickname : 'JohnDoe'
+	}).toString();
+
+	const response = await fetch('/chat?' + queryString);
+	// console.log('/chat?' + queryString);
+	const chat_data = await response.json();
+	return chat_data.token;
+}
+
+async function initialize() {
+	try {
+		// Fetch the token
+		const token = await fetchToken();
+
+		// Use the token
+		console.log('Retrieved token:', token);
+
+		// Further actions with the token, e.g., decode or use in application
+		// Note: Ensure any sensitive operations are done securely
+	} catch (error) {
+		console.error('Error initializing:', error);
+	}
+}
+initialize();
+
+async function fetchToken() {
+	const queryString = new URLSearchParams({
+		group_num: group_num ? group_num : '123',
+		nickname: 'JohnDoe',
+		// nickname: nickname ? nickname : 'JohnDoe'
+	}).toString();
+
+	const response = await fetch('/chat?' + queryString);
+	// console.log('/chat?' + queryString);
+	const chat_data = await response.json();
+	return chat_data.token;
+}
+
+async function initialize() {
+	try {
+		// Fetch the token
+		const token = await fetchToken();
+
+		// Use the token
+		console.log('Retrieved token:', token);
+
+		// Further actions with the token, e.g., decode or use in application
+		// Note: Ensure any sensitive operations are done securely
+	} catch (error) {
+		console.error('Error initializing:', error);
+	}
+}
+initialize();
+
+const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${nickname}`;
 let socket = null;
 
 function newSocket() {
@@ -119,9 +275,9 @@ function displayImage(imageUrl, name) {
 	// Create and style the username element
 	const username = document.createElement('span');
 	username.textContent = name;
-	username.textContent.endsWith(': ')
+	username.textContent.endsWith(':')
 		? username.textContent
-		: (username.textContent += '：');
+		: (username.textContent += ':');
 	username.style.color = 'blue';
 	username.style.fontWeight = 'bold';
 	// username.style.width = "auto";
@@ -131,9 +287,9 @@ function displayImage(imageUrl, name) {
 	// Create the image element
 	const imgElement = document.createElement('img');
 	imgElement.src = imageUrl;
-	imgElement.style.maxWidth = '100px'; // Adjust styling as needed
+	imgElement.style.maxWidth = '80px'; // Adjust styling as needed
 	imgElement.style.height = 'auto'; // Maintain aspect ratio
-	imgElement.style.display = 'inline-block';
+	// imgElement.style.display = 'inline-block';
 
 	// Add a placeholder for the image
 	const placeholderUrl = 'static/images/meme/miku_impatient.png'; // Path to placeholder image
@@ -170,7 +326,7 @@ function displayImage(imageUrl, name) {
 
 function sendMessage() {
 	if (socket.readyState === WebSocket.OPEN) {
-		let message = document.getElementById('txt').value.trim();
+		let message = document.getElementById('message-input').value.trim();
 		// message.focus();
 		// message.setSelectionRange(7, 7);
 		if (message !== '') {
@@ -181,7 +337,7 @@ function sendMessage() {
 					message: message,
 				})
 			);
-			document.getElementById('txt').value = '';
+			document.getElementById('message-input').value = '';
 		}
 	} else {
 		socket_state(socket);
@@ -198,24 +354,28 @@ function displayChatMessage(data, name) {
 	}
 
 	let message = document.createElement('div');
-	message.style.display = 'flex';
+	message.style.display = 'inline-flex';
+
+	// message.style.display = 'inline-table';
+	// message.style.display = 'block';
 	message.style.padding = '0px 0px 5px 0px';
-	message.style.lineHeight = '0.8';
+	message.style.lineHeight = '1.3';
 
 	if (data) {
 		let username = document.createElement('span');
-		username.textContent = name;
-		username.textContent = name + ' :';
+		// username.style.display = 'inline';
+		username.textContent = name + ':';
 		username.style.color = 'blue';
 		username.style.fontWeight = 'bold';
 		username.style.width = '70px';
 		username.style.marginRight = '10px';
+		username.style.textAlign = 'left';
 
 		let placeholderContainer = document.createElement('span');
-		placeholderContainer.classList.add('chatPlaceholder');
+		placeholderContainer.classList.add('chat-text');
 
-		let content = data;
-		placeholderContainer.innerHTML = content;
+		// let content = data;
+		placeholderContainer.innerHTML = data;
 		message.appendChild(username);
 		message.appendChild(placeholderContainer);
 	} else {
@@ -226,7 +386,7 @@ function displayChatMessage(data, name) {
 		message.appendChild(placeholderContainer);
 	}
 
-	let messageContainer = document.querySelector('.message');
+	let messageContainer = document.querySelector('.chat-messages');
 	if (messageContainer) {
 		messageContainer.appendChild(message);
 	} else {
@@ -239,7 +399,7 @@ function appendStatusMessage(status, color, message) {
 	tag.innerText = status;
 	tag.style.color = color;
 	tag.append(`\t${message}`);
-	let message_sect = document.querySelector('.message');
+	let message_sect = document.querySelector('.chat-messages');
 	if (message_sect) {
 		message_sect.appendChild(tag);
 	}

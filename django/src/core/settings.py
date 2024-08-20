@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.google',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
