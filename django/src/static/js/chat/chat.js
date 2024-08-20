@@ -14,126 +14,6 @@ console.log('nickname: ' + nickname);
 // let url = new URL(currentUrl);
 // let group_num = url.searchParams.get('room') || 123;
 
-//Testing purpose
-async function fetchToken() {
-	const queryString = new URLSearchParams({
-		group_num: group_num ? group_num : '123',
-		nickname: 'JohnDoe',
-		// nickname: nickname ? nickname : 'JohnDoe'
-	}).toString();
-
-	const response = await fetch('/chat?' + queryString);
-	// console.log('/chat?' + queryString);
-	const chat_data = await response.json();
-	return chat_data.token;
-}
-
-async function initialize() {
-	try {
-		// Fetch the token
-		const token = await fetchToken();
-
-		// Use the token
-		console.log('Retrieved token:', token);
-
-		// Further actions with the token, e.g., decode or use in application
-		// Note: Ensure any sensitive operations are done securely
-	} catch (error) {
-		console.error('Error initializing:', error);
-	}
-}
-initialize();
-
-//Testing purpose
-async function fetchToken() {
-	const queryString = new URLSearchParams({
-		group_num: group_num ? group_num : '123',
-		nickname: 'JohnDoe',
-		// nickname: nickname ? nickname : 'JohnDoe'
-	}).toString();
-
-	const response = await fetch('/chat?' + queryString);
-	// console.log('/chat?' + queryString);
-	const chat_data = await response.json();
-	return chat_data.token;
-}
-
-async function initialize() {
-	try {
-		// Fetch the token
-		const token = await fetchToken();
-
-		// Use the token
-		console.log('Retrieved token:', token);
-
-		// Further actions with the token, e.g., decode or use in application
-		// Note: Ensure any sensitive operations are done securely
-	} catch (error) {
-		console.error('Error initializing:', error);
-	}
-}
-initialize();
-
-//Testing purpose
-async function fetchToken() {
-	const queryString = new URLSearchParams({
-		group_num: group_num ? group_num : '123',
-		nickname: 'JohnDoe',
-		// nickname: nickname ? nickname : 'JohnDoe'
-	}).toString();
-
-	const response = await fetch('/chat?' + queryString);
-	// console.log('/chat?' + queryString);
-	const chat_data = await response.json();
-	return chat_data.token;
-}
-
-async function initialize() {
-	try {
-		// Fetch the token
-		const token = await fetchToken();
-
-		// Use the token
-		console.log('Retrieved token:', token);
-
-		// Further actions with the token, e.g., decode or use in application
-		// Note: Ensure any sensitive operations are done securely
-	} catch (error) {
-		console.error('Error initializing:', error);
-	}
-}
-initialize();
-
-//Testing purpose
-async function fetchToken() {
-	const queryString = new URLSearchParams({
-		group_num: group_num ? group_num : '123',
-		nickname: 'JohnDoe',
-		// nickname: nickname ? nickname : 'JohnDoe'
-	}).toString();
-
-	const response = await fetch('/chat?' + queryString);
-	// console.log('/chat?' + queryString);
-	const chat_data = await response.json();
-	return chat_data.token;
-}
-
-async function initialize() {
-	try {
-		// Fetch the token
-		const token = await fetchToken();
-
-		// Use the token
-		console.log('Retrieved token:', token);
-
-		// Further actions with the token, e.g., decode or use in application
-		// Note: Ensure any sensitive operations are done securely
-	} catch (error) {
-		console.error('Error initializing:', error);
-	}
-}
-initialize();
-
 async function fetchToken() {
 	const queryString = new URLSearchParams({
 		group_num: group_num ? group_num : '123',
@@ -226,7 +106,9 @@ function handleSocketClose() {
 	appendStatusMessage('连接关闭', 'red', '你没朋友了 ｡ﾟ･ (>﹏<) ･ﾟ｡\n');
 }
 
-document.getElementById('fileInput').addEventListener('change', handleUpload);
+//dun have upload plceholder
+// document.getElementById('fileInput').addEventListener('change', handleUpload);
+
 function handleUpload() {
 	const fileInput = document.getElementById('fileInput');
 	const file = fileInput.files[0];
@@ -263,7 +145,7 @@ function handleUpload() {
 }
 
 function displayImage(imageUrl, name) {
-	const imageContainer = document.getElementById('message-container');
+	const imageContainer = document.getElementById('chat-messages');
 
 	// Create a container for the image and username
 	const messageWrapper = document.createElement('div');
@@ -360,6 +242,7 @@ function displayChatMessage(data, name) {
 	// message.style.display = 'block';
 	message.style.padding = '0px 0px 5px 0px';
 	message.style.lineHeight = '1.3';
+	message.style.width = '100%';
 
 	if (data) {
 		let username = document.createElement('span');
@@ -406,7 +289,7 @@ function appendStatusMessage(status, color, message) {
 }
 
 function scrollToBottom() {
-	var messageContainer = document.getElementById('message-container');
+	var messageContainer = document.getElementById('chat-messages');
 	messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
