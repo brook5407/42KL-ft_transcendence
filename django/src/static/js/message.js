@@ -1,7 +1,7 @@
 const MESSAGE_CONTAINER = document.getElementById('message-container');
 
 function showMessage(message, type) {
-	MESSAGE_CONTAINER.innerHTML = ''; // Clear any existing messages
+	// MESSAGE_CONTAINER.innerHTML = ''; // Clear any existing messages
 	const messageBox = document.createElement('div');
 	messageBox.classList.add('message-box', type);
 	messageBox.textContent = message;
@@ -16,7 +16,8 @@ function showMessage(message, type) {
 	setTimeout(() => {
 		messageBox.classList.remove('fade-in');
 		setTimeout(() => {
-			MESSAGE_CONTAINER.contains(messageBox) && MESSAGE_CONTAINER.removeChild(messageBox);
+			MESSAGE_CONTAINER.contains(messageBox) &&
+				MESSAGE_CONTAINER.removeChild(messageBox);
 		}, 500); // Wait for fade out to finish
 	}, 3000);
 }
@@ -32,3 +33,14 @@ export function showErrorMessage(message) {
 export function showInfoMessage(message) {
 	showMessage(message, 'info');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+	// display all django flash messages and delete the input fields
+	const flashMessages = document.querySelectorAll('.dj-flash-message');
+	flashMessages.forEach((message) => {
+		const messageText = message.value;
+		const messageType = message.getAttribute('data-message-type');
+		showMessage(messageText, messageType);
+		message.remove();
+	});
+});

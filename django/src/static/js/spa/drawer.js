@@ -39,7 +39,7 @@ export async function openDrawer(drawerName, data = {}) {
 		url: data.url,
 		state: data.state || {},
 	});
-	
+
 	console.log('drawerName:', drawerName);
 	console.log(data);
 
@@ -65,8 +65,10 @@ export function closeDrawer() {
 	const drawer = document.getElementById('drawer');
 	drawerOverlay.classList.remove('drawer-active');
 	drawer.classList.remove('drawer-active');
-	DRAWER_CONTAINER.innerHTML = '';
-	currentDrawer?.destroy();
+	setTimeout(() => {
+		DRAWER_CONTAINER.innerHTML = '';
+		currentDrawer?.destroy();
+	}, 500);
 }
 
 function activateDrawer() {

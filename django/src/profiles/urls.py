@@ -3,8 +3,8 @@ from . import views
 
 urlpatterns = [
 	# drawers
-	path('drawer/profile', views.profile_drawer, name='profile.drawer'),
+	path('drawer/profile/', views.profile_drawer, name='profile.drawer'),
 
 	# api
-	path('detail/', views.ProfileDetail.as_view(), name='profile.detail'),
+	path('profile/detail/', views.ProfileDetail.as_view(), name='profile.detail'),
 ]

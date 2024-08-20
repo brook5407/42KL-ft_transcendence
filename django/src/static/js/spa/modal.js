@@ -48,8 +48,10 @@ export function closeModal() {
 	const modal = document.getElementById('modal');
 	modalOverlay?.classList.remove('modal-active');
 	modal?.classList.remove('modal-active');
-	MODAL_CONTAINER.innerHTML = '';
-	currentModal?.destroy();
+	setTimeout(() => {
+		MODAL_CONTAINER.innerHTML = '';
+		currentModal?.destroy();
+	}, 500);
 }
 
 function activateModal() {
