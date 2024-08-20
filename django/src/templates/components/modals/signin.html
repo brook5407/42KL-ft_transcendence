@@ -18,9 +18,17 @@
 				<label for="password">Password</label>
 				<input type="password" id="password" name="password" class="form-control" required />
 			</div>
+            <div class="input-group otp-group">
+				<label for="otp">OTP</label>
+				<input type="text" id="otp" name="otp" class="form-control" required />
+                <button type="button" id="send-otp-button" class="send-otp">send</button>
+			</div>
 			<div class="center">
 				<button type="submit" class="submit-button">Submit</button>
 			</div>
+            <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+            </div>
 		</form>
 	</div>
 {% endblock %}

@@ -6,6 +6,14 @@ from django.http import HttpResponseBadRequest, JsonResponse
 import requests
 from django.contrib import messages
 from django.conf import settings
+from rest_framework.generics import GenericAPIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework import status
+from .utils import send_otp_email
+from dj_rest_auth.views import LoginView
+from dj_rest_auth.app_settings import api_settings
+
 
 class CustomAccountAdapter(DefaultAccountAdapter):
     def get_email_confirmation_url(self, request, emailconfirmation):
@@ -54,3 +62,29 @@ class EmailVerificationView(View):
             return redirect(settings.ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL)
             # Handle error cases
 
+
+class SendOTPView(GenericAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = api_settings.LOGIN_SERIALIZER
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            user = serializer.data
+            send_otp_email(user['email'])
+            return Response({
+                'message': f'OTP sent. Please check your email.',
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginViewCustom(LoginView):
+    def post(self, request, *args, **kwargs):
+        self.request = request
+        print(self.request.data)
+        self.serializer = self.get_serializer(data=self.request.data)
+        self.serializer.is_valid(raise_exception=True)
+
+        self.login()
+        return self.get_response()
