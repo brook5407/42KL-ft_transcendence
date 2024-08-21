@@ -1,7 +1,7 @@
 # signals.py
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_migrate
 from django.dispatch import receiver
-from .models import ChatMessage
+from .models import ChatMessage, ChatRoom
 
 @receiver(post_save, sender=ChatMessage)
 def limit_public_chat_messages(sender, instance, **kwargs):
@@ -15,3 +15,9 @@ def limit_public_chat_messages(sender, instance, **kwargs):
         # Delete the oldest messages, keeping only the latest 100
         messages_to_delete = messages[100:]
         messages_to_delete.delete()
+
+@receiver(post_migrate)
+def create_lobby_chat_room(sender, **kwargs):
+    if sender.name == 'chat':
+        if not ChatRoom.objects.filter(name='Lobby').exists():
+            ChatRoom.objects.create(name='Lobby', is_public=True, is_group_chat=True, cover_image='lobby.svg')

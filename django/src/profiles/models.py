@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
-from django.conf import settings
 
 
-# Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.CharField(max_length=10, null=True, blank=True)
@@ -17,3 +15,8 @@ class Profile(models.Model):
         if not self.nickname:
             self.nickname = self.user.username
         super().save(*args, **kwargs)
+
+    def get_avatar_url(self):
+        if not self.avatar:
+            return 'https://www.gravatar.com/avatar/'
+        return self.avatar.url
