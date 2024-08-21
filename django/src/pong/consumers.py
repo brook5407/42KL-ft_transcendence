@@ -2,6 +2,9 @@ import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+gameHeight = 500
+gameWidth = 800
+
 class GameManager:
     games = {}
 
@@ -9,9 +12,11 @@ class GameManager:
     def get_game(cls, room_name):
         if room_name not in cls.games:
             cls.games[room_name] = {
-                'paddle1': Paddle(5, 200, 10, 100, 5),
-                'paddle2': Paddle(485, 200, 10, 100, 5),
-                'ball': Ball(250, 250, 8, 2)
+                'paddle1': Paddle(20, 200, 10, 100),
+                'paddle2': Paddle(gameWidth - 30, 200, 10, 100),
+                'ball': Ball(400, 250, 8, 5),
+                'score1': 0,
+                'score2': 0,
             }
         return cls.games[room_name]
 
@@ -48,9 +53,11 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.paddle1 = game_state['paddle1']
         self.paddle2 = game_state['paddle2']
         self.ball = game_state['ball']
+        self.score1 = game_state['score1']
+        self.score2 = game_state['score2']
 
         # Start the game loop if it's the first player
-        if len(self.channel_layer.groups[self.room_group_name]) == 1:
+        if len(self.channel_layer.players) == 2:
             asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
@@ -79,7 +86,16 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.ball.move()
             self.paddle1.move()
             self.paddle2.move()
-            self.ball.check_collision(500, self.paddle1, self.paddle2)
+
+            # Check for scoring
+            if self.ball.x <= 0:
+                self.score2 += 1
+                self.reset_ball()
+            elif self.ball.x >= gameWidth:
+                self.score1 += 1
+                self.reset_ball()
+
+            self.ball.check_collision(self.paddle1, self.paddle2)
 
             # Broadcast game state to clients
             await self.channel_layer.group_send(
@@ -89,9 +105,18 @@ class PongConsumer(AsyncWebsocketConsumer):
                     'paddle1': self.paddle1.serialize(),
                     'paddle2': self.paddle2.serialize(),
                     'ball': self.ball.serialize(),
+                    'score1': self.score1,
+                    'score2': self.score2,
                 }
             )
             await asyncio.sleep(1/60)  # Run at ~60 FPS
+
+    def reset_ball(self):
+        # Reset the ball to the center of the field
+        self.ball.x = gameWidth / 2
+        self.ball.y = gameHeight / 2
+        self.ball.x_direction *= -1  # Change direction after score
+        self.ball.speed = self.ball.oriSpeed
 
     async def update_game_state(self, event):
         # Send updated game state to WebSocket
@@ -100,15 +125,16 @@ class PongConsumer(AsyncWebsocketConsumer):
             'paddle1': event['paddle1'],
             'paddle2': event['paddle2'],
             'ball': event['ball'],
+            'score1': event['score1'],
+            'score2': event['score2'],
         }))
 
 class Paddle:
-    def __init__(self, x, y, width, height, speed):
+    def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.speed = speed
         self.velocity = 0
 
     def move(self):
@@ -116,8 +142,8 @@ class Paddle:
         # Keep paddle within bounds
         if self.y < 0:
             self.y = 0
-        if self.y > 500 - self.height:
-            self.y = 500 - self.height
+        if self.y > gameHeight - self.height:
+            self.y = gameHeight - self.height
 
     def serialize(self):
         return {
@@ -133,6 +159,7 @@ class Ball:
         self.y = y
         self.radius = radius
         self.speed = speed
+        self.oriSpeed = speed
         self.x_direction = 1
         self.y_direction = 1
 
@@ -140,28 +167,22 @@ class Ball:
         self.x += self.speed * self.x_direction
         self.y += self.speed * self.y_direction
 
-    def check_collision(self, height, paddle1, paddle2):
-        # Wall collision
-        if self.y <= 0 or self.y >= height - self.radius:
+    def check_collision(self, paddle1, paddle2):
+        # Y-axis collision
+        if self.y <= 0 or self.y >= gameHeight - self.radius:
             self.y_direction *= -1
 
-        # Paddle collision (use bounding box for more reliable detection)
-        # if (self.x <= paddle1.x + paddle1.width and 
-        #     paddle1.y <= self.y <= paddle1.y + paddle1.height) or \
-        #    (self.x >= paddle2.x - self.radius and 
-        #     paddle2.y <= self.y <= paddle2.y + paddle2.height):
-        #     self.x_direction *= -1
+        # Paddle collision
+        if (self.x <= paddle1.x + paddle1.width and 
+            paddle1.y <= self.y <= paddle1.y + paddle1.height):
+            self.x_direction = 1
+
+        if (self.x >= paddle2.x - self.radius and 
+            paddle2.y <= self.y <= paddle2.y + paddle2.height):
+            self.x_direction = -1
 
             # Optionally, adjust speed slightly, but cap it
-            self.speed = min(self.speed + 0.2, 10)
-
-        # Ensure the ball doesn't exceed the bounds
-        if self.x < 0:
-            self.x = 0
-            self.x_direction *= -1
-        elif self.x > 800:
-            self.x = 800
-            self.x_direction *= -1
+            self.speed = min(self.speed + 1, 15)
 
     def serialize(self):
         return {
