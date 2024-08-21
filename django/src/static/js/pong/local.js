@@ -2,12 +2,12 @@ import { Paddle } from './classes/paddle.js';
 import { Ball } from './classes/ball.js';
 import { Table } from './classes/table.js';
 
-const paddle1 = new Paddle(5, 200, 10, 100, 'red', 5);
-const paddle2 = new Paddle(gameCanvas.width - 15, gameCanvas.height - 300, 10, 100, 'blue', 5);
-const ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, 8, 'white', 'lightblue', 2);
+const paddle1 = new Paddle(5, 200, 10, 100, 'white', 5);
+const paddle2 = new Paddle(gameCanvas.width - 15, gameCanvas.height - 300, 10, 100, 'white', 5);
+const ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, 8, 'lightblue', 'lightblue', 2);
 const table = new Table(gameCanvas, paddle1, paddle2, ball);
 
-const socket = new WebSocket(`ws://${window.location.host}/ws/pong/`);
+const socket = new WebSocket(`ws://${window.location.host}/ws/pong/${roomName}/`);
 
 let form = document.getElementById('form')
 form.addEventListener('submit', (e)=> {
@@ -32,19 +32,20 @@ socket.onmessage = function(e) {
                                 <p>${data.message}</p>
                             </div>`)
     }
-    // if (data.player) {
-    //     // Assign the paddle to the client
-    //     assignedPaddle = data.player;
-    // } else {
-    //     const paddle = data['paddle'];
-    //     const velocity = data['velocity'];
 
-    //     if (paddle === 'paddle1') {
-    //         paddle1.velocity = velocity;
-    //     } else if (paddle === 'paddle2') {
-    //         paddle2.velocity = velocity;
-    //     }
-    // }
+    if (data.player) {
+        // Assign the paddle to the client
+        assignedPaddle = data.player;
+    } else {
+        const paddle = data['paddle'];
+        const velocity = data['velocity'];
+
+        if (paddle === 'paddle1') {
+            paddle1.velocity = velocity;
+        } else if (paddle === 'paddle2') {
+            paddle2.velocity = velocity;
+        }
+    }
 };
 
 document.addEventListener('keydown', (event) => {
@@ -72,13 +73,13 @@ document.addEventListener('keyup', (event) => {
     }
 });
 
+table.gameLoop();
+table.startCountdown();
 
 // resetButton.addEventListener('click', () => table.resetGame());
 // pauseButton.addEventListener('click', () => table.togglePause());
 // gameCanvas.addEventListener('click', () => table.togglePause());
 
-table.gameLoop();
-table.startCountdown();
 
 // document.addEventListener('keydown', (event) => {
 // 	switch (event.key) {
