@@ -26,4 +26,8 @@ export async function renderFriendList() {
 }
 
 renderFriendList();
-document.addEventListener('drawer-opened', renderFriendList);
+document.addEventListener('drawer-opened', (e) => {
+	if (e.detail.drawerName === 'friend-list') {
+		renderFriendList();
+	}
+});

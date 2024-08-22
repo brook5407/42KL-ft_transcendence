@@ -75,3 +75,6 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
     
 def friend_list_drawer(request):
     return render(request, 'components/drawers/friend/list.html')
+
+def friend_requests_drawer(request):
+    return render(request, 'components/drawers/friend/requests.html')

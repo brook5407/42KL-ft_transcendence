@@ -15,24 +15,24 @@
 }
 
 .drawer-container {
-    display: flex;
-    flex-direction: column; /* Ensure children are arranged vertically */
-    height: var(--drawer-height);
-    width: var(--drawer-width);
-    position: fixed;
-    top: 50%;
-    left: calc(-1 * var(--drawer-width)); /* Hide the drawer initially */
-    background-color: var(--drawer-bg-color);
-    overflow-x: hidden;
-    transition: left 0.5s ease; /* Transition effect */
-    padding-top: 20px;
-    color: white;
-    transform: translateY(-50%); /* Center the drawer vertically */
-    border-radius: 0 32px 32px 0;
+	display: flex;
+	flex-direction: column; /* Ensure children are arranged vertically */
+	height: var(--drawer-height);
+	width: var(--drawer-width);
+	position: fixed;
+	top: 50%;
+	left: calc(-1 * var(--drawer-width)); /* Hide the drawer initially */
+	background-color: var(--drawer-bg-color);
+	overflow-x: hidden;
+	transition: left 0.5s ease; /* Transition effect */
+	padding-top: 20px;
+	color: white;
+	transform: translateY(-50%); /* Center the drawer vertically */
+	border-radius: 0 32px 32px 0;
 }
 
 .drawer-container.drawer-active {
-    left: 0; /* Show the drawer */
+	left: 0; /* Show the drawer */
 }
 
 .drawer-header {
@@ -45,11 +45,24 @@
 .drawer-header h2 {
 	margin: 0;
 	font-size: 48px;
-	color: #FFF;
+	color: #fff;
 	font-family: 'Denk One', sans-serif;
 }
 
 .drawer-body {
-    flex: 1; /* Take up the remaining space */
-    overflow: hidden; /* Prevent overflow */
+	flex: 1; /* Take up the remaining space */
+	overflow: hidden; /* Prevent overflow */
+}
+
+.drawer-bottom-right-icon {
+	position: absolute;
+	bottom: 30px;
+	right: 30px;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%; /* Make it circular */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
 }

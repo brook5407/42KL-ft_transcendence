@@ -4,6 +4,7 @@ import { Settings } from './components/drawer/settings.js';
 import { ChatList } from './components/drawer/chat-list.js';
 import { ChatRoom } from './components/drawer/chat-room.js';
 import { FriendList } from './components/drawer/friend-list.js';
+import { FriendRequests } from './components/drawer/friend-requests.js';
 
 let currentDrawer = null;
 
@@ -13,6 +14,7 @@ export const DRAWERS = {
 	'chat-list': ChatList,
 	'chat-room': ChatRoom,
 	'friend-list': FriendList,
+	'friend-requests': FriendRequests,
 };
 
 // open drawer buttons handler

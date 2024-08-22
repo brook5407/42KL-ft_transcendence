@@ -11,11 +11,12 @@
 {% endblock %}
 
 {% block drawerContent %}
-<div id="friend-list">
+<div id="friend-list"></div>
+<div class="drawer-bottom-right-icon" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %}>
+	<img src="{% static 'images/icons/friend-requests.svg' %}" alt="Friend Requests" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %} />
 </div>
 {% endblock %}
 
 {% block drawerScripts %}
-{% comment %} <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script> {% endcomment %}
-<script type="module" src="{% static 'js/friend/friend.js' %}"></script>
+<script type="module" src="{% static 'js/friend/friend-list.js' %}"></script>
 {% endblock %}
