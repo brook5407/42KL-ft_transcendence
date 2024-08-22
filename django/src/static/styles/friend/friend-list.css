@@ -1,3 +1,9 @@
+.friend-list__list {
+	max-height: 400px; /* Set the maximum height */
+	overflow-y: auto; /* Enable vertical scrolling */
+	overflow-x: hidden; /* Hide horizontal scrolling */
+}
+
 .friend-list-tile {
 	display: flex;
 	align-items: center;
