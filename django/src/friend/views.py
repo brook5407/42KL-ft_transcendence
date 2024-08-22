@@ -1,86 +1,56 @@
-from django.shortcuts import render
-from rest_framework import status
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+from .models import UserRelation, FriendRequest
+from .serializers import UserRelationSerializer, FriendRequestSerializer
 from django.contrib.auth.models import User
-from .models import UserRelation
-from .serializers import UserRelationSerializer
+
+class UserRelationViewSet(viewsets.ModelViewSet):
+    queryset = UserRelation.objects.all()
+    serializer_class = UserRelationSerializer
+
+    @action(detail=True, methods=['post'])
+    def block(self, request, pk=None):
+        user_relation = get_object_or_404(UserRelation, pk=pk)
+        user_relation.block()
+        return Response({'status': 'friend blocked'})
+
+    @action(detail=True, methods=['post'])
+    def unblock(self, request, pk=None):
+        user_relation = get_object_or_404(UserRelation, pk=pk)
+        user_relation.unblock()
+        return Response({'status': 'friend unblocked'})
+
+    @action(detail=True, methods=['delete'])
+    def delete(self, request, pk=None):
+        user_relation = get_object_or_404(UserRelation, pk=pk)
+        user_relation.delete()
+        return Response({'status': 'friend deleted'}, status=status.HTTP_204_NO_CONTENT)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class FriendManagementView(APIView):
-    permission_classes = [IsAuthenticated]
+class FriendRequestViewSet(viewsets.ModelViewSet):
+    queryset = FriendRequest.objects.all()
+    serializer_class = FriendRequestSerializer
 
-    @staticmethod
-    def get(request):
-        user = request.user
-        user_relations = UserRelation.objects.filter(user=user, accepted=True)
-        serializer = UserRelationSerializer(user_relations, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    @action(detail=True, methods=['post'])
+    def accept(self, request, pk=None):
+        friend_request = get_object_or_404(FriendRequest, pk=pk)
+        friend_request.accept(request.user)
+        return Response({'status': 'friend request accepted'})
 
-    @staticmethod
-    def delete(request):
-        username = request.data.get("username")
-        user = request.user
-        friend = get_object_or_404(User, username=username)
+    @action(detail=True, methods=['post'])
+    def reject(self, request, pk=None):
+        friend_request = get_object_or_404(FriendRequest, pk=pk)
+        friend_request.reject(request.user)
+        return Response({'status': 'friend request rejected'})
 
-        try:
-            user_relation = UserRelation.objects.get(user=user, friend=friend)
-            user_relation.delete()
-            UserRelation.objects.get(user=friend, friend=user).delete()
-            return Response({"message": f"You have remove {username} from your friend list"}, status=status.HTTP_200_OK)
-        except UserRelation.DoesNotExist:
-            return Response({"message": f"{username} is not your friend anymore"}, status=status.HTTP_400_BAD_REQUEST)
-
-    @staticmethod
-    def post(request):
-        username = request.data.get("username")
-        user = request.user
-        friend = get_object_or_404(User, username=username)
-
-        if UserRelation.objects.filter(user=user, friend=friend).exists():
-            return Response({"message": f"You have sent {username} already"}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = UserRelationSerializer(data={
-            "user": user.id,
-            "friend": friend.id,
-            "accepted": False
-        })
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": f"Request sent to {username} successfully."}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-class FriendRequestView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    @staticmethod
-    def get(request):
-        user = request.user
-        user_relations = UserRelation.objects.filter(friend=user, accepted=False)
-        serializer = UserRelationSerializer(user_relations, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @staticmethod
-    def post(request):
-        username = request.data.get("username")
-        user = request.user
-        friend = get_object_or_404(User, username=username)
-
-        if UserRelation.objects.filter(user=user, friend=friend).exists():
-            return Response({"message": f"You are friend with {username}"}, status=status.HTTP_400_BAD_REQUEST)
-
-        user_relation = UserRelation.objects.create(user=user, friend=friend, accepted=True)
-        friend_relation = UserRelation.objects.get(user=friend, friend=user)
-        friend_relation.accepted = True
-        friend_relation.save()
-
-        return Response({"message": f"You have accepted friend request from {username}"}, status=status.HTTP_200_OK)
-
-    
+    def create(self, request, *args, **kwargs):
+        sender = request.user
+        receiver_username = request.data.get('receiver')
+        receiver = get_object_or_404(User, username=receiver_username)
+        if FriendRequest.objects.filter(sender=sender, receiver=receiver).exists():
+            return Response({'status': 'friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+        friend_request = FriendRequest.objects.create(sender=sender, receiver=receiver)
+        return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)

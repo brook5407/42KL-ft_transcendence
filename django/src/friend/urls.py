@@ -1,9 +1,12 @@
-from django.urls import path
-from .views import FriendManagementView, FriendRequestView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import UserRelationViewSet, FriendRequestViewSet
 
+router = DefaultRouter()
+router.register(r'user-relations', UserRelationViewSet)
+router.register(r'friend-requests', FriendRequestViewSet)
 
 urlpatterns = [
-    path('friend', FriendManagementView.as_view(), name='friend_management'),
-    path('friend_request', FriendRequestView.as_view(), name='friend_request'),
+    path('', include(router.urls)),
 ]
 

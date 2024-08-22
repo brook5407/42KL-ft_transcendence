@@ -77,8 +77,9 @@ export async function ajax_with_auth(url, options) {
 			return retryResponse;
 		} else {
 			// Refresh token is invalid/expired, redirect to login
+			localStorage.removeItem('access_token');
+			localStorage.removeItem('refresh_token');
 			navigateTo('/');
-			openModal('signin');
 		}
 	}
 
