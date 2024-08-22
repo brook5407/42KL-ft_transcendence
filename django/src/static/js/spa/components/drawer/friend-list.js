@@ -1,18 +1,14 @@
 import { Component } from '../component.js';
 
-export class SignUp extends Component {
+export class FriendList extends Component {
 	constructor(params) {
 		super(params);
-	}
-
-	cleanupComponent() {
-		super.cleanupComponent();
 	}
 
 	template() {
 		return `
 			<div>
-				<h1>Modal</h1>
+				<h1>Drawer</h1>
 			</div>
 		`;
 	}

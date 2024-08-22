@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from .models import UserRelation, FriendRequest
 from .serializers import UserRelationSerializer, FriendRequestSerializer
 from django.contrib.auth.models import User
@@ -72,3 +72,6 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
         )
         
         return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
+    
+def friend_list_drawer(request):
+    return render(request, 'components/drawers/friend/list.html')

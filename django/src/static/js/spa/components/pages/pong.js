@@ -9,8 +9,8 @@ export class PongPage extends Component {
 		}
 	}
 
-	initComponent() {
-		super.initComponent();
+	startComponent() {
+		super.startComponent();
 		this.snowfall = new Snowfall();
 		this.snowfall.startSnowfall();
 	}

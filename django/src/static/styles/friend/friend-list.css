@@ -1,0 +1,63 @@
+.friend-list-tile {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	background-color: #befafa;
+	border: 1px solid #657e7e;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.friend-list-tile__avatar {
+	flex-shrink: 0;
+	margin-right: 10px;
+}
+
+.friend-list-tile__avatar img {
+	width: 50px; /* Adjust the size as needed */
+	height: 50px; /* Adjust the size as needed */
+	border-radius: 50%;
+}
+
+.friend-list-tile__info {
+	display: flex;
+	flex-direction: column;
+}
+
+.friend-list-tile__nickname {
+	color: #18c9c9;
+	font-weight: bold;
+}
+
+.friend-list-tile__username {
+	color: black;
+}
+
+.search-bar {
+	display: flex;
+	align-items: center;
+	background-color: #c0edfa;
+	border: 1px solid #657e7e;
+	padding: 5px;
+	border-radius: 5px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.search-bar__input {
+	flex-grow: 1;
+	border: none;
+	background-color: transparent;
+	color: #000; /* Text color */
+	padding: 5px;
+	outline: none;
+}
+
+.search-bar__input::placeholder {
+	color: #657e7e; /* Prompt text color */
+}
+
+.search-bar__icon {
+	color: #657e7e; /* Icon color */
+	margin-left: 5px;
+}

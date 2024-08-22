@@ -1,0 +1,21 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/friend/friend-list.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>Friends</h2>
+{% endblock %}
+
+{% block drawerContent %}
+<div id="friend-list">
+</div>
+{% endblock %}
+
+{% block drawerScripts %}
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script> {% endcomment %}
+<script type="module" src="{% static 'js/friend/friend.js' %}"></script>
+{% endblock %}
