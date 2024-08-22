@@ -1,6 +1,8 @@
 from datetime import timezone
 from django.db import models
 from django.contrib.auth.models import User
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 # Create your models here.
 class UserRelation(models.Model):
@@ -62,4 +64,24 @@ class FriendRequest(models.Model):
         self.status = self.Status.REJECTED
         self.reject_reason = reject_reason
         self.save()
+        
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.notify_friend_request_update()
+        
+    def notify_friend_request_update(self):
+        channel_layer = get_channel_layer()
+        group_name = f"friend_requests_{self.receiver.id}"
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "friend_request_update",
+                "message": {
+                    "id": self.id,
+                    "sender": self.sender.username,
+                    "receiver": self.receiver.username,
+                    "status": self.status,
+                },
+            },
+        )
     
