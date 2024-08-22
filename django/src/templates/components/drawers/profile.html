@@ -21,6 +21,9 @@
 			</form>
 		</div>
 		<div class="profile-info-item">
+			<p class="profile-nickname">{{ user.profile.nickname }}</p>
+		</div>
+		<div class="profile-info-item">
 			<p class="profile-username">@{{ user.username }}</p>
 		</div>
 		<div class="profile-info-item">
@@ -40,13 +43,13 @@
 			<label for="bio">Bio</label>
 			<textarea id="bio" name="bio" class="form-control">{{ user.profile.bio }}</textarea>
 		</div>
-		<button type="submit" class="btn btn-success">Save</button>
+		<button type="submit" class="btn btn-success" onclick="closeDrawer()">Save</button>
 		<button type="button" id="cancel-edit-profile-btn" class="btn btn-danger" onclick="toggleProfileEditForm()">Cancel</button>
 	</form>
 {% endblock %}
 
 {% block drawerScripts %}
-<script type="module">
+<script>
 	function previewAvatar(event) {
 		const reader = new FileReader();
 		reader.onload = function(){

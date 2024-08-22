@@ -39,7 +39,7 @@ export async function openDrawer(drawerName, data = {}) {
 		url: data.url,
 		state: data.state || {},
 	});
-	
+
 	console.log('drawerName:', drawerName);
 	console.log(data);
 
@@ -85,3 +85,5 @@ function activateDrawer() {
 		.getElementById('drawerOverlay')
 		.addEventListener('click', closeDrawer);
 }
+
+window.closeDrawer = closeDrawer;
