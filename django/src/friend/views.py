@@ -50,7 +50,7 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
         sender = request.user
         receiver_username = request.data.get('receiver')
         receiver = get_object_or_404(User, username=receiver_username)
-        if FriendRequest.objects.filter(sender=sender, receiver=receiver).exists():
+        if FriendRequest.objects.filter(sender=sender, receiver=receiver, status=FriendRequest.Status.PENDING).exists():
             return Response({'status': 'friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
         friend_request = FriendRequest.objects.create(sender=sender, receiver=receiver)
         return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
