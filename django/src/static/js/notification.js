@@ -1,6 +1,6 @@
 // Function to play notification sound
 function playNotificationSound() {
-	const audio = new Audio('path/to/notification-sound.mp3'); // TODO: Replace with path to notification sound
+	const audio = new Audio('/static/audio/pop.wav');
 	audio.play();
 }
 
@@ -21,6 +21,7 @@ HTMLElement.prototype.notify = function (playSound = true) {
 	dot.style.backgroundColor = 'red';
 	dot.style.borderRadius = '50%';
 	dot.style.zIndex = '1000';
+	dot.style.display = 'block';
 
 	dot.classList.add('notification-dot');
 
@@ -31,11 +32,6 @@ HTMLElement.prototype.notify = function (playSound = true) {
 
 	// Append the dot to the element
 	this.appendChild(dot);
-
-	// Remove notification dot when clicked
-	this.addEventListener('click', function () {
-		this.removeNotificationDot();
-	});
 };
 
 // remove notification dot when clicked
