@@ -66,3 +66,13 @@
 	justify-content: center;
 	cursor: pointer;
 }
+
+.back-icon {
+	display: flex;
+	align-items: center;
+	margin-right: 20px;
+}
+
+.back-icon img {
+	display: block;
+}

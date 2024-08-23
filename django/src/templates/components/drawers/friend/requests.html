@@ -8,12 +8,15 @@
 
 {% block drawerHeader %}
 	<h2>Friend Requests</h2>
+	<div class="back-icon" data-drawer="friend-list" data-drawer-url={% url 'friend.list-drawer' %}>
+		<img src="{% static 'images/icons/back.svg' %}" alt="Back" data-drawer="friend-list" data-drawer-url={% url 'friend.list-drawer' %} />
+	</div>
 {% endblock %}
 
 {% block drawerContent %}
 <div id="friend-requests"></div>
-<div class="drawer-bottom-right-icon" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %}>
-	<img src="{% static 'images/icons/search-friend.svg' %}" alt="Search Friend" />
+<div class="drawer-bottom-right-icon" data-drawer="search-friend" data-drawer-url={% url 'friend.search-friend-drawer' %}>
+	<img src="{% static 'images/icons/search-friend.svg' %}" alt="Search Friend" data-drawer="search-friend" data-drawer-url={% url 'friend.search-friend-drawer' %} />
 </div>
 {% endblock %}
 

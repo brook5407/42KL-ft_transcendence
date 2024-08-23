@@ -1,6 +1,7 @@
 import { FriendRequests } from '../spa/components/others/friend-requests.js';
 
 export async function renderFriendRequests() {
+	// call API to get real info
 	const friendRequests = [
 		{
 			avatar: 'https://via.placeholder.com/150',
@@ -21,7 +22,6 @@ export async function renderFriendRequests() {
 			status: 'rejected',
 		},
 	];
-	friendRequests.push(...friendRequests, ...friendRequests, ...friendRequests);
 
 	const friendRequestsComponent = new FriendRequests({
 		props: { friendRequests },
