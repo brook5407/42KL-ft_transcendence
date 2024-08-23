@@ -56,8 +56,16 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.score1 = game_state['score1']
         self.score2 = game_state['score2']
 
-        # Start the game loop if it's the first player
+        # Start the game loop when two player connect
         if len(self.channel_layer.players) == 2:
+            print("Two Players are connected!")
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'start_game',
+                    'message': 'Two Players are connected, Game Start!',
+                }
+            )
             asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
@@ -79,6 +87,13 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.paddle1.velocity = velocity
         elif paddle == 'paddle2':
             self.paddle2.velocity = velocity
+
+    async def start_game(self, event):
+        # Send the matchmaking message to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'start_game',
+            'message': event['message'],
+        }))
 
     async def game_loop(self):
         while True:
@@ -111,13 +126,6 @@ class PongConsumer(AsyncWebsocketConsumer):
             )
             await asyncio.sleep(1/60)  # Run at ~60 FPS
 
-    def reset_ball(self):
-        # Reset the ball to the center of the field
-        self.ball.x = gameWidth / 2
-        self.ball.y = gameHeight / 2
-        self.ball.x_direction *= -1  # Change direction after score
-        self.ball.speed = self.ball.oriSpeed
-
     async def update_game_state(self, event):
         # Send updated game state to WebSocket
         await self.send(text_data=json.dumps({
@@ -128,6 +136,13 @@ class PongConsumer(AsyncWebsocketConsumer):
             'score1': event['score1'],
             'score2': event['score2'],
         }))
+
+    def reset_ball(self):
+        # Reset the ball to the center of the field
+        self.ball.x = gameWidth / 2
+        self.ball.y = gameHeight / 2
+        self.ball.x_direction *= -1  # Change direction after score
+        self.ball.speed = self.ball.oriSpeed
 
 class Paddle:
     def __init__(self, x, y, width, height):
