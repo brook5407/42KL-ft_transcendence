@@ -94,7 +94,7 @@
 	font-family: 'Denk One', sans-serif;
 }
 
-#signupLink {
+#signupLink, #signinLink {
 	color: #1fb5e4;
 	text-decoration: underline;
 	cursor: pointer;

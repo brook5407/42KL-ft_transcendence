@@ -5,14 +5,6 @@ export class SignIn extends Component {
 		super(params);
 	}
 
-	initComponent() {
-		super.initComponent();
-	}
-
-	cleanupComponent() {
-		super.cleanupComponent();
-	}
-
 	template() {
 		return `
 			<div>

@@ -1,34 +1,34 @@
 {% extends "components/modals/modal-center.html" %}
 
+{% block modalHeader %}
+	<h2>Sign Up</h2>
+{% endblock %}
+
+{% block modalAuthAltText %}
+	Already gave an account? Login <a data-modal="signin" id="signinLink" data-modal-url={% url 'base.signin-modal'  %}>here</a>
+{% endblock %}
+
 {% block modalContent %}
-	<div class="modal-header">
-		<h2>Register</h2>
-	</div>
-	<div class="auth-alt-text">
-		Already gave an account? Login <a data-modal="signin" id="signupLink">here</a>
-	</div>
-	<div class="modal-body">
-		<form id="signup-form" class="spa-form" action="{% url 'account_signup' %}">
-			{% csrf_token %}
-			<div class="input-group">
-				<label for="email">Email</label>
-				<input type="email" id="email" name="email" class="form-control" required />
-			</div>
-			<div class="input-group">
-				<label for="username">Username</label>
-				<input type="text" id="username" name="username" class="form-control" required />
-			</div>
-			<div class="input-group">
-				<label for="password">Password</label>
-				<input type="password" id="password" name="password1" class="form-control" required />
-			</div>
-			<div class="input-group">
-				<label for="confirm-password">Confirm Password</label>
-				<input type="password" id="confirm-password" name="password2" class="form-control" required />
-			</div>
-			<div class="center">
-				<button type="submit" class="submit-button ">Submit</button>
-			</div>
-		</form>
-	</div>
+	<form id="signup-form" class="spa-form" action="{% url 'account_signup' %}">
+		{% csrf_token %}
+		<div class="input-group">
+			<label for="email">Email</label>
+			<input type="email" id="email" name="email" class="form-control" required />
+		</div>
+		<div class="input-group">
+			<label for="username">Username</label>
+			<input type="text" id="username" name="username" class="form-control" required />
+		</div>
+		<div class="input-group">
+			<label for="password">Password</label>
+			<input type="password" id="password" name="password1" class="form-control" required />
+		</div>
+		<div class="input-group">
+			<label for="confirm-password">Confirm Password</label>
+			<input type="password" id="confirm-password" name="password2" class="form-control" required />
+		</div>
+		<div class="center">
+			<button type="submit" class="submit-button ">Submit</button>
+		</div>
+	</form>
 {% endblock %}

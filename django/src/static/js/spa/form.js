@@ -8,25 +8,26 @@ document.addEventListener('DOMContentLoaded', function () {
 		// Check if the target of the submit event matches .spa-form
 		if (event.target.matches('.spa-form')) {
 			event.preventDefault(); // Prevent the default form submission
+			const method = event.target.getAttribute('method') || 'POST'; // Determine the form submission method
 
 			if (event.target.matches('#signin-form')) {
-				submitForm(event.target, signin);
+				submitForm(event.target, method, signin);
 			} else if (event.target.matches('#signup-form')) {
-				submitForm(event.target, signup);
+				submitForm(event.target, method, signup);
 			} else {
-				submitForm(event.target);
+				submitForm(event.target, method);
 			}
 		}
 	});
 });
 
-function submitForm(form, callback) {
+function submitForm(form, method = "POST", callback) {
 	const formData = new FormData(form); // Collect form data
 	const actionUrl = form.getAttribute('action') || form.dataset.route; // Determine the submission URL
 
 	// Send the form data using Fetch API
 	ajax_with_auth(actionUrl, {
-		method: 'POST',
+		method: method,
 		body: formData,
 		headers: {
 			Accept: 'application/json',
@@ -34,6 +35,7 @@ function submitForm(form, callback) {
 		},
 	})
 		.then((response) => {
+			console.log(response);
 			if (!response.ok && response.status != 204) {
 				// Handle non-200 responses
 				return response.json().then((errorData) => {
@@ -57,6 +59,8 @@ function submitForm(form, callback) {
 		.then((data) => {
 			if (callback) {
 				callback(data);
+			} else {
+				showSuccessMessage('Operation successful');
 			}
 		})
 		.catch((error) => {

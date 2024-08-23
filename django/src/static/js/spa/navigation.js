@@ -4,10 +4,8 @@ import { ROOT_ELEMENT } from './components/component.js';
 import { PongPage } from './components/pages/pong.js';
 
 export const ROUTES = {
-	'/': new HomePage({ url: 'home' }),
-	'/login': 'login',
-	'/register': 'register',
-	'/pong': new PongPage({ url: 'pong' }),
+	'/': new HomePage({ url: '/home' }),
+	'/pong/index': new PongPage({ url: '/pong/index' }),
 	'/404': new NotFoundPage({}),
 };
 
@@ -21,17 +19,25 @@ window.addEventListener('popstate', router);
 document.body.addEventListener('click', (e) => {
 	if (e.target.matches('[data-link]')) {
 		e.preventDefault();
-		console.log('click');
-		navigateTo(e.target.href);
+		navigateTo( e.target.href);
 	}
 });
 
 export async function router() {
-	let match = ROUTES[window.location.pathname];
+	// remove trailing slash
+	let pathname = window.location.pathname;
+	if (pathname.length > 1 && pathname[pathname.length - 1] === '/') {
+		pathname = pathname.slice(0, -1);
+	}
+
+	let match = ROUTES[pathname];
 	if (!match) {
 		match = ROUTES['/404'];
 	}
 
+	// console.log(match);
+
+	window.currentRootComponent?.destroy();
 	window.currentRootComponent = match;
 	const element = await match.render();
 	ROOT_ELEMENT.innerHTML = '';
@@ -39,7 +45,6 @@ export async function router() {
 }
 
 export function navigateTo(url, title = 'IcePong') {
-	window.currentRootComponent?.destroy();
 	history.pushState(null, null, url);
 	router();
 	document.title = title;

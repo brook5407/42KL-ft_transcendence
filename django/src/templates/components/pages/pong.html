@@ -1,1 +1,19 @@
-<h1>Pong</h1>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
+
+<div id="gameContainer" style="padding-top: 100px;">
+	<canvas id="gameCanvas" height="500" width="750"></canvas>
+	<div id="scoreBoard">0 : 0</div>
+	<button id="resetButton">Reset</button>
+	<button id="pauseButton">Pause</button>
+	<div>
+		<select id="gameMode">
+			<option value="Player">Player</option>
+			<option value="Computer">Computer</option>
+		</select>
+	</div>
+</div>
+
+<script type="module" src="{% static 'js/pong/local.js' %}"></script>

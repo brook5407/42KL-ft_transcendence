@@ -20,11 +20,17 @@ from django.conf import settings
 from django.views.static import serve
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('drf_auth.urls')),
+    path('auth/', include('dj_rest_auth.urls')),
+    path('auth/', include('dj_rest_auth.registration.urls')),
+    path('accounts/', include('allauth.socialaccount.urls')),
     path('accounts/', include('provider.urls')),
-    path('pong', include('pong.urls')),
+    path('', include('pong.urls')),
+    path('', include('chat.urls')),
+    path('', include('profiles.urls')),
     path('', include('base.urls')),
 ]
 
@@ -33,6 +39,7 @@ if settings.DEBUG == True:
 else:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 if settings.APP_ENV == 'railway':
     urlpatterns += [re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT})]
-

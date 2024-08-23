@@ -60,3 +60,7 @@
 	font-size: 32px;
 	font-family: 'Denk One', sans-serif;
 }
+
+.clickable {
+	cursor: pointer;
+}

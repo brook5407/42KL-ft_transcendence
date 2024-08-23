@@ -3,14 +3,9 @@ import { Component } from '../component.js';
 export class Oauth42 extends Component {
 	constructor(params) {
 		super(params);
-	}
-
-	initComponent() {
-		super.initComponent();
-	}
-
-	cleanupComponent() {
-		super.cleanupComponent();
+		if (this.url === '' || this.url === null) {
+			this.url = '/modal/oauth42-modal';
+		}
 	}
 
 	template() {

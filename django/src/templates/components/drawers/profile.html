@@ -1,0 +1,74 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/profile.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>Profile</h2>
+{% endblock %}
+
+{% block drawerContent %}
+	<div class="profile-info">
+		<div class="profile-info-item">
+			<img src="{{ user.profile.get_avatar_url }}" alt="Profile Image" class="profile-avatar" />
+			<span class="edit-icon" onclick="document.getElementById('avatar-input').click()">✏️</span>
+			<form id="avatar-form" action="{% url 'profile.detail' %}" class="spa-form" method="PUT" style="display: none;">
+				<input type="file" id="avatar-input" name="avatar" onchange="previewAvatar(event)">
+				<input type="submit">
+			</form>
+		</div>
+		<div class="profile-info-item">
+			<p class="profile-username">@{{ user.username }}</p>
+		</div>
+		<div class="profile-info-item">
+			<p class="profile-email">{{ user.email }}</p>
+		</div>
+
+		<button id="edit-profile-btn" class="btn btn-primary" onclick="toggleProfileEditForm()">Edit Profile</button>
+	</div>
+
+
+	<form id="profile-form" action="{% url 'profile.detail' %}" class="spa-form" method="PUT" style="display: none;">
+		<div class="form-group">
+			<label for="nickname">Nickname</label>
+			<input type="text" id="nickname" name="nickname" value="{{ user.profile.nickname }}" class="form-control">
+		</div>
+		<div class="form-group">
+			<label for="bio">Bio</label>
+			<textarea id="bio" name="bio" class="form-control">{{ user.profile.bio }}</textarea>
+		</div>
+		<button type="submit" class="btn btn-success">Save</button>
+		<button type="button" id="cancel-edit-profile-btn" class="btn btn-danger" onclick="toggleProfileEditForm()">Cancel</button>
+	</form>
+{% endblock %}
+
+{% block drawerScripts %}
+<script type="module">
+	function previewAvatar(event) {
+		const reader = new FileReader();
+		reader.onload = function(){
+			const output = document.querySelector('.profile-avatar');
+			output.src = reader.result;
+		};
+		reader.readAsDataURL(event.target.files[0]);
+
+		// submit the avatar form in a spa manner
+		document.querySelector('#avatar-form input[type="submit"]').click();
+	}
+
+	function toggleProfileEditForm() {
+		const editBtn = document.getElementById('edit-profile-btn');
+		const form = document.getElementById('profile-form');
+		if (form.style.display === 'none' || form.style.display === '') {
+			form.style.display = 'block';
+			editBtn.style.display = 'none';
+		} else {
+			form.style.display = 'none';
+			editBtn.style.display = 'block';
+		}
+	}
+</script>
+{% endblock %}

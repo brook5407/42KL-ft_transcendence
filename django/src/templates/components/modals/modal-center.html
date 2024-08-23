@@ -7,6 +7,19 @@
 
 <div id="modal" class="modal-container">
 	<span id="closeModalBtn" class="modal-close-btn">&times;</span>
-	{% block modalContent %}
-	{% endblock %}
+
+	<div class="modal-header">
+		{% block modalHeader %}
+		{% endblock %}
+	</div>
+
+	<div class="auth-alt-text">
+		{% block modalAuthAltText %}
+		{% endblock %}
+	</div>
+
+	<div class="modal-body">
+		{% block modalContent %}
+		{% endblock %}
+	</div>
 </div>
