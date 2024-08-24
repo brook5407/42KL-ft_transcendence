@@ -5,20 +5,21 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 gameHeight = 500
 gameWidth = 800
 
-class GameManager:
-    games = {}
+class RoomsManager:
+    rooms = {}
 
     @classmethod
-    def get_game(cls, room_name):
-        if room_name not in cls.games:
-            cls.games[room_name] = {
+    def get_room(cls, room_name):
+        if room_name not in cls.rooms:
+            cls.rooms[room_name] = {
+                'players': {},
                 'paddle1': Paddle(20, 200, 10, 100),
                 'paddle2': Paddle(gameWidth - 30, 200, 10, 100),
                 'ball': Ball(400, 250, 8, 5),
                 'score1': 0,
                 'score2': 0,
             }
-        return cls.games[room_name]
+        return cls.rooms[room_name]
 
 class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -39,9 +40,6 @@ class PongConsumer(AsyncWebsocketConsumer):
         elif 'player2' not in self.channel_layer.players:
             self.channel_layer.players['player2'] = self.channel_name
             self.player = 'paddle2'
-        else:
-            # More than two players connecting, you can handle this case if needed
-            await self.close()
 
         # Send the player assignment to the client
         await self.send(text_data=json.dumps({
@@ -49,7 +47,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             'player': self.player,
         }))
 
-        game_state = GameManager.get_game(self.room_name)
+        game_state = RoomsManager.get_room(self.room_name)
         self.paddle1 = game_state['paddle1']
         self.paddle2 = game_state['paddle2']
         self.ball = game_state['ball']
@@ -93,6 +91,11 @@ class PongConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type': 'start_game',
             'message': event['message'],
+            'gameHeight': gameHeight,
+            'gameWidth': gameWidth,
+            'paddle1': self.paddle1.serialize(),
+            'paddle2': self.paddle2.serialize(),
+            'ball': self.ball.serialize(),
         }))
 
     async def game_loop(self):

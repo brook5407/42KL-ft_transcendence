@@ -7,10 +7,10 @@ const gameCanvas = document.getElementById('gameCanvas');
 const matchmaking = document.getElementById('matchmaking');
 const scoreBoard = document.getElementById('scoreBoard');
 
-const paddle1 = new Paddle(20, 200, 10, 100, 'white', 10);
-const paddle2 = new Paddle(gameCanvas.width - 30, gameCanvas.height - 300, 10, 100, 'white', 10);
-const ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, 8, 'lightblue', 'lightblue', 5);
-const table = new Table(gameCanvas, paddle1, paddle2, ball);
+let paddle1;
+let paddle2;
+let ball;
+let table;
 
 const socket = new WebSocket(`ws://${window.location.host}/ws/pong/${roomName}/`);
 let assignedPaddle = null;
@@ -46,6 +46,12 @@ socket.onmessage = function(e) {
     }
     if (data.type === 'start_game') {
         // Both players has connected, start the game
+        gameCanvas.height = data.gameHeight;
+        gameCanvas.width = data.gameWidth;
+        paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white', 10);
+        paddle2 = new Paddle(data.paddle2.x, data.paddle2.y, data.paddle2.width, data.paddle2.height, 'white', 10);
+        ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, 8, 'lightblue', 'lightblue', 5);
+        table = new Table(gameCanvas, paddle1, paddle2, ball);
         matchmaking.style.display = 'none';
         gameCanvas.style.display = 'block';
         scoreBoard.style.display = 'block';
