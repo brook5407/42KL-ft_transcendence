@@ -29,7 +29,15 @@
 
 {% block drawerScripts %}
 <script>
+	let searchTimeout = null;
+
 	function searchFriend(value) {
+		if (searchTimeout) {
+			clearTimeout(searchTimeout);
+		}
+		searchTimeout = setTimeout(() => {
+			searchFriendRequest(value);
+		}, 1000);
 		if (value === '') {
 			return;
 		}
@@ -43,30 +51,78 @@
 				return response.json();
 			} else {
 				return response.json().then(errorData => {
-					throw new Error(errorData.error);
+					throw new Error(errorData.status);
+				});
+			}
+		})
+		.then((data) => {
+			appendSearchFriendResult(data);
+		}).catch((error) => {
+			const searchFriendResult = document.getElementById('search-friend-result');
+			searchFriendResult.innerHTML = error.toString();
+		});
+	}
+
+	function sendFriendRequest(receiverUsername) {
+		ajax_with_auth('/api/friend-requests/', {
+			method: 'POST',
+			body: JSON.stringify({
+				receiver: receiverUsername
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				return response.json().then(errorData => {
+					throw new Error(errorData.status);
 				});
 			}
 		})
 		.then((data) => {
 			const searchFriendResult = document.getElementById('search-friend-result');
-			console.log(data);
-			searchFriendResult.innerHTML = `
-				<div class="new-friend-tile">
-					<div class="new-friend-tile__avatar">
-						<img src="${data.avatar}" alt="avatar" />
-					</div>
-					<div class="new-friend-tile__info">
-						<div class="new-friend-tile__nickname">${
-							data.nickname ?? 'Anonymous'
-						}</div>
-						<div class="new-friend-tile__username">@${data.user.username}</div>
-					</div>
-				</div>
+			searchFriendResult.querySelector('.new-friend-tile__action').innerHTML = `
+				<div class="new-friend-tile__badge">Friend Request Sent</div>
 			`;
+			showSuccessMessage('Friend request sent successfully');
 		}).catch((error) => {
-			const searchFriendResult = document.getElementById('search-friend-result');
-			searchFriendResult.innerHTML = error.toString();
+			showErrorMessage(error.toString());
 		});
+	}
+
+	function appendSearchFriendResult(data) {
+		const searchFriendResult = document.getElementById('search-friend-result');
+		const canAddFriend = data.can_add_friend;
+		let actionHTML = '';
+		if (!canAddFriend) {
+			actionHTML = `
+				<div class="new-friend-tile__badge">Friend Request Sent</div>
+			`;
+		} else {
+			actionHTML = `
+				<a href="javascript:void(0);" class="new-friend-tile__action-icon new-friend-tile__action-add" onclick="sendFriendRequest('${data.user.username}')">
+					<i class="fa fa-plus"></i>
+				</a>
+			`;
+		}
+		searchFriendResult.innerHTML = `
+			<div class="new-friend-tile">
+				<div class="new-friend-tile__avatar">
+					<img src="${data.avatar}" alt="avatar" />
+				</div>
+				<div class="new-friend-tile__info">
+					<div class="new-friend-tile__nickname">${
+						data.nickname ?? 'Anonymous'
+					}</div>
+					<div class="new-friend-tile__username">@${data.user.username}</div>
+				</div>
+				<div class="new-friend-tile__action">
+					${actionHTML}
+				</div>
+			</div>
+		`;
 	}
 </script>
 {% endblock %}

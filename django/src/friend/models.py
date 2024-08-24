@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.db.models import Q
 
 # Create your models here.
 class UserRelation(models.Model):
@@ -15,6 +16,9 @@ class UserRelation(models.Model):
     blocked_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['user', 'friend']
 
     def __str__(self):
         return f"{self.user.username} - {self.friend.username}"
@@ -84,4 +88,11 @@ class FriendRequest(models.Model):
                 },
             },
         )
-    
+
+
+def get_friends(self):
+    user_relations = UserRelation.objects.filter(Q(user=self) | Q(friend=self))
+    friends = user_relations.filter(deleted=False, blocked=False)
+    return friends
+
+User.add_to_class('friends', property(get_friends))

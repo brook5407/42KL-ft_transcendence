@@ -32,3 +32,42 @@
 .new-friend-tile__username {
 	color: black;
 }
+
+.new-friend-tile__action {
+	display: flex;
+	gap: 10px;
+	margin-left: auto;
+}
+
+.new-friend-tile__badge {
+	background-color: transparent;
+	border: none;
+	cursor: default; /* Change cursor to default */
+	font-size: 1em; /* Adjust font size */
+	padding: 5px 10px; /* Add padding for badge-like appearance */
+	border-radius: 12px; /* Rounded corners for badge */
+	transition: background-color 0.3s;
+	display: inline-block; /* Ensure it behaves like a badge */
+	user-select: none; /* Prevent text selection */
+	margin-left: auto;
+	color: #d5dfdf; /* Green color for accept */
+	background-color: #1e4141; /* Light green background */
+}
+
+.new-friend-tile__action-icon {
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	font-size: 1.5em;
+	padding: 5px;
+	border-radius: 50%;
+	transition: background-color 0.3s;
+}
+
+.new-friend-tile__action-add {
+	color: #28a745;
+}
+
+.new-friend-tile__action-add:hover {
+	background-color: #e6f9eb;
+}

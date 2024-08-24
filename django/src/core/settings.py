@@ -30,6 +30,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or 'django-insecure-33mb$m0_l)c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('APP_ENV') == 'dev' else False
 
+APPEND_SLASH=False
+
 # WARNING: '*' is for development only
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://42pong.brookchin.tech']

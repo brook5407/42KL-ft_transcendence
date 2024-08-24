@@ -40,15 +40,18 @@ class UserRelationViewSet(viewsets.ModelViewSet):
     def search_friend(self, request):
         username = request.query_params.get('username')
         if not username:
-            return Response({'error': 'username query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': 'username query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
         user = get_object_or_404(User, username=username)
         if user == request.user:
-            return Response({'error': 'cannot add yourself as a friend'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': 'cannot add yourself as a friend'}, status=status.HTTP_400_BAD_REQUEST)
         elif UserRelation.objects.filter(user=request.user, friend=user).exists():
-            return Response({'error': 'already friends'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': 'already friends'}, status=status.HTTP_400_BAD_REQUEST)
         profile = get_object_or_404(Profile, user=user)
         serializer = ProfileSerializer(profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response_data = serializer.data
+        can_add_friend = not user.friends.filter(id=request.user.id).exists() and not FriendRequest.objects.filter(sender=request.user, receiver=user).exists()
+        response_data['can_add_friend'] = can_add_friend
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class FriendRequestViewSet(viewsets.ModelViewSet):
