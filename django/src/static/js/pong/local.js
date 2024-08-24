@@ -91,14 +91,6 @@ document.addEventListener('keyup', (event) => {
     }
 });
 
-// Game table object handling the rendering
-table.draw = function() {
-    this.clearBoard();
-    this.paddle1.draw(this.ctx);
-    this.paddle2.draw(this.ctx);
-    this.ball.draw(this.ctx);
-};
-
 
 
 // let form = document.getElementById('form')

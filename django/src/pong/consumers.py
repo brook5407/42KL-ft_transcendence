@@ -32,6 +32,19 @@ class RoomsManager:
             return 'paddle2'
         else:
             return None  # Room is full
+        
+    @classmethod
+    def remove_player(cls, room_name, channel_name):
+        room = cls.get_room(room_name)
+        if 'player1' in room['players']:
+            room['players']['player1'] = channel_name
+            del room['players']['player1']
+        elif 'player2' in room['players']:
+            room['players']['player2'] = channel_name
+            del room['players']['player2']
+        else:
+            return None  # Room is empty
+
 
 class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -75,8 +88,19 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Remove player from the room in RoomManager
-        RoomsManager.remove_player_from_room(self.room_name, self.channel_name)
+        RoomsManager.remove_player(self.room_name, self.channel_name)
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+        game_state = RoomsManager.get_room(self.room_name)
+        if len(game_state['players']) < 2:
+            # If there are fewer than 2 players, end the game
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'end_game',
+                    'message': 'Player disconnected, game over!',
+                }
+            )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -130,6 +154,19 @@ class PongConsumer(AsyncWebsocketConsumer):
                     'score2': self.score2,
                 }
             )
+
+            # End the game if a player reaches a score of 5
+            if self.score1 >= 5 or self.score2 >= 5:
+                winner = 'player1' if self.score1 >= 5 else 'player2'
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'end_game',
+                        'message': f'{winner} wins! Game over!',
+                    }
+                )
+                break  # Exit the game loop
+
             await asyncio.sleep(1/60)  # Run at ~60 FPS
 
     async def update_game_state(self, event):
@@ -142,6 +179,14 @@ class PongConsumer(AsyncWebsocketConsumer):
             'score1': event['score1'],
             'score2': event['score2'],
         }))
+
+    async def end_game(self, event):
+        # Send game end message to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'end_game',
+            'message': event['message'],
+        }))
+        await self.close()  # Close the WebSocket connection
 
     def reset_ball(self):
         # Reset the ball to the center of the field
