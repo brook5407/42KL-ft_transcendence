@@ -21,6 +21,18 @@ class RoomsManager:
             }
         return cls.rooms[room_name]
 
+    @classmethod
+    def assign_player(cls, room_name, channel_name):
+        room = cls.get_room(room_name)
+        if 'player1' not in room['players']:
+            room['players']['player1'] = channel_name
+            return 'paddle1'
+        elif 'player2' not in room['players']:
+            room['players']['player2'] = channel_name
+            return 'paddle2'
+        else:
+            return None  # Room is full
+
 class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -29,23 +41,18 @@ class PongConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
-        # Track the number of players
-        if not hasattr(self.channel_layer, 'players'):
-            self.channel_layer.players = {}
-
-        # Assign the player to paddle1 or paddle2
-        if 'player1' not in self.channel_layer.players:
-            self.channel_layer.players['player1'] = self.channel_name
-            self.player = 'paddle1'
-        elif 'player2' not in self.channel_layer.players:
-            self.channel_layer.players['player2'] = self.channel_name
-            self.player = 'paddle2'
-
-        # Send the player assignment to the client
-        await self.send(text_data=json.dumps({
-            'type': 'player_assignment',
-            'player': self.player,
-        }))
+        # Assign the player using RoomsManager
+        self.player = RoomsManager.assign_player(self.room_name, self.channel_name)
+        
+        if self.player is None:
+            # Room is full, close the connection
+            await self.close()
+        else:
+            # Send the player assignment to the client
+            await self.send(text_data=json.dumps({
+                'type': 'player_assignment',
+                'player': self.player,
+            }))
 
         game_state = RoomsManager.get_room(self.room_name)
         self.paddle1 = game_state['paddle1']
@@ -55,7 +62,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.score2 = game_state['score2']
 
         # Start the game loop when two player connect
-        if len(self.channel_layer.players) == 2:
+        if len(game_state['players']) == 2:
             print("Two Players are connected!")
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -67,13 +74,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
+        # Remove player from the room in RoomManager
+        RoomsManager.remove_player_from_room(self.room_name, self.channel_name)
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-
-        # Remove the player from the players list
-        if self.player == 'paddle1':
-            del self.channel_layer.players['player1']
-        elif self.player == 'paddle2':
-            del self.channel_layer.players['player2']
 
     async def receive(self, text_data):
         data = json.loads(text_data)
