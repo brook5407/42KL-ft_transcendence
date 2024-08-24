@@ -4,16 +4,16 @@ from django.contrib.auth.models import User
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Q
+from base.models import BaseModel
 
 # Create your models here.
-class UserRelation(models.Model):
-    id = models.AutoField(primary_key=True)
+class UserRelation(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_relations")
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_relations", default=None)
     deleted = models.BooleanField(default=False)
-    deleted_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(auto_now=False)
     blocked = models.BooleanField(default=False)
-    blocked_at = models.DateTimeField(auto_now=True)
+    blocked_at = models.DateTimeField(auto_now=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -38,13 +38,12 @@ class UserRelation(models.Model):
         self.save()
 
 
-class FriendRequest(models.Model):
+class FriendRequest(BaseModel):
     class Status(models.TextChoices):
         PENDING = 'P', 'Pending'
         ACCEPTED = 'A', 'Accepted'
         REJECTED = 'R', 'Rejected'
 
-    id = models.AutoField(primary_key=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_requests")
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_requests", default=None)
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.PENDING)
@@ -59,12 +58,16 @@ class FriendRequest(models.Model):
     def accept(self, current_user):
         if current_user == self.sender:
             raise ValueError("You cannot accept your own request.")
+        elif current_user != self.receiver:
+            raise ValueError("You cannot accept a request that is not addressed to you.")
         self.status = self.Status.ACCEPTED
         self.save()
         
     def reject(self, current_user, reject_reason=""):
         if current_user == self.sender:
             raise ValueError("You cannot reject your own request.")
+        elif current_user != self.receiver:
+            raise ValueError("You cannot accept a request that is not addressed to you.")
         self.status = self.Status.REJECTED
         self.reject_reason = reject_reason
         self.save()

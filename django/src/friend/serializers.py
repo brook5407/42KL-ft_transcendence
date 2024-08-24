@@ -6,12 +6,25 @@ from .models import UserRelation, FriendRequest
 from base.serializers import UserSerializer
 
 class UserRelationSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    friend = UserSerializer(read_only=True)
+    user = serializers.SerializerMethodField()
+    friend = serializers.SerializerMethodField()
 
     class Meta:
         model = UserRelation
         fields = ['id', 'user', 'friend', 'deleted', 'deleted_at', 'blocked', 'blocked_at', 'created_at', 'updated_at']
+    
+    def get_user(self, obj):
+        profile = Profile.objects.get(user=obj.user)
+        return ProfileSerializer(profile).data
+
+    def get_friend(self, obj):
+        profile = Profile.objects.get(user=obj.friend)
+        return ProfileSerializer(profile).data
+    
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['friend'] = self.get_friend(instance)
+        return ret
 
 class FriendRequestSerializer(serializers.ModelSerializer):
     sender = serializers.SerializerMethodField()

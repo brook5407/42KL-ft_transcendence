@@ -10,7 +10,7 @@
 	<h2>New Friends</h2>
 
 	<div class="back-icon" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %}>
-		<img src="{% static 'images/icons/back.svg' %}" alt="Back" />
+		<img src="{% static 'images/icons/back.svg' %}" alt="Back" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %} />
 	</div>
 {% endblock %}
 
@@ -37,11 +37,14 @@
 		}
 		searchTimeout = setTimeout(() => {
 			searchFriendRequest(value);
-		}, 1000);
+		}, 500);
+	}
+
+	function searchFriendRequest(value) {
 		if (value === '') {
 			return;
 		}
-		ajax_with_auth('/api/friends/search_friend', {
+		ajax_with_auth('/api/friends/search_friend/', {
 			method: 'GET',
 			params: {
 				username: value
@@ -95,10 +98,15 @@
 	function appendSearchFriendResult(data) {
 		const searchFriendResult = document.getElementById('search-friend-result');
 		const canAddFriend = data.can_add_friend;
+		const isFriend = data.is_friend;
 		let actionHTML = '';
-		if (!canAddFriend) {
+		if (isFriend) {
 			actionHTML = `
-				<div class="new-friend-tile__badge">Friend Request Sent</div>
+				<div class="new-friend-tile__badge">Already friend</div>
+			`;
+		} else if (!canAddFriend) {
+			actionHTML = `
+				<div class="new-friend-tile__badge">Requested</div>
 			`;
 		} else {
 			actionHTML = `

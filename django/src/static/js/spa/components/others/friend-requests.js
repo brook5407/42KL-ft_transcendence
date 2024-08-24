@@ -4,6 +4,8 @@ import { FriendRequestTile } from './friend-request-tile.js';
 export class FriendRequests extends Component {
 	constructor(params) {
 		super(params);
+
+		this.friendReqTiles = [];
 	}
 
 	startComponent() {
@@ -15,6 +17,7 @@ export class FriendRequests extends Component {
 		const friendReqTiles = friendRequests.map((fReq) =>
 			new FriendRequestTile({ props: { ...fReq } }).render()
 		);
+		this.friendReqTiles = friendReqTiles;
 
 		const friendReqElem = this.element.querySelector('.friend-requests__list');
 		friendReqElem.innerHTML = '';

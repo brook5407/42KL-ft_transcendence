@@ -15,7 +15,7 @@ export class FriendList extends Component {
 	renderFriendList() {
 		const friends = this.props.friends.filter((friend) => {
 			if (this.filter === '') return true;
-			return friend.nickname?.includes(this.filter);
+			return friend.friend.nickname?.includes(this.filter);
 		});
 		const friendListTiles = friends.map((friend) =>
 			new FriendListTile({ props: { ...friend } }).render()

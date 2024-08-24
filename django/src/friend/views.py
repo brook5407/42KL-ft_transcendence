@@ -15,8 +15,10 @@ from django.contrib.auth.models import User
 
 class UserRelationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    queryset = UserRelation.objects.all()
     serializer_class = UserRelationSerializer
+    
+    def get_queryset(self):
+        return UserRelation.objects.filter(user=self.request.user)
 
     @action(detail=True, methods=['post'])
     def block(self, request, pk=None):
@@ -49,7 +51,8 @@ class UserRelationViewSet(viewsets.ModelViewSet):
         profile = get_object_or_404(Profile, user=user)
         serializer = ProfileSerializer(profile)
         response_data = serializer.data
-        can_add_friend = not user.friends.filter(id=request.user.id).exists() and not FriendRequest.objects.filter(sender=request.user, receiver=user).exists()
+        can_add_friend = not FriendRequest.objects.filter(sender=request.user, receiver=user, status=FriendRequest.Status.ACCEPTED).order_by('-created_at').first()
+        response_data['is_friend'] = user.friends.filter(id=request.user.id).exists()
         response_data['can_add_friend'] = can_add_friend
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -97,7 +100,7 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def to_me(self, request):
-        friend_requests = FriendRequest.objects.filter(receiver=request.user, status=FriendRequest.Status.PENDING)
+        friend_requests = FriendRequest.objects.filter(receiver=request.user)
         serializer = FriendRequestSerializer(friend_requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
