@@ -20,10 +20,11 @@ export class Component {
 
 	async fetchHtml(url, queryParams = {}) {
 		try {
-			const urlParams = new URLSearchParams(queryParams);
-			const urlWithParams = url + '?' + urlParams.toString();
-			const response = await ajax_with_auth(urlWithParams, {
+			// const urlParams = new URLSearchParams(queryParams);
+			// const urlWithParams = url + '?' + urlParams.toString();
+			const response = await ajax_with_auth(url, {
 				method: 'GET',
+				params: queryParams,
 			});
 			const html = await response.text();
 			return html;

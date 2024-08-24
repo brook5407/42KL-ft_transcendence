@@ -76,3 +76,32 @@
 .back-icon img {
 	display: block;
 }
+
+.search-bar {
+	display: flex;
+	align-items: center;
+	background-color: #c0edfa;
+	border: 1px solid #657e7e;
+	padding: 5px;
+	border-radius: 5px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.search-bar__input {
+	flex-grow: 1;
+	border: none;
+	background-color: transparent;
+	color: #000; /* Text color */
+	padding: 5px;
+	outline: none;
+}
+
+.search-bar__input::placeholder {
+	color: #657e7e; /* Prompt text color */
+}
+
+.search-bar__icon {
+	color: #657e7e; /* Icon color */
+	margin-left: 5px;
+}

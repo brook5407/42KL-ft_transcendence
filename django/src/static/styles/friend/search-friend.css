@@ -1,0 +1,34 @@
+.new-friend-tile {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	background-color: #befafa;
+	border: 1px solid #657e7e;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.new-friend-tile__avatar {
+	flex-shrink: 0;
+	margin-right: 10px;
+}
+
+.new-friend-tile__avatar img {
+	width: 50px; /* Adjust the size as needed */
+	height: 50px; /* Adjust the size as needed */
+	border-radius: 50%;
+}
+
+.new-friend-tile__info {
+	display: flex;
+	flex-direction: column;
+}
+
+.new-friend-tile__nickname {
+	color: #18c9c9;
+	font-weight: bold;
+}
+
+.new-friend-tile__username {
+	color: black;
+}

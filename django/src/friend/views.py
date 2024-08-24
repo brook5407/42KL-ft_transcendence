@@ -6,6 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, render
 
+from profiles.serializers import ProfileSerializer
+from profiles.models import Profile
 from utils.request_helpers import is_ajax_request
 from .models import UserRelation, FriendRequest
 from .serializers import UserRelationSerializer, FriendRequestSerializer
@@ -33,6 +35,20 @@ class UserRelationViewSet(viewsets.ModelViewSet):
         user_relation = get_object_or_404(UserRelation, pk=pk)
         user_relation.delete()
         return Response({'status': 'friend deleted'}, status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=False, methods=['get'])
+    def search_friend(self, request):
+        username = request.query_params.get('username')
+        if not username:
+            return Response({'error': 'username query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(User, username=username)
+        if user == request.user:
+            return Response({'error': 'cannot add yourself as a friend'}, status=status.HTTP_400_BAD_REQUEST)
+        elif UserRelation.objects.filter(user=request.user, friend=user).exists():
+            return Response({'error': 'already friends'}, status=status.HTTP_400_BAD_REQUEST)
+        profile = get_object_or_404(Profile, user=user)
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class FriendRequestViewSet(viewsets.ModelViewSet):

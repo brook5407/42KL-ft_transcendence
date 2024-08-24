@@ -15,9 +15,58 @@
 {% endblock %}
 
 {% block drawerContent %}
+<div class="search-bar">
+	<input 
+		type="text" 
+		placeholder="Search new friends..." 
+		class="search-bar__input"
+		oninput="searchFriend(this.value)"
+	/>
+	<span class="search-bar__icon">&#128269;</span>
+</div>
 <div id="search-friend-result"></div>
 {% endblock %}
 
 {% block drawerScripts %}
-{% comment %} <script type="module" src="{% static 'js/friend/friend-requests.js' %}"></script> {% endcomment %}
+<script>
+	function searchFriend(value) {
+		if (value === '') {
+			return;
+		}
+		ajax_with_auth('/api/friends/search_friend', {
+			method: 'GET',
+			params: {
+				username: value
+			},
+		}).then(response => {
+			if (response.status === 200) {
+				return response.json();
+			} else {
+				return response.json().then(errorData => {
+					throw new Error(errorData.error);
+				});
+			}
+		})
+		.then((data) => {
+			const searchFriendResult = document.getElementById('search-friend-result');
+			console.log(data);
+			searchFriendResult.innerHTML = `
+				<div class="new-friend-tile">
+					<div class="new-friend-tile__avatar">
+						<img src="${data.avatar}" alt="avatar" />
+					</div>
+					<div class="new-friend-tile__info">
+						<div class="new-friend-tile__nickname">${
+							data.nickname ?? 'Anonymous'
+						}</div>
+						<div class="new-friend-tile__username">@${data.user.username}</div>
+					</div>
+				</div>
+			`;
+		}).catch((error) => {
+			const searchFriendResult = document.getElementById('search-friend-result');
+			searchFriendResult.innerHTML = error.toString();
+		});
+	}
+</script>
 {% endblock %}
