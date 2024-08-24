@@ -3,8 +3,7 @@ export class Snowfall {
 		this.intervalId = null;
 
 		this.snowflakeImage = new Image();
-		this.snowflakeImage.src =
-			'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/White_Snowflake.svg/2048px-White_Snowflake.svg.png';
+		this.snowflakeImage.src = '/static/images/snowflake.svg';
 		this.snowflakeImage.alt = 'Snowflake';
 
 		this.snowfallInterval = 100; // Milliseconds
@@ -44,9 +43,6 @@ export class Snowfall {
 		} else if (fps > 150) {
 			this.snowfallInterval = Math.max(this.snowfallInterval - 10, 100); // Decrease interval to increase snowfall
 		}
-
-		// console.log('fps:', fps);
-		// console.log('snowflake interval ms:', this.snowfallInterval);
 
 		if (this.intervalId !== null) {
 			clearInterval(this.intervalId);

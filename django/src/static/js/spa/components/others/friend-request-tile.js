@@ -8,7 +8,7 @@ export class FriendRequestTile extends Component {
 	template() {
 		const status = this.props.status;
 		let actionsHTML = '';
-		if (status == 'pending') {
+		if (status == 'P') {
 			actionsHTML = `
 				<div class="friend-request-tile__actions">
 					<button class="friend-request-tile__accept">
@@ -19,11 +19,11 @@ export class FriendRequestTile extends Component {
 					</button>
 				</div>
 			`;
-		} else if (status == 'rejected') {
+		} else if (status == 'R') {
 			actionsHTML = `
 				<div class="friend-request-tile__rejected-badge">Rejected</div>
 			`;
-		} else if (status == 'accepted') {
+		} else if (status == 'A') {
 			actionsHTML = `
 				<div class="friend-request-tile__accepted-badge">Accepted</div>
 			`;
@@ -32,13 +32,15 @@ export class FriendRequestTile extends Component {
 		return `
 		<div class="friend-request-tile">
 			<div class="friend-request-tile__avatar">
-				<img src="${this.props.avatar}" alt="avatar" />
+				<img src="${this.props?.sender?.avatar ?? ''}" alt="avatar" />
 			</div>
 			<div class="friend-request-tile__info">
 				<div class="friend-request-tile__nickname">${
-					this.props.nickname ?? 'Anonymous'
+					this.props?.sender.nickname ?? 'Anonymous'
 				}</div>
-				<div class="friend-request-tile__username">@${this.props.username}</div>
+				<div class="friend-request-tile__username">@${
+					this.props?.sender.user.username ?? 'anonymous'
+				}</div>
 			</div>
 			${actionsHTML}
 		</div>

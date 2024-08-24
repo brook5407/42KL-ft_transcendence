@@ -14,7 +14,6 @@ export function ajax(url, options) {
 	if (options.method === 'GET' && options.params) {
 		const urlParams = new URLSearchParams(options.params);
 		url += '?' + urlParams.toString();
-		console.log(url);
 	}
 
 	return fetch(url, fetchOptions);

@@ -47,7 +47,6 @@ export async function openDrawer(drawerName, data = {}) {
 	});
 
 	console.log('drawerName:', drawerName);
-	console.log(data);
 
 	if (drawer) {
 		currentDrawer = drawer;

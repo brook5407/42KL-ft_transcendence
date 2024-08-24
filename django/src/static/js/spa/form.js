@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 });
 
-function submitForm(form, method = "POST", callback) {
+function submitForm(form, method = 'POST', callback) {
 	const formData = new FormData(form); // Collect form data
 	const actionUrl = form.getAttribute('action') || form.dataset.route; // Determine the submission URL
 
@@ -35,7 +35,6 @@ function submitForm(form, method = "POST", callback) {
 		},
 	})
 		.then((response) => {
-			console.log(response);
 			if (!response.ok && response.status != 204) {
 				// Handle non-200 responses
 				return response.json().then((errorData) => {

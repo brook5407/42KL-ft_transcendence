@@ -95,6 +95,12 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
         
         return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
     
+    @action(detail=False, methods=['get'])
+    def to_me(self, request):
+        friend_requests = FriendRequest.objects.filter(receiver=request.user, status=FriendRequest.Status.PENDING)
+        serializer = FriendRequestSerializer(friend_requests, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 def friend_list_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")

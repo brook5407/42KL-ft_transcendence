@@ -4,8 +4,6 @@ import { FriendRequestTile } from './friend-request-tile.js';
 export class FriendRequests extends Component {
 	constructor(params) {
 		super(params);
-
-		this.filter = '';
 	}
 
 	startComponent() {

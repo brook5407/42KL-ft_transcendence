@@ -1,27 +1,12 @@
+import { ajax_with_auth } from '../spa/ajax.js';
 import { FriendRequests } from '../spa/components/others/friend-requests.js';
 
 export async function renderFriendRequests() {
-	// call API to get real info
-	const friendRequests = [
-		{
-			avatar: 'https://via.placeholder.com/150',
-			nickname: 'John Doe',
-			username: 'johndoe',
-			status: 'pending',
-		},
-		{
-			avatar: 'https://via.placeholder.com/150',
-			nickname: 'Jane Doe',
-			username: 'janedoe',
-			status: 'accepted',
-		},
-		{
-			avatar: 'https://via.placeholder.com/150',
-			nickname: 'Alice',
-			username: 'alice',
-			status: 'rejected',
-		},
-	];
+	const friendRequests = await ajax_with_auth('/api/friend-requests/to_me/', {
+		method: 'GET',
+	}).then((res) => res.json());
+
+	console.log(friendRequests);
 
 	const friendRequestsComponent = new FriendRequests({
 		props: { friendRequests },
