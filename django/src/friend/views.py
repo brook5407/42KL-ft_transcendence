@@ -12,6 +12,7 @@ from utils.request_helpers import is_ajax_request
 from .models import UserRelation, FriendRequest
 from .serializers import UserRelationSerializer, FriendRequestSerializer
 from django.contrib.auth.models import User
+from rest_framework.decorators import api_view, permission_classes
 
 class UserRelationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -103,18 +104,34 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
         friend_requests = FriendRequest.objects.filter(receiver=request.user)
         serializer = FriendRequestSerializer(friend_requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def friend_list_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/friend/list.html')
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def friend_requests_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/friend/requests.html')
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def search_friend_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/friend/search-friend.html')
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def friend_profile_drawer(request):
+    if not is_ajax_request(request):
+        return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+    friend_user = User.objects.get(username=request.GET.get('username'))
+    return render(request, 'components/drawers/friend/profile.html', {
+        'friend_profile': Profile.objects.get(user=friend_user)
+    })

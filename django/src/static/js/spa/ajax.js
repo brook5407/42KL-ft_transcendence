@@ -11,7 +11,11 @@ export function ajax(url, options) {
 		options
 	);
 
-	if (options.method === 'GET' && options.params) {
+	if (
+		options.method === 'GET' &&
+		options.params &&
+		Object.keys(options.params).length > 0
+	) {
 		const urlParams = new URLSearchParams(options.params);
 		url += '?' + urlParams.toString();
 	}
@@ -35,7 +39,11 @@ export async function ajax_with_auth(url, options) {
 		options
 	);
 
-	if (fetchOptions.method === 'GET' && fetchOptions.params) {
+	if (
+		fetchOptions.method === 'GET' &&
+		fetchOptions.params &&
+		Object.keys(fetchOptions.params).length > 0
+	) {
 		const urlParams = new URLSearchParams(options.params);
 		url += '?' + urlParams.toString();
 	}

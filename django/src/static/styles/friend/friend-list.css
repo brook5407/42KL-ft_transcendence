@@ -14,6 +14,34 @@
 	box-sizing: border-box;
 }
 
+.friend-list-tile__action {
+	display: flex;
+	gap: 10px; /* Space between icons */
+	margin-left: auto;
+}
+
+.icon-action {
+	font-size: 1.5em; /* Make icons bigger */
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.icon-action[title='Chat'] {
+	color: #0ccc1f;
+}
+
+.icon-action[title='Chat']:hover {
+	color: #0a8f17;
+}
+
+.icon-action[title='View Profile'] {
+	color: #18c9c9;
+}
+
+.icon-action[title='View Profile']:hover {
+	color: #0e8f8f;
+}
+
 .friend-list-tile__avatar {
 	flex-shrink: 0;
 	margin-right: 10px;

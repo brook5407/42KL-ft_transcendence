@@ -1,11 +1,7 @@
 import { DRAWER_CONTAINER } from './components/component.js';
-import { Profile } from './components/drawer/profile.js';
-import { Settings } from './components/drawer/settings.js';
-import { ChatList } from './components/drawer/chat-list.js';
+import { GenericDrawer } from './components/drawer/generic.js';
 import { ChatRoom } from './components/drawer/chat-room.js';
-import { FriendList } from './components/drawer/friend-list.js';
-import { FriendRequests } from './components/drawer/friend-requests.js';
-import { SearchFriend } from './components/drawer/search-friend.js';
+import { ChatList } from './components/drawer/chat-list.js';
 
 class DrawerStack {
 	constructor() {
@@ -57,18 +53,20 @@ let currentDrawer = null;
 const drawerStack = new DrawerStack();
 
 export const DRAWERS = {
-	profile: Profile,
-	settings: Settings,
+	profile: GenericDrawer,
+	settings: GenericDrawer,
 	'chat-list': ChatList,
 	'chat-room': ChatRoom,
-	'friend-list': FriendList,
-	'friend-requests': FriendRequests,
-	'search-friend': SearchFriend,
+	'friend-list': GenericDrawer,
+	'friend-requests': GenericDrawer,
+	'search-friend': GenericDrawer,
+	'friend-profile': GenericDrawer,
 };
 
-// open drawer buttons handler
+// open drawer and back buttons handler
 document.body.addEventListener('click', (e) => {
 	if (e.target.matches('[data-drawer]')) {
+		// open drawer
 		e.preventDefault();
 		const drawerName = e.target.getAttribute('data-drawer');
 		const drawerUrl = e.target.getAttribute('data-drawer-url') || '';
@@ -147,5 +145,6 @@ function activateDrawer() {
 		.addEventListener('click', closeDrawer);
 }
 
+// Expose the openDrawer and closeDrawer functions to the global scope
 window.openDrawer = openDrawer;
 window.closeDrawer = closeDrawer;

@@ -6,25 +6,24 @@ export class FriendRequestTile extends Component {
 	}
 
 	startComponent() {
-		if (this.props.status == 'P') {
-			this.element
-				.querySelectorAll(
-					'.friend-request-tile__accept, .friend-request-tile__reject'
-				)
-				.forEach((button) => {
-					button.addEventListener('click', async (e) => {
-						const friendId = e.currentTarget.value;
-						console.log(friendId);
-						if (button.classList.contains('friend-request-tile__accept')) {
-							await this.acceptFriendRequest(friendId);
-						} else if (
-							button.classList.contains('friend-request-tile__reject')
-						) {
-							await this.rejectFriendRequest(friendId);
-						}
-					});
-				});
+		if (this.props.status !== 'P') {
+			return;
 		}
+		this.element
+			.querySelectorAll(
+				'.friend-request-tile__accept, .friend-request-tile__reject'
+			)
+			.forEach((button) => {
+				button.addEventListener('click', async (e) => {
+					const friendId = e.currentTarget.value;
+					console.log(friendId);
+					if (button.classList.contains('friend-request-tile__accept')) {
+						await this.acceptFriendRequest(friendId);
+					} else if (button.classList.contains('friend-request-tile__reject')) {
+						await this.rejectFriendRequest(friendId);
+					}
+				});
+			});
 	}
 
 	async acceptFriendRequest(friendId) {
