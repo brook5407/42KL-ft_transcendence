@@ -42,29 +42,4 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const otpButton = document.getElementById('send-otp-button');
 
-    otpButton.addEventListener('click', function() {
-        fetch('{% url "send_otp" %}', {  // Replace with your actual URL name
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: email })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                alert(data.message);
-            } else {
-                alert('Error requesting OTP. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error requesting OTP. Please try again.');
-        });
-    });
-});

@@ -15,5 +15,5 @@ urlpatterns = [
     path("account-confirm-email/", VerifyEmailView.as_view(), name="account_email_verification_sent"),
     path('verify/<str:key>/', EmailVerificationView.as_view(), name='verify_email'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('send-otp/', SendOTPView.as_view(), name='send_otp'),
+    path('send-otp', SendOTPView.as_view(), name='send_otp'),
 ]

@@ -19,6 +19,8 @@ def send_otp_email(email):
                   f'OTP: Enter {otp_code} within 6 minutes.\n\nYour faithfully,\nIce Pong Team')
     from_email = settings.EMAIL_HOST_USER
 
+    if OnetimePassword.objects.filter(user=user).exists():
+        OnetimePassword.objects.filter(user=user).delete()
     OnetimePassword.objects.create(user=user, code=otp_code)
 
     send_email = EmailMessage(
@@ -28,3 +30,10 @@ def send_otp_email(email):
         to=[email],
     )
     send_email.send(fail_silently=True)
+
+
+def check_otp(user, otp):
+    if OnetimePassword.objects.filter(user=user, code=otp).exists():
+        OnetimePassword.objects.filter(user=user).delete()
+        return True
+    return False

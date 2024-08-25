@@ -84,3 +84,6 @@ export async function ajax_with_auth(url, options) {
 
 	return response;
 }
+
+window.ajax = ajax;
+window.ajax_with_auth = ajax_with_auth;
