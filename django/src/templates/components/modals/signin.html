@@ -19,12 +19,12 @@
 			<label for="password">Password</label>
 			<input type="password" id="password" name="password" class="form-control" required />
 		</div>
-        {% if OTP_AUTH %}
-		<div class="input-group otp-group">
-            <label for="otp">OTP</label>
-            <input type="number" id="otp" name="otp" class="form-control" required />
-            <button type="button" id="send-otp-button" class="send-otp" onclick="otp_click()">send</button>
-        </div>
+        {% if otp_auth %}
+            <div class="input-group otp-group">
+                <label for="otp">OTP</label>
+                <input type="number" id="otp" name="otp" class="form-control" required />
+                <button type="button" id="send-otp-button" class="send-otp" onclick="otp_click()">send</button>
+            </div>
         {% endif %}
         <div class="center">
             <button type="submit" class="submit-button">Submit</button>
@@ -50,7 +50,7 @@
                 if (data.message) {
                     alert(data.message);
                 } else {
-                    alert('Error requesting OTP. Please try again.');
+                    alert('OTP sent to your email!');
                 }
             })
             .catch(error => {

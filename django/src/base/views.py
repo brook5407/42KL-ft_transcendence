@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from chat.models import ChatMessage, ChatRoom
 from chat.serializers import ChatMessageSerializer
 from chat.pagination import ChatMessagePagination
+from core import settings
 from utils.request_helpers import is_ajax_request
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -22,7 +23,10 @@ def home(request):
 @api_view(['GET'])
 def signin_modal(request):
     if is_ajax_request(request):
-        return render(request, 'components/modals/signin.html')
+        context = {
+            'otp_auth': settings.OTP_AUTH,
+        }
+        return render(request, 'components/modals/signin.html', context=context)
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 
 @api_view(['GET'])

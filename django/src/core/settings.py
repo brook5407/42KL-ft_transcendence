@@ -277,7 +277,7 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT')
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 
 # to set the OTP function
-OTP_AUTH = False
+OTP_AUTH = os.environ.get('OTP_AUTH').lower() == 'true'
 
 CHANNEL_LAYERS = {
     "default": {
