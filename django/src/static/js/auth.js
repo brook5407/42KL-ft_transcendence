@@ -17,10 +17,6 @@ export function signin(data) {
 	showSuccessMessage('You have successfully signed in!');
 	closeModal();
 	router();
-
-	// dispatch signed-in event
-	const event = new CustomEvent('signed-in');
-	document.dispatchEvent(event);
 }
 
 export function logout() {
@@ -30,10 +26,6 @@ export function logout() {
 	showInfoMessage('You have successfully logged out!');
 	closeDrawer();
 	router();
-
-	// dispatch signed-out event
-	const event = new CustomEvent('signed-out');
-	document.dispatchEvent(event);
 }
 
 export function getCurrentUser() {
@@ -50,7 +42,7 @@ export function getCurrentUser() {
 		})
 		.then((data) => {
 			window.currentUser = data;
-			const event = new CustomEvent('signed-in');
+			const event = new CustomEvent('user-ready');
 			document.dispatchEvent(event);
 			return data;
 		});
@@ -58,6 +50,9 @@ export function getCurrentUser() {
 
 export function clearCurrentUser() {
 	window.currentUser = null;
+	// dispatch user-cleared event
+	const event = new CustomEvent('user-cleared');
+	document.dispatchEvent(event);
 }
 
 export function checkAuth() {

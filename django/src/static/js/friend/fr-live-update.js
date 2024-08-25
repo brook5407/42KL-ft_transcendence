@@ -50,10 +50,10 @@ export class FriendRequestsLiveUpdate {
 
 let frUpdateObj = null;
 
-document.addEventListener('signed-in', () => {
+document.addEventListener('user-ready', () => {
 	frUpdateObj = new FriendRequestsLiveUpdate();
 });
 
-document.addEventListener('signed-out', () => {
+document.addEventListener('user-cleared', () => {
 	frUpdateObj.destroy();
 });
