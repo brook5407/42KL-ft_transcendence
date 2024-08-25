@@ -1,0 +1,22 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/friend/friend-list.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>Friends</h2>
+{% endblock %}
+
+{% block drawerContent %}
+<div id="friend-list"></div>
+<div class="drawer-bottom-right-icon" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %}>
+	<img src="{% static 'images/icons/friend-requests.svg' %}" alt="Friend Requests" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %} />
+</div>
+{% endblock %}
+
+{% block drawerScripts %}
+<script type="module" src="{% static 'js/friend/friend-list.js' %}"></script>
+{% endblock %}

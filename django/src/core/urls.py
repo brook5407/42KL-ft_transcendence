@@ -31,6 +31,7 @@ urlpatterns = [
     path('', include('chat.urls')),
     path('', include('profiles.urls')),
     path('', include('base.urls')),
+    path('', include('friend.urls')),
 ]
 
 if settings.DEBUG == True:

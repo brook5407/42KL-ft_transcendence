@@ -5,20 +5,26 @@ export const MODAL_CONTAINER = document.getElementById('modal-container');
 export const DRAWER_CONTAINER = document.getElementById('drawer-container');
 
 export class Component {
-	constructor({ state = {}, url = '' }) {
+	constructor({ state = {}, url = '', props = {} } = {}) {
 		this.element = null;
 		this.state = state;
+		this.props = props;
+		this.className = '';
 		this.queryParams = {};
 		this.url = url;
 		this.scripts = [];
+
+		this.mounted = false;
+		this.wrapper = null;
 	}
 
 	async fetchHtml(url, queryParams = {}) {
 		try {
-			const urlParams = new URLSearchParams(queryParams);
-			const urlWithParams = url + '?' + urlParams.toString();
-			const response = await ajax_with_auth(urlWithParams, {
+			// const urlParams = new URLSearchParams(queryParams);
+			// const urlWithParams = url + '?' + urlParams.toString();
+			const response = await ajax_with_auth(url, {
 				method: 'GET',
+				params: queryParams,
 			});
 			const html = await response.text();
 			return html;
@@ -29,18 +35,22 @@ export class Component {
 
 	// render the component
 	async render() {
-		const wrapper = document.createElement('div');
-		wrapper.className = this.className;
+		await this.initComponent();
+
+		if (this.wrapper === null) {
+			this.wrapper = document.createElement('div');
+		}
+		this.wrapper.className = this.className;
 
 		if (this.url !== '') {
 			const html = await this.fetchHtml(this.url, this.queryParams);
-			wrapper.innerHTML = html;
+			this.wrapper.innerHTML = html;
 		} else {
-			wrapper.innerHTML = this.template();
+			this.wrapper.innerHTML = this.template();
 		}
 
 		// Find and execute all script tags
-		const scripts = wrapper.getElementsByTagName('script');
+		const scripts = this.wrapper.getElementsByTagName('script');
 		for (let i = 0; i < scripts.length; i++) {
 			console.log('executing script', scripts[i].src || 'custom script');
 			const script = document.createElement('script');
@@ -54,10 +64,15 @@ export class Component {
 			this.scripts.push(script);
 		}
 
-		this.element = wrapper;
+		this.element = this.wrapper;
 
-		this.initComponent();
-		return wrapper;
+		this.startComponent();
+
+		if (!this.mounted) {
+			this.componentMounted();
+		}
+
+		return this.wrapper;
 	}
 
 	// Destroy element
@@ -85,7 +100,13 @@ export class Component {
 		}
 	}
 
-	initComponent() {}
+	async initComponent() {}
+
+	startComponent() {}
+
+	componentMounted() {
+		this.mounted = true;
+	}
 
 	cleanupComponent() {
 		this.scripts.forEach((script) => {
