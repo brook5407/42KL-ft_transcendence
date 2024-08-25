@@ -19,7 +19,7 @@ window.addEventListener('popstate', router);
 document.body.addEventListener('click', (e) => {
 	if (e.target.matches('[data-link]')) {
 		e.preventDefault();
-		navigateTo( e.target.href);
+		navigateTo(e.target.href);
 	}
 });
 
@@ -35,8 +35,6 @@ export async function router() {
 		match = ROUTES['/404'];
 	}
 
-	// console.log(match);
-
 	window.currentRootComponent?.destroy();
 	window.currentRootComponent = match;
 	const element = await match.render();
@@ -44,7 +42,7 @@ export async function router() {
 	ROOT_ELEMENT.appendChild(element);
 }
 
-export function navigateTo(url, title = 'IcePong') {
+export function navigateTo(url, title = 'AIsPong') {
 	history.pushState(null, null, url);
 	router();
 	document.title = title;

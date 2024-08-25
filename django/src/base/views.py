@@ -43,3 +43,14 @@ def settings_drawer(request):
     if is_ajax_request(request):
         return render(request, 'components/drawers/settings.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    user = request.user
+    user_data = {
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+    }
+    return JsonResponse(user_data)

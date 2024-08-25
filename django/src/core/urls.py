@@ -20,17 +20,20 @@ from django.conf import settings
 from django.views.static import serve
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('drf_auth.urls')),
     path('auth/', include('dj_rest_auth.urls')),
     path('auth/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.socialaccount.urls')),
+    path('accounts/', include('allauth.urls')),
     path('accounts/', include('provider.urls')),
     path('', include('pong.urls')),
     path('', include('chat.urls')),
     path('', include('profiles.urls')),
     path('', include('base.urls')),
+    path('', include('friend.urls')),
 ]
 
 if settings.DEBUG == True:

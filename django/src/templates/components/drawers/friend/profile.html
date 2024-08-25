@@ -1,0 +1,34 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/profile.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>{{ friend_profile.nickname }} Profile</h2>
+{% endblock %}
+
+{% block drawerContent %}
+	<div class="profile-info">
+		<div class="profile-info-item">
+			<img src="{{ friend_profile.get_avatar_url }}" alt="Profile Image" class="profile-avatar" />
+		</div>
+		<div class="profile-info-item">
+			<p class="profile-nickname">{{ friend_profile.nickname }}</p>
+		</div>
+		<div class="profile-info-item">
+			<p class="profile-username">@{{ friend_profile.user.username }}</p>
+		</div>
+		<div class="profile-info-item">
+			<p class="profile-email">{{ friend_profile.user.email }}</p>
+		</div>
+		<div class="profile-info-item">
+			<p class="profile-bio">{{ friend_profile.bio }}</p>
+		</div>
+	</div>
+{% endblock %}
+
+{% block drawerScripts %}
+{% endblock %}
