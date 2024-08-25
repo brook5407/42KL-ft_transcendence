@@ -5,6 +5,8 @@ urlpatterns = [
     path('', views.index, name='index'),
 	path('home', views.home, name='home'),
 
+	path('current-user', views.current_user, name='base.current-user'),
+
 	# modals
 	path('modal/signin-modal', views.signin_modal, name='base.signin-modal'),
 	path('modal/signup-modal', views.signup_modal, name='base.signup-modal'),

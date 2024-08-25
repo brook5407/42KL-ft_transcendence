@@ -2,7 +2,6 @@
 
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/sidebar.css' %}" />
-<link rel="stylesheet" href="{% static 'styles/components.css' %}" />
 
 <div class="snow-container"></div>
 
@@ -20,7 +19,7 @@
 			<div class="clickable sidebar-option">
 				<img src="{% static 'images/icons/user-group.svg' %}"
 					width="42px" height="42px" alt="Friend list Icon"
-					data-drawer="friend-list" 
+					data-drawer="friend-list" data-drawer-url={% url 'friend.list-drawer' %}
 				/>
 			</div>
 			<div class="clickable sidebar-option">

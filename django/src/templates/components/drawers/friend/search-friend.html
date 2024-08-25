@@ -1,0 +1,132 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/friend/search-friend.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>New Friends</h2>
+{% endblock %}
+
+{% block drawerContent %}
+<div class="search-bar">
+	<input 
+		type="text" 
+		placeholder="Search new friends..." 
+		class="search-bar__input"
+		oninput="searchFriend(this.value)"
+	/>
+	<span class="search-bar__icon">&#128269;</span>
+</div>
+<div id="search-friend-result"></div>
+{% endblock %}
+
+{% block drawerScripts %}
+<script>
+	let searchTimeout = null;
+
+	function searchFriend(value) {
+		if (searchTimeout) {
+			clearTimeout(searchTimeout);
+		}
+		searchTimeout = setTimeout(() => {
+			searchFriendRequest(value);
+		}, 500);
+	}
+
+	function searchFriendRequest(value) {
+		if (value === '') {
+			return;
+		}
+		ajax_with_auth('/api/friends/search_friend/', {
+			method: 'GET',
+			params: {
+				username: value
+			},
+		}).then(response => {
+			if (response.status === 200) {
+				return response.json();
+			} else {
+				return response.json().then(errorData => {
+					throw new Error(errorData.status);
+				});
+			}
+		})
+		.then((data) => {
+			appendSearchFriendResult(data);
+		}).catch((error) => {
+			const searchFriendResult = document.getElementById('search-friend-result');
+			searchFriendResult.innerHTML = error.toString();
+		});
+	}
+
+	function sendFriendRequest(receiverUsername) {
+		ajax_with_auth('/api/friend-requests/', {
+			method: 'POST',
+			body: JSON.stringify({
+				receiver: receiverUsername
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				return response.json().then(errorData => {
+					throw new Error(errorData.status);
+				});
+			}
+		})
+		.then((data) => {
+			const searchFriendResult = document.getElementById('search-friend-result');
+			searchFriendResult.querySelector('.new-friend-tile__action').innerHTML = `
+				<div class="new-friend-tile__badge">Friend Request Sent</div>
+			`;
+			showSuccessMessage('Friend request sent successfully');
+		}).catch((error) => {
+			showErrorMessage(error.toString());
+		});
+	}
+
+	function appendSearchFriendResult(data) {
+		const searchFriendResult = document.getElementById('search-friend-result');
+		const canAddFriend = data.can_add_friend;
+		const isFriend = data.is_friend;
+		let actionHTML = '';
+		if (isFriend) {
+			actionHTML = `
+				<div class="new-friend-tile__badge">Already friend</div>
+			`;
+		} else if (!canAddFriend) {
+			actionHTML = `
+				<div class="new-friend-tile__badge">Requested</div>
+			`;
+		} else {
+			actionHTML = `
+				<a href="javascript:void(0);" class="new-friend-tile__action-icon new-friend-tile__action-add" onclick="sendFriendRequest('${data.user.username}')">
+					<i class="fa fa-plus"></i>
+				</a>
+			`;
+		}
+		searchFriendResult.innerHTML = `
+			<div class="new-friend-tile">
+				<div class="new-friend-tile__avatar">
+					<img src="${data.avatar}" alt="avatar" />
+				</div>
+				<div class="new-friend-tile__info">
+					<div class="new-friend-tile__nickname">${
+						data.nickname ?? 'Anonymous'
+					}</div>
+					<div class="new-friend-tile__username">@${data.user.username}</div>
+				</div>
+				<div class="new-friend-tile__action">
+					${actionHTML}
+				</div>
+			</div>
+		`;
+	}
+</script>
+{% endblock %}

@@ -1,9 +1,18 @@
-from django.urls import path
-from .views import FriendManagementView, FriendRequestView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import UserRelationViewSet, FriendRequestViewSet, friend_list_drawer, friend_requests_drawer, search_friend_drawer, friend_profile_drawer
 
+router = DefaultRouter()
+router.register(r'friends', UserRelationViewSet, basename='friends')
+router.register(r'friend-requests', FriendRequestViewSet, basename='friend-request')
 
 urlpatterns = [
-    path('friend', FriendManagementView.as_view(), name='friend_management'),
-    path('friend_request', FriendRequestView.as_view(), name='friend_request'),
+    path('api/', include(router.urls)),
+    
+    # drawers
+    path('drawer/friend-list', friend_list_drawer, name='friend.list-drawer'),
+    path('drawer/friend-requests', friend_requests_drawer, name='friend.requests-drawer'),
+    path('drawer/search-friend', search_friend_drawer, name='friend.search-friend-drawer'),
+    path('drawer/friend-drawer', friend_profile_drawer, name='friend.profile-drawer'),
 ]
 

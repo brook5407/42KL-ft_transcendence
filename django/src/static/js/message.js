@@ -16,7 +16,8 @@ function showMessage(message, type) {
 	setTimeout(() => {
 		messageBox.classList.remove('fade-in');
 		setTimeout(() => {
-			MESSAGE_CONTAINER.contains(messageBox) && MESSAGE_CONTAINER.removeChild(messageBox);
+			MESSAGE_CONTAINER.contains(messageBox) &&
+				MESSAGE_CONTAINER.removeChild(messageBox);
 		}, 500); // Wait for fade out to finish
 	}, 3000);
 }
@@ -43,3 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		message.remove();
 	});
 });
+
+window.showSuccessMessage = showSuccessMessage;
+window.showErrorMessage = showErrorMessage;
+window.showInfoMessage = showInfoMessage;

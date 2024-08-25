@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render
 from utils.request_helpers import is_ajax_request
 from .models import ChatMessage, ChatRoom
-from .serializers import ChatMessageSerializer, UserSerializer
+from .serializers import ChatMessageSerializer
 from rest_framework.decorators import api_view
 
 class ChatAPIView(APIView):

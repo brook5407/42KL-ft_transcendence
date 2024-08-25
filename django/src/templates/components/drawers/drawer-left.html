@@ -1,7 +1,6 @@
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'styles/drawer.css' %}" />
-<link rel="stylesheet" href="{% static 'styles/components.css' %}" />
 {% block drawerStyles %}
 {% endblock %}
 
@@ -11,6 +10,9 @@
 	<div class="drawer-header">
 		{% block drawerHeader %}
 		{% endblock %}
+		<div class="back-icon">
+			<img src="{% static 'images/icons/back.svg' %}" class="drawer-back-btn" alt="Back"/>
+		</div>
 	</div>
 	<div class="drawer-body">
 		{% block drawerContent %}

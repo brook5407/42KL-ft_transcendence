@@ -9,21 +9,6 @@ export class ChatRoom extends Component {
 		};
 	}
 
-	initComponent() {
-		// fetch messages from server
-		// const path = '';
-		// ajax_with_auth(path, {
-		// 	method: 'GET',
-		// })
-		// 	.then((response) => response.json())
-		// 	.then((data) => {
-		// 		console.log('data:', data);
-		// 	})
-		// 	.catch((error) => {
-		// 		console.error('error:', error);
-		// 	});
-	}
-
 	setState(state, options = { update: true }) {
 		if (state.roomId !== this.state.roomId) {
 			this.queryParams.room_id = state.roomId;
