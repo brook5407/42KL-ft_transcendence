@@ -1,11 +1,11 @@
 export class Ball {
-	constructor(x, y, radius, color, borderColor, speed) {
+	constructor(x, y, radius, speed, color, borderColor) {
 		this.x = x;
 		this.y = y;
 		this.radius = radius;
+		this.speed = speed;
 		this.color = color;
 		this.borderColor = borderColor;
-		this.speed = speed;
 		this.xDirection = 0;
 		this.yDirection = 0;
 	}

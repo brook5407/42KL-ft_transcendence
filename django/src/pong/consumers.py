@@ -98,7 +98,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'end_game',
-                    'message': 'Player disconnected, game over!',
+                    'message': 'A Player has disconnected, Game over!',
                 }
             )
 
@@ -112,6 +112,8 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.paddle1.velocity = velocity
         elif paddle == 'paddle2':
             self.paddle2.velocity = velocity
+
+
 
     async def start_game(self, event):
         # Send the matchmaking message to WebSocket

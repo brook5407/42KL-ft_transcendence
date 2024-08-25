@@ -44,19 +44,19 @@ socket.onmessage = function(e) {
         // Store the assigned paddle
         assignedPaddle = data.player;
     }
-    if (data.type === 'start_game') {
+    else if (data.type === 'start_game') {
         // Both players has connected, start the game
         gameCanvas.height = data.gameHeight;
         gameCanvas.width = data.gameWidth;
-        paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white', 10);
-        paddle2 = new Paddle(data.paddle2.x, data.paddle2.y, data.paddle2.width, data.paddle2.height, 'white', 10);
-        ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, 8, 'lightblue', 'lightblue', 5);
+        paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white');
+        paddle2 = new Paddle(data.paddle2.x, data.paddle2.y, data.paddle2.width, data.paddle2.height, 'white');
+        ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, data.ball.radius, data.ball.speed, 'lightblue', 'lightblue');
         table = new Table(gameCanvas, paddle1, paddle2, ball);
         matchmaking.style.display = 'none';
         gameCanvas.style.display = 'block';
         scoreBoard.style.display = 'block';
     }
-    if (data.type === 'update_game_state') {
+    else if (data.type === 'update_game_state') {
         // Update the game state based on the server's response
         paddle1.y = data.paddle1.y;
         paddle2.y = data.paddle2.y;
@@ -67,6 +67,9 @@ socket.onmessage = function(e) {
 
         // Render the updated game state
         table.draw();
+    }
+    else if (data.type === 'end_game') {
+        alert(data.message);
     }
 };
 
@@ -103,8 +106,6 @@ document.addEventListener('keyup', (event) => {
 //     form.reset()
 // })
 
-// let assignedPaddle = null;
-
 // socket.onmessage = function(e) {
 //     const data = JSON.parse(e.data);
 //     console.log('Data:', data)
@@ -116,18 +117,3 @@ document.addEventListener('keyup', (event) => {
 //                                 <p>${data.message}</p>
 //                             </div>`)
 //     }
-
-//     if (data.player) {
-//         // Assign the paddle to the client
-//         assignedPaddle = data.player;
-//     } else {
-//         const paddle = data['paddle'];
-//         const velocity = data['velocity'];
-
-//         if (paddle === 'paddle1') {
-//             paddle1.velocity = velocity;
-//         } else if (paddle === 'paddle2') {
-//             paddle2.velocity = velocity;
-//         }
-//     }
-// };

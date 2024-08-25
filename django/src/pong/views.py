@@ -5,7 +5,7 @@ import uuid
 from .models import GameRoom
 
 def generate_room_name():
-    return str(uuid.uuid4())[:4]  # Generate a short unique identifier
+    return str(uuid.uuid4())[:5]  # Generate a short unique identifier
 
 # @login_required
 def pong(request):
@@ -19,7 +19,6 @@ def pong(request):
         room_name = generate_room_name()
         GameRoom.objects.create(room_name=room_name)
 
-    return render(request, 'components/pages/pong.html', {'room_name': room_name})
-    # if is_ajax_request(request):
-    #     return render(request, 'components/pages/pong.html', {'room_name': room_name})
-    # return render(request, 'index.html')
+    if is_ajax_request(request):
+        return render(request, 'components/pages/pong.html', {'room_name': room_name})
+    return render(request, 'index.html')
