@@ -4,6 +4,8 @@ function playNotificationSound() {
 	audio.play();
 }
 
+window.playNotificationSound = playNotificationSound;
+
 // Extend HTMLElement prototype
 HTMLElement.prototype.notify = function (playSound = true) {
 	// Play notification sound

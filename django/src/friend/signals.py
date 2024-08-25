@@ -13,3 +13,7 @@ def create_user_relation(sender, instance, **kwargs):
             user=instance.receiver,
             friend=instance.sender
         )
+        
+@receiver(post_save, sender=FriendRequest)
+def trigger_notify_friend_request_update(sender, instance, **kwargs):
+    instance.notify_friend_request_update()

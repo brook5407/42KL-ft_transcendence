@@ -108,7 +108,6 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 	currentDrawer = drawer;
 	if (pushStack) {
 		drawerStack.push(drawerName, data.url);
-		console.log('drawerStack new length:', drawerStack.stack.length);
 	}
 	const element = await drawer.render();
 	DRAWER_CONTAINER.innerHTML = '';

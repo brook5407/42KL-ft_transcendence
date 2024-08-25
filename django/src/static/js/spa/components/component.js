@@ -5,7 +5,7 @@ export const MODAL_CONTAINER = document.getElementById('modal-container');
 export const DRAWER_CONTAINER = document.getElementById('drawer-container');
 
 export class Component {
-	constructor({ state = {}, url = '', props = {} }) {
+	constructor({ state = {}, url = '', props = {} } = {}) {
 		this.element = null;
 		this.state = state;
 		this.props = props;
@@ -35,6 +35,8 @@ export class Component {
 
 	// render the component
 	async render() {
+		await this.initComponent();
+
 		if (this.wrapper === null) {
 			this.wrapper = document.createElement('div');
 		}

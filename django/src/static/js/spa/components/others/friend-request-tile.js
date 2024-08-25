@@ -16,7 +16,6 @@ export class FriendRequestTile extends Component {
 			.forEach((button) => {
 				button.addEventListener('click', async (e) => {
 					const friendId = e.currentTarget.value;
-					console.log(friendId);
 					if (button.classList.contains('friend-request-tile__accept')) {
 						await this.acceptFriendRequest(friendId);
 					} else if (button.classList.contains('friend-request-tile__reject')) {
@@ -27,7 +26,6 @@ export class FriendRequestTile extends Component {
 	}
 
 	async acceptFriendRequest(friendId) {
-		console.log('acceptFriendRequest');
 		const response = await ajax_with_auth(
 			`/api/friend-requests/${friendId}/accept/`,
 			{

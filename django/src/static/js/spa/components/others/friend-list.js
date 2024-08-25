@@ -5,7 +5,22 @@ export class FriendList extends Component {
 	constructor(params) {
 		super(params);
 
+		this.friends = [];
 		this.filter = '';
+		this.friendListTiles = [];
+
+		this.updateEventListener = document.addEventListener(
+			'friend-requests-update',
+			async () => {
+				await this.update();
+			}
+		);
+	}
+
+	async initComponent() {
+		this.friends = await ajax_with_auth('/api/friends/', {
+			method: 'GET',
+		}).then((response) => response.json());
 	}
 
 	startComponent() {
@@ -13,19 +28,21 @@ export class FriendList extends Component {
 	}
 
 	renderFriendList() {
-		const friends = this.props.friends.filter((friend) => {
+		const friends = this.friends.filter((friend) => {
 			if (this.filter === '') return true;
 			return friend.friend.nickname?.includes(this.filter);
 		});
-		const friendListTiles = friends.map((friend) =>
-			new FriendListTile({ props: { ...friend } }).render()
+		this.friendListTiles = friends.map(
+			(friend) => new FriendListTile({ props: { ...friend } })
 		);
 
 		const friendListElem = this.element.querySelector('.friend-list__list');
 		friendListElem.innerHTML = '';
 
 		async function appendFriendListTile() {
-			const friendList = await Promise.all(friendListTiles);
+			const friendList = await Promise.all(
+				this.friendListTiles.map((friendTile) => friendTile.render())
+			);
 			const fragment = document.createDocumentFragment();
 			friendList.forEach((friend) => {
 				fragment.appendChild(friend);
@@ -46,6 +63,12 @@ export class FriendList extends Component {
 	filterFriends(filter = '') {
 		this.filter = filter;
 		this.renderFriendList();
+	}
+
+	destroy() {
+		super.destroy();
+		this.friendListTiles.forEach((friendTile) => friendTile.destroy());
+		document.removeEventListener(this.updateEventListener);
 	}
 
 	template() {
