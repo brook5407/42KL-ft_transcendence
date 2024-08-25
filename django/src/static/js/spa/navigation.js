@@ -5,7 +5,7 @@ import { PongPage } from './components/pages/pong.js';
 
 export const ROUTES = {
 	'/': new HomePage({ url: '/home' }),
-	'/pong/index': new PongPage({ url: '/pong/index' }),
+	'/pong/index': new PongPage({ url: '/pong/index/' }),
 	'/404': new NotFoundPage({}),
 };
 
