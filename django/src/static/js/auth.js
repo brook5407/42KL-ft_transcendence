@@ -6,7 +6,7 @@ import { closeDrawer } from './spa/drawer.js';
 
 export function signup(data) {
 	closeModal();
-	showSuccessMessage('You have successfully signed up!');
+	showSuccessMessage('Please check your email to verify your account!');
 	router();
 }
 
@@ -75,3 +75,5 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 });
+
+

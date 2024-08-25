@@ -99,3 +99,24 @@
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+.otp-group button {
+	padding: 10px 15px;
+	background-color: #ff4b4b;
+	color: white;
+	border: none;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	cursor: pointer;
+}
+
+.forgot-password {
+	text-align: right;
+	font-size: 12px;
+	margin-top: 10px;
+}
+
+.forgot-password a {
+	color: #666;
+	text-decoration: none;
+}

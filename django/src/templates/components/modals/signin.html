@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block modalContent %}
-	<form id="signin-form" class="spa-form" action="{% url 'signin' %}">
+	<form id="signin-form" class="spa-form" action="{% url 'account_login' %}">
 		{% csrf_token %}
 		<div class="input-group">
 			<label for="username">Username</label>
@@ -19,8 +19,43 @@
 			<label for="password">Password</label>
 			<input type="password" id="password" name="password" class="form-control" required />
 		</div>
-		<div class="center">
-			<button type="submit" class="submit-button">Submit</button>
-		</div>
+        {% if OTP_AUTH %}
+		<div class="input-group otp-group">
+            <label for="otp">OTP</label>
+            <input type="number" id="otp" name="otp" class="form-control" required />
+            <button type="button" id="send-otp-button" class="send-otp" onclick="otp_click()">send</button>
+        </div>
+        {% endif %}
+        <div class="center">
+            <button type="submit" class="submit-button">Submit</button>
+        </div>
 	</form>
+{% endblock %}
+
+{% block modalScripts %}
+    <script>
+        function otp_click() {
+            const username = document.getElementById('username').value; 
+            const password = document.getElementById('password').value;
+            
+            ajax('auth/send-otp', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: username, password: password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                } else {
+                    alert('Error requesting OTP. Please try again.');
+                }
+            })
+            .catch(error => {
+                alert('Error requesting OTP. Please try again.');
+            });
+        }
+    </script>
 {% endblock %}
