@@ -5,10 +5,6 @@ export class SignUp extends Component {
 		super(params);
 	}
 
-	initComponent() {
-		super.initComponent();
-	}
-
 	cleanupComponent() {
 		super.cleanupComponent();
 	}

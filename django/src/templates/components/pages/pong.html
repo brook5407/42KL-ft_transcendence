@@ -3,17 +3,28 @@
 <link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
-<div id="gameContainer" style="padding-top: 100px;">
-	<canvas id="gameCanvas" height="500" width="750"></canvas>
-	<div id="scoreBoard">0 : 0</div>
-	<button id="resetButton">Reset</button>
+<div id="gameContainer" style="padding-top: 0px;">
+	<div id="scoreBoard">
+		<span id="score1">0</span> : <span id="score2">0</span>
+	</div>
+	<canvas id="gameCanvas" height="500" width="800"></canvas>
+	<div id="matchmaking" style="color: white; font-size: 24px; text-align: center; padding-top: 100px">Waiting for opponent...</div>
+	{% comment %} <div id="matchmaking" style="color: white">a</div> {% endcomment %}
+	{% comment %} <button id="resetButton">Reset</button>
 	<button id="pauseButton">Pause</button>
 	<div>
 		<select id="gameMode">
 			<option value="Player">Player</option>
 			<option value="Computer">Computer</option>
 		</select>
-	</div>
+	</div> {% endcomment %}
+	{% comment %} <form id="form">
+		<input type="text" name ="message"/>
+	</form>
+	<div id="messages"></div> {% endcomment %}
 </div>
 
+<script>
+	const roomName = "{{ room_name }}";
+</script>
 <script type="module" src="{% static 'js/pong/local.js' %}"></script>

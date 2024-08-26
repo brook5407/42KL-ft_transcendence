@@ -12,14 +12,15 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from pong.routing import websocket_urlpatterns as pong_websocket_urlpatterns
 from chat.routing import websocket_urlpatterns as chat_websocket_urlpatterns
+from friend.routing import websocket_urlpatterns as friend_websocket_urlpatterns
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            pong_websocket_urlpatterns + chat_websocket_urlpatterns
+            pong_websocket_urlpatterns + chat_websocket_urlpatterns + friend_websocket_urlpatterns
         )
     ),
 })
