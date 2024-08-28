@@ -2,6 +2,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.exceptions import StopConsumer
 from asgiref.sync import sync_to_async
 from urllib.parse import parse_qs
+from chat.models import ChatRoom, ChatMessage
+from django.contrib.auth.models import User
 import asyncio
 import re
 import json
@@ -14,63 +16,57 @@ TABLE = {
 }
 
 def is_online_image_url(url):
-    # Regular expression to match common image file extensions
     image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp']
     pattern2 = r'^(?:data:image/(?:png|jpeg|gif|webp);base64,)'
     pattern1 = r'^https?://.*\.(' + '|'.join(image_extensions) + r')'
     pattern3 = r'^https?://images.*\.(' + '|'+ r')'
 
     combined_pattern = f"({pattern1})|({pattern3})|({pattern2}.*)"
-    
-    # Compile the regex pattern
     regex = re.compile(combined_pattern, re.IGNORECASE)
     
-    # Check if the URL matches the pattern
     if regex.match(url):
         return True
     else:
         return False
 
 class ChatConsumer(AsyncWebsocketConsumer):
-
+    
     async def websocket_connect(self, message):
-        # self.chat_room = '123'
         self.chat_room = self.scope['url_route']['kwargs']['room_name']
+        print("self.chat_room: " + self.chat_room)
+        self.room_group_name = f'chat_{self.chat_room}'
+        self.customer_name = self.scope["user"].username
         
-        query_params = parse_qs(self.scope['query_string'].decode())
-        self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
-        
-        
-        # self.customer_name = self.scope['url_route']['kwargs']['nickname']
-        # self.customer_name = self.scope['user'].profile.nickname
+        # self.receiver_id = "Name"
+        # self.receiver_id = self.scope['url_route']['kwargs'].get('receiver_id', None)
         
         await self.accept()
         if self.channel_layer is not None:
             await self.channel_layer.group_add(self.chat_room, self.channel_name)
         else:
-            print("Channel Layer return None")
+            print("Channel Layer returned None. Cannot join the chat room.")
 
     async def websocket_receive(self, message):
         try:
-            query_params = parse_qs(self.scope['query_string'].decode())
-            self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
-
             text_data = json.loads(message['text'])
+            message_type = text_data.get('type', None)
+            message_content = text_data.get('message', None)
+            self.receiver_id = text_data.get('receiver_id', None)
 
-            if text_data['type'] == 'message':
-                if " shabi " in text_data['message'] or "傻逼" in text_data['message']:
-                    text_data['message'] = f"服务器:【{self.customer_name}】你才是傻逼 "
-                    await self.send_self_chat_message(text_data['message'])
+            if message_type == 'message' and message_content:
+                if " shabi " in message_content or "傻逼" in message_content:
+                    message_content = f"服务器:【{self.customer_name}】你才是傻逼 "
+                    await self.send_self_chat_message(message_content)
                 elif self.check_if_static_image(text_data):
                     return
-                elif is_online_image_url(text_data['message']):
-                    response = text_data['message']
-                    await self.send_image_message(response)
+                elif is_online_image_url(message_content):
+                    await self.send_image_message(message_content)
                 else:
-                    text_data['message'] = text_data['message']
-                    await self.send_chat_message(text_data['message'])
-            elif text_data['type'] == 'image':
+                    await self.send_chat_message(message_content)
+            elif message_type == 'image' and 'image' in text_data:
                 await self.send_image_message(text_data['image'])
+            else:
+                raise ValueError("Invalid message type or missing content")
 
         except json.JSONDecodeError as e:
             error_message = {'type': 'error', 'message': 'Invalid JSON format in received message.'}
@@ -80,12 +76,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(json.dumps(error_message))
 
     async def websocket_disconnect(self, message):
-        await self.channel_layer.group_discard(self.chat_room, self.channel_name)
+        if self.channel_layer is not None:
+            await self.channel_layer.group_discard(self.chat_room, self.channel_name)
         raise StopConsumer()
 
     async def send_chat_message(self, message):
         query_params = parse_qs(self.scope['query_string'].decode())
         self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
+        
+        await self.save_message(message, message_type='text')
         await self.channel_layer.group_send(
             self.chat_room,
             {
@@ -95,24 +94,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
-    async def send_self_chat_message(self, message):
-        query_params = parse_qs(self.scope['query_string'].decode())
-        self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
-        
-        # Create a message with image data
-        message = {
-            "type": "image.message",
-            "name": self.customer_name,
-            "message": message
-        }
-        # Send the message directly to the WebSocket channel
-        await self.send(text_data=json.dumps(message))
-
-
-
     async def send_image_message(self, image_data):
         query_params = parse_qs(self.scope['query_string'].decode())
         self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
+        
+        await self.save_message(image_data, message_type='image')
         await self.channel_layer.group_send(
             self.chat_room,
             {
@@ -121,6 +107,37 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "image": image_data
             }
         )
+
+    async def send_self_chat_message(self, message):
+        query_params = parse_qs(self.scope['query_string'].decode())
+        self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
+
+        message = {
+            "type": "chat.message",
+            "name": self.customer_name,
+            "message": message
+        }
+        await self.send(text_data=json.dumps(message))
+
+    async def save_message(self, content, message_type='text'):
+        user = self.scope["user"]
+        room = await sync_to_async(ChatRoom.objects.get)(name=self.chat_room)
+        # self.receiver_id = self.receiver_id[0] if self.receiver_id else None
+        
+        receiver = None
+        if self.receiver_id:
+            try:
+                receiver = await sync_to_async(User.objects.get)(id=self.receiver_id)
+            except User.DoesNotExist:
+                receiver = None  # Handle case where receiver_id is invalid
+
+        await sync_to_async(ChatMessage.objects.create)(
+            sender=user,
+            receiver=receiver,
+            message=content,
+            room=room
+        )
+
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({

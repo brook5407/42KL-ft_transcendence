@@ -217,7 +217,7 @@ SITE_ID = 1
 
 ACCOUNT_ADAPTER = 'drf_auth.views.CustomAccountAdapter'
 
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 LOGIN_REDIRECT_URL = '/'
 

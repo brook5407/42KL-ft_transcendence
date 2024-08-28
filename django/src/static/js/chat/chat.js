@@ -5,6 +5,7 @@ const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
 const appConfigElement = document.getElementById('chat-config');
 const nickname = appConfigElement.getAttribute('data-nickname'); //
 const group_num = appConfigElement.getAttribute('data-room') || 123;
+const receiver = appConfigElement.getAttribute('data-receiver') || null;
 console.log('nickname: ' + nickname);
 
 // const ChatListConfigElement = document.getElementById('chat-list-item');
@@ -14,34 +15,34 @@ console.log('nickname: ' + nickname);
 // let url = new URL(currentUrl);
 // let group_num = url.searchParams.get('room') || 123;
 
-async function fetchToken() {
-	const queryString = new URLSearchParams({
-		group_num: group_num ? group_num : '123',
-		nickname: 'JohnDoe',
-		// nickname: nickname ? nickname : 'JohnDoe'
-	}).toString();
+// async function fetchToken() {
+// 	const queryString = new URLSearchParams({
+// 		group_num: group_num ? group_num : '123',
+// 		nickname: 'JohnDoe',
+// 		// nickname: nickname ? nickname : 'JohnDoe'
+// 	}).toString();
 
-	const response = await fetch('/chat?' + queryString);
-	// console.log('/chat?' + queryString);
-	const chat_data = await response.json();
-	return chat_data.token;
-}
+// 	const response = await fetch('/chat?' + queryString);
+// 	// console.log('/chat?' + queryString);
+// 	const chat_data = await response.json();
+// 	return chat_data.token;
+// }
 
-async function initialize() {
-	try {
-		// Fetch the token
-		const token = await fetchToken();
+// async function initialize() {
+// 	try {
+// 		// Fetch the token
+// 		const token = await fetchToken();
 
-		// Use the token
-		console.log('Retrieved token:', token);
+// 		// Use the token
+// 		console.log('Retrieved token:', token);
 
-		// Further actions with the token, e.g., decode or use in application
-		// Note: Ensure any sensitive operations are done securely
-	} catch (error) {
-		console.error('Error initializing:', error);
-	}
-}
-initialize();
+// 		// Further actions with the token, e.g., decode or use in application
+// 		// Note: Ensure any sensitive operations are done securely
+// 	} catch (error) {
+// 		console.error('Error initializing:', error);
+// 	}
+// }
+// initialize();
 
 const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${nickname}`;
 let socket = null;
@@ -214,6 +215,7 @@ function sendMessage() {
 		if (message !== '') {
 			socket.send(
 				JSON.stringify({
+					room_id: group_num,
 					type: 'message',
 					name: nickname,
 					message: message,

@@ -1,0 +1,3 @@
+from chat.models import ChatMessage
+message = ChatMessage.objects.first()
+print(message)
