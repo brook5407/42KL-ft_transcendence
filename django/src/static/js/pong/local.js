@@ -10,14 +10,16 @@ const canvasContainer = document.getElementById('canvasContainer');
 const overlay = document.getElementById('overlay');
 const countdownText = document.getElementById('countdownText');
 const matchmaking = document.getElementById('matchmaking');
+const roomCode = document.getElementById('roomCode');
 
 let paddle1;
 let paddle2;
 let ball;
 let table;
+let assignedPaddle = null;
 
 const socket = new WebSocket(`ws://${window.location.host}/ws/pvp/${roomName}/`);
-let assignedPaddle = null;
+roomCode.innerHTML = roomName;
 
 socket.onopen = function() {
     console.log("WebSocket connection established " + roomName);
@@ -91,6 +93,7 @@ socket.onmessage = function(e) {
     if (data.type === 'end_game') {
         console.log("end_game");
         alert(data.message);
+        window.location.href = `http://${window.location.host}/`;
     }
 };
 
