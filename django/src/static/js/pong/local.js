@@ -3,10 +3,13 @@ import { Ball } from './classes/ball.js';
 import { Table } from './classes/table.js';
 
 // Client-side game setup and rendering
-const gameCanvas = document.getElementById('gameCanvas');
-const matchmaking = document.getElementById('matchmaking');
+const gameContainer = document.getElementById('gameContainer');
 const scoreBoard = document.getElementById('scoreBoard');
-const countdownElement = document.getElementById('countdown');
+const gameCanvas = document.getElementById('gameCanvas');
+const canvasContainer = document.getElementById('canvasContainer');
+const overlay = document.getElementById('overlay');
+const countdownText = document.getElementById('countdownText');
+const matchmaking = document.getElementById('matchmaking');
 
 let paddle1;
 let paddle2;
@@ -43,6 +46,8 @@ socket.onmessage = function(e) {
     if (data.type === 'start_game') {
         // Both players has connected, start the game
         console.log("start_game");
+        canvasContainer.height = data.gameHeight;
+        canvasContainer.width = data.gameWidth;
         gameCanvas.height = data.gameHeight;
         gameCanvas.width = data.gameWidth;
         paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white');
@@ -56,13 +61,17 @@ socket.onmessage = function(e) {
     if (data.type === 'countdown_game') {
         console.log("countdown_game");
         const countdownValue = data.message;
-        countdownElement.style.display = 'block';
-        countdownElement.innerHTML = countdownValue;
+        countdownText.style.display = 'block';
+        countdownText.innerHTML = countdownValue;
 
         if (countdownValue === 1) {
             setTimeout(() => {
-                countdownElement.innerHTML = 'Go!';
-            }, 1000);  // Optional: Show "Go!" after the countdown finishes
+                countdownText.innerHTML = 'Go!';
+            }, 1000);  
+            setTimeout(() => {
+                countdownText.style.display = 'none';
+                overlay.style.display = 'none';
+            }, 2000);
         }
         table.draw();
     }

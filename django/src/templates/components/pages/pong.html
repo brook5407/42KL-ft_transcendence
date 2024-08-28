@@ -3,12 +3,16 @@
 <link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
-<div id="gameContainer" style="padding-top: 0px;">
+<div id="gameContainer">
 	<div id="scoreBoard">
 		<span id="score1">0</span> : <span id="score2">0</span>
 	</div>
-	<canvas id="gameCanvas"></canvas>
-	<div id="countdown" style="display: none">countdown</div>
+	<div id="canvasContainer">
+		<canvas id="gameCanvas"></canvas>
+		<div id="overlay">
+			<div id="countdownText">3</div>
+		</div>
+	</div>
 	<div id="matchmaking">Waiting for opponent...</div>
 
 	{% comment %} <form id="form">

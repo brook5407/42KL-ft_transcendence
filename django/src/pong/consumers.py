@@ -142,7 +142,7 @@ class PVPConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(1)
 
     async def game_loop(self):
-        await asyncio.sleep(3)
+        await asyncio.sleep(4)
         while True:
             # Update game state
             self.ball.move()

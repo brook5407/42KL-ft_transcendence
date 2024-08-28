@@ -4,12 +4,39 @@
 	color: white;
 	text-align: center;
 }
+#gameContainer {
+    position: relative;
+}
+#canvasContainer {
+    position: relative;
+    display: inline-block;
+    margin: auto;
+}
+
 #gameCanvas {
-	border: 3px solid grey;
-	padding-left: 0;
-    padding-right: 0;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%; /* Match parent container */
+    height: 100%; /* Match parent container */
+    display: none;
+    border: 3px solid grey;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Cover the entire canvas */
+    height: 100%; /* Cover the entire canvas */
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    z-index: 1000;
+}
+#countdownText {
+    text-align: center;
 	display: none;
 }
 #scoreBoard {
