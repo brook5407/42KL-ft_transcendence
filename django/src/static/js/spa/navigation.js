@@ -6,6 +6,9 @@ import { PongPage } from './components/pages/pong.js';
 export const ROUTES = {
 	'/': new HomePage({ url: '/home' }),
 	'/pong/index': new PongPage({ url: '/pong/index/' }),
+	'/pong/pvp': new PongPage({ url: '/pong/pvp/' }),
+	'/pong/pve': new PongPage({ url: '/pong/pve/' }),
+	'/pong/tournament': new PongPage({ url: '/pong/tournament/' }),
 	'/404': new NotFoundPage({}),
 };
 

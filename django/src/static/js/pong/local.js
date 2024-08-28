@@ -6,18 +6,15 @@ import { Table } from './classes/table.js';
 const gameCanvas = document.getElementById('gameCanvas');
 const matchmaking = document.getElementById('matchmaking');
 const scoreBoard = document.getElementById('scoreBoard');
+const countdownElement = document.getElementById('countdown');
 
 let paddle1;
 let paddle2;
 let ball;
 let table;
 
-const socket = new WebSocket(`ws://${window.location.host}/ws/pong/${roomName}/`);
+const socket = new WebSocket(`ws://${window.location.host}/ws/pvp/${roomName}/`);
 let assignedPaddle = null;
-
-scoreBoard.style.display = 'none'
-gameCanvas.style.display = 'none';
-matchmaking.style.display = 'block';
 
 socket.onopen = function() {
     console.log("WebSocket connection established " + roomName);
@@ -28,12 +25,10 @@ socket.onerror = function(error) {
 socket.onclose = function(event) {
     console.log("WebSocket connection closed:", event);
 };
-
 socket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     // console.log("Raw message data:", e.data);
     // console.log("Parsed data:", data);
-
     // if (data.type) {
     //     console.log("Message type:", data.type);
     // } else {
@@ -42,10 +37,12 @@ socket.onmessage = function(e) {
 
     if (data.type === 'player_assignment') {
         // Store the assigned paddle
+        console.log("player_assignment");
         assignedPaddle = data.player;
     }
-    else if (data.type === 'start_game') {
+    if (data.type === 'start_game') {
         // Both players has connected, start the game
+        console.log("start_game");
         gameCanvas.height = data.gameHeight;
         gameCanvas.width = data.gameWidth;
         paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white');
@@ -56,7 +53,21 @@ socket.onmessage = function(e) {
         gameCanvas.style.display = 'block';
         scoreBoard.style.display = 'block';
     }
-    else if (data.type === 'update_game_state') {
+    if (data.type === 'countdown_game') {
+        console.log("countdown_game");
+        const countdownValue = data.message;
+        countdownElement.style.display = 'block';
+        countdownElement.innerHTML = countdownValue;
+
+        if (countdownValue === 1) {
+            setTimeout(() => {
+                countdownElement.innerHTML = 'Go!';
+            }, 1000);  // Optional: Show "Go!" after the countdown finishes
+        }
+        table.draw();
+    }
+    if (data.type === 'update_game_state') {
+        console.log("update_game_state");
         // Update the game state based on the server's response
         paddle1.y = data.paddle1.y;
         paddle2.y = data.paddle2.y;
@@ -68,7 +79,8 @@ socket.onmessage = function(e) {
         // Render the updated game state
         table.draw();
     }
-    else if (data.type === 'end_game') {
+    if (data.type === 'end_game') {
+        console.log("end_game");
         alert(data.message);
     }
 };

@@ -6,12 +6,28 @@
 }
 #gameCanvas {
 	border: 3px solid grey;
+	padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+	display: none;
 }
 #scoreBoard {
 	font-size: 64px;
 	color: white;
+	padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+	display: none;
 }
-#resetButton {
+#matchmaking {
+	color: white;
+	font-size: 24px;
+	text-align: center;
+	padding-top: 100px;
+}
+/* #resetButton {
 	font-size: 24px;
 	width: 100px;
 	height: 50px;
@@ -30,8 +46,8 @@
 	cursor: pointer;
 	color: black;
 	margin: 10px;
-}
-#blurCanvas {
+} */
+/* #blurCanvas {
 	background: rgba(255, 255, 255, 0.8);
 }
 select {
@@ -41,4 +57,4 @@ select {
 	text-align: center;
 	border: 3px solid grey;
 	border-radius: 15px;
-}
+} */

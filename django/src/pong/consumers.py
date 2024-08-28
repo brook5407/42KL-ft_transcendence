@@ -46,7 +46,7 @@ class RoomsManager:
             return None  # Room is empty
 
 
-class PongConsumer(AsyncWebsocketConsumer):
+class PVPConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f'room_{self.room_name}'
@@ -81,9 +81,14 @@ class PongConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'start_game',
-                    'message': 'Two Players are connected, Game Start!',
-                }
-            )
+                    'message': 'Two players connected.',
+                })
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'countdown_game',
+                    'message': 'Start Countdown.',
+                })
             asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
@@ -127,7 +132,17 @@ class PongConsumer(AsyncWebsocketConsumer):
             'ball': self.ball.serialize(),
         }))
 
+    async def countdown_game(self, event):
+        # Send the matchmaking message to WebSocket
+        for i in range(3, 0, -1):
+            await self.send(text_data=json.dumps({
+                'type': 'countdown_game',
+                'message': i,
+            }))
+            await asyncio.sleep(1)
+
     async def game_loop(self):
+        await asyncio.sleep(3)
         while True:
             # Update game state
             self.ball.move()
@@ -196,6 +211,8 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.ball.y = gameHeight / 2
         self.ball.x_direction *= -1  # Change direction after score
         self.ball.speed = self.ball.oriSpeed
+
+
 
 class Paddle:
     def __init__(self, x, y, width, height):

@@ -7,17 +7,10 @@
 	<div id="scoreBoard">
 		<span id="score1">0</span> : <span id="score2">0</span>
 	</div>
-	<canvas id="gameCanvas" height="500" width="800"></canvas>
-	<div id="matchmaking" style="color: white; font-size: 24px; text-align: center; padding-top: 100px">Waiting for opponent...</div>
-	{% comment %} <div id="matchmaking" style="color: white">a</div> {% endcomment %}
-	{% comment %} <button id="resetButton">Reset</button>
-	<button id="pauseButton">Pause</button>
-	<div>
-		<select id="gameMode">
-			<option value="Player">Player</option>
-			<option value="Computer">Computer</option>
-		</select>
-	</div> {% endcomment %}
+	<canvas id="gameCanvas"></canvas>
+	<div id="countdown" style="display: none">countdown</div>
+	<div id="matchmaking">Waiting for opponent...</div>
+
 	{% comment %} <form id="form">
 		<input type="text" name ="message"/>
 	</form>
