@@ -1,5 +1,5 @@
-import os
-os.environ['LD_LIBRARY_PATH'] = '/usr/local/cuda/lib64:' + os.environ.get('LD_LIBRARY_PATH', '')
+# import os
+# os.environ['LD_LIBRARY_PATH'] = '/usr/local/cuda/lib64:' + os.environ.get('LD_LIBRARY_PATH', '')
 
 
 from game import PongGame
@@ -8,7 +8,7 @@ import numpy as np
 import tensorflow as tf
 
 def main():
-    tf.profiler.experimental.start('logdir')
+    # tf.profiler.experimental.start('logdir')
     env = PongGame()
     state_size = env.get_state().shape[0]
     action_size = 3
@@ -18,7 +18,6 @@ def main():
     target_update_interval = 10  # Update target network every 10 episodes
 
     for e in range(episodes):
-        print(f"episode: {e}/{episodes}")
         state = env.reset()
         state = np.reshape(state, [1, state_size])
         for time in range(300):
@@ -33,12 +32,16 @@ def main():
                 break
             if len(agent.memory) > batch_size:
                 agent.replay(batch_size)
-            env.render()
+            env.render(e)
             env.clock.tick(env.fps)
-    tf.profiler.experimental.stop()
+            
+        # Save the model every 50 episodes
+        if e % 50 == 0:
+            agent.model.save(f"model_episode_{e}.h5")
+    # tf.profiler.experimental.stop()
 
 if __name__ == "__main__":
-    tf.debugging.set_log_device_placement(True)
+    # tf.debugging.set_log_device_placement(True)
     gpus = tf.config.experimental.list_physical_devices('GPU')
     if not gpus:
         print("No GPU detected!")

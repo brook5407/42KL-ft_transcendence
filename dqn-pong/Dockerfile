@@ -19,12 +19,14 @@ RUN pip install protobuf==3.20.3
 
 WORKDIR /tf
 
-COPY . .
+# COPY . .
+VOLUME /tf
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 ENV DISPLAY=host.docker.internal:0.0
 
 # run the training script
-CMD ["python", "train.py"]
+# CMD ["python", "train.py"]
+CMD ["python", "test.py"]
 

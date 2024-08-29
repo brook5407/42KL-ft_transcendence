@@ -163,7 +163,7 @@ class PongGame:
 
         return reward
 
-    def render(self):
+    def render(self, episode = None):
         # Fill the screen with black color
         self.win.fill(self.BLACK)
 
@@ -179,13 +179,18 @@ class PongGame:
         player2_text = self.font.render(str(self.player2_score), True, self.WHITE)
         self.win.blit(player1_text, (self.screen_width // 4, 10))
         self.win.blit(player2_text, (self.screen_width * 3 // 4, 10))
+        
+        if episode is not None:
+            small_font = pygame.font.Font(None, 24)
+            episode_text = small_font.render(f'Episode: {episode}', True, (255, 255, 255))
+            self.win.blit(episode_text, (10, 10))
 
         # Update the display
-        pygame.display.update()
+        pygame.display.flip()
   
-        if self.need_pause:
-            time.sleep(1)
-            self.need_pause = False
+        # if self.need_pause:
+        #     time.sleep(1)
+        #     self.need_pause = False
     
     def is_done(self):
         return self.player1_score >= 5 or self.player2_score >= 5
