@@ -45,18 +45,19 @@ class RoomsManager:
         else:
             return None  # Room is empty
 
-
 class PVPConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        self.game_mode = self.scope['url_route']['kwargs']['game_mode']
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f'room_{self.room_name}'
 
+        print(self.game_mode)
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
         # Assign the player using RoomsManager
         self.player = RoomsManager.assign_player(self.room_name, self.channel_name)
-        
+
         if self.player is None:
             # Room is full, close the connection
             await self.close()
@@ -74,9 +75,8 @@ class PVPConsumer(AsyncWebsocketConsumer):
         self.score1 = game_state['score1']
         self.score2 = game_state['score2']
 
-        # Start the game loop when two player connect
-        if len(game_state['players']) == 2:
-            print("Two Players are connected!")
+        # Start the game loop
+        if len(game_state['players']) == 2 or self.game_mode == "pve":
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {

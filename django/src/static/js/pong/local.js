@@ -18,11 +18,12 @@ let ball;
 let table;
 let assignedPaddle = null;
 
-const socket = new WebSocket(`ws://${window.location.host}/ws/pvp/${roomName}/`);
+const socket = new WebSocket(`ws://${window.location.host}/ws/${gameMode}/${roomName}/`);
 roomCode.innerHTML = roomName;
 
 socket.onopen = function() {
     console.log("WebSocket connection established " + roomName);
+    socket.send(JSON.stringify({ 'game_mode': gameMode}));
 };
 socket.onerror = function(error) {
     console.error("WebSocket error:", error);
@@ -59,6 +60,11 @@ socket.onmessage = function(e) {
         matchmaking.style.display = 'none';
         gameCanvas.style.display = 'block';
         scoreBoard.style.display = 'block';
+        if (assignedPaddle === 'paddle1') {
+            paddle1.color = "lightgreen";
+        } else if (assignedPaddle === 'paddle2') {
+            paddle2.color = "lightgreen";
+        }
     }
     if (data.type === 'countdown_game') {
         console.log("countdown_game");

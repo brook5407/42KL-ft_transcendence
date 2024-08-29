@@ -1,0 +1,14 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
+
+<div id="lobby">
+    <h2>Lobby: {{ room_name }}</h2>
+    <ul id="playerList">
+        {% for player in players %}
+            <li>{{ player.username }}</li>
+        {% endfor %}
+    </ul>
+    <button id="startTournament">Start Tournament</button>
+</div>
