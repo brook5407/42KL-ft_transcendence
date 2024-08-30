@@ -32,7 +32,12 @@ def is_online_image_url(url):
 class ChatConsumer(AsyncWebsocketConsumer):
     
     async def websocket_connect(self, message):
-        self.chat_room = self.scope['url_route']['kwargs']['room_name']
+        self.chat_room = self.scope['url_route']['kwargs']['group_num']
+        
+        # self.room_id = self.scope['url_route']['kwargs'].get('room_id')
+        # self.room = ChatRoom.objects.get(id=self.room_id)
+        # self.room_name = self.room.get_room_name(self.scope['user'])
+        
         print("self.chat_room: " + self.chat_room)
         self.room_group_name = f'chat_{self.chat_room}'
         self.customer_name = self.scope["user"].username

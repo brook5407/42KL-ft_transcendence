@@ -61,6 +61,7 @@ export const DRAWERS = {
 	'friend-requests': GenericDrawer,
 	'search-friend': GenericDrawer,
 	'friend-profile': GenericDrawer,
+	'friend-room': GenericDrawer,
 };
 
 // open drawer and back buttons handler

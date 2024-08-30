@@ -18,6 +18,9 @@ export class FriendListTile extends Component {
 						});
 					else if (element.title === 'Chat') {
 						// openDrawer('chat-room', { username });
+						openDrawer('friend-room', {
+							url: `drawer/friend-room?username=${username}`,
+						});
 					}
 				});
 			});
@@ -38,6 +41,8 @@ export class FriendListTile extends Component {
 				<div class="friend-list-tile__username">@${friend.user.username}</div>
 			</div>
 			<div class="friend-list-tile__action">
+
+
 				<a class="icon-action" title="Chat" data-username=${friend.user.username}>
 					<i class="fa fa-comments"></i>
 				</a>

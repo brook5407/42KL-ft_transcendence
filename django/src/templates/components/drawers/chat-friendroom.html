@@ -1,0 +1,32 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/chat-room.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>{{ room_name }}</h2>
+{% endblock %}
+
+{% block drawerContent %}
+{% comment %} <div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="8888" style="display:none;"></div> {% endcomment %}
+<div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="public_room" style="display:none;"></div>
+
+<div class="chat-container">
+    <div class="chat-messages" id="chat-messages">
+        <!-- Messages will be appended here dynamically -->
+    </div>
+    <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Type a message..." onKeyPress=handleMessage(event)>
+        <button id="send-button" onclick="sendMessage()">
+			<img src="{% static 'images/icons/send.svg' %}" alt="Send" />
+		</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block drawerScripts %}
+	<script src="{% static 'js/chat/chat.js' %}"></script>
+{% endblock %}
