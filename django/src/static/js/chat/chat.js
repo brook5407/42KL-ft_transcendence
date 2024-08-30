@@ -4,45 +4,11 @@ const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
 
 const appConfigElement = document.getElementById('chat-config');
 const nickname = appConfigElement.getAttribute('data-nickname'); //
-const group_num = appConfigElement.getAttribute('data-room') || 123;
+const group_num = appConfigElement.getAttribute('data-room') || '0000';
 const receiver = appConfigElement.getAttribute('data-receiver') || null;
 console.log('nickname: ' + nickname);
 
-// const ChatListConfigElement = document.getElementById('chat-list-item');
-// const group_num = ChatListConfigElement.getAttribute('data-roomid') || 123;
 
-// let currentUrl = window.location.href;
-// let url = new URL(currentUrl);
-// let group_num = url.searchParams.get('room') || 123;
-
-// async function fetchToken() {
-// 	const queryString = new URLSearchParams({
-// 		group_num: group_num ? group_num : '123',
-// 		nickname: 'JohnDoe',
-// 		// nickname: nickname ? nickname : 'JohnDoe'
-// 	}).toString();
-
-// 	const response = await fetch('/chat?' + queryString);
-// 	// console.log('/chat?' + queryString);
-// 	const chat_data = await response.json();
-// 	return chat_data.token;
-// }
-
-// async function initialize() {
-// 	try {
-// 		// Fetch the token
-// 		const token = await fetchToken();
-
-// 		// Use the token
-// 		console.log('Retrieved token:', token);
-
-// 		// Further actions with the token, e.g., decode or use in application
-// 		// Note: Ensure any sensitive operations are done securely
-// 	} catch (error) {
-// 		console.error('Error initializing:', error);
-// 	}
-// }
-// initialize();
 
 const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${nickname}`;
 let socket = null;
@@ -324,24 +290,24 @@ function handleMessage(event) {
 	}
 }
 
-function dataURLToBlob(dataURL) {
-	const BASE64_MARKER = ';base64,';
-	if (dataURL.indexOf(BASE64_MARKER) === -1) {
-		const parts = dataURL.split(',');
-		const contentType = parts[0].split(':')[1];
-		const raw = parts[1];
-		return new Blob([raw], { type: contentType });
-	}
+// function dataURLToBlob(dataURL) {
+// 	const BASE64_MARKER = ';base64,';
+// 	if (dataURL.indexOf(BASE64_MARKER) === -1) {
+// 		const parts = dataURL.split(',');
+// 		const contentType = parts[0].split(':')[1];
+// 		const raw = parts[1];
+// 		return new Blob([raw], { type: contentType });
+// 	}
 
-	const parts = dataURL.split(BASE64_MARKER);
-	const contentType = parts[0].split(':')[1];
-	const raw = window.atob(parts[1]);
-	const rawLength = raw.length;
+// 	const parts = dataURL.split(BASE64_MARKER);
+// 	const contentType = parts[0].split(':')[1];
+// 	const raw = window.atob(parts[1]);
+// 	const rawLength = raw.length;
 
-	const uInt8Array = new Uint8Array(rawLength);
-	for (let i = 0; i < rawLength; ++i) {
-		uInt8Array[i] = raw.charCodeAt(i);
-	}
+// 	const uInt8Array = new Uint8Array(rawLength);
+// 	for (let i = 0; i < rawLength; ++i) {
+// 		uInt8Array[i] = raw.charCodeAt(i);
+// 	}
 
-	return new Blob([uInt8Array], { type: contentType });
-}
+// 	return new Blob([uInt8Array], { type: contentType });
+// }

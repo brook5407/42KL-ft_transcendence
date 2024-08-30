@@ -16,36 +16,36 @@ const group_num = appConfigElement.getAttribute('room');
 
 
 
-async function fetchToken() {
+// async function fetchToken() {
 
-    const queryString = new URLSearchParams({
-        group_num: group_num ? group_num : '123',
-        nickname: 'JohnDoe'
-        // nickname: nickname ? nickname : 'JohnDoe'
-    }).toString();
+//     const queryString = new URLSearchParams({
+//         group_num: group_num ? group_num : '123',
+//         nickname: 'JohnDoe'
+//         // nickname: nickname ? nickname : 'JohnDoe'
+//     }).toString();
 
-    const response = await fetch('/chat?' + queryString);
-    // console.log('/chat?' + queryString);
-    const chat_data = await response.json();
-    return chat_data.token;
-}
+//     const response = await fetch('/chat?' + queryString);
+//     // console.log('/chat?' + queryString);
+//     const chat_data = await response.json();
+//     return chat_data.token;
+// }
 
-async function initialize() {
-    try {
-        // Fetch the token
-        const token = await fetchToken();
+// async function initialize() {
+//     try {
+//         // Fetch the token
+//         const token = await fetchToken();
 
-        // Use the token
-        console.log("Retrieved token:", token);
+//         // Use the token
+//         console.log("Retrieved token:", token);
 
-        // Further actions with the token, e.g., decode or use in application
-        // Note: Ensure any sensitive operations are done securely
+//         // Further actions with the token, e.g., decode or use in application
+//         // Note: Ensure any sensitive operations are done securely
 
-    } catch (error) {
-        console.error('Error initializing:', error);
-    }
-}
-initialize();
+//     } catch (error) {
+//         console.error('Error initializing:', error);
+//     }
+// }
+// initialize();
 
 
 

@@ -40,6 +40,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         print("self.chat_room: " + self.chat_room)
         self.room_group_name = f'chat_{self.chat_room}'
+        
         self.customer_name = self.scope["user"].username
         
         # self.receiver_id = "Name"
