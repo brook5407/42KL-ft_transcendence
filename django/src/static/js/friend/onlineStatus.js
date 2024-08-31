@@ -18,22 +18,34 @@ export class FriendsOnlineStatus {
 		const data = JSON.parse(event.data);
 		console.log('Friends online status data', data);
 
-		// if (data.initial_status) {
-		// 	const friends = document.querySelectorAll('.friend-list__tile');
-		// 	friends.forEach((friend) => {
-		// 		const friendId = friend.getAttribute('data-user-id');
-		// 		if (data.initial_status[friendId]) {
-		// 			const onlineStatus = data.initial_status[friendId];
-		// 			const statusElem = friend.querySelector('.friend-list__status');
-		// 			statusElem.textContent = onlineStatus ? 'Online' : 'Offline';
-		// 			statusElem.classList.add(
-		// 				onlineStatus
-		// 					? 'friend-list__status--online'
-		// 					: 'friend-list__status--offline'
-		// 			);
-		// 		}
-		// 	});
-		// }
+		if (data.online_friend_ids) {
+			// the initial online friend list
+			window.onlineFriendIds = data.online_friend_ids;
+			return;
+		}
+
+		// toggle the online status of the friend
+		const friendTile = document.querySelector(
+			`.friend-list-tile[data-user-id="${data.user_id}"]`
+		);
+		const avatar = friendTile?.querySelector('.friend-list-tile__avatar img');
+		if (data.status === true) {
+			// friend online
+			window.onlineFriendIds.push(data.user_id);
+			if (avatar) {
+				avatar.addOnlineStatus();
+			}
+		} else {
+			// friend offline
+			const index = window.onlineFriendIds.indexOf(data.user_id);
+			if (index > -1) {
+				window.onlineFriendIds.splice(index, 1);
+			}
+
+			if (avatar) {
+				avatar.removeOnlineStatus();
+			}
+		}
 	}
 
 	onclose(event) {

@@ -97,7 +97,7 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
         
     async def send_initial_online_status(self):
         online_friends = await self.get_online_friends()
-        initial_status = [friend_id for friend_id in online_friends]
+        online_friend_ids = [friend_id for friend_id in online_friends]
         await self.send(text_data=json.dumps({
-            'initial_status': initial_status
+            'online_friend_ids': online_friend_ids
         }))

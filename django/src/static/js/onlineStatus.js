@@ -1,13 +1,12 @@
-HTMLElement.prototype.toggleOnlineStatus = function () {
+HTMLElement.prototype.addOnlineStatus = function () {
 	// if this is a img tag, add the online status dot to the parent element
 	if (this.tagName === 'IMG') {
-		this.parentElement.toggleOnlineStatus();
+		this.parentElement.addOnlineStatus();
 		return;
 	}
 
 	let dot = this.querySelector('div.online-status-dot');
 	if (dot) {
-		this.removeChild(dot);
 		return;
 	}
 
@@ -23,4 +22,17 @@ HTMLElement.prototype.toggleOnlineStatus = function () {
 
 	this.style.position = 'relative'; // Ensure the parent element is positioned
 	this.appendChild(dot);
+};
+
+HTMLElement.prototype.removeOnlineStatus = function () {
+	// if this is a img tag, add the online status dot to the parent element
+	if (this.tagName === 'IMG') {
+		this.parentElement.removeOnlineStatus();
+		return;
+	}
+
+	let dot = this.querySelector('div.online-status-dot');
+	if (dot) {
+		dot.remove();
+	}
 };

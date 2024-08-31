@@ -22,6 +22,14 @@ export class FriendList extends Component {
 
 	startComponent() {
 		this.renderFriendList();
+
+		const friends = document.querySelectorAll('.friend-list__tile');
+		friends.forEach((friend) => {
+			const friendId = friend.getAttribute('data-user-id');
+			if (window.onlineFriendIds[friendId]) {
+				friend.addOnlineStatus();
+			}
+		});
 	}
 
 	renderFriendList() {

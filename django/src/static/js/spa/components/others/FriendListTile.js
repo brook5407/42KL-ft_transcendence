@@ -21,6 +21,15 @@ export class FriendListTile extends Component {
 			.addEventListener('click', () => {
 				// openDrawer('chat'); WXR TODO
 			});
+
+		// show online status
+		this.element
+			.querySelectorAll('.friend-list-tile__avatar img')
+			.forEach((avatar) => {
+				if (window.onlineFriendIds.includes(this.friend.user.id)) {
+					avatar.addOnlineStatus();
+				}
+			});
 	}
 
 	template() {
