@@ -14,7 +14,7 @@ export class FriendList extends Component {
 	}
 
 	async initComponent() {
-		this.friends = await ajax_with_auth('/api/friends/', {
+		this.friends = await ajaxWithAuth('/api/friends/', {
 			method: 'GET',
 		}).then((response) => response.json());
 	}

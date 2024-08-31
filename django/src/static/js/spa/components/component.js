@@ -1,4 +1,4 @@
-import { ajax, ajax_with_auth } from '../ajax.js';
+import { ajax, ajaxWithAuth } from '../ajax.js';
 
 export const ROOT_ELEMENT = document.getElementById('root');
 export const MODAL_CONTAINER = document.getElementById('modal-container');
@@ -22,7 +22,7 @@ export class Component {
 		try {
 			// const urlParams = new URLSearchParams(queryParams);
 			// const urlWithParams = url + '?' + urlParams.toString();
-			const response = await ajax_with_auth(url, {
+			const response = await ajaxWithAuth(url, {
 				method: 'GET',
 				params: queryParams,
 			});

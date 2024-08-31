@@ -26,7 +26,7 @@ export class FriendRequestTile extends Component {
 	}
 
 	async acceptFriendRequest(friendId) {
-		const response = await ajax_with_auth(
+		const response = await ajaxWithAuth(
 			`/api/friend-requests/${friendId}/accept/`,
 			{
 				method: 'POST',
@@ -42,7 +42,7 @@ export class FriendRequestTile extends Component {
 	}
 
 	async rejectFriendRequest(friendId) {
-		const response = await ajax_with_auth(
+		const response = await ajaxWithAuth(
 			`/api/friend-requests/${friendId}/reject/`,
 			{
 				method: 'POST',

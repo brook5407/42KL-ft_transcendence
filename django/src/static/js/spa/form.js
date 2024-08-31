@@ -1,4 +1,4 @@
-import { ajax, ajax_with_auth } from './ajax.js';
+import { ajax, ajaxWithAuth } from './ajax.js';
 import { showSuccessMessage, showErrorMessage } from '../message.js';
 import { signin, signup } from '../auth.js';
 
@@ -28,7 +28,7 @@ function submitForm(form, method = 'POST', callback) {
 	const closeLoadingEffect = showLoadingEffect(); // Show the loading effect
 
 	// Send the form data using Fetch API
-	ajax_with_auth(actionUrl, {
+	ajaxWithAuth(actionUrl, {
 		method: method,
 		body: formData,
 		headers: {

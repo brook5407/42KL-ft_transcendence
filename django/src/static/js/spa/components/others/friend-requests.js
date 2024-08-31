@@ -13,7 +13,7 @@ export class FriendRequests extends Component {
 	}
 
 	async initComponent() {
-		this.friendRequests = await ajax_with_auth('/api/friend-requests/to_me/', {
+		this.friendRequests = await ajaxWithAuth('/api/friend-requests/to_me/', {
 			method: 'GET',
 		}).then((res) => res.json());
 	}

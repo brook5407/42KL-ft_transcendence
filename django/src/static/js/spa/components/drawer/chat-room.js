@@ -1,4 +1,4 @@
-import { ajax_with_auth } from '../../ajax.js';
+import { ajaxWithAuth } from '../../ajax.js';
 import { Component } from '../component.js';
 
 export class ChatRoom extends Component {

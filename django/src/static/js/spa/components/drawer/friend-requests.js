@@ -23,6 +23,7 @@ export class FriendRequestsDrawer extends Component {
 		}
 	}
 
+	// override
 	async initComponent() {
 		document.addEventListener(
 			'drawer-opened',
@@ -30,6 +31,7 @@ export class FriendRequestsDrawer extends Component {
 		);
 	}
 
+	// override
 	destroy() {
 		super.destroy();
 		document.removeEventListener(
@@ -39,6 +41,7 @@ export class FriendRequestsDrawer extends Component {
 		this.friendRequestsComponent?.destroy();
 	}
 
+	// override
 	template() {
 		return `
 			<div>
