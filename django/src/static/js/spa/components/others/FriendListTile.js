@@ -1,5 +1,5 @@
 import { openDrawer } from '../../drawer.js';
-import { Component } from '../component.js';
+import { Component } from '../Component.js';
 
 export class FriendListTile extends Component {
 	constructor(params) {

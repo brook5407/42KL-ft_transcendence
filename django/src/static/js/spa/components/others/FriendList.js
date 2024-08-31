@@ -1,5 +1,5 @@
-import { Component } from '../component.js';
-import { FriendListTile } from './friend-list-tile.js';
+import { Component } from '../Component.js';
+import { FriendListTile } from './FriendListTile.js';
 
 export class FriendList extends Component {
 	constructor(params) {

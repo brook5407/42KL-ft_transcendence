@@ -1,6 +1,6 @@
-import { Component } from '../component.js';
+import { Component } from '../Component.js';
 
-export class GenericDrawer extends Component {
+export class ChatListDrawer extends Component {
 	constructor(params) {
 		super(params);
 	}

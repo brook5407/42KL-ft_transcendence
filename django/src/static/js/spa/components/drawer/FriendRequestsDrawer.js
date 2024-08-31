@@ -1,5 +1,5 @@
-import { Component } from '../component.js';
-import { FriendRequests } from '../others/friend-requests.js';
+import { Component } from '../Component.js';
+import { FriendRequests } from '../others/FriendRequests.js';
 
 export class FriendRequestsDrawer extends Component {
 	constructor(params) {

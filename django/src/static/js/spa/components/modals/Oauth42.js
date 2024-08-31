@@ -1,4 +1,4 @@
-import { Component } from '../component.js';
+import { Component } from '../Component.js';
 
 export class Oauth42 extends Component {
 	constructor(params) {

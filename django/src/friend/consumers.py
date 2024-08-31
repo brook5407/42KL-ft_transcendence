@@ -30,7 +30,7 @@ class FriendRequestConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event["message"]))
         
 
-class StatusConsumer(AsyncWebsocketConsumer):
+class OnlineStatusConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         self.room_group_name = 'online_users'

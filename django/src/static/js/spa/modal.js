@@ -1,7 +1,7 @@
-import { MODAL_CONTAINER } from './components/component.js';
-import { SignIn } from './components/modals/signin.js';
-import { SignUp } from './components/modals/signup.js';
-import { Oauth42 } from './components/modals/42oauth.js';
+import { MODAL_CONTAINER } from './components/Component.js';
+import { SignIn } from './components/modals/SignIn.js';
+import { SignUp } from './components/modals/SignUp.js';
+import { Oauth42 } from './components/modals/Oauth42.js';
 
 let currentModal = null;
 

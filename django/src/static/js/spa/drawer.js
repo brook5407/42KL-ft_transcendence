@@ -1,9 +1,9 @@
-import { DRAWER_CONTAINER } from './components/component.js';
-import { GenericDrawer } from './components/drawer/generic.js';
-import { ChatRoom } from './components/drawer/chat-room.js';
-import { ChatList } from './components/drawer/chat-list.js';
-import { FriendListDrawer } from './components/drawer/friend-list.js';
-import { FriendRequestsDrawer } from './components/drawer/friend-requests.js';
+import { DRAWER_CONTAINER } from './components/Component.js';
+import { GenericDrawer } from './components/drawer/GenericDrawer.js';
+import { ChatRoomDrawer } from './components/drawer/ChatRoomDrawer.js';
+import { ChatListDrawer } from './components/drawer/ChatListDrawer.js';
+import { FriendListDrawer } from './components/drawer/FriendListDrawer.js';
+import { FriendRequestsDrawer } from './components/drawer/FriendRequestsDrawer.js';
 
 class DrawerStack {
 	constructor() {
@@ -57,8 +57,8 @@ const drawerStack = new DrawerStack();
 export const DRAWERS = {
 	profile: GenericDrawer,
 	settings: GenericDrawer,
-	'chat-list': ChatList,
-	'chat-room': ChatRoom,
+	'chat-list': ChatListDrawer,
+	'chat-room': ChatRoomDrawer,
 	'friend-list': FriendListDrawer,
 	'friend-requests': FriendRequestsDrawer,
 	'search-friend': GenericDrawer,

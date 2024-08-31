@@ -1,7 +1,7 @@
 import { ajaxWithAuth } from '../../ajax.js';
-import { Component } from '../component.js';
+import { Component } from '../Component.js';
 
-export class ChatRoom extends Component {
+export class ChatRoomDrawer extends Component {
 	constructor(params) {
 		super(params);
 		this.queryParams = {
