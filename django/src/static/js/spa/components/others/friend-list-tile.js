@@ -16,7 +16,11 @@ export class FriendListTile extends Component {
 					url: `drawer/friend-drawer?username=${this.friend.user.username}`,
 				});
 			});
-		// this.element.querySelector('');
+		this.element
+			.querySelector('.icon-action[title="Chat"]')
+			.addEventListener('click', () => {
+				// openDrawer('chat'); WXR TODO
+			});
 	}
 
 	template() {
@@ -37,9 +41,6 @@ export class FriendListTile extends Component {
 			<div class="friend-list-tile__action">
 				<a class="icon-action" title="Chat">
 					<i class="fa fa-comments"></i>
-				</a>
-				<a class="icon-action" title="Toggle Block">
-					<i class="fa fa-user"></i>
 				</a>
 			</div>
 		</div>
