@@ -25,7 +25,22 @@
 			<p class="profile-email">{{ friend_profile.user.email }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="profile-bio">{{ friend_profile.bio }}</p>
+			<p class="profile-bio">
+				{% if friend_profile.bio %}
+					{{ friend_profile.bio }}
+				{% else %}
+					This user didn't say anything
+				{% endif %}
+			</p>
+		</div>
+
+		<div class="action-buttons">
+			{% if is_blocked %}
+				<button type="button" class="btn unblock-btn" data-friend-id="{{ friend_profile.user.id }}">Unblock</button>
+			{% else %}
+				<button type="button" class="btn block-btn" data-friend-id="{{ friend_profile.user.id }}">Block</button>
+			{% endif %}
+			<button type="button" class="btn delete-btn" data-friend-id="{{ friend_profile.user.id }}">Delete</button>
 		</div>
 	</div>
 {% endblock %}
