@@ -38,6 +38,8 @@ export function getCurrentUser() {
 		.then((response) => {
 			if (response.ok) {
 				return response.json();
+			} else {
+				throw 'User not logged in';
 			}
 		})
 		.then((data) => {
@@ -45,6 +47,9 @@ export function getCurrentUser() {
 			const event = new CustomEvent('user-ready');
 			document.dispatchEvent(event);
 			return data;
+		})
+		.catch((error) => {
+			console.log(error);
 		});
 }
 
@@ -75,5 +80,3 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 });
-
-
