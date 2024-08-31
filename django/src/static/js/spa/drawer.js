@@ -2,6 +2,8 @@ import { DRAWER_CONTAINER } from './components/component.js';
 import { GenericDrawer } from './components/drawer/generic.js';
 import { ChatRoom } from './components/drawer/chat-room.js';
 import { ChatList } from './components/drawer/chat-list.js';
+import { FriendListDrawer } from './components/drawer/friend-list.js';
+import { FriendRequestsDrawer } from './components/drawer/friend-requests.js';
 
 class DrawerStack {
 	constructor() {
@@ -57,8 +59,8 @@ export const DRAWERS = {
 	settings: GenericDrawer,
 	'chat-list': ChatList,
 	'chat-room': ChatRoom,
-	'friend-list': GenericDrawer,
-	'friend-requests': GenericDrawer,
+	'friend-list': FriendListDrawer,
+	'friend-requests': FriendRequestsDrawer,
 	'search-friend': GenericDrawer,
 	'friend-profile': GenericDrawer,
 };
@@ -88,6 +90,7 @@ document.body.addEventListener('click', (e) => {
 });
 
 function dispatchDrawerOpenedEvent(e = null) {
+	console.log('dispatch drawer-opened event');
 	document.dispatchEvent(new CustomEvent('drawer-opened', e));
 }
 
@@ -127,8 +130,8 @@ export function closeDrawer() {
 	drawerOverlay?.classList.remove('drawer-active');
 	drawer?.classList.remove('drawer-active');
 	setTimeout(() => {
-		DRAWER_CONTAINER.innerHTML = '';
 		currentDrawer?.destroy();
+		DRAWER_CONTAINER.innerHTML = '';
 	}, 500);
 	drawerStack.empty();
 }

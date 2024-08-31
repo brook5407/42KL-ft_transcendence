@@ -9,12 +9,8 @@ export class FriendList extends Component {
 		this.filter = '';
 		this.friendListTiles = [];
 
-		this.updateEventListener = document.addEventListener(
-			'friend-requests-update',
-			async () => {
-				await this.update();
-			}
-		);
+		this.boundUpdate = this.update.bind(this);
+		document.addEventListener('friend-requests-update', this.boundUpdate);
 	}
 
 	async initComponent() {
@@ -68,7 +64,7 @@ export class FriendList extends Component {
 	destroy() {
 		super.destroy();
 		this.friendListTiles.forEach((friendTile) => friendTile.destroy());
-		document.removeEventListener(this.updateEventListener);
+		document.removeEventListener('friend-requests-update', this.boundUpdate);
 	}
 
 	template() {
