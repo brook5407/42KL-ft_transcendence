@@ -90,11 +90,12 @@ document.body.addEventListener('click', (e) => {
 });
 
 function dispatchDrawerOpenedEvent(e = null) {
-	console.log('dispatch drawer-opened event');
 	document.dispatchEvent(new CustomEvent('drawer-opened', e));
 }
 
 export async function openDrawer(drawerName, data = {}, pushStack = true) {
+	// close previous drawer only
+	closeDrawer(false, false);
 	const drawerClass = DRAWERS[drawerName];
 	const drawer = new drawerClass({
 		url: data.url,
@@ -124,16 +125,25 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 	return element;
 }
 
-export function closeDrawer() {
+export function closeDrawer(delay = true, emptyStack = true) {
 	const drawerOverlay = document.getElementById('drawerOverlay');
 	const drawer = document.getElementById('drawer');
 	drawerOverlay?.classList.remove('drawer-active');
 	drawer?.classList.remove('drawer-active');
+	if (emptyStack) {
+		drawerStack.empty();
+	}
+	if (!delay) {
+		currentDrawer?.destroy();
+		DRAWER_CONTAINER.innerHTML = '';
+		currentDrawer = null;
+		return;
+	}
 	setTimeout(() => {
 		currentDrawer?.destroy();
 		DRAWER_CONTAINER.innerHTML = '';
+		currentDrawer = null;
 	}, 500);
-	drawerStack.empty();
 }
 
 function activateDrawer() {

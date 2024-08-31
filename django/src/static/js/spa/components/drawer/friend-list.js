@@ -11,7 +11,6 @@ export class FriendListDrawer extends Component {
 	}
 
 	async renderFriendList() {
-		console.log('Rendering friend list');
 		this.friendList = new FriendList();
 		const friendListElem = document.getElementById('friend-list');
 		friendListElem.innerHTML = '';

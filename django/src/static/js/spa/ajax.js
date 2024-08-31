@@ -40,7 +40,7 @@ export async function ajaxWithAuth(url, options) {
 	);
 
 	if (
-		fetchOptions.method === 'GET' &&
+		(fetchOptions.method === 'GET' || fetchOptions.method === 'DELETE') &&
 		fetchOptions.params &&
 		Object.keys(fetchOptions.params).length > 0
 	) {
