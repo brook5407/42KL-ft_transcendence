@@ -1,7 +1,7 @@
 import { showSuccessMessage, showInfoMessage } from './message.js';
 import { closeModal } from './spa/modal.js';
 import { router } from './spa/navigation.js';
-import { ajax, ajax_with_auth } from './spa/ajax.js';
+import { ajax, ajaxWithAuth } from './spa/ajax.js';
 import { closeDrawer } from './spa/drawer.js';
 
 export function signup(data) {
@@ -29,7 +29,7 @@ export function logout() {
 }
 
 export function getCurrentUser() {
-	return ajax_with_auth('/current-user', {
+	return ajaxWithAuth('/current-user', {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -38,6 +38,8 @@ export function getCurrentUser() {
 		.then((response) => {
 			if (response.ok) {
 				return response.json();
+			} else {
+				throw 'User not logged in';
 			}
 		})
 		.then((data) => {
@@ -45,6 +47,9 @@ export function getCurrentUser() {
 			const event = new CustomEvent('user-ready');
 			document.dispatchEvent(event);
 			return data;
+		})
+		.catch((error) => {
+			console.log(error);
 		});
 }
 
@@ -75,5 +80,3 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 });
-
-

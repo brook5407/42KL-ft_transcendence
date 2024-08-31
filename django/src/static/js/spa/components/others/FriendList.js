@@ -1,5 +1,6 @@
-import { Component } from '../component.js';
-import { FriendListTile } from './friend-list-tile.js';
+import { Component } from '../Component.js';
+import { FriendListTile } from './FriendListTile.js';
+import { FriendsOnlineStatus } from '../../../friend/onlineStatus.js';
 
 export class FriendList extends Component {
 	constructor(params) {
@@ -9,22 +10,26 @@ export class FriendList extends Component {
 		this.filter = '';
 		this.friendListTiles = [];
 
-		this.updateEventListener = document.addEventListener(
-			'friend-requests-update',
-			async () => {
-				await this.update();
-			}
-		);
+		this.boundUpdate = this.update.bind(this);
+		document.addEventListener('friend-requests-update', this.boundUpdate);
 	}
 
 	async initComponent() {
-		this.friends = await ajax_with_auth('/api/friends/', {
+		this.friends = await ajaxWithAuth('/api/friends/', {
 			method: 'GET',
 		}).then((response) => response.json());
 	}
 
 	startComponent() {
 		this.renderFriendList();
+
+		const friends = document.querySelectorAll('.friend-list__tile');
+		friends.forEach((friend) => {
+			const friendId = friend.getAttribute('data-user-id');
+			if (window.onlineFriendIds[friendId]) {
+				friend.addOnlineStatus();
+			}
+		});
 	}
 
 	renderFriendList() {
@@ -68,7 +73,7 @@ export class FriendList extends Component {
 	destroy() {
 		super.destroy();
 		this.friendListTiles.forEach((friendTile) => friendTile.destroy());
-		document.removeEventListener(this.updateEventListener);
+		document.removeEventListener('friend-requests-update', this.boundUpdate);
 	}
 
 	template() {

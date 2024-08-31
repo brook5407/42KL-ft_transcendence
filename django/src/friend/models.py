@@ -1,9 +1,10 @@
-from datetime import timezone
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Q
+from django.forms import ValidationError
 from base.models import BaseModel
 
 # Create your models here.
@@ -24,17 +25,24 @@ class UserRelation(BaseModel):
         return f"{self.user.username} - {self.friend.username}"
     
     def delete(self):
+        if self.deleted:
+            raise ValidationError("User relation is already deleted.")
         self.deleted = True
         self.deleted_at = timezone.now()
         self.save()
         
     def block(self):
+        if self.blocked:
+            raise ValidationError("User is already blocked.")
         self.blocked = True
         self.blocked_at = timezone.now()
         self.save()
     
     def unblock(self):
+        if not self.blocked:
+            raise ValidationError("User is not blocked.")
         self.blocked = False
+        self.blocked_at = None
         self.save()
 
 
@@ -56,17 +64,17 @@ class FriendRequest(BaseModel):
     
     def accept(self, current_user):
         if current_user == self.sender:
-            raise ValueError("You cannot accept your own request.")
+            raise ValidationError("You cannot accept your own request.")
         elif current_user != self.receiver:
-            raise ValueError("You cannot accept a request that is not addressed to you.")
+            raise ValidationError("You cannot accept a request that is not addressed to you.")
         self.status = self.Status.ACCEPTED
         self.save()
         
     def reject(self, current_user):
         if current_user == self.sender:
-            raise ValueError("You cannot reject your own request.")
+            raise ValidationError("You cannot reject your own request.")
         elif current_user != self.receiver:
-            raise ValueError("You cannot accept a request that is not addressed to you.")
+            raise ValidationError("You cannot accept a request that is not addressed to you.")
         self.status = self.Status.REJECTED
         self.save()
         
@@ -94,8 +102,9 @@ class FriendRequest(BaseModel):
 
 
 def get_friends(self):
-    user_relations = UserRelation.objects.filter(Q(user=self) | Q(friend=self))
-    friends = user_relations.filter(deleted=False, blocked=False)
+    user_relations = UserRelation.objects.filter(Q(user=self)).filter(deleted=False)
+    friend_ids = user_relations.values_list('friend_id', flat=True)
+    friends = User.objects.filter(id__in=friend_ids)
     return friends
 
 User.add_to_class('friends', property(get_friends))

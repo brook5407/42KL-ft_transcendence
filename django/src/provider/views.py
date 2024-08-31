@@ -1,5 +1,4 @@
 import requests
-
 from django.urls import reverse
 from django.conf import settings
 from allauth.account import app_settings
@@ -12,9 +11,10 @@ from allauth.socialaccount.providers.oauth2.client import (
     OAuth2Error,
 )
 from allauth.utils import build_absolute_uri
-
+from core import settings
 from .client import FortyTwoOAuth2Client
 from .provider import FortyTwoProvider
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class FortyTwoOAuth2Adapter(OAuth2Adapter):
@@ -65,7 +65,40 @@ class FortyTwoOAuth2LoginView(FortyTwoOAuth2ClientMixin, OAuth2LoginView):
 
 
 class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
-    pass
+    def dispatch(self, request, *args, **kwargs):
+        # Call the original dispatch method to handle the OAuth2 callback
+        response = super().dispatch(request, *args, **kwargs)
+
+        # After successful login, generate JWT tokens
+        if self.request.user.is_authenticated:
+            refresh = RefreshToken.for_user(self.request.user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+            
+            access_token_lifetime = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
+            refresh_token_lifetime = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+
+            if settings.REST_AUTH['USE_JWT']:
+                response.set_cookie(
+                    settings.REST_AUTH['JWT_AUTH_COOKIE'],
+                    access_token,
+                    httponly=False,
+                    secure=False,
+                    samesite='Lax',
+                    max_age=access_token_lifetime.total_seconds(),
+                )
+                response.set_cookie(
+                    settings.REST_AUTH['JWT_AUTH_REFRESH_COOKIE'],
+                    refresh_token,
+                    httponly=False,
+                    secure=False,
+                    samesite='Lax',
+                    max_age=refresh_token_lifetime.total_seconds()
+                )
+            
+            return response
+        
+        return response
 
 
 oauth2_login = FortyTwoOAuth2LoginView.adapter_view(FortyTwoOAuth2Adapter)

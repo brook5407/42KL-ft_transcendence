@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/message.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/components.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/loading.css' %}" />
 
     <title>AIsPong</title>
   </head>
@@ -33,11 +34,14 @@
 
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     <script type="module" src="{% static 'js/script.js' %}"></script>
+    <script type="module" src="{% static 'js/oauth.js' %}"></script>
     <script type="module" src="{% static 'js/message.js' %}"></script>
     <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
     <script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
     <script type="module" src="{% static 'js/spa/form.js' %}"></script>
     <script type="module" src="{% static 'js/notification.js' %}"></script>
-    <script type="module" src="{% static 'js/friend/fr-live-update.js' %}"></script>
+    <script type="module" src="{% static 'js/loading.js' %}"></script>
+    <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
+    <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
   </body>
 </html>

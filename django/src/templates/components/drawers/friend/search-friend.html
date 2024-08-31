@@ -40,7 +40,7 @@
 		if (value === '') {
 			return;
 		}
-		ajax_with_auth('/api/friends/search_friend/', {
+		ajaxWithAuth('/api/friends/search_friend/', {
 			method: 'GET',
 			params: {
 				username: value
@@ -63,7 +63,7 @@
 	}
 
 	function sendFriendRequest(receiverUsername) {
-		ajax_with_auth('/api/friend-requests/', {
+		ajaxWithAuth('/api/friend-requests/', {
 			method: 'POST',
 			body: JSON.stringify({
 				receiver: receiverUsername

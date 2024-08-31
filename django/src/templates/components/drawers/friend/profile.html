@@ -25,10 +25,95 @@
 			<p class="profile-email">{{ friend_profile.user.email }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="profile-bio">{{ friend_profile.bio }}</p>
+			<p class="profile-bio">
+				{% if friend_profile.bio %}
+					{{ friend_profile.bio }}
+				{% else %}
+					This user didn't say anything
+				{% endif %}
+			</p>
+		</div>
+
+		<div class="action-buttons">
+			{% if friend_is_blocked %}
+				<button type="button" id="block-unblock-btn" class="btn unblock-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">Unblock</button>
+			{% else %}
+				<button type="button" id="block-unblock-btn" class="btn block-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">Block</button>
+			{% endif %}
+			<button type="button" class="btn delete-btn" onclick="deleteFriend('{{ friend_profile.user.id }}')">Delete</button>
 		</div>
 	</div>
 {% endblock %}
 
 {% block drawerScripts %}
+<script>
+	function deleteFriend(friendId) {
+		ajaxWithAuth('{% url "friends-delete" %}', {
+			method: 'DELETE',
+			params: { friend_id: friendId },
+		}).then(response => {
+			if (response.ok) {
+				closeDrawer();
+				showSuccessMessage('Friend deleted successfully');
+				return;
+			}
+			throw new Error('Failed to delete friend');
+		}).catch(error => {
+			console.error(error);
+		});
+	}
+
+	function toggleBlockFriend(friendId) {
+		const btn = document.getElementById('block-unblock-btn');
+		if (btn.classList.contains('block-btn')) {
+			blockFriend(friendId);
+		} else {
+			unblockFriend(friendId);
+		}
+	}
+
+	function blockFriend(friendId) {
+		ajaxWithAuth('{% url "friends-block" %}', {
+			method: 'POST',
+			body: JSON.stringify({ friend_id: friendId }),
+			headers: {
+				'Content-Type': 'application/json'
+			},
+		}).then(response => {
+			if (response.ok) {
+				const blockBtn = document.getElementById('block-unblock-btn');
+				blockBtn.classList.remove('block-btn');
+				blockBtn.classList.add('unblock-btn');
+				blockBtn.innerText = 'Unblock';
+				showSuccessMessage('Friend blocked successfully');
+				return;
+			}
+			throw new Error('Failed to block friend');
+		}).catch(error => {
+			console.error(error);
+		});
+	}
+
+	function unblockFriend(friendId) {
+		ajaxWithAuth('{% url "friends-unblock" %}', {
+			method: 'POST',
+			body: JSON.stringify({ friend_id: friendId }),
+			headers: {
+				'Content-Type': 'application/json'
+			},
+		}).then(response => {
+			if (response.ok) {
+				const unblockBtn = document.getElementById('block-unblock-btn');
+				unblockBtn.classList.remove('unblock-btn');
+				unblockBtn.classList.add('block-btn');
+				unblockBtn.innerText = 'Block';
+				showSuccessMessage('Friend unblocked successfully');
+				return;
+			}
+			throw new Error('Failed to unblock friend');
+		}).catch(error => {
+			console.error(error);
+		});
+	}
+</script>
 {% endblock %}

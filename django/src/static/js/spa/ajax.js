@@ -23,7 +23,7 @@ export function ajax(url, options) {
 	return fetch(url, fetchOptions);
 }
 
-export async function ajax_with_auth(url, options) {
+export async function ajaxWithAuth(url, options) {
 	options.headers = constructRequestHeader(options.headers);
 
 	const accessToken = localStorage.getItem('access_token');
@@ -40,7 +40,7 @@ export async function ajax_with_auth(url, options) {
 	);
 
 	if (
-		fetchOptions.method === 'GET' &&
+		(fetchOptions.method === 'GET' || fetchOptions.method === 'DELETE') &&
 		fetchOptions.params &&
 		Object.keys(fetchOptions.params).length > 0
 	) {
@@ -53,7 +53,7 @@ export async function ajax_with_auth(url, options) {
 		const status = await refreshJWT();
 		if (!status) return response;
 		// Retry the original request with new access token
-		const retryResponse = await ajax_with_auth(url, options);
+		const retryResponse = await ajaxWithAuth(url, options);
 		return retryResponse;
 	}
 
@@ -99,4 +99,4 @@ async function refreshJWT() {
 }
 
 window.ajax = ajax;
-window.ajax_with_auth = ajax_with_auth;
+window.ajaxWithAuth = ajaxWithAuth;
