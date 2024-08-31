@@ -74,8 +74,10 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
             refresh = RefreshToken.for_user(self.request.user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
+            
+            access_token_lifetime = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
+            refresh_token_lifetime = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
 
-            # Optionally, set the JWT tokens in cookies
             if settings.REST_AUTH['USE_JWT']:
                 response.set_cookie(
                     settings.REST_AUTH['JWT_AUTH_COOKIE'],
@@ -83,6 +85,7 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
                     httponly=False,
                     secure=False,
                     samesite='Lax',
+                    max_age=access_token_lifetime.total_seconds(),
                 )
                 response.set_cookie(
                     settings.REST_AUTH['JWT_AUTH_REFRESH_COOKIE'],
@@ -90,6 +93,7 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
                     httponly=False,
                     secure=False,
                     samesite='Lax',
+                    max_age=refresh_token_lifetime.total_seconds()
                 )
             
             return response
