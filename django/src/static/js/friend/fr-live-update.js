@@ -40,7 +40,7 @@ export class FriendRequestsLiveUpdate {
 	}
 
 	onclose(event) {
-		console.log('Friend requests live update socket closed', event);
+		console.log('Friend requests live update socket closed');
 	}
 
 	destroy() {
