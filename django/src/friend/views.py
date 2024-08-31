@@ -63,7 +63,8 @@ class UserRelationViewSet(viewsets.ModelViewSet):
         serializer = ProfileSerializer(profile)
         response_data = serializer.data
         is_friend = user.friends.filter(id=request.user.id, deleted=False).exists()
-        can_add_friend = not is_friend and FriendRequest.objects.filter(sender=request.user, receiver=user).order_by('-created_at').first().status != FriendRequest.Status.PENDING
+        latest_friend_request = FriendRequest.objects.filter(sender=request.user, receiver=user).order_by('-created_at').first()
+        can_add_friend = (not is_friend) and (latest_friend_request is None or latest_friend_request.status != FriendRequest.Status.PENDING)
         response_data['is_friend'] = is_friend
         response_data['can_add_friend'] = can_add_friend
         return Response(response_data, status=status.HTTP_200_OK)
