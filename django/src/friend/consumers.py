@@ -1,5 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.cache import cache
+from channels.db import database_sync_to_async
 import json
 
 class FriendRequestConsumer(AsyncWebsocketConsumer):
@@ -78,10 +79,25 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
             }
         )
         
+    async def user_status(self, event):
+        user_id = event['user_id']
+        status = event['status']
+
+        # Handle the user status update (e.g., broadcast to the group)
+        await self.send(text_data=json.dumps({
+            'user_id': user_id,
+            'status': status
+        }))
+        
+    @database_sync_to_async
+    def get_online_friends(self):
+        friends = self.user.friends
+        online_friends = [friend.id for friend in friends if cache.get(f"user_{friend.id}_online")]
+        return online_friends
+        
     async def send_initial_online_status(self):
-        friends = self.user.friends.filter(deleted=False)
-        online_friends = [friend_id for friend_id in friends if cache.get(f"user_{friend_id}_online")]
-        initial_status = [{'user_id': friend_id, 'status': True} for friend_id in online_friends]
+        online_friends = await self.get_online_friends()
+        initial_status = [friend_id for friend_id in online_friends]
         await self.send(text_data=json.dumps({
             'initial_status': initial_status
         }))

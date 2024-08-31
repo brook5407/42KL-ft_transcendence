@@ -1,5 +1,6 @@
 import { Component } from '../Component.js';
 import { FriendListTile } from './FriendListTile.js';
+import { FriendsOnlineStatus } from '../../../friend/onlineStatus.js';
 
 export class FriendList extends Component {
 	constructor(params) {

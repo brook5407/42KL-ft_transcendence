@@ -1,6 +1,7 @@
 const MESSAGE_CONTAINER = document.getElementById('message-container');
 
 function showMessage(message, type) {
+	// WXR TODO: add options for go to a specific page, drawer, or modal etc.
 	// MESSAGE_CONTAINER.innerHTML = ''; // Clear any existing messages
 	const messageBox = document.createElement('div');
 	messageBox.classList.add('message-box', type);
@@ -19,7 +20,7 @@ function showMessage(message, type) {
 			MESSAGE_CONTAINER.contains(messageBox) &&
 				MESSAGE_CONTAINER.removeChild(messageBox);
 		}, 500); // Wait for fade out to finish
-	}, 3000);
+	}, 5000);
 }
 
 export function showSuccessMessage(message) {

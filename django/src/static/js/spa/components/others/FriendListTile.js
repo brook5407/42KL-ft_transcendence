@@ -28,7 +28,7 @@ export class FriendListTile extends Component {
 			return '';
 		}
 		return `
-		<div class="friend-list-tile">
+		<div class="friend-list-tile" data-user-id="${this.friend.user.id}">
 			<div class="friend-list-tile__avatar">
 				<img src="${this.friend.avatar ?? ''}" alt="avatar" />
 			</div>
