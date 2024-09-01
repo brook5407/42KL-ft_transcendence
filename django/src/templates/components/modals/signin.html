@@ -30,6 +30,9 @@
             <button type="submit" class="submit-button">Submit</button>
         </div>
 	</form>
+    <div class="forgot-password">
+        <a data-modal="signup" id="signupLink" data-modal-url={% url 'base.forget-password-modal' %}>Forgot Password?</a>
+    </div>
 {% endblock %}
 
 {% block modalScripts %}

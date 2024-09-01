@@ -1,6 +1,8 @@
 import { MODAL_CONTAINER } from './components/component.js';
 import { SignIn } from './components/modals/signin.js';
 import { SignUp } from './components/modals/signup.js';
+import { ForgetPassword } from './components/modals/forget-password.js';
+import { ResetPassword } from './components/modals/reset-password.js';
 import { Oauth42 } from './components/modals/42oauth.js';
 
 let currentModal = null;
@@ -9,6 +11,8 @@ export const MODALS = {
 	signin: SignIn,
 	signup: SignUp,
 	oauth42: Oauth42,
+	forgetpassword: ForgetPassword,
+	resetpassword: ResetPassword,
 };
 
 // open modal buttons handler
