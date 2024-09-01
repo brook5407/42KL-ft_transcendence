@@ -70,11 +70,17 @@ window.clearCurrentUser = clearCurrentUser;
 document.addEventListener('DOMContentLoaded', function () {
 	document.body.addEventListener('click', function (event) {
 		if (event.target.matches('#logout-button')) {
+			const isOauth = getCookie('is_oauth');
 			ajax('/auth/signout', {
 				method: 'POST',
 			}).then((response) => {
 				if (response.ok) {
 					logout();
+					if (isOauth) {
+						deleteCookie('is_oauth');
+						deleteCookie('access_token');
+						deleteCookie('refresh_token');
+					}
 				}
 			});
 		}

@@ -1,3 +1,4 @@
+import time
 import requests
 from django.urls import reverse
 from django.conf import settings
@@ -85,7 +86,7 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
                     httponly=False,
                     secure=True,
                     samesite='Lax',
-                    max_age=access_token_lifetime.total_seconds(),
+                    expires=time.time() + access_token_lifetime.total_seconds()
                 )
                 response.set_cookie(
                     settings.REST_AUTH['JWT_AUTH_REFRESH_COOKIE'],
@@ -93,7 +94,16 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
                     httponly=False,
                     secure=True,
                     samesite='Lax',
-                    max_age=refresh_token_lifetime.total_seconds()
+                    expires=time.time() + refresh_token_lifetime.total_seconds()
+                )
+                response.set_cookie(
+                    'is_oauth',
+                    'true',
+                    httponly=False,
+                    secure=True,
+                    samesite='Lax',
+                    expires=None,
+                    max_age=None
                 )
             
             return response

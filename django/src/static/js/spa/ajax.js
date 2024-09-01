@@ -111,9 +111,5 @@ async function refreshJWT() {
 	}
 }
 
-function deleteCookie(name) {
-	document.cookie = `${name}=; Max-Age=-99999999;`;
-}
-
 window.ajax = ajax;
 window.ajaxWithAuth = ajaxWithAuth;
