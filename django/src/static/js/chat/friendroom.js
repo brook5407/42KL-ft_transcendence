@@ -3,337 +3,220 @@ const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
 
 const appConfigElement = document.getElementById('chat-config');
-const nickname = appConfigElement.getAttribute('data-nickname'); //
-const group_num = appConfigElement.getAttribute('data-room') || '0000';
+const nickname = appConfigElement.getAttribute('data-nickname');
+const groupNum = appConfigElement.getAttribute('data-room') || '0000';
+// const groupNum = appConfigElement.getAttribute('data-room') || 'private_temp';
 const receiver = appConfigElement.getAttribute('data-receiver') || null;
-console.log('nickname: ' + nickname);
 
-
-
-const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${nickname}`;
+let socketURL = `${protocol}//${host}:${port}/room/${groupNum}/?customer_name=${nickname}`;
 let socket = null;
 
-// function sendMessage(receiverId, messageContent) {
-//     fetch(`/send_message/${receiverId}`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'X-CSRFToken': getCsrfToken()  // Make sure to handle CSRF tokens
-//         },
-//         body: JSON.stringify({ message: messageContent })
-//     })
-//     .then(response => response.json())
-//     .then(data => console.log('Message sent:', data))
-//     .catch(error => console.error('Error:', error));
-// }
+document.getElementById('message-input').addEventListener('keydown', handleMessage);
 
-function fetchChatHistory(receiverId) {
-    fetch(`/chat_history/${receiverId}`)
-    .then(response => response.json())
-    .then(data => {
-        // Handle displaying chat history
-        console.log('Chat history:', data.messages);
-        document.getElementById('messageDisplay').textContent = data.message;
-    })
-    .catch(error => console.error('Error:', error));
+function reconnectWebSocket() {
+    let retries = 0;
+    const maxRetries = 5; // Maximum number of retries
+
+    function tryReconnect() {
+        if (retries >= maxRetries) {
+            console.error('Max reconnect attempts reached. Giving up.');
+            return;
+        }
+        retries++;
+        console.log(`Reconnecting... (Attempt ${retries}/${maxRetries})`);
+        newSocket();
+    }
+
+    socket.onclose = function(event) {
+        console.log('WebSocket connection closed. Attempting to reconnect...');
+        setTimeout(tryReconnect, 3000); // Retry after 3 seconds
+    };
 }
 
 
 function newSocket() {
-	if (socket !== null && socket.readyState === WebSocket.OPEN) {
-		socket.close();
-	}
+    if (socket !== null && socket.readyState === WebSocket.OPEN) {
+        socket.close();
+    }
+    socketURL = `${protocol}//${host}:${port}/room/${groupNum}/?customer_name=${nickname}`;
+    socket = new WebSocket(socketURL);
 
-	socket = new WebSocket(socketURL);
-
-	socket.onopen = function (event) {
-		handleSocketOpen();
-	};
-
-	socket.onmessage = function (event) {
-		handleSocketMessage(event);
-	};
-
-	socket.onclose = function (event) {
-		handleSocketClose();
-	};
-
-	socket.onerror = function (error) {
-		console.error('WebSocket error:', error);
-	};
+    socket.onopen = handleSocketOpen;
+    socket.onmessage = handleSocketMessage;
+    socket.onclose = handleSocketClose;
+    socket.onerror = handleSocketError;
 }
 
 function openConnect() {
-	if (socket.readyState === WebSocket.OPEN) return;
-	newSocket();
+    if (socket.readyState !== WebSocket.OPEN) {
+        newSocket();
+    }
 }
 
-newSocket();
-
 function closeConnect() {
-	if (socket) {
-		socket.close(); // Close the connection
-	}
+    if (socket) {
+        socket.close(); // Close the connection
+    }
 }
 
 function handleSocketOpen() {
-	console.log('WebSocket connection opened.');
-	appendStatusMessage('连接成功', 'green', '你有朋友了 (｡♥‿♥｡)\n');
+    console.log('WebSocket connection opened.');
+    appendStatusMessage('Connected', 'green', 'You have friends now (｡♥‿♥｡)');
 }
 
 function handleSocketMessage(event) {
-	const data = JSON.parse(event.data);
-	if (data.type === 'message') {
-		displayChatMessage(data.message, data.name);
-	} else if (data.type === 'image') {
-		displayImage(data.image, data.name);
-	} else {
-		displayChatMessage(data.message, data.name);
-	}
-	scrollToBottom();
+    const data = JSON.parse(event.data);
+    if (data.type === 'message') {
+        displayChatMessage(data.message, data.name);
+    } else if (data.type === 'image') {
+        displayImage(data.image, data.name);
+    } else {
+        console.warn('Unknown message type:', data.type);
+    }
+    scrollToBottom();
 }
 
 function handleSocketClose() {
-	console.log('WebSocket connection closed.');
-	logMessage(nickname + '连接已断开', 'error');
-	appendStatusMessage('连接关闭', 'red', '你没朋友了 ｡ﾟ･ (>﹏<) ･ﾟ｡\n');
+    console.log('WebSocket connection closed.');
+    logMessage(nickname + ' disconnected', 'error');
+    appendStatusMessage('Disconnected', 'red', 'You have no friends now ｡ﾟ･ (>﹏<) ･ﾟ｡');
 }
 
-//dun have upload plceholder
-// document.getElementById('fileInput').addEventListener('change', handleUpload);
-
-function handleUpload() {
-	const fileInput = document.getElementById('fileInput');
-	const file = fileInput.files[0];
-
-	if (file) {
-		const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-
-		if (file.size > MAX_FILE_SIZE) {
-			alert('File size exceeds the 5 MB limit.');
-			return; // Exit the function if file size is too large
-		}
-		const reader = new FileReader();
-
-		reader.onload = function (event) {
-			const imageUrl = event.target.result;
-
-			// Display the uploaded image immediately
-			// displayImage(imageUrl);
-
-			// Send the image URL via WebSocket
-			socket.send(
-				JSON.stringify({
-					type: 'image',
-					name: nickname,
-					image: imageUrl,
-				})
-			);
-		};
-
-		reader.readAsDataURL(file);
-	} else {
-		alert('Please select a file to upload.');
-	}
-}
-
-function displayImage(imageUrl, name) {
-	const imageContainer = document.getElementById('chat-messages');
-
-	// Create a container for the image and username
-	const messageWrapper = document.createElement('div');
-	// messageWrapper.style.display = 'inline-flex'; // Align items horizontally
-	messageWrapper.style.display = 'flex'; // Align items horizontally
-	messageWrapper.style.padding = '0px 0px 5px 0px';
-	// messageWrapper.style.box-sizing = 'border-box';
-
-	// Create and style the username element
-	const username = document.createElement('span');
-	username.textContent = name;
-	username.textContent.endsWith(':')
-		? username.textContent
-		: (username.textContent += ':');
-	username.style.color = 'blue';
-	username.style.fontWeight = 'bold';
-	// username.style.width = "auto";
-	username.style.display = 'inline-flex';
-	username.style.marginRight = '10px';
-
-	// Create the image element
-	const imgElement = document.createElement('img');
-	imgElement.src = imageUrl;
-	imgElement.style.maxWidth = '80px'; // Adjust styling as needed
-	imgElement.style.height = 'auto'; // Maintain aspect ratio
-	// imgElement.style.display = 'inline-block';
-
-	// Add a placeholder for the image
-	const placeholderUrl = 'static/images/meme/miku_impatient.png'; // Path to placeholder image
-	const placeholder = document.createElement('img');
-	placeholder.src = placeholderUrl;
-	placeholder.style.maxWidth = '100px';
-	placeholder.style.height = 'auto';
-	placeholder.style.display = 'none'; // Initially hidden
-
-	// Append username and image to the wrapper
-	messageWrapper.appendChild(username);
-	messageWrapper.appendChild(imgElement);
-	messageWrapper.appendChild(placeholder);
-	imageContainer.appendChild(messageWrapper);
-
-	// Handle image load success
-	imgElement.onload = function () {
-		placeholder.style.display = 'none'; // Hide placeholder if image loads successfully
-		// imageContainer.appendChild(document.createElement("div")).innerText = "\n";
-		scrollToBottom();
-	};
-
-	// Handle image load error
-	imgElement.onerror = function () {
-		imgElement.style.display = 'none'; // Hide the actual image
-		placeholder.style.display = 'inline-block'; // Show placeholder
-		const errorMessage = document.createElement('div');
-		errorMessage.innerText = 'Failed to load image';
-		errorMessage.style.color = 'red';
-		imageContainer.appendChild(errorMessage);
-		scrollToBottom();
-	};
-}
-
-function sendMessage() {
-	if (socket.readyState === WebSocket.OPEN) {
-		let message = document.getElementById('message-input').value.trim();
-		// message.focus();
-		// message.setSelectionRange(7, 7);
-		if (message !== '') {
-			socket.send(
-				JSON.stringify({
-					room_id: group_num,
-					type: 'message',
-					name: nickname,
-					message: message,
-				})
-			);
-			document.getElementById('message-input').value = '';
-		}
-	} else {
-		socket_state(socket);
-		openConnect();
-	}
-}
-
-// url='https://upload.wikimedia.org/wikipedia/commons/0/09/Blackpink_Coachella_2023_02_%28cropped%29.jpg';
-
-function displayChatMessage(data, name) {
-	if (typeof data !== 'string') {
-		console.error('Invalid input: expected a string.');
-		return;
-	}
-
-	let message = document.createElement('div');
-	message.style.display = 'inline-flex';
-
-	// message.style.display = 'inline-table';
-	// message.style.display = 'block';
-	message.style.padding = '0px 0px 5px 0px';
-	message.style.lineHeight = '1.3';
-	message.style.width = '100%';
-
-	if (data) {
-		let username = document.createElement('span');
-		// username.style.display = 'inline';
-		username.textContent = name + ':';
-		username.style.color = 'blue';
-		username.style.fontWeight = 'bold';
-		username.style.width = '70px';
-		username.style.marginRight = '10px';
-		username.style.textAlign = 'left';
-
-		let placeholderContainer = document.createElement('span');
-		placeholderContainer.classList.add('chat-text');
-
-		// let content = data;
-		placeholderContainer.innerHTML = data;
-		message.appendChild(username);
-		message.appendChild(placeholderContainer);
-	} else {
-		let textNode = document.createElement('span');
-		textNode.innerHTML = messageText;
-
-		message.appendChild(textNode);
-		message.appendChild(placeholderContainer);
-	}
-
-	let messageContainer = document.querySelector('.chat-messages');
-	if (messageContainer) {
-		messageContainer.appendChild(message);
-	} else {
-		console.error('Element with class "message" not found.');
-	}
-}
-
-function appendStatusMessage(status, color, message) {
-	let tag = document.createElement('div');
-	tag.innerText = status;
-	tag.style.color = color;
-	tag.append(`\t${message}`);
-	let message_sect = document.querySelector('.chat-messages');
-	if (message_sect) {
-		message_sect.appendChild(tag);
-	}
-}
-
-function scrollToBottom() {
-	var messageContainer = document.getElementById('chat-messages');
-	messageContainer.scrollTop = messageContainer.scrollHeight;
-}
-
-function logMessage(message, style = 'default') {
-	const styles = {
-		default: 'color: black;',
-		warning: 'color: orange; font-weight: bold;',
-		error: 'color: red; font-weight: bold;',
-	};
-	console.log(`%c${message}`, styles[style]);
-}
-
-function socket_state(socket) {
-	if (socket.readyState === WebSocket.OPEN) {
-		logMessage('The connection is open', 'warning');
-	} else if (socket.readyState === WebSocket.CONNECTING) {
-		logMessage('The connection is connecting', 'warning');
-	} else if (socket.readyState === WebSocket.CLOSING) {
-		logMessage('The connection is closing', 'warning');
-	} else if (socket.readyState === WebSocket.CLOSED) {
-		logMessage('The connection is closed', 'warning');
-	} else {
-		logMessage('The connection state is unknown', 'warning');
-	}
+function handleSocketError(error) {
+    console.error('WebSocket error:', error);
 }
 
 function handleMessage(event) {
-	if (event.key === 'Enter') {
-		sendMessage();
-	}
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
 }
 
-// function dataURLToBlob(dataURL) {
-// 	const BASE64_MARKER = ';base64,';
-// 	if (dataURL.indexOf(BASE64_MARKER) === -1) {
-// 		const parts = dataURL.split(',');
-// 		const contentType = parts[0].split(':')[1];
-// 		const raw = parts[1];
-// 		return new Blob([raw], { type: contentType });
-// 	}
+function sendMessage() {
+    if (socket.readyState === WebSocket.OPEN) {
+        const message = document.getElementById('message-input').value.trim();
+        if (message !== '') {
+            socket.send(JSON.stringify({
+                room_id: groupNum,
+                type: 'message',
+                name: nickname,
+                message: message,
+            }));
+            document.getElementById('message-input').value = '';
+        }
+    } else {
+        socket_state(socket);
+        reconnectWebSocket();
+    }
+}
 
-// 	const parts = dataURL.split(BASE64_MARKER);
-// 	const contentType = parts[0].split(':')[1];
-// 	const raw = window.atob(parts[1]);
-// 	const rawLength = raw.length;
+function displayChatMessage(message, name) {
+    if (typeof message !== 'string') {
+        console.error('Invalid input: expected a string.');
+        return;
+    }
 
-// 	const uInt8Array = new Uint8Array(rawLength);
-// 	for (let i = 0; i < rawLength; ++i) {
-// 		uInt8Array[i] = raw.charCodeAt(i);
-// 	}
+    const messageContainer = document.querySelector('.chat-messages');
+    const messageElement = document.createElement('div');
+    messageElement.style.display = 'flex';
+    messageElement.style.padding = '0 0 5px 0';
+    messageElement.style.lineHeight = '1.3';
+    messageElement.style.width = '100%';
 
-// 	return new Blob([uInt8Array], { type: contentType });
-// }
+    const username = document.createElement('span');
+    username.textContent = `${name}:`;
+    username.style.color = 'blue';
+    username.style.fontWeight = 'bold';
+    username.style.marginRight = '10px';
+
+    const messageText = document.createElement('span');
+    messageText.classList.add('chat-text');
+    messageText.innerHTML = message;
+
+    messageElement.appendChild(username);
+    messageElement.appendChild(messageText);
+    messageContainer.appendChild(messageElement);
+}
+
+function displayImage(imageUrl, name) {
+    const imageContainer = document.getElementById('chat-messages');
+    const messageWrapper = document.createElement('div');
+    messageWrapper.style.display = 'flex';
+    messageWrapper.style.padding = '0 0 5px 0';
+
+    const username = document.createElement('span');
+    username.textContent = name.endsWith(':') ? name : `${name}:`;
+    username.style.color = 'blue';
+    username.style.fontWeight = 'bold';
+    username.style.marginRight = '10px';
+
+    const imgElement = document.createElement('img');
+    imgElement.src = imageUrl;
+    imgElement.style.maxWidth = '80px';
+    imgElement.style.height = 'auto';
+
+    const placeholderUrl = 'static/images/meme/miku_impatient.png';
+    const placeholder = document.createElement('img');
+    placeholder.src = placeholderUrl;
+    placeholder.style.maxWidth = '100px';
+    placeholder.style.height = 'auto';
+    placeholder.style.display = 'none';
+
+    messageWrapper.appendChild(username);
+    messageWrapper.appendChild(imgElement);
+    messageWrapper.appendChild(placeholder);
+    imageContainer.appendChild(messageWrapper);
+
+    imgElement.onload = () => {
+        placeholder.style.display = 'none';
+        scrollToBottom();
+    };
+
+    imgElement.onerror = () => {
+        imgElement.style.display = 'none';
+        placeholder.style.display = 'inline-block';
+        const errorMessage = document.createElement('div');
+        errorMessage.innerText = 'Failed to load image';
+        errorMessage.style.color = 'red';
+        imageContainer.appendChild(errorMessage);
+        scrollToBottom();
+    };
+}
+
+function appendStatusMessage(status, color, message) {
+    const tag = document.createElement('div');
+    tag.innerText = status;
+    tag.style.color = color;
+    tag.append(`\t${message}`);
+    document.querySelector('.chat-messages').appendChild(tag);
+}
+
+function scrollToBottom() {
+    const messageContainer = document.getElementById('chat-messages');
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+}
+
+function logMessage(message, style = 'default') {
+    const styles = {
+        default: 'color: black;',
+        warning: 'color: orange; font-weight: bold;',
+        error: 'color: red; font-weight: bold;',
+    };
+    console.log(`%c${message}`, styles[style]);
+}
+
+function socket_state(socket) {
+    const stateMessages = {
+        [WebSocket.OPEN]: 'The connection is open',
+        [WebSocket.CONNECTING]: 'The connection is connecting',
+        [WebSocket.CLOSING]: 'The connection is closing',
+        [WebSocket.CLOSED]: 'The connection is closed',
+    };
+    const state = socket.readyState;
+    const message = stateMessages[state] || 'The connection state is unknown';
+    logMessage(message, 'warning');
+}
+
+// openConnect();
+newSocket();
+// reconnectWebSocket();

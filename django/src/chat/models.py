@@ -10,6 +10,7 @@ class ChatRoom(models.Model):
     is_public = models.BooleanField(default=False)
     cover_image = models.ImageField(upload_to='chatroom_covers/', null=True, blank=True)
     is_group_chat = models.BooleanField(default=False)
+    # messages = models.ForeignKey('ChatMessage', related_name='chatroom_messages', on_delete=models.CASCADE)
     messages = models.ManyToManyField('ChatMessage', related_name='chatroom_messages')
 
     def __str__(self):
@@ -18,6 +19,9 @@ class ChatRoom(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = str(uuid.uuid4())
+        if self.members.count() == 2:
+            member_ids = sorted([str(member.id) for member in self.members.all()])
+            self.name = f'private_chat_{"_".join(member_ids)}'
         super().save(*args, **kwargs)
 
     def get_last_message(self):
@@ -31,6 +35,7 @@ class ChatRoom(models.Model):
         if self.is_group_chat:
             return self.name
         return self.members.exclude(id=user.id).first().username
+    
 
 class ChatMessage(models.Model):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)

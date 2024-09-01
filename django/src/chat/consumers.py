@@ -8,6 +8,7 @@ import asyncio
 import re
 import json
 
+# Static images mapping
 TABLE = {
     'dog': '/static/images/meme/9299765.jpg',
     'miku': '/static/images/meme/miku_impatient.png',
@@ -15,6 +16,7 @@ TABLE = {
     'minion': 'https://miro.medium.com/v2/resize:fit:1000/format:webp/1*AmI9wRbXrfIWGESx6eEiTw.gif',
 }
 
+# Function to verify if a URL is an online image
 def is_online_image_url(url):
     image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp']
     pattern2 = r'^(?:data:image/(?:png|jpeg|gif|webp);base64,)'
@@ -24,41 +26,40 @@ def is_online_image_url(url):
     combined_pattern = f"({pattern1})|({pattern3})|({pattern2}.*)"
     regex = re.compile(combined_pattern, re.IGNORECASE)
     
-    if regex.match(url):
-        return True
-    else:
-        return False
+    return bool(regex.match(url))
 
 class ChatConsumer(AsyncWebsocketConsumer):
     
     async def websocket_connect(self, message):
         self.chat_room = self.scope['url_route']['kwargs']['group_num']
-        
-        # self.room_id = self.scope['url_route']['kwargs'].get('room_id')
-        # self.room = ChatRoom.objects.get(id=self.room_id)
-        # self.room_name = self.room.get_room_name(self.scope['user'])
-        
-        print("self.chat_room: " + self.chat_room)
         self.room_group_name = f'chat_{self.chat_room}'
-        
         self.customer_name = self.scope["user"].username
         
-        # self.receiver_id = "Name"
-        # self.receiver_id = self.scope['url_route']['kwargs'].get('receiver_id', None)
+        print("self.chat_room: " + self.chat_room)
+        
+        # Check if the ChatRoom exists
+        if not await self.does_chat_room_exist(self.chat_room):
+            error_message = {'type': 'error', 'message': 'Chat room does not exist.'}
+            await self.send(text_data=json.dumps(error_message))
+            await self.close()
+            return
         
         await self.accept()
+
+        # Add the consumer to the group
         if self.channel_layer is not None:
-            await self.channel_layer.group_add(self.chat_room, self.channel_name)
+            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         else:
             print("Channel Layer returned None. Cannot join the chat room.")
 
     async def websocket_receive(self, message):
         try:
             text_data = json.loads(message['text'])
-            message_type = text_data.get('type', None)
-            message_content = text_data.get('message', None)
-            self.receiver_id = text_data.get('receiver_id', None)
+            message_type = text_data.get('type')
+            message_content = text_data.get('message')
+            self.receiver_id = text_data.get('receiver_id')
 
+            # Process based on message type
             if message_type == 'message' and message_content:
                 if " shabi " in message_content or "傻逼" in message_content:
                     message_content = f"服务器:【{self.customer_name}】你才是傻逼 "
@@ -74,7 +75,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             else:
                 raise ValueError("Invalid message type or missing content")
 
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             error_message = {'type': 'error', 'message': 'Invalid JSON format in received message.'}
             await self.send(json.dumps(error_message))
         except Exception as e:
@@ -82,17 +83,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(json.dumps(error_message))
 
     async def websocket_disconnect(self, message):
+        # Remove the consumer from the group
         if self.channel_layer is not None:
-            await self.channel_layer.group_discard(self.chat_room, self.channel_name)
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         raise StopConsumer()
 
     async def send_chat_message(self, message):
-        query_params = parse_qs(self.scope['query_string'].decode())
-        self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
-        
         await self.save_message(message, message_type='text')
         await self.channel_layer.group_send(
-            self.chat_room,
+            self.room_group_name,
             {
                 "type": "chat.message",
                 "name": self.customer_name,
@@ -101,12 +100,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def send_image_message(self, image_data):
-        query_params = parse_qs(self.scope['query_string'].decode())
-        self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
-        
         await self.save_message(image_data, message_type='image')
         await self.channel_layer.group_send(
-            self.chat_room,
+            self.room_group_name,
             {
                 "type": "image.message",
                 "name": self.customer_name,
@@ -115,9 +111,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def send_self_chat_message(self, message):
-        query_params = parse_qs(self.scope['query_string'].decode())
-        self.customer_name = query_params.get('customer_name', ['Anonymous'])[0]
-
         message = {
             "type": "chat.message",
             "name": self.customer_name,
@@ -127,23 +120,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def save_message(self, content, message_type='text'):
         user = self.scope["user"]
-        room = await sync_to_async(ChatRoom.objects.get)(name=self.chat_room)
-        # self.receiver_id = self.receiver_id[0] if self.receiver_id else None
-        
+        try:
+            room = await sync_to_async(ChatRoom.objects.get)(name=self.chat_room)
+        except ChatRoom.DoesNotExist:
+            room = None  # Handle the case where the room does not exist
+            # Optionally log this error or handle it as needed
+
         receiver = None
+
         if self.receiver_id:
             try:
                 receiver = await sync_to_async(User.objects.get)(id=self.receiver_id)
             except User.DoesNotExist:
-                receiver = None  # Handle case where receiver_id is invalid
+                receiver = None  # Handle invalid receiver_id
 
-        await sync_to_async(ChatMessage.objects.create)(
-            sender=user,
-            receiver=receiver,
-            message=content,
-            room=room
-        )
-
+        if room:
+            await sync_to_async(ChatMessage.objects.create)(
+                sender=user,
+                receiver=receiver,
+                message=content,
+                room=room
+            )
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({
@@ -160,11 +157,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
     def check_if_static_image(self, text_data):
-        pattern = r'^:'  # Regex pattern to match ':=' exactly
-        if re.match(pattern, text_data['message']):
+        if text_data['message'].startswith(':'):
             response = TABLE.get(text_data['message'][1:], None)
             if response:
                 asyncio.create_task(self.send_image_message(response))
             return True
-        else:
-            return False
+        return False
+
+    async def does_chat_room_exist(self, room_name):
+        return await sync_to_async(ChatRoom.objects.filter(name=room_name).exists)()

@@ -1,5 +1,6 @@
 # urls.py
 from django.urls import path
+# from .views import ChatAPIView, FriendChatAPIView, SendMessageAPIView, ChatHistoryAPIView, chat_list_drawer, chat_room_drawer
 from .views import ChatAPIView, FriendChatAPIView, SendMessageAPIView, ChatHistoryAPIView, chat_list_drawer, chat_room_drawer, chat_friendroom_drawer
 
 urlpatterns = [
