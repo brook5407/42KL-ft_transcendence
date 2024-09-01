@@ -1,13 +1,17 @@
 # models.py
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from base.models import BaseModel
 import uuid
 
-class GameRoom(models.Model):
+
+User = get_user_model()
+
+class GameRoom(BaseModel):
     room_name = models.CharField(max_length=8, unique=True)
     is_full = models.BooleanField(default=False)
 
-class MatchHistory(models.Model):
+class MatchHistory(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_matches')
     opponent = models.OneToOneField(User, on_delete=models.CASCADE, related_name='opponent_matches')
     won = models.BooleanField()

@@ -1,11 +1,14 @@
 from django.utils import timezone
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Q
 from django.forms import ValidationError
 from base.models import BaseModel
+
+
+User = get_user_model()
 
 # Create your models here.
 class UserRelation(BaseModel):

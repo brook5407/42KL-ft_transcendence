@@ -1,9 +1,11 @@
 # scripts/generate_game_history.py
 import random
 from datetime import datetime, timedelta
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from ..models import GameHistory
 
+
+User = get_user_model()
 
 def get_or_create_users():
     user1, _ = User.objects.get_or_create(username="brook5407")

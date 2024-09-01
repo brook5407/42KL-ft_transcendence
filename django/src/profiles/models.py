@@ -1,8 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, User
+from django.contrib.auth import get_user_model
+from base.models import BaseModel
 
 
-class Profile(models.Model):
+User = get_user_model()
+
+class Profile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.CharField(max_length=10, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)

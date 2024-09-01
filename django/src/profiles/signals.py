@@ -1,8 +1,10 @@
 from django.db.models.signals import post_save
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from .models import Profile
 
+
+User = get_user_model()
 
 # Signal to create a profile when a user is created
 @receiver(post_save, sender=User)

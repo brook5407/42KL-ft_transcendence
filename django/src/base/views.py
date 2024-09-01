@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from chat.models import ChatMessage, ChatRoom
 from chat.serializers import ChatMessageSerializer
 from chat.pagination import ChatMessagePagination
@@ -9,6 +9,8 @@ from utils.request_helpers import is_ajax_request
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
+
+User = get_user_model()
 
 @api_view(['GET'])
 def index(request):

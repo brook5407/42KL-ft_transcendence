@@ -83,7 +83,7 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
                     settings.REST_AUTH['JWT_AUTH_COOKIE'],
                     access_token,
                     httponly=False,
-                    secure=False,
+                    secure=True,
                     samesite='Lax',
                     max_age=access_token_lifetime.total_seconds(),
                 )
@@ -91,7 +91,7 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
                     settings.REST_AUTH['JWT_AUTH_REFRESH_COOKIE'],
                     refresh_token,
                     httponly=False,
-                    secure=False,
+                    secure=True,
                     samesite='Lax',
                     max_age=refresh_token_lifetime.total_seconds()
                 )

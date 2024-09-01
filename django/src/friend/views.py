@@ -11,8 +11,11 @@ from profiles.models import Profile
 from utils.request_helpers import is_ajax_request
 from .models import UserRelation, FriendRequest
 from .serializers import UserRelationSerializer, FriendRequestSerializer
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
+
+
+User = get_user_model()
 
 class UserRelationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
