@@ -34,14 +34,6 @@
 	color: #0a8f17;
 }
 
-.icon-action[title='View Profile'] {
-	color: #18c9c9;
-}
-
-.icon-action[title='View Profile']:hover {
-	color: #0e8f8f;
-}
-
 .friend-list-tile__avatar {
 	flex-shrink: 0;
 	margin-right: 10px;
@@ -51,6 +43,7 @@
 	width: 50px; /* Adjust the size as needed */
 	height: 50px; /* Adjust the size as needed */
 	border-radius: 50%;
+	cursor: pointer;
 }
 
 .friend-list-tile__info {

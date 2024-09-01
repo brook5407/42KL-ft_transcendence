@@ -5,12 +5,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.decorators import permission_classes
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
 from utils.request_helpers import is_ajax_request
 from .models import ChatMessage, ChatRoom
 from .serializers import ChatMessageSerializer
 from rest_framework.decorators import api_view
+
+
+User = get_user_model()
 
 class ChatAPIView(APIView):
     permission_classes = [IsAuthenticated]

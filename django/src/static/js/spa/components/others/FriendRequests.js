@@ -1,5 +1,5 @@
-import { Component } from '../component.js';
-import { FriendRequestTile } from './friend-request-tile.js';
+import { Component } from '../Component.js';
+import { FriendRequestTile } from './FriendRequestTile.js';
 
 export class FriendRequests extends Component {
 	constructor(params) {
@@ -8,16 +8,12 @@ export class FriendRequests extends Component {
 		this.friendRequests = [];
 		this.friendReqTiles = [];
 
-		this.updateEventListener = document.addEventListener(
-			'friend-requests-update',
-			async () => {
-				await this.update();
-			}
-		);
+		this.boundUpdate = this.update.bind(this);
+		document.addEventListener('friend-requests-update', this.boundUpdate);
 	}
 
 	async initComponent() {
-		this.friendRequests = await ajax_with_auth('/api/friend-requests/to_me/', {
+		this.friendRequests = await ajaxWithAuth('/api/friend-requests/to_me/', {
 			method: 'GET',
 		}).then((res) => res.json());
 	}
@@ -51,7 +47,7 @@ export class FriendRequests extends Component {
 	destroy() {
 		super.destroy();
 		this.friendReqTiles.forEach((fReqTile) => fReqTile.destroy());
-		document.removeEventListener(this.updateEventListener);
+		document.removeEventListener('friend-requests-update', this.boundUpdate);
 	}
 
 	template() {

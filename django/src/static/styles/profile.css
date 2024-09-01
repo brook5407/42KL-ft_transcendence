@@ -1,44 +1,46 @@
 .profile-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    max-width: 400px;
-    margin: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	max-width: 400px;
+	margin: auto;
 }
 
 .profile-info-item {
-    display: block;
-    /* margin: 10px 0 0 0; */
-    text-align: center;
-    position: relative;
+	display: block;
+	/* margin: 10px 0 0 0; */
+	text-align: center;
+	position: relative;
 }
 
 .profile-avatar {
-    border-radius: 50%;
-    object-fit: cover;
-    width: 120px;
-    height: 120px;
-    border: 3px solid #ddd;
+	border-radius: 50%;
+	object-fit: cover;
+	width: 120px;
+	height: 120px;
+	border: 3px solid #ddd;
 }
 
 .edit-icon {
-    cursor: pointer;
-    position: absolute;
-    top: 70%;
-    right: 10px;
-    background-color: #fff;
-    border-radius: 50%;
-    padding: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	position: absolute;
+	top: 70%;
+	right: 10px;
+	background-color: #fff;
+	border-radius: 50%;
+	padding: 5px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.profile-username, .profile-email, .profile-nickname {
-    margin: 0;
-    font-size: 18px;
-    color: #C0EDFA;
-    font-weight: 500;
+.profile-username,
+.profile-email,
+.profile-nickname {
+	margin: 0;
+	font-size: 18px;
+	color: #c0edfa;
+	font-weight: 500;
 }
 
 .profile-username {
@@ -47,58 +49,84 @@
 
 .profile-nickname {
 	font-size: 24px;
-	color: #42EDED;
+	color: #42eded;
 }
 
 .profile-bio {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box;
-    resize: vertical;
-    height: 100px;
-	resize: none;
+	padding: 15px;
+	border: 1px solid #c0edfa;
+	border-radius: 5px;
+	background-color: #befafa;
+	font-size: 16px;
+	color: #333;
+	line-height: 1.5;
+	margin: 10px 0;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	resize: vertical;
 	outline: none;
 }
 
+.profile-bio::before {
+	content: 'Bio: ';
+	font-weight: bold;
+	color: #555;
+}
+
 .btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 10px;
+	padding: 10px 20px;
+	font-size: 16px;
+	border: none;
+	border-radius: 5px;
+	background-color: #007bff;
+	color: white;
+	cursor: pointer;
+	margin-bottom: 10px;
 }
 
 .btn:hover {
-    background-color: #0056b3;
+	background-color: #0056b3;
 }
 
 .form-group {
-    margin-bottom: 15px;
+	margin-bottom: 15px;
 }
 
 .form-control {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
+	width: 100%;
+	padding: 10px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	font-size: 16px;
+	box-sizing: border-box;
 }
 
 textarea.form-control {
-    height: 100px;
-    resize: none; /* Prevent resizing */
+	height: 100px;
+	resize: none; /* Prevent resizing */
 }
 
 .btn-success {
-    background-color: #28a745;
+	background-color: #28a745;
 }
 
 .btn-success:hover {
-    background-color: #218838;
+	background-color: #218838;
+}
+
+.action-buttons {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+}
+
+.block-btn {
+	background-color: #eec120;
+}
+
+.unblock-btn {
+	background-color: #22e936;
+}
+
+.delete-btn {
+	background-color: #e32121;
 }

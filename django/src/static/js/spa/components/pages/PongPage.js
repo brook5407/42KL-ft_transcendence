@@ -1,11 +1,11 @@
-import { Component } from '../component.js';
+import { Component } from '../Component.js';
 import { Snowfall } from '../../../animation/snow.js';
 
-export class HomePage extends Component {
+export class PongPage extends Component {
 	constructor(params) {
 		super(params);
 		if (this.url === '' || this.url === null) {
-			this.url = '/home';
+			this.url = '/pong';
 		}
 	}
 
@@ -22,9 +22,8 @@ export class HomePage extends Component {
 
 	template() {
 		return `
-			<div class="home">
-				<h1>Home</h1>
-				<p>Welcome to the home page</p>
+			<div>
+				<h1>Pong page template</h1>
 			</div>
 		`;
 	}

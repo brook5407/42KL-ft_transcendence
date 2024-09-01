@@ -1,10 +1,12 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
-import uuid
+from base.models import BaseModel
 
-class ChatRoom(models.Model):
-    id = models.CharField(max_length=255, primary_key=True)
+
+User = get_user_model()
+
+class ChatRoom(BaseModel):
     name = models.CharField(max_length=255)
     members = models.ManyToManyField(User, blank=True, related_name='chatroom_members')
     is_public = models.BooleanField(default=False)
@@ -35,9 +37,8 @@ class ChatRoom(models.Model):
         if self.is_group_chat:
             return self.name
         return self.members.exclude(id=user.id).first().username
-    
 
-class ChatMessage(models.Model):
+class ChatMessage(BaseModel):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE, null=True, blank=True)
     message = models.TextField()  # for game invitation, message will have a /invite prefix
