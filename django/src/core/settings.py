@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'django_extensions',
     'base',
     'provider',
     'drf_auth',
@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'pong',
     'friend',
     'profiles',
+    "game_history"
 ]
 
 MIDDLEWARE = [
@@ -292,7 +293,7 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT')
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 
 # to set the OTP function
-OTP_AUTH = os.environ.get('OTP_AUTH').lower() == 'true'
+OTP_AUTH = os.environ.get('OTP_AUTH', 'false').lower() == 'true'
 
 CHANNEL_LAYERS = {
     'default': {
