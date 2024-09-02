@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 from base.models import BaseModel
+import uuid
+
 
 
 User = get_user_model()

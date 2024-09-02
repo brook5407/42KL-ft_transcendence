@@ -297,14 +297,24 @@ DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 # to set the OTP function
 OTP_AUTH = os.environ.get('OTP_AUTH', 'false').lower() == 'true'
 
+
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [(REDIS_HOST, REDIS_PORT)],
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('127.0.0.1', 6379)],
         },
     },
 }
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [(REDIS_HOST, REDIS_PORT)],
+#         },
+#     },
+# }
 # CHANNEL_LAYERS = {
 #     'default': {
 #         'BACKEND': 'channels.layers.InMemoryChannelLayer',
