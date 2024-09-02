@@ -23,6 +23,12 @@
       <input type="hidden" class="dj-flash-message" value="{{ message.message }}" data-message-type="{{ message.tags }}">
     {% endfor %}
 
+    {% if modals_and_drawers %}
+      {% for item in modals_and_drawers %}
+        <input type="hidden" class="auto-open" value="{{ item.type }}" data-url="{{ item.url }}" data-name="{{ item.name }}" />
+      {% endfor %}
+    {% endif %}
+
     <div id="message-container"></div>
 
     <div id="root"></div>
