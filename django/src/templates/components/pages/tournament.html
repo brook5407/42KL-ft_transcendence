@@ -1,0 +1,33 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
+<link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
+
+<div>Tournament Room: {{ room_name }}</div>
+<script>
+    const roomName = "{{ room_name }}";
+    const ws = new WebSocket('ws://' + window.location.host + '/ws/tournament/' + roomName + '/');
+
+    let form = document.getElementById('form')
+    form.addEventListener('submit', (e)=> {
+        e.preventDefault()
+        let message = e.target.message.value
+        socket.send(JSON.stringify({
+            'message':message
+        }))
+        form.reset()
+    })
+
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        console.log('Data:', data)
+
+        if (data.type === 'chat'){
+            let messages = document.getElementById('messages')
+
+            messages.insertAdjacentHTML('beforeend', `<div>
+                                    <p>${data.message}</p>
+                                </div>`)
+        }
+    }
+</script>

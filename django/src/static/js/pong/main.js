@@ -103,6 +103,7 @@ socket.onmessage = function(e) {
     }
 };
 
+
 // Client Paddle Controls
 document.addEventListener('keydown', (event) => {
     let velocity = null;

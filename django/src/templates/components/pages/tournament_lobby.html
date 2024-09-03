@@ -3,12 +3,15 @@
 <link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
-<div id="lobby">
-    <h2>Lobby: {{ room_name }}</h2>
-    <ul id="playerList">
-        {% for player in players %}
-            <li>{{ player.username }}</li>
-        {% endfor %}
-    </ul>
-    <button id="startTournament">Start Tournament</button>
+<div class="container" style="color: black">
+    <h1>Tournament Lobby</h1>
+    <button id="create-room">Create Room</button>
+    <div class="form-group">
+        <input type="text" id="room-code"
+        placeholder="Enter room code">
+        <button id="join-room">Join Room</button>
+    </div>
+    <div id="message"></div>
 </div>
+
+<script type="module" src="{% static 'js/pong/lobby.js' %}"></script>
