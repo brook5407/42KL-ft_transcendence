@@ -133,27 +133,30 @@ class LoginViewCustom(LoginView):
 
 @api_view(['GET'])
 def ResetPasswordPage(request):
-    if request.method == 'GET':
-        if request.query_params:
-            uid = request.query_params.get('$uid')
-            token = request.query_params.get('$token')
-            if uid or token is None:
-                return render(request, 'index.html', status=404)
+    if request.query_params:
+        uid = request.query_params.get('$uid')
+        token = request.query_params.get('$token')
+        if uid is None or token is None:
+            return render(request, 'index.html', status=404)
 
-    modal_to_open = {
-        "type": "modal",
-        "name": "resetpassword",
-        "url": reverse('reset_password_modal')
-    }
+        modal_to_open = {
+            "type": "modal",
+            "name": "resetpassword",
+            "url": reverse('reset_password_modal'),
+        }
 
-    return render(request, 'index.html', context={
-        'modals_and_drawers': [modal_to_open],
-        'uid': uid,
-        'token': token
-    })
+        return render(request, 'index.html', context={
+            'modals_and_drawers': [modal_to_open],
+            'uid': uid,
+            'token': token,
+            'store_reset_params': True
+        })
+    
+    return render(request, 'index.html', status=404)
 
 @api_view(['GET'])
 def reset_password_modal(request):
     if is_ajax_request(request):
+        
         return render(request, 'components/modals/reset-password.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")

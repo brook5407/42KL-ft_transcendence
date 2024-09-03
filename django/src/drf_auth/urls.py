@@ -18,7 +18,7 @@ urlpatterns = [
     path('password-reset/', PasswordResetView.as_view(), name='rest_password_reset'),
     path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='rest_password_reset_confirm'),
     path('password-change/', PasswordChangeView.as_view(), name='password_change'),
-    path('reset-password/?$uid=<uidb64>&$token=<token>/', PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path('reset-password/?$uid=<uidb64>&$token=<token>', PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path('reset-password/', ResetPasswordPage, name='reset_password_page'),
     path('reset-password-drawer/', reset_password_modal, name='reset_password_modal'),
 ]

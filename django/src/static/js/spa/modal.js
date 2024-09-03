@@ -25,14 +25,16 @@ document.body.addEventListener('click', (e) => {
 	}
 });
 
+function dispatchModalOpenedEvent(e = null) {
+	document.dispatchEvent(new CustomEvent('Modal-opened', e));
+}
+
 export async function openModal(modalName, data = {}) {
 	const modalClass = MODALS[modalName];
 	const modal = new modalClass({
 		url: data.url,
 		state: data.state,
 	});
-
-	console.log('modalName:', modalName);
 
 	if (modal) {
 		currentModal = modal;
@@ -41,6 +43,9 @@ export async function openModal(modalName, data = {}) {
 		MODAL_CONTAINER.appendChild(element);
 		setTimeout(() => {
 			activateModal();
+			dispatchModalOpenedEvent({
+				detail: { modalName },
+			});
 		}, 100);
 	} else {
 		console.error('Modal not found:', modalName);
