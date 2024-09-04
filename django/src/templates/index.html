@@ -1,48 +1,64 @@
 <!DOCTYPE html>
+{% load i18n %}
 {% load static %}
 
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'styles/global.css' %}" />
-    <link rel="stylesheet" href="{% static 'styles/not-found.css' %}" />
-    <link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
-    <link rel="stylesheet" href="{% static 'styles/message.css' %}" />
-    <link rel="stylesheet" href="{% static 'styles/components.css' %}" />
-    <link rel="stylesheet" href="{% static 'styles/loading.css' %}" />
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'styles/global.css' %}" />
+	<link rel="stylesheet" href="{% static 'styles/not-found.css' %}" />
+	<link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
+	<link rel="stylesheet" href="{% static 'styles/message.css' %}" />
+	<link rel="stylesheet" href="{% static 'styles/components.css' %}" />
+	<link rel="stylesheet" href="{% static 'styles/loading.css' %}" />
 
-    <title>AIsPong</title>
+	<title>AIsPong</title>
   </head>
 
   <body>
-    {% for message in messages %}
-      <input type="hidden" class="dj-flash-message" value="{{ message.message }}" data-message-type="{{ message.tags }}">
-    {% endfor %}
+	<form id="language-switcher" action="{% url 'set_language' %}" method="post" style="display: inline;">
+		{% csrf_token %}
+		<input name="next" type="hidden" value="{{ request.path }}">
+		{% get_current_language as LANGUAGE_CODE %}
+		<input id="language-input" type="hidden" name="language" value="{{ LANGUAGE_CODE }}">
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        {% for language in languages %}
+			<a href="#" onclick="document.getElementById('language-input').value='{{language.code}}'; document.getElementById('language-switcher').submit();">
+				<img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto;">
+			</a>
+		{% endfor %}
+	</form>
 
-    <div id="message-container"></div>
+	{% for message in messages %}
+	  <input type="hidden" class="dj-flash-message" value="{{ message.message }}" data-message-type="{{ message.tags }}">
+	{% endfor %}
 
-    <div id="root"></div>
+	<div id="message-container"></div>
 
-    <div id="modal-container"></div>
+	<div id="root"></div>
 
-    <div id="drawer-container"></div>
+	<div id="modal-container"></div>
 
-    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    <script type="module" src="{% static 'js/script.js' %}"></script>
-    <script type="module" src="{% static 'js/utils.js' %}"></script>
-    <script type="module" src="{% static 'js/oauth.js' %}"></script>
-    <script type="module" src="{% static 'js/message.js' %}"></script>
-    <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
-    <script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
-    <script type="module" src="{% static 'js/spa/form.js' %}"></script>
-    <script type="module" src="{% static 'js/notification.js' %}"></script>
-    <script type="module" src="{% static 'js/loading.js' %}"></script>
-    <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
-    <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
+	<div id="drawer-container"></div>
+
+	<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+	<script type="module" src="{% static 'js/script.js' %}"></script>
+	<script type="module" src="{% static 'js/utils.js' %}"></script>
+	<script type="module" src="{% static 'js/oauth.js' %}"></script>
+	<script type="module" src="{% static 'js/message.js' %}"></script>
+	<script type="module" src="{% static 'js/spa/modal.js' %}"></script>
+	<script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
+	<script type="module" src="{% static 'js/spa/form.js' %}"></script>
+	<script type="module" src="{% static 'js/notification.js' %}"></script>
+	<script type="module" src="{% static 'js/loading.js' %}"></script>
+	<script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
+	<script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
+	<script type="module" src="{% static 'js/language-switch.js' %}"></script>
   </body>
 </html>

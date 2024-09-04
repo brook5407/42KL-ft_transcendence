@@ -73,3 +73,17 @@
 		transform: rotate(-360deg);
 	}
 }
+
+#language-switch {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+#flag-icon {
+  width: 30px;
+  height: 20px;
+  border: 1px solid #ddd;
+}

@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block drawerHeader %}
-	<h2>{{ friend_profile.nickname }} Profile</h2>
+	<h2>{{ friend_profile.nickname }} {% trans 'Profile' %}</h2>
 {% endblock %}
 
 {% block drawerContent %}
@@ -29,7 +29,7 @@
 				{% if friend_profile.bio %}
 					{{ friend_profile.bio }}
 				{% else %}
-					This user didn't say anything
+					{% trans "This user didn't say anything" %}
 				{% endif %}
 			</p>
 		</div>

@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -7,13 +7,13 @@
 {% endblock %}
 
 {% block drawerHeader %}
-	<h2>Chat</h2>
+	<h2>{% trans 'Chat' %}</h2>
 {% endblock %}
 
 {% block drawerContent %}
 <div class="chat-list">
 	<div class="public-chat">
-		<h3>Public Chat</h3>
+		<h3>{% trans 'Public Chat' %}</h3>
 		{% for chat in public_chats %}
 			<div class="chat-list-item" data-drawer="chat-room" data-drawer-url="{% url 'chat.room-drawer' %}" data-roomid="{{ chat.id }}">
 				<div class="chat-image chat-image-public">

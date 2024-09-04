@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.views.static import serve
 from django.conf.urls.static import static
@@ -27,12 +28,13 @@ urlpatterns = [
     path('auth/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.socialaccount.urls')),
     path('accounts/', include('provider.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('', include('pong.urls')),
     path('', include('chat.urls')),
     path('', include('profiles.urls')),
     path('', include('base.urls')),
     path('', include('friend.urls')),
-    path('', include('game_history.urls')),
+    path('', include('game_history.urls'))
 ]
 
 if settings.DEBUG == True:

@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
@@ -5,7 +6,7 @@
 
 <div class="snow-container"></div>
 
-<h1 class="logo">AIsPong</h1>
+<h1 class="logo">{% trans 'AIsPong' %}</h1>
 
 {% if user.is_authenticated %}
 	<div class="sidebar-wrapper">
@@ -57,7 +58,7 @@
 
 	<div class="center-buttons-container">
 		<a class="center-button signin-button" data-modal="signin" data-modal-url={% url 'base.signin-modal'  %}>
-			Sign In
+			{% trans 'Sign In' %}
 		</a>
 		<a class="center-button oauth-button" data-modal="oauth42" data-modal-url={% url 'base.oauth42-modal' %}>
 			<img src="{% static 'images/icons/42_Logo.svg' %}"
