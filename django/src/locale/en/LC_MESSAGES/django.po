@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-05 02:41+0000\n"
+"POT-Creation-Date: 2024-09-05 05:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -163,6 +163,14 @@ msgstr "Nickname"
 msgid "Bio"
 msgstr "Bio"
 
+#: templates/components/drawers/profile.html:46
+msgid "Save"
+msgstr ""
+
+#: templates/components/drawers/profile.html:47
+msgid "Cancel"
+msgstr ""
+
 #: templates/components/drawers/settings.html:6
 msgid "Settings"
 msgstr "Settings"
@@ -238,4 +246,8 @@ msgstr ""
 
 #: templates/components/pages/home.html:49
 msgid "PVE"
+msgstr ""
+
+#: templates/components/pages/pong.html:11
+msgid "Waiting for opponent..."
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-05 02:41+0000\n"
+"POT-Creation-Date: 2024-09-05 05:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr "Bahasa Malaysia"
 
 #: core/settings.py:187
 msgid "Chinese"
-msgstr ""
+msgstr "Bahasa Cina"
 
 #: drf_auth/views.py:32 drf_auth/views.py:42
 msgid "Verification key is missing"
@@ -47,7 +47,7 @@ msgstr "OTP telah dihantar. Sila semak e-mel anda."
 
 #: drf_auth/views.py:88
 msgid "User email is not verified."
-msgstr ""
+msgstr "E-mel pengguna tidak disahkan."
 
 #: drf_auth/views.py:92
 msgid "User does not exist."
@@ -63,15 +63,15 @@ msgstr "OTP telah tamat tempoh, Sila minta yang baharu"
 
 #: friend/views.py:31 friend/views.py:40 friend/views.py:49
 msgid "friend_id is required"
-msgstr ""
+msgstr "Sila letak friend_id"
 
 #: friend/views.py:34
 msgid "friend blocked"
-msgstr ""
+msgstr "rakan dihalang"
 
 #: friend/views.py:43
 msgid "friend unblocked"
-msgstr ""
+msgstr "rakan telah dinyahsekat"
 
 #: friend/views.py:53
 #, fuzzy
@@ -81,11 +81,11 @@ msgstr "Permintaan Rakan"
 
 #: friend/views.py:59
 msgid "username query parameter is required"
-msgstr ""
+msgstr "parameter pertanyaan nama pengguna diperlukan"
 
 #: friend/views.py:62
 msgid "cannot add yourself as a friend"
-msgstr ""
+msgstr "tidak boleh menambah diri anda sebagai kawan"
 
 #: friend/views.py:64
 #, fuzzy
@@ -95,7 +95,7 @@ msgstr "Kawan Baru"
 
 #: friend/views.py:85 friend/views.py:93
 msgid "not authorized"
-msgstr ""
+msgstr "tidak dibenarkan"
 
 #: friend/views.py:87
 #, fuzzy
@@ -161,6 +161,14 @@ msgstr "Nama panggilan"
 #: templates/components/drawers/profile.html:43
 msgid "Bio"
 msgstr "Bio"
+
+#: templates/components/drawers/profile.html:46
+msgid "Save"
+msgstr "Simpan"
+
+#: templates/components/drawers/profile.html:47
+msgid "Cancel"
+msgstr "Batal"
 
 #: templates/components/drawers/settings.html:6
 msgid "Settings"
@@ -233,8 +241,12 @@ msgstr "AIsPong"
 
 #: templates/components/pages/home.html:48
 msgid "PVP"
-msgstr ""
+msgstr "PVP"
 
 #: templates/components/pages/home.html:49
 msgid "PVE"
-msgstr ""
+msgstr "PVE"
+
+#: templates/components/pages/pong.html:11
+msgid "Waiting for opponent..."
+msgstr "Menunggu lawan..."
