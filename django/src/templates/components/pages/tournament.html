@@ -4,9 +4,17 @@
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
 <div>Tournament Room: {{ room_name }}</div>
+<form id="form">
+    <input type="text" name ="message"/>
+</form>
+<div id="messages"></div>
 <script>
     const roomName = "{{ room_name }}";
-    const ws = new WebSocket('ws://' + window.location.host + '/ws/tournament/' + roomName + '/');
+    const socket = new WebSocket('ws://' + window.location.host + '/ws/tournament/' + roomName + '/');
+
+    socket.onopen = function() {
+        console.log("WebSocket connection established " + roomName);
+    }
 
     let form = document.getElementById('form')
     form.addEventListener('submit', (e)=> {

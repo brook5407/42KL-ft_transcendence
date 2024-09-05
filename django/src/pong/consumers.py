@@ -2,6 +2,7 @@ import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from asgiref.sync import async_to_sync
 # from .models import Tournament, Room, Match
 
 gameHeight = 500
@@ -60,52 +61,26 @@ class PongConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
-        self.current_match = MatchManager.create_match(self.room_name)
-
-        if (self.game_mode == "pvp"):
-            self.pvp_mode()
-        elif (self.game_mode == "pve"):
-            self.pve_mode()
-        elif (self.game_mode == "tournament"):
-            self.tournament_mode()
-
-        # Assign the player using MatchManager
+        self.match = MatchManager.create_match(self.room_name)
         self.player = MatchManager.assign_player(self.room_name, self.channel_name)
 
-        if self.player is None:
-            # Room is full, close the connection
-            await self.close()
-        else:
-            # Send the player assignment to the client
-            await self.send(text_data=json.dumps({
-                'type': 'player_assignment',
-                'player': self.player,
-            }))
+        print(f"Match: {self.match}")  # Debugging line
+        print(f"Player: {self.player}")  # Debugging line
+        print(f"Game Mode: {self.game_mode}")  # Debugging line
 
-        game_state = MatchManager.create_match(self.room_name)
-        self.paddle1 = game_state['paddle1']
-        self.paddle2 = game_state['paddle2']
-        self.ball = game_state['ball']
-        self.score1 = game_state['score1']
-        self.score2 = game_state['score2']
-
-        # Start the game and game loop
-        if (game_state['player1'] != None and game_state['player2'] != None) or self.game_mode == "pve":
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'start_game',
-                    'message': 'channel_layer.group_send: start_game',
-                })
-            asyncio.create_task(self.game_loop())
+        if (self.game_mode == "pvp"):
+            await self.pvp_mode()
+        elif (self.game_mode == "pve"):
+            await self.pve_mode()
+        elif (self.game_mode == "tournament"):
+            await self.tournament_mode()
 
     async def disconnect(self, close_code):
         # Remove player from the room in RoomManager
         MatchManager.remove_player(self.room_name, self.channel_name)
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
-        game_state = MatchManager.create_match(self.room_name)
-        if len(game_state['players']) < 2:
+        if self.match['player1'] == None or self.match['player1'] == None:
             # If there are fewer than 2 players, end the game
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -122,16 +97,53 @@ class PongConsumer(AsyncWebsocketConsumer):
 
         # Update the paddle's velocity
         if paddle == 'paddle1':
-            self.paddle1.velocity = velocity
+            self.match['paddle1'].velocity = velocity
         elif paddle == 'paddle2':
-            self.paddle2.velocity = velocity
+            self.match['paddle2'].velocity = velocity
+
+        message = data.get('message')
+        if message:
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type':'chat_message',
+                    'message':message
+                })
 
     async def pvp_mode(self):
-        print("pvp")
+        print("ENTERED PVP MODE FUNCTION")
+        if self.player is None:
+            await self.close()
+        else:
+            await self.send(text_data=json.dumps({
+                'type': 'player_assignment',
+                'player': self.player,
+            }))
+        if (self.match['player1'] != None and self.match['player2'] != None):
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'start_game',
+                    'message': 'channel_layer.group_send: start_game',
+                })
+            asyncio.create_task(self.game_loop())
+
     async def pve_mode(self):
-        print("pve")
+        print("ENTERED PVE MODE FUNCTION")
+        await self.send(text_data=json.dumps({
+        'type': 'player_assignment',
+        'player': self.player,
+        }))
+        await self.channel_layer.group_send(
+        self.room_group_name,
+        {
+            'type': 'start_game',
+            'message': 'channel_layer.group_send: start_game',
+        })
+        asyncio.create_task(self.game_loop())
+
     async def tournament_mode(self):
-        print("tournament")
+        print("ENTERED TOURNAMENT MODE FUNCTION")
 
     async def start_game(self, event):
         await self.send(text_data=json.dumps({
@@ -139,9 +151,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             'message': event['message'],
             'gameHeight': gameHeight,
             'gameWidth': gameWidth,
-            'paddle1': self.paddle1.serialize(),
-            'paddle2': self.paddle2.serialize(),
-            'ball': self.ball.serialize(),
+            'paddle1': self.match['paddle1'].serialize(),
+            'paddle2': self.match['paddle2'].serialize(),
+            'ball': self.match['ball'].serialize(),
         }))
         for i in range(3, 0, -1):
             await self.send(text_data=json.dumps({
@@ -154,36 +166,36 @@ class PongConsumer(AsyncWebsocketConsumer):
         await asyncio.sleep(4)
         while True:
             # Update game state
-            self.ball.move()
-            self.paddle1.move()
-            self.paddle2.move()
+            self.match['ball'].move()
+            self.match['paddle1'].move()
+            self.match['paddle2'].move()
 
             # Check for scoring
-            if self.ball.x <= 0:
-                self.score2 += 1
+            if self.match['ball'].x <= 0:
+                self.match['score2'] += 1
                 self.reset_ball()
-            elif self.ball.x >= gameWidth:
-                self.score1 += 1
+            elif self.match['ball'].x >= gameWidth:
+                self.match['score1'] += 1
                 self.reset_ball()
 
-            self.ball.check_collision(self.paddle1, self.paddle2)
+            self.match['ball'].check_collision(self.match['paddle1'], self.match['paddle2'])
 
             # Broadcast game state to clients
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'update_game_state',
-                    'paddle1': self.paddle1.serialize(),
-                    'paddle2': self.paddle2.serialize(),
-                    'ball': self.ball.serialize(),
-                    'score1': self.score1,
-                    'score2': self.score2,
+                    'paddle1': self.match['paddle1'].serialize(),
+                    'paddle2': self.match['paddle2'].serialize(),
+                    'ball': self.match['ball'].serialize(),
+                    'score1': self.match['score1'],
+                    'score2': self.match['score2'],
                 }
             )
 
             # End the game if a player reaches a score of 5
-            if self.score1 >= 5 or self.score2 >= 5:
-                winner = 'player1' if self.score1 >= 5 else 'player2'
+            if self.match['score1'] >= 5 or self.match['score2'] >= 5:
+                winner = 'player1' if self.match['score1'] >= 5 else 'player2'
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -216,10 +228,18 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     def reset_ball(self):
         # Reset the ball to the center of the field
-        self.ball.x = gameWidth / 2
-        self.ball.y = gameHeight / 2
-        self.ball.x_direction *= -1  # Change direction after score
-        self.ball.speed = self.ball.oriSpeed
+        self.match['ball'].x = gameWidth / 2
+        self.match['ball'].y = gameHeight / 2
+        self.match['ball'].x_direction *= -1  # Change direction after score
+        self.match['ball'].speed = self.match['ball'].oriSpeed
+
+    async def chat_message(self, event):
+        message = event['message']
+
+        await self.send(text_data=json.dumps({
+            'type':'chat',
+            'message':message
+        }))
 
 # class TournamentConsumer(AsyncWebsocketConsumer):
 #     async def connect(self):
@@ -318,7 +338,37 @@ class PongConsumer(AsyncWebsocketConsumer):
 #             'message': message
 #         }))
 
+class ChatConsumer(AsyncWebsocketConsumer):
+    def connect(self):
+        self.room_name = self.scope['url_route']['kwargs']['room_name']
 
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        self.accept()
+   
+
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type':'chat_message',
+                'message':message
+            }
+        )
+        print(message)
+
+    def chat_message(self, event):
+        message = event['message']
+
+        self.send(text_data=json.dumps({
+            'type':'chat',
+            'message':message
+        }))
 
 class Paddle:
     def __init__(self, x, y, width, height):
