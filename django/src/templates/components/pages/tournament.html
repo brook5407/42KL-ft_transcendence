@@ -9,6 +9,7 @@
 </form>
 <div id="messages"></div>
 <script>
+    const username = prompt("Enter your username:");
     const roomName = "{{ room_name }}";
     const socket = new WebSocket('ws://' + window.location.host + '/ws/tournament/' + roomName + '/');
 

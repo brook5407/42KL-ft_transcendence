@@ -10,6 +10,12 @@ gameWidth = 800
 
 class MatchManager:
     matches = {}
+    player_counter = 0
+
+    @classmethod
+    def assign_player_id(cls):
+        cls.player_counter += 1
+        return cls.player_counter
 
     @classmethod
     def create_match(cls, room_name):
@@ -56,14 +62,14 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.game_mode = self.scope['url_route']['kwargs']['game_mode']
         self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'room_{self.room_name}'
+        self.room_group_name = f'pong_{self.room_name}'
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
         self.match = MatchManager.create_match(self.room_name)
         self.player = MatchManager.assign_player(self.room_name, self.channel_name)
-
+        self.id = MatchManager.assign_player_id()
         print(f"Match: {self.match}")  # Debugging line
         print(f"Player: {self.player}")  # Debugging line
         print(f"Game Mode: {self.game_mode}")  # Debugging line
@@ -107,7 +113,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type':'chat_message',
-                    'message':message
+                    'message': f'Player {self.id}: {message}'
                 })
 
     async def pvp_mode(self):
@@ -144,6 +150,13 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def tournament_mode(self):
         print("ENTERED TOURNAMENT MODE FUNCTION")
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': f'Player {self.id} has joined the chat',
+            }
+        )
 
     async def start_game(self, event):
         await self.send(text_data=json.dumps({
@@ -338,37 +351,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 #             'message': message
 #         }))
 
-class ChatConsumer(AsyncWebsocketConsumer):
-    def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
 
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
-
-        self.accept()
-   
-
-    def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type':'chat_message',
-                'message':message
-            }
-        )
-        print(message)
-
-    def chat_message(self, event):
-        message = event['message']
-
-        self.send(text_data=json.dumps({
-            'type':'chat',
-            'message':message
-        }))
 
 class Paddle:
     def __init__(self, x, y, width, height):
