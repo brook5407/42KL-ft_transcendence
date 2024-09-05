@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-04 07:38+0000\n"
+"POT-Creation-Date: 2024-09-05 02:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,6 +24,102 @@ msgstr "Bahasa Inggeris"
 #: core/settings.py:186
 msgid "Malay"
 msgstr "Bahasa Malaysia"
+
+#: core/settings.py:187
+msgid "Chinese"
+msgstr ""
+
+#: drf_auth/views.py:32 drf_auth/views.py:42
+msgid "Verification key is missing"
+msgstr "Tiada Kunci pengesahan"
+
+#: drf_auth/views.py:61
+msgid "Your email has been successfully verified."
+msgstr "E-mel anda telah berjaya disahkan."
+
+#: drf_auth/views.py:64
+msgid "There was an error verifying your email."
+msgstr "Berlaku ralat mengesahkan e-mel anda."
+
+#: drf_auth/views.py:84
+msgid "OTP sent. Please check your email."
+msgstr "OTP telah dihantar. Sila semak e-mel anda."
+
+#: drf_auth/views.py:88
+msgid "User email is not verified."
+msgstr ""
+
+#: drf_auth/views.py:92
+msgid "User does not exist."
+msgstr "E-mel pengguna belum disahkan."
+
+#: drf_auth/views.py:115 drf_auth/views.py:124
+msgid "OTP is invalid"
+msgstr "OTP tidak sah"
+
+#: drf_auth/views.py:120
+msgid "OTP has expired, Please request a new one"
+msgstr "OTP telah tamat tempoh, Sila minta yang baharu"
+
+#: friend/views.py:31 friend/views.py:40 friend/views.py:49
+msgid "friend_id is required"
+msgstr ""
+
+#: friend/views.py:34
+msgid "friend blocked"
+msgstr ""
+
+#: friend/views.py:43
+msgid "friend unblocked"
+msgstr ""
+
+#: friend/views.py:53
+#, fuzzy
+#| msgid "Friend Requests"
+msgid "friend deleted"
+msgstr "Permintaan Rakan"
+
+#: friend/views.py:59
+msgid "username query parameter is required"
+msgstr ""
+
+#: friend/views.py:62
+msgid "cannot add yourself as a friend"
+msgstr ""
+
+#: friend/views.py:64
+#, fuzzy
+#| msgid "New Friends"
+msgid "already friends"
+msgstr "Kawan Baru"
+
+#: friend/views.py:85 friend/views.py:93
+msgid "not authorized"
+msgstr ""
+
+#: friend/views.py:87
+#, fuzzy
+#| msgid "Friend Requests"
+msgid "friend request accepted"
+msgstr "Permintaan Rakan"
+
+#: friend/views.py:95
+#, fuzzy
+#| msgid "Friend Requests"
+msgid "friend request rejected"
+msgstr "Permintaan Rakan"
+
+#: friend/views.py:103
+#, fuzzy
+#| msgid "Friend Requests"
+msgid "friend request already sent"
+msgstr "Permintaan Rakan"
+
+#: friend/views.py:110
+#, fuzzy
+#| msgid "Friend Requests"
+msgid "friend request sent"
+msgstr "Permintaan Rakan"
 
 #: templates/components/drawers/chat-list.html:10
 msgid "Chat"
@@ -134,3 +230,11 @@ msgstr "Pengesahan Kata Laluan"
 #: templates/components/pages/home.html:9
 msgid "AIsPong"
 msgstr "AIsPong"
+
+#: templates/components/pages/home.html:48
+msgid "PVP"
+msgstr ""
+
+#: templates/components/pages/home.html:49
+msgid "PVE"
+msgstr ""
