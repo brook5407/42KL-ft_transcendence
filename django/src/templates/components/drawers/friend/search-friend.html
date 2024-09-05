@@ -58,7 +58,11 @@
 			appendSearchFriendResult(data);
 		}).catch((error) => {
 			const searchFriendResult = document.getElementById('search-friend-result');
-			searchFriendResult.innerHTML = error.toString();
+			searchFriendResult.innerHTML = `
+				<div class="error-search-result">
+					${error.toString()}
+				</div>
+			`
 		});
 	}
 

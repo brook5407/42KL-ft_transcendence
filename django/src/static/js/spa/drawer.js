@@ -74,8 +74,13 @@ document.body.addEventListener('click', (e) => {
 		const drawerUrl = e.target.getAttribute('data-drawer-url') || '';
 		openDrawer(drawerName, { url: drawerUrl });
 	} else if (e.target.matches('.drawer-back-btn')) {
-		// open the previous drawer
 		e.preventDefault();
+		if (drawerStack.stack.length === 1) {
+			// close drawer
+			closeDrawer();
+			return;
+		}
+		// open the previous drawer
 		currentDrawer?.destroy();
 		drawerStack.pop();
 		const drawerToOpen = drawerStack.getCurrentDrawer();
@@ -94,6 +99,11 @@ function dispatchDrawerOpenedEvent(e = null) {
 }
 
 export async function openDrawer(drawerName, data = {}, pushStack = true) {
+	// if current drawer is the same as the drawer to open, do nothing
+	if (drawerStack.getCurrentDrawer()?.drawerName === drawerName) {
+		return;
+	}
+
 	// close previous drawer only
 	closeDrawer(false, false);
 	const drawerClass = DRAWERS[drawerName];

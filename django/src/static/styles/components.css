@@ -64,3 +64,12 @@
 .clickable {
 	cursor: pointer;
 }
+
+.close-button {
+	border: none;
+	cursor: pointer;
+}
+
+.underline-text {
+	text-decoration: underline;
+}
