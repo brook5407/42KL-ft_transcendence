@@ -30,7 +30,13 @@
 			<p class="profile-email">{{ user.email }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="">{{ user.profile.bio }}</p>
+			<p class="profile-joined">Joined: {{ user.date_joined|date:"d M Y" }}</p>
+		</div>
+		<div class="profile-info-item">
+			<p class="">Wins: {{ wins }}, Losses: {{ losses }}</p>
+		</div>
+		<div class="profile-info-item">
+			<p class="profile-bio">{{ user.profile.bio }}</p>
 		</div>
 
 		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">Edit Profile</button>
