@@ -18,6 +18,15 @@ def profile_drawer(request):
         })
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profile_edit_drawer(request):
+    if is_ajax_request(request):
+        return render(request, 'components/drawers/profile-edit.html', {
+            'profile': Profile.objects.get(user=request.user)
+        })
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
 class ProfileDetail(generics.RetrieveUpdateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer

@@ -29,23 +29,12 @@
 		<div class="profile-info-item">
 			<p class="profile-email">{{ user.email }}</p>
 		</div>
+		<div class="profile-info-item">
+			<p class="">{{ user.profile.bio }}</p>
+		</div>
 
-		<button id="edit-profile-btn" class="btn btn-primary" onclick="toggleProfileEditForm()">Edit Profile</button>
+		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">Edit Profile</button>
 	</div>
-
-
-	<form id="profile-form" action="{% url 'profile.detail' %}" class="spa-form" method="PUT" style="display: none;">
-		<div class="form-group">
-			<label for="nickname">Nickname</label>
-			<input type="text" id="nickname" name="nickname" value="{{ user.profile.nickname }}" class="form-control">
-		</div>
-		<div class="form-group">
-			<label for="bio">Bio</label>
-			<textarea id="bio" name="bio" class="form-control">{{ user.profile.bio }}</textarea>
-		</div>
-		<button type="submit" class="btn btn-success" onclick="closeDrawer()">Save</button>
-		<button type="button" id="cancel-edit-profile-btn" class="btn btn-danger" onclick="toggleProfileEditForm()">Cancel</button>
-	</form>
 {% endblock %}
 
 {% block drawerScripts %}
@@ -60,18 +49,6 @@
 
 		// submit the avatar form in a spa manner
 		document.querySelector('#avatar-form input[type="submit"]').click();
-	}
-
-	function toggleProfileEditForm() {
-		const editBtn = document.getElementById('edit-profile-btn');
-		const form = document.getElementById('profile-form');
-		if (form.style.display === 'none' || form.style.display === '') {
-			form.style.display = 'block';
-			editBtn.style.display = 'none';
-		} else {
-			form.style.display = 'none';
-			editBtn.style.display = 'block';
-		}
 	}
 </script>
 {% endblock %}

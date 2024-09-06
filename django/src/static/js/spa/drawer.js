@@ -63,6 +63,7 @@ export const DRAWERS = {
 	'friend-requests': FriendRequestsDrawer,
 	'search-friend': GenericDrawer,
 	'friend-profile': GenericDrawer,
+	'profile-edit': GenericDrawer,
 };
 
 // open drawer and back buttons handler
@@ -75,14 +76,8 @@ document.body.addEventListener('click', (e) => {
 		openDrawer(drawerName, { url: drawerUrl });
 	} else if (e.target.matches('.drawer-back-btn')) {
 		e.preventDefault();
-		if (drawerStack.stack.length === 1) {
-			// close drawer
-			closeDrawer();
-			return;
-		}
-		// open the previous drawer
-		currentDrawer?.destroy();
 		drawerStack.pop();
+		// open the previous drawer
 		const drawerToOpen = drawerStack.getCurrentDrawer();
 		if (drawerToOpen) {
 			openDrawer(
@@ -90,6 +85,8 @@ document.body.addEventListener('click', (e) => {
 				{ url: drawerToOpen.drawerUrl },
 				false
 			);
+		} else {
+			closeDrawer();
 		}
 	}
 });
@@ -99,14 +96,13 @@ function dispatchDrawerOpenedEvent(e = null) {
 }
 
 export async function openDrawer(drawerName, data = {}, pushStack = true) {
-	// if current drawer is the same as the drawer to open, do nothing
-	if (drawerStack.getCurrentDrawer()?.drawerName === drawerName) {
-		return;
-	}
-
 	// close previous drawer only
 	closeDrawer(false, false);
 	const drawerClass = DRAWERS[drawerName];
+	if (!drawerClass) {
+		console.error('Drawer not found:', drawerName);
+		return;
+	}
 	const drawer = new drawerClass({
 		url: data.url,
 		state: data.state || {},
