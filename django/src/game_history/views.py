@@ -13,7 +13,7 @@ from .serializers import GameHistorySerializer
 User = get_user_model()
 
 class GameHistoryViewSet(viewsets.ModelViewSet):
-    queryset = GameHistory.objects.all().order_by('-game_date')
+    queryset = GameHistory.objects.all().order_by('-created_at')
     serializer_class = GameHistorySerializer
     permission_classes = [IsAuthenticated]
 
@@ -24,5 +24,5 @@ class GameHistoryViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return GameHistory.objects.filter(
             Q(player1=user) | Q(player2=user)
-        ).order_by('-game_date')
+        ).order_by('-created_at')
 
