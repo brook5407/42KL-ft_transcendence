@@ -1,13 +1,11 @@
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponseBadRequest, JsonResponse
+from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from chat.models import ChatMessage, ChatRoom
-from chat.serializers import ChatMessageSerializer
-from chat.pagination import ChatMessagePagination
-from core import settings
-from utils.request_helpers import is_ajax_request
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from allauth.account.models import EmailAddress
+from core import settings
+from utils.request_helpers import is_ajax_request
 
 
 User = get_user_model()
@@ -52,11 +50,20 @@ def settings_drawer(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def current_user(request):
+def current_user_profile(request):
     user = request.user
-    user_data = {
+    profile = user.profile
+    data = {
         'id': user.id,
         'username': user.username,
         'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email_verified': True if EmailAddress.objects.get(user=user, primary=True) else False,
+        'profile': {
+            'bio': profile.bio,
+            'avatar': profile.avatar.url,
+            'nickname': profile.nickname,
+        }
     }
-    return JsonResponse(user_data)
+    return JsonResponse(data)

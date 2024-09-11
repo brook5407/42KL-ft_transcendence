@@ -11,8 +11,7 @@
 {% endblock %}
 
 {% block drawerContent %}
-{% comment %} <div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="8888" style="display:none;"></div> {% endcomment %}
-<div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="public_room" style="display:none;"></div>
+<input type="hidden" id="chatroom-name" value="{{ room_name }}" />
 
 <div class="chat-container">
     <div class="chat-messages" id="chat-messages" data-room="public_room">
@@ -28,7 +27,5 @@
 {% endblock %}
 
 {% block drawerScripts %}
-	<script type="module" src="{% static 'js/chat/chatConfig.js' %}"></script>
-	{% comment %} <script type="module" src="{% static 'js/chat/chat.js' %}"></script> {% endcomment %}
-    <script type="module" src="{% static 'js/chat/friendroom.js' %}"></script>
+    <script src="{% static 'js/chat/friendroom.js' %}"></script>
 {% endblock %}

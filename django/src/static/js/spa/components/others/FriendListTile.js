@@ -19,9 +19,8 @@ export class FriendListTile extends Component {
 		this.element
 			.querySelector('.friend-list-tile__action')
 			.addEventListener('click', () => {
-				// openDrawer('chat'); WXR TODO
 				openDrawer('friend-room', {
-					url: `drawer/chat-friendroom?username=${this.friend.user.username}`,
+					url: '', // WXR TODO: finalize the url
 				});
 			});
 

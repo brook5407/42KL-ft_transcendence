@@ -5,7 +5,6 @@ from base.models import BaseModel
 import uuid
 
 
-
 User = get_user_model()
 
 class ChatRoom(BaseModel):
@@ -14,19 +13,10 @@ class ChatRoom(BaseModel):
     is_public = models.BooleanField(default=False)
     cover_image = models.ImageField(upload_to='chatroom_covers/', null=True, blank=True)
     is_group_chat = models.BooleanField(default=False)
-    # messages = models.ForeignKey('ChatMessage', related_name='chatroom_messages', on_delete=models.CASCADE)
     messages = models.ManyToManyField('ChatMessage', related_name='chatroom_messages')
 
     def __str__(self):
         return self.name
-
-    # def save(self, *args, **kwargs):
-    #     if not self.id:
-    #         self.id = str(uuid.uuid4())
-    #     if self.members.count() == 2:
-    #         member_names = sorted([str(member.username) for member in self.members.all()])
-    #         self.name = "-".join(member_names)
-    #     super().save(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -43,9 +33,8 @@ class ChatRoom(BaseModel):
     
     @staticmethod
     def get_private_chat_roomname(user1, user2):
-        member_names = sorted([str(member.username) for member in [user1, user2]])
+        member_names = sorted([user1.username, user2.username])
         roomname = "-".join(member_names)
-        # roomname = "-2.join(member_names)
         return roomname
 
     def get_room_name(self, user):
@@ -64,10 +53,6 @@ class ChatRoom(BaseModel):
             timestamp = message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
             print(f"[{timestamp}] {sender} to {receiver}: {message.message}")
 
-    # def get_room_name(self, user):
-    #     if self.is_group_chat:
-    #         return self.name
-    #     return self.members.exclude(id=user.id).first().username
 
 class ChatMessage(BaseModel):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
