@@ -20,18 +20,19 @@ def limit_public_chat_messages(sender, instance, **kwargs):
 
 @receiver(post_migrate)
 def create_lobby_chat_room(sender, **kwargs):
+    # Create a lobby chat room if it doesn't exist after migration
     if sender.name == 'chat':
         if not ChatRoom.objects.filter(name='Lobby').exists():
             ChatRoom.objects.create(name='Lobby', is_public=True, is_group_chat=True, cover_image='lobby.svg')
 
 @receiver(post_save, sender=Friend)
 def create_private_chat_room(sender, instance, created, **kwargs):
-    if created:
-        user1 = instance.user
-        user2 = instance.friend
-        
-        # Create a private chat room for the two friends
-        room_name = ChatRoom.get_private_chat_roomname(user1, user2)
-        room, created = ChatRoom.objects.get_or_create(name=room_name, is_public=False, is_group_chat=False)
-        if created:
-            room.members.add(user1, user2)
+    if not created:
+        return
+    user1 = instance.user
+    user2 = instance.friend
+    # Create a private chat room for the two friends
+    room_name = ChatRoom.get_private_chat_roomname(user1, user2)
+    room, chatroom_created = ChatRoom.objects.get_or_create(name=room_name, is_public=False, is_group_chat=False)
+    if chatroom_created:
+        room.members.add(user1, user2)

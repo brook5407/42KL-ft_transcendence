@@ -61,7 +61,7 @@ def chat_list_drawer(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/chat-list.html', {
         'public_chats': ChatRoom.objects.filter(is_public=True),
-        'private_chats': ChatRoom.get_private_chats(request.user)
+        'private_chats': ChatRoom.get_private_chats(request.user) # WXR TODO: frontend dynamic fetch user's active private chats
 	})
 
 @api_view(['GET'])

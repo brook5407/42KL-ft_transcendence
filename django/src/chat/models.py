@@ -65,10 +65,13 @@ class ChatMessage(BaseModel):
         receiver_name = self.receiver.username if self.receiver else "No Receiver"
         sender_name = self.sender.username if self.sender else "No Sender"
         return f"Message from {sender_name} to {receiver_name} in room {self.room.name} at {self.timestamp}: {self.message}"
-    # Optional: Custom method to print a full message
-    def print_message(self):
-        if self.receiver:
-            print(f"Message from {self.sender.username} to {self.receiver.username}: {self.message}")
-        else:
-            print(f"Message from {self.sender.username} to None: {self.message}")
-        # print(f"Message from {self.sender.username} to {self.receiver.username if self.receiver else 'None'}: {self.message}")
+
+
+class ActiveChatRoom(models.Model):
+    # The rooms that has at least 1 message in it
+    # WXR TODO: request for this when opening chat-list, and paginate the list
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} in {self.room.name}"
