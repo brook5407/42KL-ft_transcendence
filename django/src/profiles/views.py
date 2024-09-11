@@ -13,8 +13,21 @@ from .models import Profile
 @permission_classes([IsAuthenticated])
 def profile_drawer(request):
     if is_ajax_request(request):
+        profile = request.user.profile
+        wins, losses = profile.get_wins_losses()
         return render(request, 'components/drawers/profile.html', {
-            'profile': Profile.objects.get(user=request.user)
+            'profile': profile,
+            'wins': wins,
+            'losses': losses
+        })
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profile_edit_drawer(request):
+    if is_ajax_request(request):
+        return render(request, 'components/drawers/profile-edit.html', {
+            'profile': request.user.profile
         })
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 

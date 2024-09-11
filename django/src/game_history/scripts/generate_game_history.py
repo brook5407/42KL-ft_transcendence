@@ -17,10 +17,13 @@ def generate_game_history(user1, user2, num_games):
     start_date = datetime.now() - timedelta(days=30)  # Generate games for the last 30 days
 
     for _ in range(num_games):
-        score1 = random.randint(0, 5)
-        score2 = random.randint(0, 5)
-        winner = user1 if score1 > score2 else user2
-        game_date = datetime.today()
+        winner = random.choice([user1, user2])
+        if winner == user1:
+            score1 = 5
+            score2 = random.randint(0, 4)
+        else:
+            score2 = 5
+            score1 = random.randint(0, 4)
 
         GameHistory.objects.create(
             player1=user1,
@@ -28,7 +31,6 @@ def generate_game_history(user1, user2, num_games):
             winner=winner,
             score_player1=score1,
             score_player2=score2,
-            game_date=game_date
         )
 
 
@@ -45,7 +47,7 @@ def run():
 
     # Print some sample data
     print("\nSample Game History:")
-    for game in GameHistory.objects.filter(player1__username__in=["brook5407", "l3rook"]).order_by('-game_date')[:5]:
+    for game in GameHistory.objects.filter(player1__username__in=["brook5407", "l3rook"]).order_by('-created_at')[:5]:
         print(f"{game.player1.username} vs {game.player2.username} - "
               f"Score: {game.score_player1}-{game.score_player2} - "
-              f"Winner: {game.winner.username} - Date: {game.game_date}")
+              f"Winner: {game.winner.username} - Date: {game.created_at}")

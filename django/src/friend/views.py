@@ -143,9 +143,13 @@ def friend_profile_drawer(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     friend_user = User.objects.get(username=request.GET.get('username'))
     is_blocked = UserRelation.objects.filter(user=request.user, friend=friend_user, blocked=True).exists()
+    profile = friend_user.profile
+    wins, losses = profile.get_wins_losses()
     return render(request, 'components/drawers/friend/profile.html', {
         'friend_profile': Profile.objects.get(user=friend_user),
-        'friend_is_blocked': is_blocked
+        'friend_is_blocked': is_blocked,
+        'wins': wins,
+        'losses': losses
     })
     
 @api_view(['GET'])

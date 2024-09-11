@@ -42,11 +42,19 @@
 	margin: 20px 0 20px 10px;
 }
 
-.drawer-header h2 {
+.drawer-header h2,
+h3 {
 	margin: 0;
-	font-size: 48px;
 	color: #fff;
 	font-family: 'Denk One', sans-serif;
+}
+
+.drawer-header h2 {
+	font-size: 48px;
+}
+
+.drawer-header h3 {
+	font-size: 28px;
 }
 
 .drawer-body {
