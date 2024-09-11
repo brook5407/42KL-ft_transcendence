@@ -25,6 +25,9 @@
 			<p class="profile-email">{{ friend_profile.user.email }}</p>
 		</div>
 		<div class="profile-info-item">
+			<p class="">Wins: {{ wins }}, Losses: {{ losses }}</p>
+		</div>
+		<div class="profile-info-item">
 			<p class="profile-bio">
 				{% if friend_profile.bio %}
 					{{ friend_profile.bio }}
@@ -33,6 +36,8 @@
 				{% endif %}
 			</p>
 		</div>
+
+		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'game-history.drawer' %}">See Match History</button>
 
 		<div class="action-buttons">
 			{% if friend_is_blocked %}

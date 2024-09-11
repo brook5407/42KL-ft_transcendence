@@ -18,8 +18,6 @@ class UserRelation(BaseModel):
     deleted_at = models.DateTimeField(auto_now=False, null=True)
     blocked = models.BooleanField(default=False)
     blocked_at = models.DateTimeField(auto_now=False, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         unique_together = ['user', 'friend']
@@ -59,8 +57,6 @@ class FriendRequest(BaseModel):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_requests", default=None)
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.PENDING)
     receiver_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.sender.username} -> {self.receiver.username}"
@@ -105,9 +101,13 @@ class FriendRequest(BaseModel):
 
 
 def get_friends(self):
-    user_relations = UserRelation.objects.filter(Q(user=self)).filter(deleted=False)
+    user_relations = UserRelation.objects.filter(Q(user=self) & Q(deleted=False))
     friend_ids = user_relations.values_list('friend_id', flat=True)
     friends = User.objects.filter(id__in=friend_ids)
     return friends
 
+def is_friend(self, user):
+    return UserRelation.objects.filter(Q(user=self) & Q(friend=user) & Q(deleted=False)).exists()
+
 User.add_to_class('friends', property(get_friends))
+User.add_to_class('is_friend', is_friend)

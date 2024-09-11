@@ -20,7 +20,12 @@ export class FriendRequestsLiveUpdate {
 		if (data.status === 'P') {
 			if (data.receiver !== this.username) return;
 			showInfoMessage(
-				`You have received a friend request from @${data.sender ?? someone}!`
+				`You have received a friend request from @${data.sender ?? someone}!`,
+				{
+					type: 'drawer',
+					name: 'friend-requests',
+					data: { url: 'drawer/friend-requests' },
+				}
 			);
 		} else if (data.status === 'A') {
 			if (data.sender !== this.username) return;

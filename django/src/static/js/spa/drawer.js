@@ -63,6 +63,8 @@ export const DRAWERS = {
 	'friend-requests': FriendRequestsDrawer,
 	'search-friend': GenericDrawer,
 	'friend-profile': GenericDrawer,
+	'profile-edit': GenericDrawer,
+	'match-history': GenericDrawer,
 };
 
 // open drawer and back buttons handler
@@ -74,10 +76,9 @@ document.body.addEventListener('click', (e) => {
 		const drawerUrl = e.target.getAttribute('data-drawer-url') || '';
 		openDrawer(drawerName, { url: drawerUrl });
 	} else if (e.target.matches('.drawer-back-btn')) {
-		// open the previous drawer
 		e.preventDefault();
-		currentDrawer?.destroy();
 		drawerStack.pop();
+		// open the previous drawer
 		const drawerToOpen = drawerStack.getCurrentDrawer();
 		if (drawerToOpen) {
 			openDrawer(
@@ -85,6 +86,8 @@ document.body.addEventListener('click', (e) => {
 				{ url: drawerToOpen.drawerUrl },
 				false
 			);
+		} else {
+			closeDrawer();
 		}
 	}
 });
@@ -97,6 +100,10 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 	// close previous drawer only
 	closeDrawer(false, false);
 	const drawerClass = DRAWERS[drawerName];
+	if (!drawerClass) {
+		console.error('Drawer not found:', drawerName);
+		return;
+	}
 	const drawer = new drawerClass({
 		url: data.url,
 		state: data.state || {},

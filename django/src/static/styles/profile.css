@@ -10,7 +10,7 @@
 
 .profile-info-item {
 	display: block;
-	/* margin: 10px 0 0 0; */
+	margin: 0;
 	text-align: center;
 	position: relative;
 }
@@ -43,12 +43,8 @@
 	font-weight: 500;
 }
 
-.profile-username {
-	font-size: 24px;
-}
-
 .profile-nickname {
-	font-size: 24px;
+	font-size: 32px;
 	color: #42eded;
 }
 
@@ -56,7 +52,7 @@
 	padding: 15px;
 	border: 1px solid #c0edfa;
 	border-radius: 5px;
-	background-color: #befafa;
+	/* background-color: #befafa; */
 	font-size: 16px;
 	color: #333;
 	line-height: 1.5;

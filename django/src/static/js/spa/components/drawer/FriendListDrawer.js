@@ -15,6 +15,22 @@ export class FriendListDrawer extends Component {
 		const friendListElem = document.getElementById('friend-list');
 		friendListElem.innerHTML = '';
 		friendListElem.appendChild(await this.friendList.render());
+
+		const friendRequestsIcon = document.querySelector(
+			'.drawer-bottom-right-icon img'
+		);
+		const pendingFriendRequests = await this.getPendingFriendRequests();
+		friendRequestsIcon.addUnreadCount(pendingFriendRequests.length);
+	}
+
+	async getPendingFriendRequests() {
+		const allFriendRequests = await ajaxWithAuth(
+			'/api/friend-requests/to_me/',
+			{
+				method: 'GET',
+			}
+		).then((res) => res.json());
+		return allFriendRequests.filter((fReq) => fReq.status === 'P');
 	}
 
 	handleFriendListDrawerOpened(e) {

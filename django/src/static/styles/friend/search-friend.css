@@ -71,3 +71,12 @@
 .new-friend-tile__action-add:hover {
 	background-color: #e6f9eb;
 }
+
+.error-search-result {
+	margin: auto;
+	width: 50%;
+	text-align: center;
+	font-size: 1.5em;
+	color: #f44336;
+	font-family: 'Ubuntu', sans-serif;
+}
