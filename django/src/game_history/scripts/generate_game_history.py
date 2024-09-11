@@ -17,9 +17,13 @@ def generate_game_history(user1, user2, num_games):
     start_date = datetime.now() - timedelta(days=30)  # Generate games for the last 30 days
 
     for _ in range(num_games):
-        score1 = random.randint(0, 5)
-        score2 = random.randint(0, 5)
-        winner = user1 if score1 > score2 else user2
+        winner = random.choice([user1, user2])
+        if winner == user1:
+            score1 = 5
+            score2 = random.randint(0, 4)
+        else:
+            score2 = 5
+            score1 = random.randint(0, 4)
 
         GameHistory.objects.create(
             player1=user1,

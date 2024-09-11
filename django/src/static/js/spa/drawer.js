@@ -64,6 +64,7 @@ export const DRAWERS = {
 	'search-friend': GenericDrawer,
 	'friend-profile': GenericDrawer,
 	'profile-edit': GenericDrawer,
+	'match-history': GenericDrawer,
 };
 
 // open drawer and back buttons handler

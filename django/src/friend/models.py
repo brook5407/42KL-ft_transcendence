@@ -101,9 +101,13 @@ class FriendRequest(BaseModel):
 
 
 def get_friends(self):
-    user_relations = UserRelation.objects.filter(Q(user=self)).filter(deleted=False)
+    user_relations = UserRelation.objects.filter(Q(user=self) & Q(deleted=False))
     friend_ids = user_relations.values_list('friend_id', flat=True)
     friends = User.objects.filter(id__in=friend_ids)
     return friends
 
+def is_friend(self, user):
+    return UserRelation.objects.filter(Q(user=self) & Q(friend=user) & Q(deleted=False)).exists()
+
 User.add_to_class('friends', property(get_friends))
+User.add_to_class('is_friend', is_friend)

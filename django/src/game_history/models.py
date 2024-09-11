@@ -30,3 +30,8 @@ class GameHistory(BaseModel):
 
     def __str__(self):
         return f"{self.player1} vs {self.player2}"
+    
+    def result(self):
+        if self.winner == self.player1:
+            return f"{self.player1} won"
+        return f"{self.player2} won"
