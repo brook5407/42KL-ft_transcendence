@@ -26,6 +26,14 @@ export class Component {
 				method: 'GET',
 				params: queryParams,
 			});
+			if (response.status === 404) {
+				return `
+				<div class="not-found">
+					<h1>404</h1>
+					<p>Page not found</p>
+				</div>
+				`;
+			}
 			const html = await response.text();
 			return html;
 		} catch {

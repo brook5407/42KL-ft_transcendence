@@ -42,16 +42,21 @@ def pve_view(request):
 
 @login_required
 def tournament_view(request):
-    return render(request, 'components/pages/tournament_lobby.html')
+    if is_ajax_request(request):
+        return render(request, 'components/pages/tournament_lobby.html')
+    return render(request, 'index.html')
 
 def tournament_create_view(request):
     room_name = generate_room_name()
     redirect_url = reverse('pong.tournament_join', kwargs={'room_name': room_name})
-    return JsonResponse({'redirect_url': redirect_url})
+    print(f"Generated room name: {room_name}, Redirect URL: {redirect_url}")  # Debug print
+    return JsonResponse({'redirect_url': redirect_url, 'room_name': room_name})
 
 @login_required
 def tournament_join_view(request, room_name):
-    return render(request, 'components/pages/tournament.html', {
-        'room_name': room_name,
-        'game_mode': "tournament"
-        })
+    if is_ajax_request(request):
+        return render(request, 'components/pages/tournament.html', {
+            'room_name': room_name,
+            'game_mode': "tournament"
+            })
+    return render(request, 'index.html')
