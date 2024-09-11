@@ -3,31 +3,54 @@
 {% load static %}
 
 {% block drawerStyles %}
-	<link rel="stylesheet" href="{% static 'styles/chat-room.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/chat-room.css' %}" />
 {% endblock %}
 
 {% block drawerHeader %}
-	<h2>{{ room_name }}</h2>
+    <h2>{{ room_name }}</h2>
 {% endblock %}
 
 {% block drawerContent %}
 <div id="friendroom"></div>
-<div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="{{user.room_name}}" style="display:none;"></div>
-{% comment %} <div id="chat-config" data-nickname="{{ user.username }}" data-room="public_room" style="display:none;"></div> {% endcomment %}
+<div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="{{ room_name }}" style="display:none;"></div>
 
-<div class="chat-container">
-    <div class="chat-messages" id="chat-messages">
+{% comment %} <div class="chat-container"> {% endcomment %}
+<div class="chat-container" data-drawer="friend-room" data-drawer-url="{% url 'chat.friendroom-drawer' %}" data-roomid="{{ chat.id }}">
+    <p>Nickname: {{ user.profile.nickname }}</p>
+    <p>Room Name: {{ room_name }}</p>
+    <div class="chat-messages" id="chat-messages" data-room="{{ room_name }}">
         <!-- Messages will be appended here dynamically -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="chat-message" role="listitem">
+                <span class="chat-username">{{ message.sender.username }}:</span>
+                <span class="chat-text">{{ message.message|escape }}</span>
+                {% if message.image_url %} <!-- Ensure 'image_url' is a valid field -->
+                    <div class="chat-image">
+                        <img src="{{ message.image_url }}" alt="Image message">
+                    </div>
+                {% endif %}
+                {% if message.timestamp %}
+                    <span class="chat-timestamp">{{ message.timestamp|date:"H:i" }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="chat-message">
+                <span class="chat-text">No messages yet.</span>
+            </div>
+        {% endif %}
     </div>
     <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Type a message..." onKeyPress=handleMessage(event)>
-        <button id="send-button" onclick="sendMessage()">
-			<img src="{% static 'images/icons/send.svg' %}" alt="Send" />
-		</button>
+        <input type="text" id="message-input" data-room="{{ room_name }}" placeholder="Type a message..." />
+        <button id="send-button">
+            <img src="{% static 'images/icons/send.svg' %}" alt="Send" />
+        </button>
     </div>
 </div>
 {% endblock %}
 
 {% block drawerScripts %}
-	<script src="{% static 'js/chat/friendroom.js' %}"></script>
+    <script type="module" src="{% static 'js/chat/chatConfig.js' %}"></script>
+    <script type="module" src="{% static 'js/chat/friendroom.js' %}"></script>
 {% endblock %}

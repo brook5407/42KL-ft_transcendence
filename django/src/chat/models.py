@@ -20,25 +20,54 @@ class ChatRoom(BaseModel):
     def __str__(self):
         return self.name
 
+    # def save(self, *args, **kwargs):
+    #     if not self.id:
+    #         self.id = str(uuid.uuid4())
+    #     if self.members.count() == 2:
+    #         member_names = sorted([str(member.username) for member in self.members.all()])
+    #         self.name = "-".join(member_names)
+    #     super().save(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = str(uuid.uuid4())
-        if self.members.count() == 2:
-            member_ids = sorted([str(member.id) for member in self.members.all()])
-            self.name = f'private_chat_{"_".join(member_ids)}'
         super().save(*args, **kwargs)
 
+
     def get_last_message(self):
-        return self.messages.order_by('-timestamp').first()
+        return self.chat_messages.order_by('-timestamp').first()
 
     @staticmethod
     def get_private_chats(user):
         return ChatRoom.objects.filter(members=user, is_public=False)
+    
+    @staticmethod
+    def get_private_chat_roomname(user1, user2):
+        member_names = sorted([str(member.username) for member in [user1, user2]])
+        roomname = "-".join(member_names)
+        # roomname = "-2.join(member_names)
+        return roomname
 
     def get_room_name(self, user):
         if self.is_group_chat:
             return self.name
-        return self.members.exclude(id=user.id).first().username
+        other_member = self.members.exclude(id=user.id).first()
+        if other_member:
+            return other_member.username
+        return 'default_room_name'
+
+    def print_chat_history(self):
+        messages = self.chat_messages.order_by('timestamp')
+        for message in messages:
+            sender = message.sender.username
+            receiver = message.receiver.username if message.receiver else "No Receiver"
+            timestamp = message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            print(f"[{timestamp}] {sender} to {receiver}: {message.message}")
+
+    # def get_room_name(self, user):
+    #     if self.is_group_chat:
+    #         return self.name
+    #     return self.members.exclude(id=user.id).first().username
 
 class ChatMessage(BaseModel):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)

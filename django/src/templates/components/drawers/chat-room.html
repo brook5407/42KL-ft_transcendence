@@ -15,12 +15,12 @@
 <div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="public_room" style="display:none;"></div>
 
 <div class="chat-container">
-    <div class="chat-messages" id="chat-messages">
+    <div class="chat-messages" id="chat-messages" data-room="public_room">
         <!-- Messages will be appended here dynamically -->
     </div>
     <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Type a message..." onKeyPress=handleMessage(event)>
-        <button id="send-button" onclick="sendMessage()">
+        <input type="text" id="message-input" data-room="public_room" placeholder="Type a message...">
+        <button id="send-button">
 			<img src="{% static 'images/icons/send.svg' %}" alt="Send" />
 		</button>
     </div>
@@ -28,5 +28,7 @@
 {% endblock %}
 
 {% block drawerScripts %}
-	<script src="{% static 'js/chat/chat.js' %}"></script>
+	<script type="module" src="{% static 'js/chat/chatConfig.js' %}"></script>
+	{% comment %} <script type="module" src="{% static 'js/chat/chat.js' %}"></script> {% endcomment %}
+    <script type="module" src="{% static 'js/chat/friendroom.js' %}"></script>
 {% endblock %}

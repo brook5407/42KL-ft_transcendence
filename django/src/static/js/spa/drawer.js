@@ -63,6 +63,8 @@ export const DRAWERS = {
 	'friend-requests': FriendRequestsDrawer,
 	'search-friend': GenericDrawer,
 	'friend-profile': GenericDrawer,
+
+	// 'friend-room': ChatRoomDrawer,
 	'friend-room': GenericDrawer,
 };
 
@@ -126,26 +128,61 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 	return element;
 }
 
+// export function closeDrawer(delay = true, emptyStack = true) {
+// 	const drawerOverlay = document.getElementById('drawerOverlay');
+// 	const drawer = document.getElementById('drawer');
+// 	drawerOverlay?.classList.remove('drawer-active');
+// 	drawer?.classList.remove('drawer-active');
+// 	if (emptyStack) {
+// 		drawerStack.empty();
+// 	}
+// 	if (!delay) {
+// 		currentDrawer?.destroy();
+// 		DRAWER_CONTAINER.innerHTML = '';
+// 		currentDrawer = null;
+// 		return;
+// 	}
+// 	setTimeout(() => {
+// 		currentDrawer?.destroy();
+// 		DRAWER_CONTAINER.innerHTML = '';
+// 		currentDrawer = null;
+// 	}, 500);
+// }
+
 export function closeDrawer(delay = true, emptyStack = true) {
-	const drawerOverlay = document.getElementById('drawerOverlay');
-	const drawer = document.getElementById('drawer');
-	drawerOverlay?.classList.remove('drawer-active');
-	drawer?.classList.remove('drawer-active');
-	if (emptyStack) {
-		drawerStack.empty();
-	}
-	if (!delay) {
-		currentDrawer?.destroy();
-		DRAWER_CONTAINER.innerHTML = '';
-		currentDrawer = null;
-		return;
-	}
-	setTimeout(() => {
-		currentDrawer?.destroy();
-		DRAWER_CONTAINER.innerHTML = '';
-		currentDrawer = null;
-	}, 500);
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const drawer = document.getElementById('drawer');
+    drawerOverlay?.classList.remove('drawer-active');
+    drawer?.classList.remove('drawer-active');
+
+    if (emptyStack) {
+        drawerStack.empty();
+    }
+
+    if (!delay) {
+        // Dispatch the drawer-closed event
+        document.dispatchEvent(new CustomEvent('drawer-closed'));
+        
+        currentDrawer?.destroy();
+        DRAWER_CONTAINER.innerHTML = '';
+        currentDrawer = null;
+        return;
+    }
+
+    setTimeout(() => {
+        // Dispatch the drawer-closed event
+        document.dispatchEvent(new CustomEvent('drawer-closed'));
+        
+        currentDrawer?.destroy();
+        DRAWER_CONTAINER.innerHTML = '';
+        currentDrawer = null;
+    }, 500);
 }
+
+// function dispatchDrawerOpenedEvent(e = null) {
+//     document.dispatchEvent(new CustomEvent('drawer-opened', e));
+// }
+
 
 function activateDrawer() {
 	const drawerOverlay = document.getElementById('drawerOverlay');

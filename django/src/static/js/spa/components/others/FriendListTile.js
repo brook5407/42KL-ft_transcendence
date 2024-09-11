@@ -17,9 +17,12 @@ export class FriendListTile extends Component {
 				});
 			});
 		this.element
-			.querySelector('.icon-action[title="Chat"]')
+			.querySelector('.friend-list-tile__action')
 			.addEventListener('click', () => {
 				// openDrawer('chat'); WXR TODO
+				openDrawer('friend-room', {
+					url: `drawer/chat-friendroom?username=${this.friend.user.username}`,
+				});
 			});
 
 		// show online status
@@ -48,7 +51,7 @@ export class FriendListTile extends Component {
 				<div class="friend-list-tile__username">@${this.friend.user.username}</div>
 			</div>
 			<div class="friend-list-tile__action">
-				<a class="icon-action" title="Chat">
+				<a class="icon-action" title="Chat" data-username=${this.friend.user.username}>
 					<i class="fa fa-comments"></i>
 				</a>
 			</div>

@@ -32,7 +32,8 @@ def create_private_chat_room(sender, instance, created, **kwargs):
         
         # Create a private chat room for the two friends
         # room_name = f"{user1.username}-{user2.username}"
-        room_name = '-'.join(sorted([user1.username, user2.username]))
+        room_name = "-55-".join(sorted([user1.username, user2.username]))
+        # room_name = '-'.join(sorted([user1.username, user2.username]))
         room, created = ChatRoom.objects.get_or_create(name=room_name, is_public=False, is_group_chat=False)
         if created:
             room.members.add(user1, user2)
