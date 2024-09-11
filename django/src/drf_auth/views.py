@@ -6,6 +6,10 @@ import requests
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import get_user_model
+
+# import username 
+# from django.contrib.auth import get_user_model
+
 from allauth.account.models import EmailAddress
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response

@@ -1,203 +1,264 @@
-const host = window.location.hostname;
-const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
-
-const appConfigElement = document.getElementById('chat-config');
-const nickname = appConfigElement.getAttribute('data-nickname'); //
-const group_num = appConfigElement.getAttribute('data-room') || 123;
-console.log('nickname: ' + nickname);
-
-// const ChatListConfigElement = document.getElementById('chat-list-item');
-// const group_num = ChatListConfigElement.getAttribute('data-roomid') || 123;
-
-// let currentUrl = window.location.href;
-// let url = new URL(currentUrl);
-// let group_num = url.searchParams.get('room') || 123;
-
-async function fetchToken() {
-	const queryString = new URLSearchParams({
-		group_num: group_num ? group_num : '123',
-		nickname: 'JohnDoe',
-		// nickname: nickname ? nickname : 'JohnDoe'
-	}).toString();
-
-	const response = await fetch('/chat?' + queryString);
-	// console.log('/chat?' + queryString);
-	const chat_data = await response.json();
-	return chat_data.token;
-}
-
-async function initialize() {
-	try {
-		// Fetch the token
-		const token = await fetchToken();
-
-		// Use the token
-		console.log('Retrieved token:', token);
-
-		// Further actions with the token, e.g., decode or use in application
-		// Note: Ensure any sensitive operations are done securely
-	} catch (error) {
-		console.error('Error initializing:', error);
-	}
-}
-initialize();
-
-const socketURL = `${protocol}//${host}:${port}/room/${group_num}/?customer_name=${nickname}`;
+let connections = new Map(); // To store WebSocket connections by room ID
+let host,
+	protocol,
+	port,
+	nickname,
+	roomId = null;
 let socket = null;
+let socketURL = null;
 
-function newSocket() {
-	if (socket !== null && socket.readyState === WebSocket.OPEN) {
-		socket.close();
+// WXR TODO: make this file OOP
+
+document.addEventListener('drawer-opened', () => {
+	var { host, protocol, port } = getWebSocketConfig();
+	var { nickname, roomId } = getChatConfig();
+	host = host;
+	protocol = protocol;
+	port = port;
+	nickname = nickname;
+	roomId = roomId;
+
+	// Get configuration data from functions
+
+	// Log configuration for debugging
+	console.log(`Room ID: ${roomId}`);
+	console.log(`Nickname: ${nickname}`);
+
+	// Validate configurations
+	if (!roomId) {
+		console.error('Room ID is missing or not defined.');
+		return;
+	}
+	if (!nickname) {
+		console.error('Nickname is missing or not defined.');
+		return;
 	}
 
-	socket = new WebSocket(socketURL);
+	// Create the WebSocket URL
+	socketURL = `${protocol}//${host}:${port}/drawer/chat-friendroom/${roomId}/?customer_name=${nickname}`;
+	console.log(`Connecting to ${socketURL}`);
 
-	socket.onopen = function (event) {
-		handleSocketOpen();
-	};
+	// Initialize connections map and WebSocket
+	// let connections = new Map(); // To store WebSocket connections by room ID
+	// let socket = null;
 
-	socket.onmessage = function (event) {
-		handleSocketMessage(event);
-	};
+	// Set up event listeners for message input and send button
+	document
+		.getElementById('message-input')
+		.addEventListener('keydown', handleMessage);
+	document.getElementById('send-button').addEventListener('click', sendMessage);
 
-	socket.onclose = function (event) {
-		handleSocketClose();
-	};
+	// Connect to the specified room
+	// socketURL = createSocketURL(roomId, protocol, nickname, port, host);
+	connectToRoom(roomId);
+	// disconnectFromRoom(roomId);
+});
 
-	socket.onerror = function (error) {
-		console.error('WebSocket error:', error);
-	};
+function createSocketURL(roomId) {
+	if (!roomId) {
+		console.error('Invalid room ID');
+		return '';
+	}
+	console.log(`Creating socket URL for room': ${roomId}`);
+	return `${protocol}//${host}:${port}/drawer/chat-friendroom/${roomId}/?customer_name=${nickname}`;
 }
 
-function openConnect() {
-	if (socket.readyState === WebSocket.OPEN) return;
-	newSocket();
+function connectToRoom(roomId) {
+	if (!roomId) {
+		console.error('Room ID is required to connect');
+		return;
+	}
+	if (connections.has(roomId)) {
+		console.log(`Already connected to room ${roomId}`);
+		return;
+	}
+	// socketURL = createSocketURL(roomId, protocol, nickname);
+	if (socket === null) {
+		socket = new WebSocket(socketURL);
+	}
+	// socket = new WebSocket(socketURL);
+
+	socket.onopen = () => handleSocketOpen(roomId);
+	socket.onmessage = (event) => handleSocketMessage(event, roomId);
+	socket.onclose = () => handleSocketClose(roomId);
+	socket.onerror = handleSocketError;
+
+	connections.set(roomId, socket);
+	console.log(`Connecting to room ${roomId}`);
 }
 
-newSocket();
-
-function closeConnect() {
+function disconnectFromRoom(roomId) {
+	socket = connections.get(roomId);
 	if (socket) {
-		socket.close(); // Close the connection
+		socket.close();
+		connections.delete(roomId);
+		console.log(`Disconnected from room ${roomId}`);
 	}
 }
 
-function handleSocketOpen() {
-	console.log('WebSocket connection opened.');
-	appendStatusMessage('连接成功', 'green', '你有朋友了 (｡♥‿♥｡)\n');
+function handleSocketOpen(roomId) {
+	console.log(`WebSocket connection opened for room ${roomId}`);
+	appendStatusMessage(
+		roomId,
+		'Connected',
+		'green',
+		`You are now connected to room ${roomId}`
+	);
 }
 
-function handleSocketMessage(event) {
+function handleSocketMessage(event, roomId) {
 	const data = JSON.parse(event.data);
 	if (data.type === 'message') {
-		displayChatMessage(data.message, data.name);
+		displayChatMessage(data.message, data.name, roomId);
 	} else if (data.type === 'image') {
-		displayImage(data.image, data.name);
+		displayImage(data.image, data.name, roomId);
 	} else {
-		displayChatMessage(data.message, data.name);
+		console.warn('Unknown message type:', data.type);
 	}
 	scrollToBottom();
 }
 
-function handleSocketClose() {
-	console.log('WebSocket connection closed.');
-	logMessage(nickname + '连接已断开', 'error');
-	appendStatusMessage('连接关闭', 'red', '你没朋友了 ｡ﾟ･ (>﹏<) ･ﾟ｡\n');
+function handleSocketClose(roomId) {
+	console.log(`WebSocket connection closed for room ${roomId}`);
+	appendStatusMessage(
+		roomId,
+		'Disconnected',
+		'red',
+		`You have been disconnected from room ${roomId}`
+	);
+	connections.delete(roomId);
+	reconnectWebSocket(roomId);
 }
 
-//dun have upload plceholder
-// document.getElementById('fileInput').addEventListener('change', handleUpload);
+function handleSocketError(error) {
+	console.error('WebSocket error:', error);
+}
 
-function handleUpload() {
-	const fileInput = document.getElementById('fileInput');
-	const file = fileInput.files[0];
+function reconnectWebSocket(roomId) {
+	let retries = 0;
+	const maxRetries = 5; // Maximum number of retries
 
-	if (file) {
-		const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-
-		if (file.size > MAX_FILE_SIZE) {
-			alert('File size exceeds the 5 MB limit.');
-			return; // Exit the function if file size is too large
+	function tryReconnect() {
+		if (retries >= maxRetries) {
+			console.error('Max reconnect attempts reached. Giving up.');
+			return;
 		}
-		const reader = new FileReader();
+		retries++;
+		console.log(
+			`Reconnecting to room ${roomId}... (Attempt ${retries}/${maxRetries})`
+		);
+		connectToRoom(roomId);
+	}
 
-		reader.onload = function (event) {
-			const imageUrl = event.target.result;
+	setTimeout(tryReconnect, 3000); // Retry after 3 seconds
+}
 
-			// Display the uploaded image immediately
-			// displayImage(imageUrl);
-
-			// Send the image URL via WebSocket
-			socket.send(
-				JSON.stringify({
-					type: 'image',
-					name: nickname,
-					image: imageUrl,
-				})
-			);
-		};
-
-		reader.readAsDataURL(file);
-	} else {
-		alert('Please select a file to upload.');
+function handleMessage(event) {
+	if (event.key === 'Enter') {
+		sendMessage();
 	}
 }
 
-function displayImage(imageUrl, name) {
-	const imageContainer = document.getElementById('chat-messages');
+function sendMessage() {
+	const message = document.getElementById('message-input').value.trim();
+	// console.log(`Sending message: ${message}`);  // Debugging line
+	if (message !== '') {
+		// const roomId = appConfigElement.getAttribute('data-room'); // Get the current room ID
+		// const socket = connections.get(roomId);
+		if (socket && socket.readyState === WebSocket.OPEN) {
+			socket.send(
+				JSON.stringify({
+					room_id: roomId,
+					type: 'message',
+					name: nickname,
+					message: message,
+					// receiver_id: roomId,
+				})
+			);
+			document.getElementById('message-input').value = '';
+		} else {
+			socket_state(socket);
+			reconnectWebSocket(roomId);
+		}
+	}
+}
 
-	// Create a container for the image and username
-	const messageWrapper = document.createElement('div');
-	// messageWrapper.style.display = 'inline-flex'; // Align items horizontally
-	messageWrapper.style.display = 'flex'; // Align items horizontally
-	messageWrapper.style.padding = '0px 0px 5px 0px';
-	// messageWrapper.style.box-sizing = 'border-box';
+function displayChatMessage(message, name, roomId) {
+	if (typeof message !== 'string') {
+		console.error('Invalid input: expected a string.');
+		return;
+	}
 
-	// Create and style the username element
+	const messageContainer = document.querySelector(
+		`.chat-messages[data-room="${roomId}"]`
+	);
+	// const messageContainer = document.querySelector('.chat-messages');
+	if (!messageContainer) return; // Ensure the message container exists
+
+	const messageElement = document.createElement('div');
+	messageElement.style.display = 'flex';
+	messageElement.style.padding = '0 0 5px 0';
+	messageElement.style.lineHeight = '1.3';
+	messageElement.style.width = '100%';
+
 	const username = document.createElement('span');
-	username.textContent = name;
-	username.textContent.endsWith(':')
-		? username.textContent
-		: (username.textContent += ':');
+	username.textContent = `${name}:`;
 	username.style.color = 'blue';
 	username.style.fontWeight = 'bold';
-	// username.style.width = "auto";
-	username.style.display = 'inline-flex';
 	username.style.marginRight = '10px';
 
-	// Create the image element
+	const messageText = document.createElement('span');
+	messageText.classList.add('chat-text');
+	messageText.innerHTML = message;
+
+	console.log(`Displaying message: ${message}`); // Debugging line
+	messageElement.appendChild(username);
+	messageElement.appendChild(messageText);
+	messageContainer.appendChild(messageElement);
+}
+
+function displayImage(imageUrl, name, roomId) {
+	const imageContainer = document.querySelector(
+		`.chat-messages[data-room="${roomId}"]`
+	);
+	// const imageContainer = document.querySelector('.chat-messages');
+	if (!imageContainer) return; // Ensure the message container exists
+
+	const messageWrapper = document.createElement('div');
+	messageWrapper.style.display = 'flex';
+	messageWrapper.style.padding = '0 0 5px 0';
+
+	const username = document.createElement('span');
+	username.textContent = name.endsWith(':') ? name : `${name}:`;
+	username.style.color = 'blue';
+	username.style.fontWeight = 'bold';
+	username.style.marginRight = '10px';
+
 	const imgElement = document.createElement('img');
 	imgElement.src = imageUrl;
-	imgElement.style.maxWidth = '80px'; // Adjust styling as needed
-	imgElement.style.height = 'auto'; // Maintain aspect ratio
-	// imgElement.style.display = 'inline-block';
+	imgElement.style.maxWidth = '80px';
+	imgElement.style.height = 'auto';
 
-	// Add a placeholder for the image
-	const placeholderUrl = 'static/images/meme/miku_impatient.png'; // Path to placeholder image
+	const placeholderUrl = 'static/images/meme/miku_impatient.png';
 	const placeholder = document.createElement('img');
 	placeholder.src = placeholderUrl;
 	placeholder.style.maxWidth = '100px';
 	placeholder.style.height = 'auto';
-	placeholder.style.display = 'none'; // Initially hidden
+	placeholder.style.display = 'none';
 
-	// Append username and image to the wrapper
 	messageWrapper.appendChild(username);
 	messageWrapper.appendChild(imgElement);
 	messageWrapper.appendChild(placeholder);
 	imageContainer.appendChild(messageWrapper);
 
-	// Handle image load success
-	imgElement.onload = function () {
-		placeholder.style.display = 'none'; // Hide placeholder if image loads successfully
-		// imageContainer.appendChild(document.createElement("div")).innerText = "\n";
+	imgElement.onload = () => {
+		placeholder.style.display = 'none';
 		scrollToBottom();
 	};
 
-	// Handle image load error
-	imgElement.onerror = function () {
-		imgElement.style.display = 'none'; // Hide the actual image
-		placeholder.style.display = 'inline-block'; // Show placeholder
+	imgElement.onerror = () => {
+		imgElement.style.display = 'none';
+		placeholder.style.display = 'inline-block';
 		const errorMessage = document.createElement('div');
 		errorMessage.innerText = 'Failed to load image';
 		errorMessage.style.color = 'red';
@@ -206,91 +267,25 @@ function displayImage(imageUrl, name) {
 	};
 }
 
-function sendMessage() {
-	if (socket.readyState === WebSocket.OPEN) {
-		let message = document.getElementById('message-input').value.trim();
-		// message.focus();
-		// message.setSelectionRange(7, 7);
-		if (message !== '') {
-			socket.send(
-				JSON.stringify({
-					type: 'message',
-					name: nickname,
-					message: message,
-				})
-			);
-			document.getElementById('message-input').value = '';
-		}
-	} else {
-		socket_state(socket);
-		openConnect();
-	}
-}
-
-// url='https://upload.wikimedia.org/wikipedia/commons/0/09/Blackpink_Coachella_2023_02_%28cropped%29.jpg';
-
-function displayChatMessage(data, name) {
-	if (typeof data !== 'string') {
-		console.error('Invalid input: expected a string.');
-		return;
-	}
-
-	let message = document.createElement('div');
-	message.style.display = 'inline-flex';
-
-	// message.style.display = 'inline-table';
-	// message.style.display = 'block';
-	message.style.padding = '0px 0px 5px 0px';
-	message.style.lineHeight = '1.3';
-	message.style.width = '100%';
-
-	if (data) {
-		let username = document.createElement('span');
-		// username.style.display = 'inline';
-		username.textContent = name + ':';
-		username.style.color = 'blue';
-		username.style.fontWeight = 'bold';
-		username.style.width = '70px';
-		username.style.marginRight = '10px';
-		username.style.textAlign = 'left';
-
-		let placeholderContainer = document.createElement('span');
-		placeholderContainer.classList.add('chat-text');
-
-		// let content = data;
-		placeholderContainer.innerHTML = data;
-		message.appendChild(username);
-		message.appendChild(placeholderContainer);
-	} else {
-		let textNode = document.createElement('span');
-		textNode.innerHTML = messageText;
-
-		message.appendChild(textNode);
-		message.appendChild(placeholderContainer);
-	}
-
-	let messageContainer = document.querySelector('.chat-messages');
-	if (messageContainer) {
-		messageContainer.appendChild(message);
-	} else {
-		console.error('Element with class "message" not found.');
-	}
-}
-
-function appendStatusMessage(status, color, message) {
-	let tag = document.createElement('div');
+function appendStatusMessage(roomId, status, color, message) {
+	const tag = document.createElement('div');
 	tag.innerText = status;
 	tag.style.color = color;
 	tag.append(`\t${message}`);
-	let message_sect = document.querySelector('.chat-messages');
-	if (message_sect) {
-		message_sect.appendChild(tag);
+	const messageContainer = document.querySelector(
+		`.chat-messages[data-room="${roomId}"]`
+	);
+	// const messageContainer = document.querySelector('.chat-messages');
+	if (messageContainer) {
+		messageContainer.appendChild(tag);
 	}
 }
 
 function scrollToBottom() {
-	var messageContainer = document.getElementById('chat-messages');
-	messageContainer.scrollTop = messageContainer.scrollHeight;
+	const messageContainers = document.querySelectorAll('.chat-messages');
+	messageContainers.forEach(
+		(container) => (container.scrollTop = container.scrollHeight)
+	);
 }
 
 function logMessage(message, style = 'default') {
@@ -303,43 +298,13 @@ function logMessage(message, style = 'default') {
 }
 
 function socket_state(socket) {
-	if (socket.readyState === WebSocket.OPEN) {
-		logMessage('The connection is open', 'warning');
-	} else if (socket.readyState === WebSocket.CONNECTING) {
-		logMessage('The connection is connecting', 'warning');
-	} else if (socket.readyState === WebSocket.CLOSING) {
-		logMessage('The connection is closing', 'warning');
-	} else if (socket.readyState === WebSocket.CLOSED) {
-		logMessage('The connection is closed', 'warning');
-	} else {
-		logMessage('The connection state is unknown', 'warning');
-	}
-}
-
-function handleMessage(event) {
-	if (event.key === 'Enter') {
-		sendMessage();
-	}
-}
-
-function dataURLToBlob(dataURL) {
-	const BASE64_MARKER = ';base64,';
-	if (dataURL.indexOf(BASE64_MARKER) === -1) {
-		const parts = dataURL.split(',');
-		const contentType = parts[0].split(':')[1];
-		const raw = parts[1];
-		return new Blob([raw], { type: contentType });
-	}
-
-	const parts = dataURL.split(BASE64_MARKER);
-	const contentType = parts[0].split(':')[1];
-	const raw = window.atob(parts[1]);
-	const rawLength = raw.length;
-
-	const uInt8Array = new Uint8Array(rawLength);
-	for (let i = 0; i < rawLength; ++i) {
-		uInt8Array[i] = raw.charCodeAt(i);
-	}
-
-	return new Blob([uInt8Array], { type: contentType });
+	const stateMessages = {
+		[WebSocket.OPEN]: 'The connection is open',
+		[WebSocket.CONNECTING]: 'The connection is connecting',
+		[WebSocket.CLOSING]: 'The connection is closing',
+		[WebSocket.CLOSED]: 'The connection is closed',
+	};
+	const state = socket?.readyState;
+	const message = stateMessages[state] || 'The connection state is unknown';
+	logMessage(message, 'warning');
 }

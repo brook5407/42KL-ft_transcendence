@@ -8,9 +8,10 @@ from rest_framework.decorators import permission_classes
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
 from utils.request_helpers import is_ajax_request
+from django.db.models import Q
+from rest_framework.decorators import api_view
 from .models import ChatMessage, ChatRoom
 from .serializers import ChatMessageSerializer
-from rest_framework.decorators import api_view
 
 
 User = get_user_model()
@@ -51,16 +52,17 @@ class ChatHistoryAPIView(APIView):
         ).order_by('timestamp')
         serializer = ChatMessageSerializer(messages, many=True)
         return Response(serializer.data)
-    
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def chat_list_drawer(request):
-    if is_ajax_request(request):
-        return render(request, 'components/drawers/chat-list.html', {
+    if not is_ajax_request(request):
+        return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+    return render(request, 'components/drawers/chat-list.html', {
         'public_chats': ChatRoom.objects.filter(is_public=True),
         'private_chats': ChatRoom.get_private_chats(request.user)
 	})
-    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -69,14 +71,15 @@ def chat_room_drawer(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 
     room_id = request.GET.get('room_id')
-    if not room_id:
-        return HttpResponseBadRequest("Error: Room ID is required.")
-    
-    room = get_object_or_404(ChatRoom, id=room_id)
-    # messages = ChatMessage.objects.filter(room=room).order_by('-timestamp')
-    
+    friend_username = request.GET.get('username')
+    if room_id:
+        room = get_object_or_404(ChatRoom, id=room_id)
+    elif friend_username:
+        friend = get_object_or_404(User, username=friend_username)
+        room = get_object_or_404(ChatRoom, name=ChatRoom.get_private_chat_roomname(request.user, friend))
+    else:
+        return HttpResponseBadRequest("Error: Invalid request parameters.")
     return render(request, 'components/drawers/chat-room.html', {
-        'room': room,
-        'room_name': room.get_room_name(request.user),
-        # 'messages': ChatMessageSerializer(messages, many=True).data
-    })
+                'room': room,
+                'room_name': room.get_room_name(request.user),
+            })

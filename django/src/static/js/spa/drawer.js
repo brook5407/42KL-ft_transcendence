@@ -63,6 +63,7 @@ export const DRAWERS = {
 	'friend-requests': FriendRequestsDrawer,
 	'search-friend': GenericDrawer,
 	'friend-profile': GenericDrawer,
+	'friend-room': GenericDrawer,
 	'profile-edit': GenericDrawer,
 	'match-history': GenericDrawer,
 };
@@ -137,16 +138,23 @@ export function closeDrawer(delay = true, emptyStack = true) {
 	const drawer = document.getElementById('drawer');
 	drawerOverlay?.classList.remove('drawer-active');
 	drawer?.classList.remove('drawer-active');
+
 	if (emptyStack) {
 		drawerStack.empty();
 	}
+
 	if (!delay) {
+		// Dispatch the drawer-closed event
+		document.dispatchEvent(new CustomEvent('drawer-closed'));
 		currentDrawer?.destroy();
 		DRAWER_CONTAINER.innerHTML = '';
 		currentDrawer = null;
 		return;
 	}
+
 	setTimeout(() => {
+		// Dispatch the drawer-closed event
+		document.dispatchEvent(new CustomEvent('drawer-closed'));
 		currentDrawer?.destroy();
 		DRAWER_CONTAINER.innerHTML = '';
 		currentDrawer = null;

@@ -151,3 +151,13 @@ def friend_profile_drawer(request):
         'wins': wins,
         'losses': losses
     })
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def friend_chat_drawer(request):
+    if not is_ajax_request(request):
+        return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+    friend_user = User.objects.get(username=request.GET.get('username'))
+    return render(request, 'components/drawers/chat-friendroom.html', {
+        'friend_profile': Profile.objects.get(user=friend_user)
+    })
