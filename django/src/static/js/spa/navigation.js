@@ -3,14 +3,36 @@ import { NotFoundPage } from './components/pages/NotFoundPage.js';
 import { ROOT_ELEMENT } from './components/Component.js';
 import { PongPage } from './components/pages/PongPage.js';
 
+
 export const ROUTES = {
-	'/': new HomePage({ url: '/home' }),
-	'/pong/index': new PongPage({ url: '/pong/index/' }),
-	'/404': new NotFoundPage({}),
+	'/': {
+		component: HomePage,
+		data: { url: '/home' }
+	},
+	'/pong/index': {
+		component: PongPage,
+		data: { url: '/pong/index/' }
+	},
+	'/pong/pvp': {
+		component: PongPage,
+		data: { url: '/pong/pvp/' }
+	},
+	'/pong/pve': {
+		component: PongPage,
+		data: { url: '/pong/pve/' }
+	},
+	'/pong/tournament': {
+		component: PongPage,
+		data: { url: '/pong/tournament/' }
+	},
+	'^\/pong\/tournament\/[^\/]+\/?$': {
+		component: PongPage,
+		dynamic: true,
+	},
 };
 
 // global variable to keep track of the current root component
-window.currentRootComponent = ROUTES[window.location.pathname];
+window.currentRootComponent = null;
 
 // listen to the back button
 window.addEventListener('popstate', router);
@@ -32,12 +54,35 @@ export async function router() {
 
 	let match = ROUTES[pathname];
 	if (!match) {
-		match = ROUTES['/404'];
+		// try regular expression match
+		for (const pattern in ROUTES) {
+			if (!ROUTES[pattern].dynamic) {
+				continue;
+			}
+			console.log(pattern)
+			console.log(pathname)
+			const re = new RegExp(pattern);
+			if (re.test(pathname)) {
+				match = ROUTES[pattern];
+				console.log(match)
+				break;
+			}
+		}
+	}
+
+	let component;
+	if (!match) {
+		component = new NotFoundPage({});
+	} else if (match.dynamic) {
+		console.log(pathname)
+		component = new match.component({ url: pathname });
+	} else {
+		component = new match.component(match.data);
 	}
 
 	window.currentRootComponent?.destroy();
-	window.currentRootComponent = match;
-	const element = await match.render();
+	window.currentRootComponent = component;
+	const element = await component.render();
 	ROOT_ELEMENT.innerHTML = '';
 	ROOT_ELEMENT.appendChild(element);
 }
@@ -47,3 +92,5 @@ export function navigateTo(url, title = 'AIsPong') {
 	router();
 	document.title = title;
 }
+
+window.navigateTo = navigateTo;
