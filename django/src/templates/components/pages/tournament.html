@@ -5,11 +5,10 @@
 
 <div>Tournament Room: {{ room_name }}</div>
 <form id="form">
-    <input type="text" name ="message"/>
+    <input type="text" name="message" id="messageInput" autocomplete="off"/>
 </form>
 <div id="messages"></div>
 <script>
-    const username = prompt("Enter your username:");
     const roomName = "{{ room_name }}";
     const socket = new WebSocket('ws://' + window.location.host + '/ws/tournament/' + roomName + '/');
 
@@ -17,26 +16,29 @@
         console.log("WebSocket connection established " + roomName);
     }
 
-    let form = document.getElementById('form')
-    form.addEventListener('submit', (e)=> {
-        e.preventDefault()
-        let message = e.target.message.value
+    let form = document.getElementById('form');
+    form.addEventListener('button', (e)=> {
+        e.preventDefault();
+        let messageInput = document.getElementById('messageInput');  // Access the message input field
+        let message = messageInput.value;  // Get the message text
+    
+        // Send the message via WebSocket
         socket.send(JSON.stringify({
-            'message':message
-        }))
-        form.reset()
+            'message': message
+        }));
+    
+        // Clear the message input field
+        messageInput.value = '';
     })
 
     socket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        console.log('Data:', data)
+        console.log('Data:', data);
 
         if (data.type === 'chat'){
-            let messages = document.getElementById('messages')
-
-            messages.insertAdjacentHTML('beforeend', `<div>
-                                    <p>${data.message}</p>
-                                </div>`)
+            let messages = document.getElementById('messages');
+            messages.insertAdjacentHTML('beforeend', `
+                <div><p>${data.message}</p></div>`);
         }
     }
 </script>

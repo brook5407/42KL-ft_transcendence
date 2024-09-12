@@ -9,9 +9,14 @@ document.getElementById('create-room').addEventListener('click', function() {
 
 document.getElementById('join-room').addEventListener('click', function() {
 	const roomCode = document.getElementById('room-code').value;
+	console.log(roomcode.Length());
 	if (roomCode) {
 		navigateTo(`/pong/tournament/${roomCode}/`);
-	} else {
+	}
+	else if (roomCode.Length() != 5) {
+		document.getElementById('message').textContent = 'Please enter a valid code';
+	}
+	else {
 		document.getElementById('message').textContent = 'Please enter a room code.';
 	}
 });
