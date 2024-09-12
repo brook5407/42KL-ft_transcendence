@@ -43,14 +43,14 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
         room = get_object_or_404(ChatRoom, id=pk)
         serializer = ChatMessageSerializer(data=request.data)
         if serializer.is_valid():
-            chat_message = serializer.save(sender=request.user, room=room)
             channel_layer = get_channel_layer()
+            data = serializer.validated_data
             if room.is_group_chat:
                 async_to_sync(channel_layer.group_send)(
                     room_id,
                     {
                         'type': 'group_chat_message',
-                        'message': chat_message.message,
+                        'message': data.get('message'),
                         'user': request.user.username,
                         'room_id': room_id
                     }
@@ -61,11 +61,12 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
                     f"private_chats_{other_member.id}",
                     {
                         'type': 'private_chat_message',
-                        'message': chat_message.message,
+                        'message': data.get('message'),
                         'sender': request.user.username,
                         'room_id': room_id
                     }
                 )
+            chat_message = serializer.save(sender=request.user, room=room)
             return Response(ChatMessageSerializer(chat_message).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

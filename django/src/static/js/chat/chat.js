@@ -12,10 +12,10 @@ const wsHost = getWSHost();
 class ChatController {
 	constructor() {
 		this.socket = new WebSocket(`${wsHost}/ws/chat/`);
-		this.socket.onopen = this._onOpen;
-		this.socket.onmessage = this._onMessage;
-		this.socket.onclose = this._onClose;
-		this.socket.onerror = this._onError;
+		this.socket.onopen = this._onOpen.bind(this);
+		this.socket.onmessage = this._onMessage.bind(this);
+		this.socket.onclose = this._onClose.bind(this);
+		this.socket.onerror = this._onError.bind(this);
 	}
 
 	_onOpen() {
@@ -55,8 +55,16 @@ class ChatController {
 		});
 		document.dispatchEvent(newMessageEvent);
 	}
+
+	destroy() {
+		this.socket.close();
+	}
 }
 
-window.onload = () => {
+document.addEventListener('user-ready', () => {
 	window.chat = new ChatController();
-};
+});
+
+document.addEventListener('user-cleared', () => {
+	window.chat.destroy();
+});
