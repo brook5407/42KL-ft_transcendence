@@ -20,18 +20,6 @@
 	transition: opacity 0.5s ease-in-out;
 }
 
-.success {
-	background-color: #4caf50; /* Green */
-}
-
-.error {
-	background-color: #f44336; /* Red */
-}
-
-.info {
-	background-color: #4fcdf0; /* Blue */
-}
-
 .fade-in {
 	opacity: 1;
 }
