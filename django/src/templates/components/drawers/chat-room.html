@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block drawerContent %}
-<input type="hidden" id="chatroom-name" value="{{ room_name }}" />
+{{ room_name|json_script:"room-name" }}
 
 <div class="chat-container">
     <div class="chat-messages" id="chat-messages" data-room="public_room">
@@ -27,5 +27,4 @@
 {% endblock %}
 
 {% block drawerScripts %}
-    <script src="{% static 'js/chat/friendroom.js' %}"></script>
 {% endblock %}

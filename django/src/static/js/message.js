@@ -34,7 +34,6 @@ function showMessage(message, type, toOpen = null) {
 	}, 100);
 
 	if (toOpen) {
-		console.log('toOpen:', toOpen);
 		textBox.classList.add('clickable');
 		textBox.addEventListener('click', () => {
 			const toOpenType = toOpen?.type;
@@ -66,13 +65,22 @@ export function showInfoMessage(message, toOpen = null) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	// display all django flash messages and delete the input fields
-	const flashMessages = document.querySelectorAll('.dj-flash-message');
+	// Retrieve the JSON data from the script tag
+	const flashMessagesElement = document.getElementById('flash-messages');
+	if (!flashMessagesElement) {
+		return;
+	}
+
+	const flashMessages = JSON.parse(flashMessagesElement.textContent);
+	if (!flashMessages || flashMessages.length === 0) {
+		return;
+	}
+
+	// Display all flash messages
 	flashMessages.forEach((message) => {
-		const messageText = message.value;
-		const messageType = message.getAttribute('data-message-type');
+		const messageText = message.message;
+		const messageType = message.tags;
 		showMessage(messageText, messageType);
-		message.remove();
 	});
 });
 
