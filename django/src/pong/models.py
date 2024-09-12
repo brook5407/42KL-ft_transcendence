@@ -12,7 +12,7 @@ class GameRoom(BaseModel):
     is_full = models.BooleanField(default=False)
     players = models.ManyToManyField('Player')
 
-class Tournament(models.Model):
+class Tournament(BaseModel):
     STATUS_CHOICES = [
         ('waiting', 'Waiting'),        # Tournament is in the lobby, waiting for players
         ('ongoing', 'Ongoing'),        # Tournament has started
@@ -24,7 +24,7 @@ class Tournament(models.Model):
     def __str__(self):
         return self.room
 
-class Player(models.Model):
+class Player(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True, null=True, blank=True)
     # tournaments = models.ManyToManyField(Tournament, related_name='players')
     # wins = models.IntegerField(default=0)
@@ -34,7 +34,7 @@ class Player(models.Model):
     def __str__(self):
         return self.user.username
 
-class Match(models.Model):
+class Match(BaseModel):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, null=True, blank=True)
     room_name = models.CharField(max_length=5, unique=True)
     is_full = models.BooleanField(default=False)
