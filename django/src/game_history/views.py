@@ -10,12 +10,10 @@ from rest_framework.pagination import PageNumberPagination
 from utils.request_helpers import is_ajax_request
 from .models import GameHistory
 from .serializers import GameHistorySerializer
+from .pagination import GameHistoryPagination
 
 
 User = get_user_model()
-
-class GameHistoryPagination(PageNumberPagination):
-    page_size = 10
 
 class GameHistoryViewSet(viewsets.ModelViewSet):
     queryset = GameHistory.objects.all().order_by('-created_at')
