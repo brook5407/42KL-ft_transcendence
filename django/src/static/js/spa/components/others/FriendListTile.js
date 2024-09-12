@@ -13,14 +13,20 @@ export class FriendListTile extends Component {
 			.querySelector('.friend-list-tile__avatar')
 			.addEventListener('click', () => {
 				openDrawer('friend-profile', {
-					url: `drawer/friend-drawer?username=${this.friend.user.username}`,
+					url: `drawer/friend-drawer`,
+					queryParams: {
+						username: this.friend.user.username,
+					},
 				});
 			});
 		this.element
 			.querySelector('.friend-list-tile__action')
 			.addEventListener('click', () => {
-				openDrawer('friend-room', {
-					url: '', // WXR TODO: finalize the url
+				openDrawer('chat-room', {
+					url: `drawer/chat-room`,
+					queryParams: {
+						username: this.friend.user.username,
+					},
 				});
 			});
 
@@ -50,7 +56,7 @@ export class FriendListTile extends Component {
 				<div class="friend-list-tile__username">@${this.friend.user.username}</div>
 			</div>
 			<div class="friend-list-tile__action">
-				<a class="icon-action" title="Chat" data-username=${this.friend.user.username}>
+				<a class="icon-action" title="Chat">
 					<i class="fa fa-comments"></i>
 				</a>
 			</div>

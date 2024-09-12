@@ -15,7 +15,11 @@
 	<div class="public-chat">
 		<h3>Public Chat</h3>
 		{% for chat in public_chats %}
-			<div class="chat-list-item" data-drawer="chat-room" data-drawer-url="{% url 'chat.room-drawer' %}" data-roomid="{{ chat.id }}">
+			<div class="chat-list-item"
+				data-drawer="chat-room"
+				data-drawer-url="{% url 'chat.room-drawer' %}"
+				data-query-params='{"room_id": "{{ chat.id }}"}'
+			>
 				<div class="chat-image chat-image-public">
 					<img src="{{ chat.cover_image.url|default:'https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg' }}"
 						alt="{{ chat.name }} cover image"
@@ -46,8 +50,8 @@
 <script type="text/javascript">
 	document.addEventListener('drawer-opened', (e) => {
 		const timeElements = document.querySelectorAll('.chat-time');
-		timeElements.forEach((el) => {
-			const timestamp = el.getAttribute('data-timestamp');
+		timeElements.forEach((elem) => {
+			const timestamp = elem.getAttribute('data-timestamp');
 			if (!timestamp) {
 				return;
 			}
@@ -56,23 +60,7 @@
 			const formattedTime = dateFns.formatDistanceToNow(date, {
 				addSuffix: true,
 			});
-			el.textContent = formattedTime;
-		});
-
-		const chatList = document.querySelector('.chat-list');
-
-		chatList?.addEventListener('click', (e) => {
-			const chatListItem = e.target.closest('.chat-list-item');
-
-			if (chatListItem) {
-				const roomId = chatListItem.getAttribute('data-roomid');
-				openDrawer('chat-room', {
-					url: chatListItem.getAttribute('data-drawer-url'),
-					state: {
-						roomId
-					}
-			});
-			}
+			elem.textContent = formattedTime;
 		});
 	});
 

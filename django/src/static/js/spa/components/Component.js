@@ -5,12 +5,12 @@ export const MODAL_CONTAINER = document.getElementById('modal-container');
 export const DRAWER_CONTAINER = document.getElementById('drawer-container');
 
 export class Component {
-	constructor({ state = {}, url = '', props = {} } = {}) {
+	constructor({ state = {}, url = '', props = {}, queryParams = {} } = {}) {
 		this.element = null;
 		this.state = state;
 		this.props = props;
 		this.className = '';
-		this.queryParams = {};
+		this.queryParams = queryParams;
 		this.url = url;
 		this.scripts = [];
 
