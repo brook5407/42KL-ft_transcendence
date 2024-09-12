@@ -183,6 +183,10 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.match['paddle1'].move()
             self.match['paddle2'].move()
 
+            # AI Paddle follows the ball
+            if (self.game_mode == "pve"):
+                self.match['paddle2'].follow_ball(self.match['ball'])
+
             # Check for scoring
             if self.match['ball'].x <= 0:
                 self.match['score2'] += 1
@@ -360,6 +364,9 @@ class Paddle:
         self.width = width
         self.height = height
         self.velocity = 0
+        self.speed = 10
+        self.mid_x = self.x + (self.width / 2)
+        self.mid_y = self.y + (self.height / 2)
 
     def move(self):
         self.y += self.velocity
@@ -368,6 +375,17 @@ class Paddle:
             self.y = 0
         if self.y > gameHeight - self.height:
             self.y = gameHeight - self.height
+
+    def follow_ball(self, ball):
+        # If ball is below paddle, move down
+        if ball.y > self.y + self.height:
+            self.velocity = self.speed
+        # If ball is above paddle, move up
+        elif ball.y < self.y:
+            self.velocity = -self.speed
+        # If ball is near the middle, stop moving
+        else:
+            self.velocity = 0
 
     def serialize(self):
         return {
@@ -410,7 +428,7 @@ class Ball:
 
     def check_collision(self, paddle1, paddle2):
         # Y-axis collision with the top and bottom of the game area
-        if self.y <= 0 or self.y >= gameHeight - self.radius:
+        if self.y - self.radius <= 0 or self.y + self.radius >= gameHeight:
             self.y_direction *= -1
 
         # Paddle 1 collision (left paddle)
