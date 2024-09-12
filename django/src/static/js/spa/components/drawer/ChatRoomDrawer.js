@@ -1,4 +1,3 @@
-import { ajaxWithAuth } from '../../ajax.js';
 import { Component } from '../Component.js';
 
 export class ChatRoomDrawer extends Component {

@@ -45,26 +45,15 @@ class ChatRoom(BaseModel):
             return other_member.username
         return 'default_room_name'
 
-    def print_chat_history(self):
-        messages = self.chat_messages.order_by('timestamp')
-        for message in messages:
-            sender = message.sender.username
-            receiver = message.receiver.username if message.receiver else "No Receiver"
-            timestamp = message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
-            print(f"[{timestamp}] {sender} to {receiver}: {message.message}")
-
 
 class ChatMessage(BaseModel):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE, null=True, blank=True)
     message = models.TextField()  # for game invitation, message will have a /invite prefix
     room = models.ForeignKey(ChatRoom, related_name='chat_messages', on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now, db_index=True)
 
     def __str__(self):
-        receiver_name = self.receiver.username if self.receiver else "No Receiver"
         sender_name = self.sender.username if self.sender else "No Sender"
-        return f"Message from {sender_name} to {receiver_name} in room {self.room.name} at {self.timestamp}: {self.message}"
+        return f"Message from {sender_name} in room {self.room.name} at {self.created_at}: {self.message}"
 
 
 class ActiveChatRoom(models.Model):
@@ -72,6 +61,7 @@ class ActiveChatRoom(models.Model):
     # WXR TODO: request for this when opening chat-list, and paginate the list
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
+    last_message = models.ForeignKey(ChatMessage, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.username} in {self.room.name}"

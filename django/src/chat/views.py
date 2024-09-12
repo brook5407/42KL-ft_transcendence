@@ -12,6 +12,7 @@ from django.db.models import Q
 from rest_framework.decorators import api_view
 from .models import ChatMessage, ChatRoom
 from .serializers import ChatMessageSerializer
+from .pagination import ChatMessagePagination, ActiveChatRoomsPagination
 
 
 User = get_user_model()
@@ -33,16 +34,17 @@ class FriendChatAPIView(APIView):
 class SendMessageAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, receiver_id):
-        receiver = get_object_or_404(User, id=receiver_id)
+    def post(self, request, room_id):
+        room = get_object_or_404(ChatRoom, id=room_id)
         serializer = ChatMessageSerializer(data=request.data)
         if serializer.is_valid():
-            chat_message = serializer.save(sender=request.user, receiver=receiver)
+            chat_message = serializer.save(sender=request.user, room=room)
             return Response(ChatMessageSerializer(chat_message).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ChatHistoryAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = ChatMessagePagination
 
     def get(self, request, receiver_id):
         receiver = get_object_or_404(User, id=receiver_id)

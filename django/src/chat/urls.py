@@ -9,6 +9,6 @@ urlpatterns = [
 	
     path('chat', ChatAPIView.as_view(), name='chat'),
     path('friendchat', FriendChatAPIView.as_view(), name='chat.friendchat'),
-    path('send_message/<int:receiver_id>', SendMessageAPIView.as_view(), name='chat.send_message'),
-    path('chat_history/<int:receiver_id>', ChatHistoryAPIView.as_view(), name='chat.chat_history'),
+    path('send_message/<str:room_id>', SendMessageAPIView.as_view(), name='chat.send_message'),
+    path('chat_history/<str:room_id>', ChatHistoryAPIView.as_view(), name='chat.chat_history'),
 ]
