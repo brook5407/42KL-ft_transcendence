@@ -1,7 +1,7 @@
-import { HomePage } from './components/pages/home.js';
-import { NotFoundPage } from './components/pages/not_found.js';
-import { ROOT_ELEMENT } from './components/component.js';
-import { PongPage } from './components/pages/pong.js';
+import { HomePage } from './components/pages/HomePage.js';
+import { NotFoundPage } from './components/pages/NotFoundPage.js';
+import { ROOT_ELEMENT } from './components/Component.js';
+import { PongPage } from './components/pages/PongPage.js';
 
 
 export const ROUTES = {

@@ -11,16 +11,15 @@
 {% endblock %}
 
 {% block drawerContent %}
-{% comment %} <div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="8888" style="display:none;"></div> {% endcomment %}
-<div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="{{ chat.id }}" style="display:none;"></div>
+{{ room_name|json_script:"room-name" }}
 
 <div class="chat-container">
-    <div class="chat-messages" id="chat-messages">
+    <div class="chat-messages" id="chat-messages" data-room="public_room">
         <!-- Messages will be appended here dynamically -->
     </div>
     <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Type a message..." />
-        <button id="send-button" onclick="sendMessage()">
+        <input type="text" id="message-input" data-room="public_room" placeholder="Type a message...">
+        <button id="send-button">
 			<img src="{% static 'images/icons/send.svg' %}" alt="Send" />
 		</button>
     </div>
@@ -28,5 +27,4 @@
 {% endblock %}
 
 {% block drawerScripts %}
-	<script src="{% static 'js/chat/chat.js' %}"></script>
 {% endblock %}

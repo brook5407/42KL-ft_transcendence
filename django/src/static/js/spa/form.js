@@ -1,4 +1,4 @@
-import { ajax, ajax_with_auth } from './ajax.js';
+import { ajax, ajaxWithAuth } from './ajax.js';
 import { showSuccessMessage, showErrorMessage } from '../message.js';
 import { signin, signup } from '../auth.js';
 
@@ -25,8 +25,10 @@ function submitForm(form, method = 'POST', callback) {
 	const formData = new FormData(form); // Collect form data
 	const actionUrl = form.getAttribute('action') || form.dataset.route; // Determine the submission URL
 
+	const closeLoadingEffect = showLoadingEffect(); // Show the loading effect
+
 	// Send the form data using Fetch API
-	ajax_with_auth(actionUrl, {
+	ajaxWithAuth(actionUrl, {
 		method: method,
 		body: formData,
 		headers: {
@@ -56,6 +58,7 @@ function submitForm(form, method = 'POST', callback) {
 			return response.json();
 		})
 		.then((data) => {
+			closeLoadingEffect(); // Remove the loading effect
 			if (callback) {
 				callback(data);
 			} else {
@@ -63,6 +66,7 @@ function submitForm(form, method = 'POST', callback) {
 			}
 		})
 		.catch((error) => {
+			closeLoadingEffect(); // Remove the loading effect
 			console.error('Error:', error);
 			showErrorMessage(error.message);
 		});

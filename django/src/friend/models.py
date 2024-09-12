@@ -1,10 +1,14 @@
-from datetime import timezone
+from django.utils import timezone
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Q
+from django.forms import ValidationError
 from base.models import BaseModel
+
+
+User = get_user_model()
 
 # Create your models here.
 class UserRelation(BaseModel):
@@ -14,8 +18,6 @@ class UserRelation(BaseModel):
     deleted_at = models.DateTimeField(auto_now=False, null=True)
     blocked = models.BooleanField(default=False)
     blocked_at = models.DateTimeField(auto_now=False, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         unique_together = ['user', 'friend']
@@ -24,17 +26,24 @@ class UserRelation(BaseModel):
         return f"{self.user.username} - {self.friend.username}"
     
     def delete(self):
+        if self.deleted:
+            raise ValidationError("User relation is already deleted.")
         self.deleted = True
         self.deleted_at = timezone.now()
         self.save()
         
     def block(self):
+        if self.blocked:
+            raise ValidationError("User is already blocked.")
         self.blocked = True
         self.blocked_at = timezone.now()
         self.save()
     
     def unblock(self):
+        if not self.blocked:
+            raise ValidationError("User is not blocked.")
         self.blocked = False
+        self.blocked_at = None
         self.save()
 
 
@@ -48,25 +57,23 @@ class FriendRequest(BaseModel):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_requests", default=None)
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.PENDING)
     receiver_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.sender.username} -> {self.receiver.username}"
     
     def accept(self, current_user):
         if current_user == self.sender:
-            raise ValueError("You cannot accept your own request.")
+            raise ValidationError("You cannot accept your own request.")
         elif current_user != self.receiver:
-            raise ValueError("You cannot accept a request that is not addressed to you.")
+            raise ValidationError("You cannot accept a request that is not addressed to you.")
         self.status = self.Status.ACCEPTED
         self.save()
         
     def reject(self, current_user):
         if current_user == self.sender:
-            raise ValueError("You cannot reject your own request.")
+            raise ValidationError("You cannot reject your own request.")
         elif current_user != self.receiver:
-            raise ValueError("You cannot accept a request that is not addressed to you.")
+            raise ValidationError("You cannot accept a request that is not addressed to you.")
         self.status = self.Status.REJECTED
         self.save()
         
@@ -94,8 +101,13 @@ class FriendRequest(BaseModel):
 
 
 def get_friends(self):
-    user_relations = UserRelation.objects.filter(Q(user=self) | Q(friend=self))
-    friends = user_relations.filter(deleted=False, blocked=False)
+    user_relations = UserRelation.objects.filter(Q(user=self) & Q(deleted=False))
+    friend_ids = user_relations.values_list('friend_id', flat=True)
+    friends = User.objects.filter(id__in=friend_ids)
     return friends
 
+def is_friend(self, user):
+    return UserRelation.objects.filter(Q(user=self) & Q(friend=user) & Q(deleted=False)).exists()
+
 User.add_to_class('friends', property(get_friends))
+User.add_to_class('is_friend', is_friend)

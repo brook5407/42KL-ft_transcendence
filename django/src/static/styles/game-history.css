@@ -1,0 +1,55 @@
+.game-history {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.game-history__game {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: #f9f9f9;
+}
+
+.game-history__game-content__player1,
+.game-history__game-content__player2 {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.game-history__game-content__player1__avatar,
+.game-history__game-content__player2__avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.game-history__game-content__player1__avatar img,
+.game-history__game-content__player2__avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.game-history__game-content__player1__nickname,
+.game-history__game-content__player2__nickname {
+	font-weight: bold;
+}
+
+.game-history__game-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
+}
+
+.game-history__game-header__date,
+.game-history__game-header__result {
+	font-size: 14px;
+	color: #666;
+}

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load custom_filters %}
 
 <html lang="en">
   <head>
@@ -13,15 +14,15 @@
     <link rel="stylesheet" href="{% static 'styles/not-found.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/message.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/toast.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/components.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/loading.css' %}" />
 
     <title>AIsPong</title>
   </head>
 
   <body>
-    {% for message in messages %}
-      <input type="hidden" class="dj-flash-message" value="{{ message.message }}" data-message-type="{{ message.tags }}">
-    {% endfor %}
+    {{ messages|serialize_flash_messages|json_script:"flash-messages" }}
 
     <div id="message-container"></div>
 
@@ -31,13 +32,21 @@
 
     <div id="drawer-container"></div>
 
+    <div id="toast-container"></div>
+
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     <script type="module" src="{% static 'js/script.js' %}"></script>
+    <script type="module" src="{% static 'js/utils.js' %}"></script>
+    <script type="module" src="{% static 'js/oauth.js' %}"></script>
     <script type="module" src="{% static 'js/message.js' %}"></script>
+    <script type="module" src="{% static 'js/websocket.js' %}"></script>
+    <script type="module" src="{% static 'js/chat.js' %}"></script>
     <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
     <script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
     <script type="module" src="{% static 'js/spa/form.js' %}"></script>
     <script type="module" src="{% static 'js/notification.js' %}"></script>
-    <script type="module" src="{% static 'js/friend/fr-live-update.js' %}"></script>
+    <script type="module" src="{% static 'js/loading.js' %}"></script>
+    <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
+    <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
   </body>
 </html>
