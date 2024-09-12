@@ -4,6 +4,7 @@ import { ChatRoomDrawer } from './components/drawer/ChatRoomDrawer.js';
 import { ChatListDrawer } from './components/drawer/ChatListDrawer.js';
 import { FriendListDrawer } from './components/drawer/FriendListDrawer.js';
 import { FriendRequestsDrawer } from './components/drawer/FriendRequestsDrawer.js';
+import { checkNearestMatch } from './utils.js';
 
 class DrawerStack {
 	constructor() {
@@ -18,12 +19,12 @@ class DrawerStack {
 	/**
 	 * Push a drawer onto the stack.
 	 * @param {string} drawerName - The name of the drawer.
-	 * @param {string} drawerUrl - The URL of the drawer.
+	 * @param {object} drawerData - The data of the drawer.
 	 */
-	push(drawerName, drawerUrl) {
+	push(drawerName, drawerData) {
 		this.stack.push({
 			drawerName,
-			drawerUrl,
+			drawerData,
 		});
 	}
 
@@ -63,30 +64,37 @@ export const DRAWERS = {
 	'friend-requests': FriendRequestsDrawer,
 	'search-friend': GenericDrawer,
 	'friend-profile': GenericDrawer,
-	'friend-room': GenericDrawer,
 	'profile-edit': GenericDrawer,
 	'match-history': GenericDrawer,
 };
 
 // open drawer and back buttons handler
 document.body.addEventListener('click', (e) => {
-	if (e.target.matches('[data-drawer]')) {
+	const drawerElement = checkNearestMatch(e.target, '[data-drawer]', 3);
+	if (drawerElement) {
 		// open drawer
 		e.preventDefault();
-		const drawerName = e.target.getAttribute('data-drawer');
-		const drawerUrl = e.target.getAttribute('data-drawer-url') || '';
-		openDrawer(drawerName, { url: drawerUrl });
+		const drawerName = drawerElement.getAttribute('data-drawer');
+		const url = drawerElement.getAttribute('data-drawer-url') || '';
+		const stateStr = drawerElement.getAttribute('data-state');
+		const state = stateStr ? JSON.parse(stateStr) : {};
+		const propsStr = drawerElement.getAttribute('data-props');
+		const props = propsStr ? JSON.parse(propsStr) : {};
+		const queryParamsStr = drawerElement.getAttribute('data-query-params');
+		const queryParams = queryParamsStr ? JSON.parse(queryParamsStr) : {};
+		openDrawer(drawerName, {
+			url,
+			state,
+			props,
+			queryParams,
+		});
 	} else if (e.target.matches('.drawer-back-btn')) {
 		e.preventDefault();
 		drawerStack.pop();
 		// open the previous drawer
 		const drawerToOpen = drawerStack.getCurrentDrawer();
 		if (drawerToOpen) {
-			openDrawer(
-				drawerToOpen.drawerName,
-				{ url: drawerToOpen.drawerUrl },
-				false
-			);
+			openDrawer(drawerToOpen.drawerName, drawerToOpen.drawerData, false);
 		} else {
 			closeDrawer();
 		}
@@ -105,10 +113,7 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 		console.error('Drawer not found:', drawerName);
 		return;
 	}
-	const drawer = new drawerClass({
-		url: data.url,
-		state: data.state || {},
-	});
+	const drawer = new drawerClass(data);
 
 	console.log('drawerName:', drawerName);
 
@@ -119,7 +124,7 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 
 	currentDrawer = drawer;
 	if (pushStack) {
-		drawerStack.push(drawerName, data.url);
+		drawerStack.push(drawerName, data);
 	}
 	const element = await drawer.render();
 	DRAWER_CONTAINER.innerHTML = '';

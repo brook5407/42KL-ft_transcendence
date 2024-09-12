@@ -8,50 +8,66 @@ from rest_framework.decorators import permission_classes
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
 from utils.request_helpers import is_ajax_request
-from django.db.models import Q
 from rest_framework.decorators import api_view
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from .models import ChatMessage, ChatRoom
 from .serializers import ChatMessageSerializer
+from .pagination import ChatMessagePagination, ActiveChatRoomsPagination
 
 
 User = get_user_model()
 
-class ChatAPIView(APIView):
+class ChatMessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    pagination_class = ChatMessagePagination
+    serializer_class = ChatMessageSerializer
 
-    def get(self, request):
-        group_num = request.GET.get('group_num')
-        return Response({'group_num': group_num})
-
-class FriendChatAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        group_num = request.GET.get('group_num')
-        return Response({'group_num': group_num})
-
-class SendMessageAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, receiver_id):
-        receiver = get_object_or_404(User, id=receiver_id)
-        serializer = ChatMessageSerializer(data=request.data)
-        if serializer.is_valid():
-            chat_message = serializer.save(sender=request.user, receiver=receiver)
-            return Response(ChatMessageSerializer(chat_message).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class ChatHistoryAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, receiver_id):
-        receiver = get_object_or_404(User, id=receiver_id)
-        messages = ChatMessage.objects.filter(
-            (Q(sender=request.user) & Q(receiver=receiver)) | 
-            (Q(sender=receiver) & Q(receiver=request.user))
-        ).order_by('timestamp')
+    @action(detail=True, methods=['get'])
+    def history(self, request, pk=None):
+        room = get_object_or_404(ChatRoom, id=pk)
+        messages = ChatMessage.objects.filter(room=room).order_by('created_at')
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(messages, request, view=self)
+        if page is not None:
+            serializer = ChatMessageSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         serializer = ChatMessageSerializer(messages, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def send(self, request, pk=None):
+        room_id = pk
+        room = get_object_or_404(ChatRoom, id=pk)
+        serializer = ChatMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            chat_message = serializer.save(sender=request.user, room=room)
+            channel_layer = get_channel_layer()
+            if room.is_group_chat:
+                async_to_sync(channel_layer.group_send)(
+                    room_id,
+                    {
+                        'type': 'group_chat_message',
+                        'message': chat_message.message,
+                        'user': request.user.username,
+                        'room_id': room_id
+                    }
+                )
+            else:
+                other_member = room.members.exclude(id=request.user.id).first()
+                async_to_sync(channel_layer.group_send)(
+                    f"private_chats_{other_member.id}",
+                    {
+                        'type': 'private_chat_message',
+                        'message': chat_message.message,
+                        'sender': request.user.username,
+                        'room_id': room_id
+                    }
+                )
+            return Response(ChatMessageSerializer(chat_message).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -61,7 +77,7 @@ def chat_list_drawer(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/chat-list.html', {
         'public_chats': ChatRoom.objects.filter(is_public=True),
-        'private_chats': ChatRoom.get_private_chats(request.user)
+        'private_chats': ChatRoom.get_private_chats(request.user) # WXR TODO: frontend dynamic fetch user's active private chats
 	})
 
 @api_view(['GET'])
