@@ -38,6 +38,10 @@
 #countdownText {
     text-align: center;
 	display: none;
+	color:white;
+}
+#score1, #score2{
+	color:white;
 }
 #scoreBoard {
 	font-size: 64px;

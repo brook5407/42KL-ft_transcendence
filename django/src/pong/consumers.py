@@ -391,22 +391,68 @@ class Ball:
         self.x += self.speed * self.x_direction
         self.y += self.speed * self.y_direction
 
+    # def check_collision(self, paddle1, paddle2):
+    #     # Y-axis collision with the top and bottom of the game area
+    #     if self.y <= 0 or self.y >= gameHeight - self.radius:
+    #         self.y_direction *= -1
+
+    #     # Paddle collision
+    #     if (self.x <= paddle1.x + paddle1.width and 
+    #         paddle1.y <= self.y <= paddle1.y + paddle1.height):
+    #         self.x_direction = 1
+
+    #     if (self.x >= paddle2.x - self.radius and 
+    #         paddle2.y <= self.y <= paddle2.y + paddle2.height):
+    #         self.x_direction = -1
+
+    #         # Optionally, adjust speed slightly, but cap it
+    #         self.speed = min(self.speed + 1, 15)
+
     def check_collision(self, paddle1, paddle2):
-        # Y-axis collision
+        # Y-axis collision with the top and bottom of the game area
         if self.y <= 0 or self.y >= gameHeight - self.radius:
             self.y_direction *= -1
 
-        # Paddle collision
+        # Paddle 1 collision (left paddle)
         if (self.x <= paddle1.x + paddle1.width and 
             paddle1.y <= self.y <= paddle1.y + paddle1.height):
-            self.x_direction = 1
+            
+            self.x_direction = 1  # Ball goes to the right
 
+            # Calculate the impact point on the paddle relative to its center
+            hit_pos = (self.y - (paddle1.y + paddle1.height / 2)) / (paddle1.height / 2)
+
+            # Adjust y-direction based on where the ball hits the paddle
+            if hit_pos > 0.5:  # Bottom quarter
+                self.y_direction = 1  # Steeper downward angle
+            elif hit_pos > 0:  # Bottom center
+                self.y_direction = 0.5  # Shallow downward angle
+            elif hit_pos > -0.5:  # Top center
+                self.y_direction = -0.5  # Shallow upward angle
+            else:  # Top quarter
+                self.y_direction = -1  # Steeper upward angle
+            self.speed = min(self.speed + 1, 15)
+
+        # Paddle 2 collision (right paddle)
         if (self.x >= paddle2.x - self.radius and 
             paddle2.y <= self.y <= paddle2.y + paddle2.height):
-            self.x_direction = -1
+            
+            self.x_direction = -1  # Ball goes to the left
 
-            # Optionally, adjust speed slightly, but cap it
+            # Calculate the impact point on the paddle relative to its center
+            hit_pos = (self.y - (paddle2.y + paddle2.height / 2)) / (paddle2.height / 2)
+
+            # Adjust y-direction based on where the ball hits the paddle
+            if hit_pos > 0.5:  # Bottom quarter
+                self.y_direction = 1  # Steeper downward angle
+            elif hit_pos > 0:  # Bottom center
+                self.y_direction = 0.5  # Shallow downward angle
+            elif hit_pos > -0.5:  # Top center
+                self.y_direction = -0.5  # Shallow upward angle
+            else:  # Top quarter
+                self.y_direction = -1  # Steeper upward angle
             self.speed = min(self.speed + 1, 15)
+
 
     def serialize(self):
         return {
