@@ -13,6 +13,31 @@ const roomName = "{{ room_name }}";
 const gameSocket = new WebSocket(
 	'ws://' + window.location.host + '/ws/game/' + roomName + '/'
 );
+// const hitSound = new Audio('/static/audio/hit.mp3');
+// const scoreSound = new Audio('/static/audio/score.mp3');
+// // Preload audio
+// hitSound.load();
+// scoreSound.load();
+
+// Use preloaded audio assets
+function playHitSound() {
+    if (window.audioAssets && window.audioAssets.hitSound) {
+        window.audioAssets.hitSound.play();
+		console.log("Hit sound played");
+    }
+	else
+		console.log("Hit sound not played");
+}
+
+function playScoreSound() {
+    if (window.audioAssets && window.audioAssets.scoreSound) {
+        window.audioAssets.scoreSound.play();
+		console.log("Score sound played");
+    }
+	else
+		console.log("Score sound not played");
+}
+
 
 gameSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
@@ -277,17 +302,20 @@ function checkCollision() {
 	if (ball.y >= gameHeight - ball.radius)
 		ball.yDirection *= -1;
 	if (ball.x <= 0) {
+		playScoreSound();		
 		player2Score += 1;
 		createBall();
 		return;
 	}
 	if (ball.x >= gameWidth) {
+		playScoreSound();
 		player1Score += 1;
 		createBall();
 		return;
 	}
 	if (ball.x <= (paddle1.x + paddle1.width + ball.radius)) {
 		if (ball.y > paddle1.y && ball.y < paddle1.y + paddle1.height) {
+			playHitSound();
 			ball.x = (paddle1.x + paddle1.width) + ball.radius; // if ball gets stuck
 			ball.xDirection *= -1;
 			ball.speed += 0.5;
@@ -295,6 +323,7 @@ function checkCollision() {
 	}
 	if (ball.x >= (paddle2.x - ball.radius)) {
 		if (ball.y > paddle2.y && ball.y < paddle2.y + paddle2.height) {
+			playHitSound();
 			ball.x = paddle2.x - ball.radius; // if ball gets stuck
 			ball.xDirection *= -1;
 			ball.speed += 0.5;

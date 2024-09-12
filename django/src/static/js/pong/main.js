@@ -18,8 +18,21 @@ let ball;
 let table;
 let assignedPaddle = null;
 
+
 const socket = new WebSocket(`ws://${window.location.host}/ws/${gameMode}/${roomName}/`);
 roomCode.innerHTML = roomName;
+
+const hitSound = new Audio('/static/audio/hit.mp3');
+const scoreSound = new Audio('/static/audio/score.mp3');
+hitSound.load();
+scoreSound.load();
+function playHitSound() {
+    hitSound.play();
+}
+
+function playScoreSound() {
+    scoreSound.play();
+}
 
 socket.onopen = function() {
     console.log("WebSocket connection established " + roomName);
@@ -54,8 +67,20 @@ socket.onmessage = function(e) {
         gameCanvas.height = data.gameHeight;
         gameCanvas.width = data.gameWidth;
         paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white');
+        // if (ball.y > paddle1.y && ball.y < paddle1.y + paddle1.height)
+		// 	playHitSound();
         paddle2 = new Paddle(data.paddle2.x, data.paddle2.y, data.paddle2.width, data.paddle2.height, 'white');
+        // if (ball.y > paddle2.y && ball.y < paddle2.y + paddle2.height)
+		// 	playHitSound();
         ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, data.ball.radius, data.ball.speed, 'lightblue', 'lightblue');
+        // if (ball.x <= (paddle1.x + paddle1.width + ball.radius)) {
+        //     // if (ball.y > paddle1.y && ball.y < paddle1.y + paddle1.height)
+        //         playHitSound();
+        // }
+        // if (ball.x >= (paddle2.x - ball.radius)) {
+        //     // if (ball.y > paddle2.y && ball.y < paddle2.y + paddle2.height)
+        //         playHitSound();
+        // }
         table = new Table(gameCanvas, paddle1, paddle2, ball);
         matchmaking.style.display = 'none';
         gameCanvas.style.display = 'block';
@@ -90,8 +115,26 @@ socket.onmessage = function(e) {
         paddle2.y = data.paddle2.y;
         ball.x = data.ball.x;
         ball.y = data.ball.y;
+        // if (ball.y <= 0) {
+            //     playScoreSound();
+            // } 
+        if (ball.x <= 0) {
+            playScoreSound();
+        } 
+        console.log("gameCanvas.width:", gameCanvas.width);
+        if (ball.x >= gameCanvas.width) {
+            playScoreSound();
+        }  
         document.getElementById('score1').innerText = data.score1;
         document.getElementById('score2').innerText = data.score2;
+        if (ball.x <= (paddle1.x + paddle1.width + ball.radius)) {
+            if (ball.y > paddle1.y && ball.y < paddle1.y + paddle1.height)
+                playHitSound();
+        }
+        if (ball.x >= (paddle2.x - ball.radius)) {
+            if (ball.y > paddle2.y && ball.y < paddle2.y + paddle2.height)
+                playHitSound();
+        }
 
         // Render the updated game state
         table.draw();

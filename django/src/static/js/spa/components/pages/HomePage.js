@@ -1,6 +1,13 @@
 import { Component } from '../Component.js';
 import { Snowfall } from '../../../animation/snow.js';
 
+// const hitSound = new Audio('/static/audio/hit.mp3');
+// const scoreSound = new Audio('/static/audio/score.mp3');
+// // Preload audio
+// hitSound.load();
+// scoreSound.load();
+
+
 export class HomePage extends Component {
 	constructor(params) {
 		super(params);
