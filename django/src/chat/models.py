@@ -13,7 +13,6 @@ class ChatRoom(BaseModel):
     is_public = models.BooleanField(default=False)
     cover_image = models.ImageField(upload_to='chatroom_covers/', null=True, blank=True)
     is_group_chat = models.BooleanField(default=False)
-    messages = models.ManyToManyField('ChatMessage', related_name='chatroom_messages')
 
     def __str__(self):
         return self.name
@@ -25,7 +24,7 @@ class ChatRoom(BaseModel):
 
 
     def get_last_message(self):
-        return self.chat_messages.order_by('-timestamp').first()
+        return self.chat_messages.order_by('-created_at').first()
 
     @staticmethod
     def get_private_chats(user):
@@ -51,6 +50,12 @@ class ChatMessage(BaseModel):
     message = models.TextField()  # for game invitation, message will have a /invite prefix
     room = models.ForeignKey(ChatRoom, related_name='chat_messages', on_delete=models.CASCADE)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['room']),
+            models.Index(fields=['sender']),
+        ]
+
     def __str__(self):
         sender_name = self.sender.username if self.sender else "No Sender"
         return f"Message from {sender_name} in room {self.room.name} at {self.created_at}: {self.message}"
@@ -62,6 +67,12 @@ class ActiveChatRoom(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
     last_message = models.ForeignKey(ChatMessage, on_delete=models.CASCADE)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['room']),
+        ]
 
     def __str__(self):
         return f"{self.user.username} in {self.room.name}"

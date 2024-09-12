@@ -37,7 +37,7 @@
 					{% endif %}
 				</div>
 				{% if chat.get_last_message %}
-					<div class="chat-time" data-timestamp="{{ chat.get_last_message.timestamp|date:'c' }}"></div>
+					<div class="chat-time" data-timestamp="{{ chat.get_last_message.created_at|date:'c' }}"></div>
 				{% endif %}
 			</div>
 		{% endfor %}

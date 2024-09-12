@@ -12,7 +12,7 @@ def limit_public_chat_messages(sender, instance, **kwargs):
         return
     if not room.is_public:
         return
-    messages = ChatMessage.objects.filter(room=room).order_by('-timestamp')
+    messages = ChatMessage.objects.filter(room=room).order_by('-created_at')
     if messages.count() > 100:
         # Delete the oldest messages, keeping only the latest 100
         messages_to_delete = messages[100:]
