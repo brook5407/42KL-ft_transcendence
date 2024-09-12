@@ -2,7 +2,7 @@ const MESSAGE_CONTAINER = document.getElementById('message-container');
 
 function showMessage(message, type, toOpen = null) {
 	const messageBox = document.createElement('div');
-	messageBox.classList.add('toast-box', type);
+	messageBox.classList.add('message-box', type);
 	const textBox = document.createElement('span');
 	textBox.textContent = message;
 
