@@ -1,10 +1,12 @@
+import { getWSHost } from '../websocket.js';
+
+const wsHost = getWSHost();
+
 export class FriendRequestsLiveUpdate {
 	constructor() {
 		this.userId = window.currentUser.id;
 		this.username = window.currentUser.username;
-		this.socket = new WebSocket(
-			`ws://${window.location.host}/ws/friend-requests/`
-		);
+		this.socket = new WebSocket(`${wsHost}/ws/friend-requests/`);
 
 		this.socket.onopen = () => {
 			console.log('Friend requests live update socket opened');
