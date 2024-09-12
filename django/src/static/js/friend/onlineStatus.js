@@ -1,10 +1,12 @@
+import { getWSHost } from '../websocket.js';
+
+const wsHost = getWSHost();
+
 export class FriendsOnlineStatus {
 	constructor() {
 		this.userId = window.currentUser.id;
 		this.username = window.currentUser.username;
-		this.socket = new WebSocket(
-			`ws://${window.location.host}/ws/online-status/`
-		);
+		this.socket = new WebSocket(`${wsHost}/ws/online-status/`);
 
 		this.socket.onopen = () => {
 			console.log('Friends online status socket opened');

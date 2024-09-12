@@ -2,7 +2,7 @@ const TOAST_CONTAINER = document.getElementById('toast-container');
 
 function showToast(message, type, toOpen = null) {
 	const toast = document.createElement('div');
-	toast.classList.add('toast', type);
+	toast.classList.add('toast-box', type);
 	const textBox = document.createElement('span');
 	textBox.textContent = message;
 
@@ -12,24 +12,25 @@ function showToast(message, type, toOpen = null) {
 	}
 
 	const closeToast = () => {
-		toast.classList.remove('fade-in');
+		toast.classList.remove('show');
 		setTimeout(() => {
 			TOAST_CONTAINER.contains(toast) && TOAST_CONTAINER.removeChild(toast);
 		}, 500); // Wait for fade out to finish
 	};
 
 	// add a close button
-	const closeButton = document.createElement('span');
+	const closeButton = document.createElement('button');
 	closeButton.classList.add('toast-close-button');
 	closeButton.innerHTML = '&times;';
 	closeButton.addEventListener('click', closeToast);
 
 	toast.appendChild(textBox);
 	toast.appendChild(closeButton);
+	TOAST_CONTAINER.innerHTML = '';
 	TOAST_CONTAINER.appendChild(toast);
 
 	setTimeout(() => {
-		toast.classList.add('fade-in');
+		toast.classList.add('show');
 	}, 100);
 
 	if (toOpen) {
