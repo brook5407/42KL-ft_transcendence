@@ -37,39 +37,6 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
         serializer = ChatMessageSerializer(messages, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['post'])
-    def send(self, request, pk=None):
-        room_id = pk
-        room = get_object_or_404(ChatRoom, id=pk)
-        serializer = ChatMessageSerializer(data=request.data)
-        if serializer.is_valid():
-            channel_layer = get_channel_layer()
-            data = serializer.validated_data
-            if room.is_group_chat:
-                async_to_sync(channel_layer.group_send)(
-                    room_id,
-                    {
-                        'type': 'group_chat_message',
-                        'message': data.get('message'),
-                        'user': request.user.username,
-                        'room_id': room_id
-                    }
-                )
-            else:
-                other_member = room.members.exclude(id=request.user.id).first()
-                async_to_sync(channel_layer.group_send)(
-                    f"private_chats_{other_member.id}",
-                    {
-                        'type': 'private_chat_message',
-                        'message': data.get('message'),
-                        'sender': request.user.username,
-                        'room_id': room_id
-                    }
-                )
-            chat_message = serializer.save(sender=request.user, room=room)
-            return Response(ChatMessageSerializer(chat_message).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

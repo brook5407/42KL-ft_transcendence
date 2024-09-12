@@ -40,13 +40,12 @@ class ChatController {
 	}
 
 	async sendMessage(message, roomId) {
-		await ajaxWithAuth(`/api/chat/${roomId}/send/`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ message }),
-		});
+		this.socket.send(
+			JSON.stringify({
+				message,
+				room_id: roomId,
+			})
+		);
 	}
 
 	_dispatchNewMessageEvent(data) {
