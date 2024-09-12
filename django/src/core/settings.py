@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'channels',
+    'django_extensions',
 
     'django.contrib.admin',
     'django.contrib.auth',
