@@ -28,7 +28,7 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def history(self, request, pk=None):
         room = get_object_or_404(ChatRoom, id=pk)
-        messages = ChatMessage.objects.filter(room=room).order_by('created_at')
+        messages = ChatMessage.objects.filter(room=room).order_by('-created_at')
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(messages, request, view=self)
         if page is not None:

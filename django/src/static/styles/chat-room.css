@@ -11,8 +11,11 @@
 	flex: 1;
 	padding: 10px;
 	overflow-y: auto;
+	overscroll-behavior-y: contain;
+	scroll-snap-type: y proximity;
 	background-color: #869d9d;
 	min-height: 300px; /* Set a minimum height to prevent shrinking */
+	position: relative;
 }
 
 /* .chat-message {
@@ -71,4 +74,11 @@
 
 .chat-input button:hover {
 	background-color: #0056b3;
+}
+
+#loading-spinner {
+	position: absolute;
+	top: 10px;
+	left: 50%;
+	transform: translateX(-50%);
 }

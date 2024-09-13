@@ -1,6 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.db.models import Q
+from asgiref.sync import sync_to_async
 from .models import ChatRoom, ChatMessage
 import json
 
@@ -65,6 +66,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Fetch the room
         room = await self.get_room(room_id)
         
+        user_profile = await sync_to_async(lambda: self.user.profile)()
+        
         # Check if the room is a group chat or private chat
         if room.is_group_chat:
             await self.channel_layer.group_send(
@@ -72,8 +75,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     'type': 'group_chat_message',
                     'message': message,
-                    'user': self.user.username,
-                    'room_id': room_id
+                    'sender': {
+                        'username': self.user.username,
+                        'nickname': user_profile.nickname,
+                        'avatar': user_profile.avatar.url
+                    },
+                    'room_name': room.name,
+                    'cover_image': room.cover_image.url,
+                    'room_id': room_id,
                 }
             )
         else:
@@ -83,7 +92,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     'type': 'private_chat_message',
                     'message': message,
-                    'sender': self.user.username,
+                    'sender': {
+                        'username': self.user.username,
+                        'nickname': user_profile.nickname,
+                        'avatar': user_profile.avatar.url
+                    },
+                    'room_name': room.name,
                     'room_id': room_id
                 }
             )
@@ -104,16 +118,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return room.members.exclude(id=self.user.id).first()
 
     async def group_chat_message(self, event):
-        print("group chat message sending....")
         message = event['message']
-        user = event['user']
+        sender = event['sender']
         room_id = event['room_id']
+        room_name = event['room_name']
+        cover_image = event['cover_image']
 
         # Send the message to WebSocket
         await self.send(text_data=json.dumps({
+            'type': 'group_chat_message',
             'message': message,
-            'user': user,
-            'room_id': room_id
+            'sender': sender,
+            'room_id': room_id,
+            'room_name': room_name,
+            'cover_image': cover_image,
         }))
 
     # Handling private chat notifications
@@ -121,6 +139,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         sender = event['sender']
         room_id = event['room_id']
+        room_name = event['room_name']
 
         # Send notification to WebSocket
         await self.send(text_data=json.dumps({
@@ -128,4 +147,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message,
             'sender': sender,
             'room_id': room_id,
+            'room_name': room_name,
         }))
