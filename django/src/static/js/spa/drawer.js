@@ -6,6 +6,19 @@ import { FriendListDrawer } from './components/drawer/FriendListDrawer.js';
 import { FriendRequestsDrawer } from './components/drawer/FriendRequestsDrawer.js';
 import { checkNearestMatch } from './utils.js';
 
+export const DRAWERS = {
+	profile: GenericDrawer,
+	settings: GenericDrawer,
+	'chat-list': ChatListDrawer,
+	'chat-room': ChatRoomDrawer,
+	'friend-list': FriendListDrawer,
+	'friend-requests': FriendRequestsDrawer,
+	'search-friend': GenericDrawer,
+	'friend-profile': GenericDrawer,
+	'profile-edit': GenericDrawer,
+	'match-history': GenericDrawer,
+};
+
 class DrawerStack {
 	constructor() {
 		/**
@@ -52,21 +65,8 @@ class DrawerStack {
 	}
 }
 
-let currentDrawer = null;
-const drawerStack = new DrawerStack();
-
-export const DRAWERS = {
-	profile: GenericDrawer,
-	settings: GenericDrawer,
-	'chat-list': ChatListDrawer,
-	'chat-room': ChatRoomDrawer,
-	'friend-list': FriendListDrawer,
-	'friend-requests': FriendRequestsDrawer,
-	'search-friend': GenericDrawer,
-	'friend-profile': GenericDrawer,
-	'profile-edit': GenericDrawer,
-	'match-history': GenericDrawer,
-};
+window.currentDrawer = null;
+window.drawerStack = new DrawerStack();
 
 // open drawer and back buttons handler
 document.body.addEventListener('click', (e) => {
@@ -113,6 +113,7 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 		console.error('Drawer not found:', drawerName);
 		return;
 	}
+	data.name = drawerName;
 	const drawer = new drawerClass(data);
 
 	console.log('drawerName:', drawerName);

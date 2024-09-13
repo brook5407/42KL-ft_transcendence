@@ -5,7 +5,14 @@ export const MODAL_CONTAINER = document.getElementById('modal-container');
 export const DRAWER_CONTAINER = document.getElementById('drawer-container');
 
 export class Component {
-	constructor({ state = {}, url = '', props = {}, queryParams = {} } = {}) {
+	constructor({
+		name = 'component',
+		state = {},
+		url = '',
+		props = {},
+		queryParams = {},
+	} = {}) {
+		this.name = name;
 		this.element = null;
 		this.state = state;
 		this.props = props;

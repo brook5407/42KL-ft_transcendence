@@ -30,30 +30,16 @@ class ChatController {
 			return;
 		}
 
-		let toOpen = {
-			type: 'drawer',
-			name: 'chat-room',
-			data: {
-				url: 'drawer/chat-room',
-			},
-		};
-		if (data.type === 'private_chat_message') {
-			toOpen.data.queryParams = {
-				username: data.sender,
-			};
+		if (window.currentDrawer && window.currentDrawer.name === 'chat-room') {
+			console.log('WXR TODO: append message');
+		} else if (
+			window.currentDrawer &&
+			window.currentDrawer.name === 'chat-list'
+		) {
+			console.log('WXR TODO: change last message and time');
 		} else {
-			toOpen.data.queryParams = {
-				room_id: data.room_id,
-			};
+			this.showToastNotification(data);
 		}
-
-		// show toast
-		showInfoToast(data.message, `New message from ${data.sender}`, toOpen);
-
-		// play notification sound
-		window.playNotificationSound();
-
-		// WXR TODO: chat UI update
 
 		this._dispatchNewMessageEvent(event.data);
 	}
@@ -80,6 +66,40 @@ class ChatController {
 			detail: JSON.parse(data),
 		});
 		document.dispatchEvent(newMessageEvent);
+	}
+
+	showToastNotification(data) {
+		let toOpen = {
+			type: 'drawer',
+			name: 'chat-room',
+			data: {
+				url: 'drawer/chat-room',
+			},
+		};
+		if (data.type === 'private_chat_message') {
+			toOpen.data.queryParams = {
+				username: data.sender,
+			};
+			showInfoToast(
+				data.message,
+				`${data.sender.nickname}`,
+				data.sender.avatar,
+				toOpen
+			);
+		} else {
+			toOpen.data.queryParams = {
+				room_id: data.room_id,
+			};
+			showInfoToast(
+				`${data.sender.nickname}: ${data.message}`,
+				`${data.room_name}`,
+				data.cover_image,
+				toOpen
+			);
+		}
+
+		// play notification sound
+		window.playNotificationSound();
 	}
 
 	destroy() {

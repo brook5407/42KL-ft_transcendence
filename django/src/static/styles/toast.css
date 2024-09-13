@@ -38,6 +38,13 @@
 	color: #ffffff;
 }
 
+.toast-avatar {
+	width: 40px; /* Adjust size as needed */
+	height: 40px; /* Adjust size as needed */
+	border-radius: 50%;
+	margin-right: 10px; /* Space between avatar and title */
+}
+
 .toast-body {
 	display: flex;
 	align-items: center;
@@ -90,4 +97,14 @@
 
 .toast-link-icon:hover {
 	color: #81f7f7;
+}
+
+.toast-progress-bar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 5px;
+	background-color: #e4eded;
+	width: 0;
+	transition: width 0.1s linear;
 }

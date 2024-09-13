@@ -12,3 +12,9 @@ window.getCookie = function (name) {
 window.deleteCookie = function (name) {
 	document.cookie = name + '=; Max-Age=-99999999;';
 };
+
+window.isHTMLElement = function (str) {
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = str.trim();
+	return tempDiv.childNodes.length > 0 && tempDiv.childNodes[0].nodeType === 1;
+};
