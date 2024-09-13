@@ -32,6 +32,15 @@ def pvp_view(request):
 
 @login_required
 def pve_view(request):
+    # available_room = GameRoom.objects.filter(is_full=False).first()
+    # if available_room:
+    #     room_name = available_room.room_name
+    #     # available_room.is_full = True
+    #     available_room.save()
+    # else:
+    #     room_name = generate_room_name()
+    #     GameRoom.objects.create(room_name=room_name)
+    # room_name = generate_room_name()
     room_name = generate_room_name()
     if is_ajax_request(request):
         return render(request, 'components/pages/pong.html', {
@@ -43,7 +52,9 @@ def pve_view(request):
 @login_required
 def tournament_view(request):
     if is_ajax_request(request):
-        return render(request, 'components/pages/tournament_lobby.html')
+        return render(request, 'components/pages/tournament_lobby.html',{
+            'game_mode': "tournament",
+        })
     return render(request, 'index.html')
 
 @login_required
@@ -52,6 +63,21 @@ def tournament_create_view(request):
     redirect_url = reverse('pong.tournament_join', kwargs={'room_name': room_name})
     print(f"Generated room name: {room_name}, Redirect URL: {redirect_url}")  # Debug print
     return JsonResponse({'redirect_url': redirect_url})
+
+# @login_required
+# def tournament_create_view(request):
+#     room_name = generate_room_name()
+#     room = Tournament.objects.create(name=f"t_{room_name}")
+#     # player = get_object_or_404(Player, user=request.user)
+#     room.add_player(request.user)
+#     # return redirect('join_tournament_room', room_id=room.id)
+#     redirect_url = reverse('pong.tournament_join', kwargs={'room_name': room_name})
+#     print(f"Generated room name: {room_name}, Redirect URL: {redirect_url}")  # Debug print
+#     return JsonResponse({'redirect_url': redirect_url, 'room_name': room_name})
+#     # redirect_url = reverse('pong.tournament_join', kwargs={'room_name': room_name})
+#     # print(f"Generated room name: {room_name}, Redirect URL: {redirect_url}")  # Debug print
+#     # return JsonResponse({'redirect_url': redirect_url})
+
 
 @login_required
 def tournament_join_view(request, room_name):
@@ -62,3 +88,16 @@ def tournament_join_view(request, room_name):
             'game_mode': "tournament"
             })
     return render(request, 'index.html')
+
+# @login_required
+# def tournament_join_view(request, room_name):
+#     print("tournament join view start")
+#     room = get_object_or_404(Tournament, id=room_name)
+#     if is_ajax_request(request):
+#         if room.has_space():
+#             room.add_player(request.user)
+#         return render(request, 'components/pages/tournament.html', {
+#             'room_name': room_name,
+#             'game_mode': "tournament"
+#             })
+#     return render(request, 'index.html')

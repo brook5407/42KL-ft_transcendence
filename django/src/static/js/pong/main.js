@@ -19,6 +19,8 @@ let table;
 let assignedPaddle = null;
 
 
+
+
 const socket = new WebSocket(`ws://${window.location.host}/ws/${gameMode}/${roomName}/`);
 roomCode.innerHTML = roomName;
 
