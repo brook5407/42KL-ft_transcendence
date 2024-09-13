@@ -13,6 +13,7 @@ export class Component {
 		this.queryParams = queryParams;
 		this.url = url;
 		this.scripts = [];
+		this.styles = [];
 
 		this.mounted = false;
 		this.wrapper = null;
@@ -72,6 +73,32 @@ export class Component {
 			this.scripts.push(script);
 		}
 
+		// append all css into head, to avoid FOUC
+		const links = this.wrapper.querySelectorAll('link[rel="stylesheet"]');
+		links.forEach((link) => {
+			// Check if the link is already in the <head> to avoid duplicates
+			if (!document.querySelector(`head link[href="${link.href}"]`)) {
+				const linkClone = link.cloneNode(true);
+				document.head.appendChild(linkClone);
+				this.styles.push(linkClone);
+			}
+			link.remove();
+		});
+
+		// function areStylesLoaded(styles) {
+		// 	return Promise.all(
+		// 		styles.map((style) => {
+		// 			return new Promise((resolve, reject) => {
+		// 				style.onload = () => resolve(style);
+		// 				style.onerror = () =>
+		// 					reject(new Error(`Failed to load stylesheet: ${style.href}`));
+		// 			});
+		// 		})
+		// 	);
+		// }
+
+		// await areStylesLoaded(this.styles);
+
 		this.element = this.wrapper;
 
 		this.startComponent();
@@ -120,6 +147,10 @@ export class Component {
 		this.scripts.forEach((script) => {
 			console.log('removing script', script.src || 'custom script');
 			script.remove();
+		});
+		this.styles.forEach((link) => {
+			console.log('removing link', link.href);
+			link.remove();
 		});
 	}
 
