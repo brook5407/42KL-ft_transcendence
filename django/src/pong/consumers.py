@@ -383,9 +383,6 @@ class Paddle:
         # If ball is above paddle, move up
         elif ball.y < self.y:
             self.velocity = -self.speed
-        # If ball is near the middle, stop moving
-        else:
-            self.velocity = 0
 
     def serialize(self):
         return {
@@ -432,7 +429,7 @@ class Ball:
             self.y_direction *= -1
 
         # Paddle 1 collision (left paddle)
-        if (self.x <= paddle1.x + paddle1.width and 
+        if (self.x <= paddle1.x + paddle1.width + self.radius and 
             paddle1.y <= self.y <= paddle1.y + paddle1.height):
             
             self.x_direction = 1  # Ball goes to the right
