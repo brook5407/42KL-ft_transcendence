@@ -30,8 +30,12 @@ class ChatController {
 			return;
 		}
 
+		if (data.sender.username === window.currentUser.username) {
+			return;
+		}
+
 		if (window.currentDrawer && window.currentDrawer.name === 'chat-room') {
-			console.log('WXR TODO: append message');
+			window.currentDrawer.appendMessage(data);
 		} else if (
 			window.currentDrawer &&
 			window.currentDrawer.name === 'chat-list'
@@ -59,6 +63,17 @@ class ChatController {
 				room_id: roomId,
 			})
 		);
+		if (window.currentDrawer && window.currentDrawer.name === 'chat-room') {
+			window.currentDrawer.appendMessage({
+				message,
+				room_id: roomId,
+				sender: {
+					username: currentUser.username,
+					nickname: currentUser.profile.nickname,
+					avatar: currentUser.profile.avatar,
+				},
+			});
+		}
 	}
 
 	_dispatchNewMessageEvent(data) {
@@ -108,9 +123,10 @@ class ChatController {
 }
 
 document.addEventListener('user-ready', () => {
-	window.chat = new ChatController();
+	window.chatController = new ChatController();
 });
 
 document.addEventListener('user-cleared', () => {
-	window.chat.destroy();
+	window.chatController.destroy();
+	window.chatController = null;
 });

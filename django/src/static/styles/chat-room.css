@@ -76,9 +76,76 @@
 	background-color: #0056b3;
 }
 
-#loading-spinner {
+/* #loading-spinner {
 	position: absolute;
 	top: 10px;
 	left: 50%;
 	transform: translateX(-50%);
+} */
+
+#loading-spinner {
+	background-color: #869d9d;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding-bottom: 0.5rem;
+	padding-top: 0.5rem;
+}
+
+.chat-room__message {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: colomn;
+	margin: 10px 0;
+}
+
+.chat-room__message-sent {
+	justify-content: flex-start;
+	flex-direction: row-reverse;
+}
+
+.chat-room__message-received {
+	justify-content: flex-start;
+}
+
+.chat-room__avatar-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-right: 10px;
+}
+
+.chat-room__message-sent .chat-room__avatar-container {
+	margin-left: 10px;
+	margin-right: 0;
+}
+
+.chat-room__avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+}
+
+.chat-room__nickname {
+	font-weight: bold;
+	margin-bottom: 2px;
+}
+
+.chat-room__message-bubble {
+	max-width: 60%;
+	min-width: 20%;
+	padding: 10px;
+	border-radius: 10px;
+	background-color: #f1f1f1;
+	margin-top: auto;
+	color: black;
+	text-align: center;
+}
+
+.chat-room__message-sent .chat-room__message-bubble {
+	background-color: #1edddd;
+}
+
+.chat-room__message-received .chat-room__message-bubble {
+	background-color: #e5fcfc;
 }
