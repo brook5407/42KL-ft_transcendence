@@ -139,35 +139,39 @@ export class ChatRoomDrawer extends Component {
 	 * @returns {HTMLDivElement}
 	 */
 	createMessageElement(message) {
+		const isSentByCurrentUser =
+			message.sender.nickname === currentUser.profile.nickname;
+		const messageClass = isSentByCurrentUser
+			? 'chat-room__message-sent'
+			: 'chat-room__message-received';
+
 		const messageElem = document.createElement('div');
-		messageElem.classList.add('chat-room__message');
-		if (message.sender.nickname === currentUser.profile.nickname) {
-			messageElem.classList.add('chat-room__message-sent');
+		messageElem.className = `chat-room__message ${messageClass}`;
+		messageElem.innerHTML = `
+			<div class="chat-room__avatar-container">
+				<span class="chat-room__nickname">${message.sender.nickname}</span>
+				<img src="${message.sender.avatar}" alt="${message.sender.nickname}'s avatar" class="chat-room__avatar">
+			</div>
+			<div class="chat-room__message-bubble">${message.message}</div>
+		`;
+
+		const avatar = messageElem.querySelector('img.chat-room__avatar');
+		if (!isSentByCurrentUser) {
+			avatar.addEventListener('click', () => {
+				openDrawer('friend-profile', {
+					url: `drawer/friend-drawer`,
+					queryParams: {
+						username: message.sender.user.username,
+					},
+				});
+			});
 		} else {
-			messageElem.classList.add('chat-room__message-received');
+			avatar.addEventListener('click', () => {
+				openDrawer('profile', {
+					url: `drawer/profile/`,
+				});
+			});
 		}
-
-		const avatarContainer = document.createElement('div');
-		avatarContainer.classList.add('chat-room__avatar-container');
-
-		const avatarElem = document.createElement('img');
-		avatarElem.src = message.sender.avatar;
-		avatarElem.alt = `${message.sender.nickname}'s avatar`;
-		avatarElem.classList.add('chat-room__avatar');
-
-		const nicknameElem = document.createElement('span');
-		nicknameElem.textContent = message.sender.nickname;
-		nicknameElem.classList.add('chat-room__nickname');
-
-		const bubbleElem = document.createElement('div');
-		bubbleElem.textContent = message.message;
-		bubbleElem.classList.add('chat-room__message-bubble');
-
-		avatarContainer.appendChild(nicknameElem);
-		avatarContainer.appendChild(avatarElem);
-
-		messageElem.appendChild(avatarContainer);
-		messageElem.appendChild(bubbleElem);
 
 		return messageElem;
 	}
