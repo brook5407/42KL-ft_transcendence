@@ -1,15 +1,22 @@
 const TOAST_CONTAINER = document.getElementById('toast-container');
 
-function showToast(message, type, toOpen = null) {
+function showToast(message, title, type, toOpen = null) {
 	const toast = document.createElement('div');
 	toast.classList.add('toast-box', type);
-	const textBox = document.createElement('span');
-	textBox.textContent = message;
 
-	// if the toast can be clicked to open a drawer or modal, add underline to the text
-	if (toOpen) {
-		textBox.classList.add('underline-text');
-	}
+	const content = `
+		<div class="toast-header">
+            <span>${title}</span>
+            <button class="toast-close-button">
+				<i class="fa fa-times"></i>
+			</button>
+        </div>
+        <div class="toast-body">
+            <span>${message}</span>
+			${toOpen ? '<i class="fa fa-link toast-link-icon"></i>' : ''}
+        </div>
+	`;
+	toast.innerHTML = content;
 
 	const closeToast = () => {
 		toast.classList.remove('show');
@@ -18,14 +25,9 @@ function showToast(message, type, toOpen = null) {
 		}, 500); // Wait for fade out to finish
 	};
 
-	// add a close button
-	const closeButton = document.createElement('button');
-	closeButton.classList.add('toast-close-button');
-	closeButton.innerHTML = '&times;';
+	const closeButton = toast.querySelector('button.toast-close-button');
 	closeButton.addEventListener('click', closeToast);
 
-	toast.appendChild(textBox);
-	toast.appendChild(closeButton);
 	TOAST_CONTAINER.innerHTML = '';
 	TOAST_CONTAINER.appendChild(toast);
 
@@ -34,8 +36,9 @@ function showToast(message, type, toOpen = null) {
 	}, 100);
 
 	if (toOpen) {
-		textBox.classList.add('clickable');
-		textBox.addEventListener('click', () => {
+		const jumpIcon = toast.querySelector('.toast-link-icon');
+		jumpIcon.classList.add('clickable');
+		jumpIcon.addEventListener('click', () => {
 			const toOpenType = toOpen?.type;
 			if (toOpenType === 'page') {
 				window.location.href = toOpen?.url;
@@ -52,16 +55,16 @@ function showToast(message, type, toOpen = null) {
 	setTimeout(closeToast, 5000);
 }
 
-export function showSuccessToast(message, toOpen = null) {
-	showToast(message, 'success', toOpen);
+export function showSuccessToast(message, title = 'Notice!', toOpen = null) {
+	showToast(message, title, 'success', toOpen);
 }
 
-export function showErrorToast(message, toOpen = null) {
-	showToast(message, 'error', toOpen);
+export function showErrorToast(message, title = 'Notice!', toOpen = null) {
+	showToast(message, title, 'error', toOpen);
 }
 
-export function showInfoToast(message, toOpen = null) {
-	showToast(message, 'info', toOpen);
+export function showInfoToast(message, title = 'Notice!', toOpen = null) {
+	showToast(message, title, 'info', toOpen);
 }
 
 window.showSuccessToast = showSuccessToast;
