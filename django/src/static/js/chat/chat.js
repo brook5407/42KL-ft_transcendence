@@ -34,7 +34,11 @@ class ChatController {
 			return;
 		}
 
-		if (window.currentDrawer && window.currentDrawer.name === 'chat-room') {
+		if (
+			window.currentDrawer &&
+			window.currentDrawer.name === 'chat-room' &&
+			window.currentDrawer.room_id === data.room_id
+		) {
 			window.currentDrawer.appendMessage(data);
 		} else if (
 			window.currentDrawer &&
