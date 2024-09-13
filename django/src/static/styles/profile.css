@@ -28,7 +28,7 @@
 	position: absolute;
 	top: 70%;
 	right: 10px;
-	background-color: #fff;
+	background-color: white;
 	border-radius: 50%;
 	padding: 5px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -39,22 +39,21 @@
 .profile-nickname {
 	margin: 0;
 	font-size: 18px;
-	color: #c0edfa;
+	color: var(--color-info-2);
 	font-weight: 500;
 }
 
 .profile-nickname {
 	font-size: 32px;
-	color: #42eded;
+	color: var(--color-brand-4);
 }
 
 .profile-bio {
 	padding: 15px;
-	border: 1px solid #c0edfa;
+	border: 1px solid var(--color-info-2);
 	border-radius: 5px;
-	/* background-color: #befafa; */
 	font-size: 16px;
-	color: #333;
+	color: var(--color-text-7);
 	line-height: 1.5;
 	margin: 10px 0;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -65,7 +64,7 @@
 .profile-bio::before {
 	content: 'Bio: ';
 	font-weight: bold;
-	color: #555;
+	color: var(--color-text-5);
 }
 
 .btn {
@@ -73,14 +72,14 @@
 	font-size: 16px;
 	border: none;
 	border-radius: 5px;
-	background-color: #007bff;
+	background-color: var(--color-info-6);
 	color: white;
 	cursor: pointer;
 	margin-bottom: 10px;
 }
 
 .btn:hover {
-	background-color: #0056b3;
+	background-color: var(--color-info-5);
 }
 
 .form-group {
@@ -91,7 +90,7 @@
 	width: 100%;
 	padding: 10px;
 	border-radius: 5px;
-	border: 1px solid #ccc;
+	border: 1px solid var(--color-text-2);
 	font-size: 16px;
 	box-sizing: border-box;
 }
@@ -101,14 +100,6 @@ textarea.form-control {
 	resize: none; /* Prevent resizing */
 }
 
-.btn-success {
-	background-color: #28a745;
-}
-
-.btn-success:hover {
-	background-color: #218838;
-}
-
 .action-buttons {
 	display: flex;
 	gap: 10px;
@@ -116,13 +107,13 @@ textarea.form-control {
 }
 
 .block-btn {
-	background-color: #eec120;
+	background-color: var(--color-warning-5);
 }
 
 .unblock-btn {
-	background-color: #22e936;
+	background-color: var(--color-success-5);
 }
 
 .delete-btn {
-	background-color: #e32121;
+	background-color: var(--color-error-5);
 }

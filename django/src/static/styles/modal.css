@@ -19,8 +19,8 @@
 	top: -50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background-color: #e5f7fc;
-	border: 2px solid #83def7;
+	background-color: var(--color-info-1);
+	border: 2px solid var(--color-info-3);
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	padding: 20px;
 	border-radius: 32px;
@@ -51,7 +51,7 @@
 .modal-header h2 {
 	margin: 0;
 	font-size: 64px;
-	color: #010c0c;
+	color: var(--color-text-9);
 	font-family: 'Denk One', sans-serif;
 }
 
@@ -67,21 +67,20 @@
 .input-group label {
 	position: absolute;
 	font-family: 'Denk One', sans-serif;
-	top: -10px; /* Adjust to move label up to overlay on input's top border */
-	left: 10px; /* Adjust based on padding of input to align with text start */
-	background-color: #e5f7fc; /* Match the form or page background */
-	padding: 0 5px; /* Add some padding around the label text */
-	z-index: 6; /* Ensure the label is on top of the input */
+	top: -10px;
+	left: 10px;
+	background-color: var(--color-info-1);
+	padding: 0 5px;
+	z-index: 6;
 }
 
 .input-group input {
-	background-color: #e6f7ff; /* Light blue background */
-	border: 3px solid #4fcdf0; /* Blue border */
-	border-radius: 4px; /* Rounded corners for the input box */
-	padding: 10px; /* Padding inside the input box */
-	width: 100%; /* Full width of its parent */
-	box-sizing: border-box; /* Include padding and border in the element's total width and height */
-	/* z-index: 5; */
+	background-color: var(--color-info-1);
+	border: 3px solid var(--color-info-4);
+	border-radius: 4px;
+	padding: 10px;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .input-group input:focus {
@@ -94,15 +93,16 @@
 	font-family: 'Denk One', sans-serif;
 }
 
-#signupLink, #signinLink {
-	color: #1fb5e4;
+#signupLink,
+#signinLink {
+	color: var(--color-info-5);
 	text-decoration: underline;
 	cursor: pointer;
 }
 
 .otp-group button {
 	padding: 10px 15px;
-	background-color: #ff4b4b;
+	background-color: var(--color-error-4);
 	color: white;
 	border: none;
 	border-top-right-radius: 5px;
@@ -117,6 +117,6 @@
 }
 
 .forgot-password a {
-	color: #666;
+	color: var(--color-text-7);
 	text-decoration: none;
 }

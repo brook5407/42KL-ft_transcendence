@@ -8,8 +8,8 @@
 	display: flex;
 	align-items: center;
 	width: 100%;
-	background-color: #befafa;
-	border: 1px solid #657e7e;
+	background-color: var(--color-brand-2);
+	border: 1px solid var(--color-text-5);
 	padding: 10px;
 	box-sizing: border-box;
 }
@@ -31,7 +31,7 @@
 }
 
 .friend-request-tile__nickname {
-	color: #18c9c9;
+	color: var(--color-brand-6);
 	font-weight: bold;
 }
 
@@ -57,19 +57,19 @@
 }
 
 .friend-request-tile__accept {
-	color: #28a745;
+	color: var(--color-success-4);
 }
 
 .friend-request-tile__accept:hover {
-	background-color: #e6f9eb;
+	background-color: var(--color-success-3);
 }
 
 .friend-request-tile__reject {
-	color: #dc3545;
+	color: var(--color-error-4);
 }
 
 .friend-request-tile__reject:hover {
-	background-color: #f9e6e6;
+	background-color: var(--color-error-3);
 }
 
 .friend-request-tile__accepted-badge,
@@ -87,11 +87,11 @@
 }
 
 .friend-request-tile__accepted-badge {
-	color: #28a745; /* Green color for accept */
-	background-color: #e6f9eb; /* Light green background */
+	color: var(--color-success-5);
+	background-color: var(--color-success-1);
 }
 
 .friend-request-tile__rejected-badge {
-	color: #dc3545; /* Red color for reject */
-	background-color: #f9e6e6; /* Light red background */
+	color: var(--color-error-5);
+	background-color: var(--color-error-1);
 }
