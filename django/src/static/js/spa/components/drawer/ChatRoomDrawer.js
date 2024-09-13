@@ -22,7 +22,7 @@ export class ChatRoomDrawer extends Component {
 	constructor(params) {
 		super(params);
 
-		this.room_id = this.queryParams.room_id;
+		this.room_id = null;
 
 		this.boundHandleChatRoomDrawerOpened =
 			this.handleChatRoomDrawerOpened.bind(this);
@@ -93,6 +93,13 @@ export class ChatRoomDrawer extends Component {
 	async handleChatRoomDrawerOpened(e) {
 		if (e.detail.drawerName !== 'chat-room') {
 			return;
+		}
+		this.room_id = this.queryParams.room_id;
+		if (!this.room_id) {
+			this.room_id = JSON.parse(
+				document.querySelector('#room_id')?.textContent || '""'
+			);
+			console.log('got room_id from html:', this.room_id);
 		}
 		this.chatMessagesContainer = this.element.querySelector('#chat-messages');
 		this.showLoadingSpinner();
