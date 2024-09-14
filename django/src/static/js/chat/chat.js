@@ -1,12 +1,9 @@
-/**
- * if in chat list drawer
- * 		any new incoming message should change the last message in a chat room tile if necessary
- * if in chat room drawer
- * 		any new incoming message should append to the chat room
- */
-
 import { getWSHost } from '../websocket.js';
 import { showInfoToast } from '../toast.js';
+
+/**
+ * @borrows {import('../../../types.js').WSChatMessage}
+ */
 
 const wsHost = getWSHost();
 
@@ -25,7 +22,13 @@ class ChatController {
 
 	_onMessage(event) {
 		console.log('Chat socket message:', event.data);
+
+		/** @type {WSChatMessage} */
 		const data = JSON.parse(event.data);
+		// WXR TODO: add error handling for being blocked or deleted
+		// WXR TODO: fix delete friend cannot add back bug
+		// WXR TODO: can consider add a notification table for persisting notifications
+		// like friend request, friend accepted, friend deleted you, etc.
 		if (!data || !data.message || !data.sender || !data.room_id) {
 			return;
 		}
@@ -44,9 +47,12 @@ class ChatController {
 			window.currentDrawer &&
 			window.currentDrawer.name === 'chat-list'
 		) {
-			console.log('WXR TODO: change last message and time');
+			window.currentDrawer.moveChatRoomToTop(data.room_id, data);
+
+			window.playNotificationSound();
 		} else {
 			this.showToastNotification(data);
+			window.playNotificationSound();
 		}
 
 		this._dispatchNewMessageEvent(event.data);
@@ -116,9 +122,6 @@ class ChatController {
 				toOpen
 			);
 		}
-
-		// play notification sound
-		window.playNotificationSound();
 	}
 
 	destroy() {

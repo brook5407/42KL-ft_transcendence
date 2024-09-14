@@ -1,8 +1,8 @@
-.public-chat {
+.chat-list {
 	padding: 10px;
 }
 
-.public-chat h3 {
+.chat-list h3 {
 	font-family: 'Denk One', sans-serif;
 	font-size: 24px;
 }
@@ -15,6 +15,20 @@
 	position: relative;
 	background-color: var(--color-brand-2);
 	cursor: pointer;
+	transition: width 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+	from {
+		width: 0;
+	}
+	to {
+		width: 100%;
+	}
+}
+
+.chat-list-item.animate {
+	animation: slideIn 0.5s forwards;
 }
 
 .chat-list-item:hover {
@@ -68,4 +82,16 @@
 
 .last-message {
 	flex: 1; /* Allow the message to take up the remaining space */
+}
+
+.unread-count {
+	background-color: red;
+	color: white;
+	border-radius: 50%;
+	padding: 5px;
+	font-size: 12px;
+	display: inline-block;
+	min-width: 20px;
+	text-align: center;
+	margin-left: 10px;
 }

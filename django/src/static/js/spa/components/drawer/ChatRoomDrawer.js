@@ -1,31 +1,16 @@
 import { ajaxWithAuth } from '../../ajax.js';
-import { Component } from '../Component.js';
+import { GenericDrawer } from './GenericDrawer.js';
 
 /**
- * @typedef {Object} Message
- * @property {string} [type] - The message type, group or private (optional).
- * @property {string} message - The message content.
- * @property {Sender} sender - The sender of the message.
- * @property {string} room_id - The ID of the room.
- * @property {string} room_name - The name of the room.
- * @property {string} [cover_image] - The cover image of the room (optional).
+ * @borrows {import('../../../types.js').WSChatMessage}
+ * @borrows {import('../../../types.js').Profile}
  */
 
-/**
- * @typedef {Object} Sender
- * @property {string} username - The username of the sender.
- * @property {string} nickname - The nickname of the sender.
- * @property {string} avatar - The avatar url of the sender.
- */
-
-export class ChatRoomDrawer extends Component {
+export class ChatRoomDrawer extends GenericDrawer {
 	constructor(params) {
 		super(params);
 
 		this.room_id = null;
-
-		this.boundHandleChatRoomDrawerOpened =
-			this.handleChatRoomDrawerOpened.bind(this);
 
 		this.spinnerHTML = `
 			<div class="spinner-border text-primary" role="status">
@@ -37,16 +22,19 @@ export class ChatRoomDrawer extends Component {
 
 		this.nextPage = 1;
 		this.stillHasNextPage = true;
-		this.renderingHistoryMessage = false;
+		this.renderingNextPage = false;
 	}
 
 	async fetchNextPageHistoryMessages() {
-		const res = await ajaxWithAuth(`/api/chat/${this.room_id}/history/`, {
-			method: 'GET',
-			params: {
-				page: this.nextPage,
-			},
-		});
+		const res = await ajaxWithAuth(
+			`/api/chat-message/${this.room_id}/history/`,
+			{
+				method: 'GET',
+				params: {
+					page: this.nextPage,
+				},
+			}
+		);
 
 		if (!res.ok) {
 			return [];
@@ -61,7 +49,7 @@ export class ChatRoomDrawer extends Component {
 	}
 
 	async renderNextPageMessages() {
-		this.renderingHistoryMessage = true;
+		this.renderingNextPage = true;
 
 		/** @type {Message[]} */
 		const messages = await this.fetchNextPageHistoryMessages();
@@ -72,7 +60,7 @@ export class ChatRoomDrawer extends Component {
 			this.prependMessage(message);
 		});
 
-		this.renderingHistoryMessage = false;
+		this.renderingNextPage = false;
 	}
 
 	showLoadingSpinner() {
@@ -90,24 +78,35 @@ export class ChatRoomDrawer extends Component {
 		this.spinnerElement = null;
 	}
 
-	async handleChatRoomDrawerOpened(e) {
+	// override
+	async handleDrawerOpened(e) {
 		if (e.detail.drawerName !== 'chat-room') {
 			return;
 		}
+
 		this.room_id = this.queryParams.room_id;
 		if (!this.room_id) {
 			this.room_id = JSON.parse(
 				document.querySelector('#room_id')?.textContent || '""'
 			);
-			console.log('got room_id from html:', this.room_id);
 		}
+
+		// mark the chat as read
+		ajaxWithAuth(`/api/active-chat/mark-read/${this.room_id}/`, {
+			method: 'POST',
+		});
+
+		// focus on the chat input when the drawer is opened
+		const chatInput = this.element.querySelector('#message-input');
+		chatInput.focus();
+
 		this.chatMessagesContainer = this.element.querySelector('#chat-messages');
 		this.showLoadingSpinner();
 		await this.renderNextPageMessages();
 		this.scrollToBottom();
 		this.chatMessagesContainer.addEventListener('wheel', () => {
 			if (
-				!this.renderingHistoryMessage &&
+				!this.renderingNextPage &&
 				this.chatMessagesContainer.scrollTop <= 0
 			) {
 				this.showLoadingSpinner();
@@ -119,7 +118,6 @@ export class ChatRoomDrawer extends Component {
 			}
 		});
 
-		const chatInput = this.element.querySelector('#message-input');
 		const sendMessage = () => {
 			const message = chatInput.value;
 			if (!message) {
@@ -185,7 +183,7 @@ export class ChatRoomDrawer extends Component {
 
 	/**
 	 *
-	 * @param {Message} message
+	 * @param {WSChatMessage} message
 	 * @returns
 	 */
 	prependMessage(message) {
@@ -198,7 +196,7 @@ export class ChatRoomDrawer extends Component {
 
 	/**
 	 *
-	 * @param {Message} message
+	 * @param {WSChatMessage} message
 	 * @returns
 	 */
 	appendMessage(message) {
@@ -216,30 +214,5 @@ export class ChatRoomDrawer extends Component {
 			top: this.chatMessagesContainer.scrollHeight,
 			behavior: 'smooth',
 		});
-	}
-
-	// override
-	async initComponent() {
-		document.addEventListener(
-			'drawer-opened',
-			this.boundHandleChatRoomDrawerOpened
-		);
-	}
-
-	// override
-	destroy() {
-		super.destroy();
-		document.removeEventListener(
-			'drawer-opened',
-			this.boundHandleChatRoomDrawerOpened
-		);
-	}
-
-	template() {
-		return `
-			<div>
-				<h1>Drawer</h1>
-			</div>
-		`;
 	}
 }
