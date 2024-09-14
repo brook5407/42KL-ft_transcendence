@@ -24,18 +24,21 @@ let assignedPaddle = null;
 const socket = new WebSocket(`ws://${window.location.host}/ws/${gameMode}/${roomName}/`);
 roomCode.innerHTML = roomName;
 
-const hitSound = new Audio('/static/audio/hit.mp3');
-const scoreSound = new Audio('/static/audio/score.mp3');
-hitSound.load();
-scoreSound.load();
-function playHitSound() {
-    hitSound.play();
-}
+// const hitSound = new Audio('/static/audio/hit.mp3');
+// const scoreSound = new Audio('/static/audio/score.mp3');
+// hitSound.load();
+// scoreSound.load();
+// function playHitSound() {
+//     hitSound.play();
+// }
 
-function playScoreSound() {
-    scoreSound.play();
-}
+// function playScoreSound() {
+//     scoreSound.play();
+// }
 
+// function playBackgroundMusic() {
+window.audioAssets.bgmSound.loop = true;
+window.audioAssets.bgmSound.play();
 socket.onopen = function() {
     console.log("WebSocket connection established " + roomName);
     socket.send(JSON.stringify({ 'game_mode': gameMode}));
@@ -131,11 +134,13 @@ socket.onmessage = function(e) {
         document.getElementById('score2').innerText = data.score2;
         if (ball.x <= (paddle1.x + paddle1.width + ball.radius)) {
             if (ball.y > paddle1.y && ball.y < paddle1.y + paddle1.height)
-                playHitSound();
+                // playHitSound();
+                window.audioAssets.hitSound.play();
         }
         if (ball.x >= (paddle2.x - ball.radius)) {
             if (ball.y > paddle2.y && ball.y < paddle2.y + paddle2.height)
-                playHitSound();
+                // playHitSound();
+                window.audioAssets.hitSound.play();
         }
 
         // Render the updated game state

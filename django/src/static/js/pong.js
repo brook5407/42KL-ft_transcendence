@@ -38,6 +38,14 @@ function playScoreSound() {
 		console.log("Score sound not played");
 }
 
+function playBackgroundMusic() {
+	if (window.audioAssets && window.audioAssets.backgroundMusic) {
+		window.audioAssets.backgroundMusic.play();
+		console.log("Background music played");
+	}
+	else
+		console.log("Background music not played");
+}
 
 gameSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
