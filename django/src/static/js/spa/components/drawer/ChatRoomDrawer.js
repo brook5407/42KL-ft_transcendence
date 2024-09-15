@@ -148,6 +148,12 @@ export class ChatRoomDrawer extends GenericDrawer {
 		sendButton.addEventListener('click', sendMessage);
 	}
 
+	wrapUrlsWithAnchorTags(message) {
+		const urlPattern =
+			/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+		return message.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+	}
+
 	/**
 	 *
 	 * @param {string} message
@@ -165,9 +171,13 @@ export class ChatRoomDrawer extends GenericDrawer {
 		messageElem.innerHTML = `
 			<div class="chat-room__avatar-container">
 				<span class="chat-room__nickname">${message.sender.nickname}</span>
-				<img src="${message.sender.avatar}" alt="${message.sender.nickname}'s avatar" class="chat-room__avatar">
+				<img src="${message.sender.avatar}" alt="${
+			message.sender.nickname
+		}'s avatar" class="chat-room__avatar">
 			</div>
-			<div class="chat-room__message-bubble">${message.message}</div>
+			<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
+				message.message
+			)}</div>
 		`;
 
 		const avatar = messageElem.querySelector('img.chat-room__avatar');
