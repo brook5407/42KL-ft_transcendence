@@ -21,7 +21,7 @@ class ChatRoomSerializer(serializers.ModelSerializer):
                 if other_user:
                     profile = other_user.profile
                     representation['name'] = profile.nickname
-                    representation['cover_image'] = profile.profile_picture.url
+                    representation['cover_image'] = profile.avatar.url
         return representation
 
 class ChatMessageSerializer(serializers.ModelSerializer):
