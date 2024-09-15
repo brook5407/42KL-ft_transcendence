@@ -3,7 +3,7 @@ import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
-# from .models import Tournament, Room, Match
+from .models import GameRoom
 
 gameHeight = 500
 gameWidth = 800
@@ -241,7 +241,14 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'end_game',
             'message': event['message'],
         }))
-        await self.close()  # Close the WebSocket connection
+        try:
+            game_room = GameRoom.objects.get(room_name=self.room_name)
+            game_room.delete()  # Delete the room when the game is over or a player disconnects
+        except GameRoom.DoesNotExist:
+            pass  # Room already deleted or not found
+
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        # await self.close()  # Close the WebSocket connection
 
     def reset_ball(self):
         # Reset the ball to the center of the field
@@ -425,7 +432,7 @@ class Ball:
 
     def check_collision(self, paddle1, paddle2):
         # Y-axis collision with the top and bottom of the game area
-        if self.y - self.radius <= 0 or self.y + self.radius >= gameHeight:
+        if (self.y - self.radius) <= 0 or (self.y + self.radius) >= gameHeight:
             self.y_direction *= -1
 
         # Paddle 1 collision (left paddle)

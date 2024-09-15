@@ -6,13 +6,24 @@ from django.contrib.auth.decorators import login_required
 import uuid, secrets, string
 from .models import Player, Tournament, Match, GameRoom
 
-def generate_room_name():
-    length = 5
-    alphabet = string.ascii_uppercase + string.digits
-    return ''.join(secrets.choice(alphabet) for i in range(length))
+class RoomsManager:
+    def __init__(self):
+        self.rooms = {}
+
+    def generate_room_name(self):
+        length = 5
+        alphabet = string.ascii_uppercase + string.digits
+        return ''.join(secrets.choice(alphabet) for i in range(length))
+    
+    def create_room(self):
+        room_name = self.generate_room_name()
+        self.rooms[room_name] = {"players": []}  # Initialize room
+        return room_name
+
 
 @login_required
 def pvp_view(request):
+    # check for any avaliable room and assign second player to the same room
     available_room = GameRoom.objects.filter(is_full=False).first()
 
     if available_room:
@@ -20,7 +31,7 @@ def pvp_view(request):
         available_room.is_full = True
         available_room.save()
     else:
-        room_name = generate_room_name()
+        room_name = RoomsManager().create_room()
         GameRoom.objects.create(room_name=room_name)
 
     if is_ajax_request(request):
@@ -32,7 +43,7 @@ def pvp_view(request):
 
 @login_required
 def pve_view(request):
-    room_name = generate_room_name()
+    room_name = RoomsManager().create_room()
     if is_ajax_request(request):
         return render(request, 'components/pages/pong.html', {
             'room_name': room_name,
@@ -48,7 +59,7 @@ def tournament_view(request):
 
 @login_required
 def tournament_create_view(request):
-    room_name = generate_room_name()
+    room_name = RoomsManager().create_room()
     redirect_url = reverse('pong.tournament_join', kwargs={'room_name': room_name})
     print(f"Generated room name: {room_name}, Redirect URL: {redirect_url}")  # Debug print
     return JsonResponse({'redirect_url': redirect_url})

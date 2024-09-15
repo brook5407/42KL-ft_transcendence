@@ -90,6 +90,8 @@ socket.onmessage = function(e) {
         paddle2.y = data.paddle2.y;
         ball.x = data.ball.x;
         ball.y = data.ball.y;
+        console.log("x: " + ball.x);
+        console.log("y: " + ball.y);
         document.getElementById('score1').innerText = data.score1;
         document.getElementById('score2').innerText = data.score2;
 
