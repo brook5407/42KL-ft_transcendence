@@ -3,29 +3,28 @@ import { NotFoundPage } from './components/pages/NotFoundPage.js';
 import { ROOT_ELEMENT } from './components/Component.js';
 import { PongPage } from './components/pages/PongPage.js';
 
-
 export const ROUTES = {
 	'/': {
 		component: HomePage,
-		data: { url: '/home' }
+		data: { url: '/home' },
 	},
 	'/pong/index': {
 		component: PongPage,
-		data: { url: '/pong/index/' }
+		data: { url: '/pong/index/' },
 	},
 	'/pong/pvp': {
 		component: PongPage,
-		data: { url: '/pong/pvp/' }
+		data: { url: '/pong/pvp/' },
 	},
 	'/pong/pve': {
 		component: PongPage,
-		data: { url: '/pong/pve/' }
+		data: { url: '/pong/pve/' },
 	},
 	'/pong/tournament': {
 		component: PongPage,
-		data: { url: '/pong/tournament/' }
+		data: { url: '/pong/tournament/' },
 	},
-	'^\/pong\/tournament\/[^\/]+\/?$': {
+	'^/pong/tournament/[^/]+/?$': {
 		component: PongPage,
 		dynamic: true,
 	},
@@ -59,12 +58,9 @@ export async function router() {
 			if (!ROUTES[pattern].dynamic) {
 				continue;
 			}
-			console.log(pattern)
-			console.log(pathname)
 			const re = new RegExp(pattern);
 			if (re.test(pathname)) {
 				match = ROUTES[pattern];
-				console.log(match)
 				break;
 			}
 		}
@@ -74,7 +70,6 @@ export async function router() {
 	if (!match) {
 		component = new NotFoundPage({});
 	} else if (match.dynamic) {
-		console.log(pathname)
 		component = new match.component({ url: pathname });
 	} else {
 		component = new match.component(match.data);

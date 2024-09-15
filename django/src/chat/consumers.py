@@ -2,6 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.db.models import Q
 from asgiref.sync import sync_to_async
+from django.utils import timezone
 from .models import ChatRoom, ChatMessage
 import json
 
@@ -85,6 +86,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'room_name': room.name,
                     'cover_image': room.cover_image.url,
                     'room_id': room_id,
+                    'created_at': timezone.now().isoformat(),
                 }
             )
         else:
@@ -128,7 +130,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                             'avatar': user_profile.avatar.url
                         },
                         'room_name': room.name,
-                        'room_id': room_id
+                        'room_id': room_id,
+                        'created_at': timezone.now().isoformat(),
                     }
                 )
             
@@ -153,6 +156,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room_id = event['room_id']
         room_name = event['room_name']
         cover_image = event['cover_image']
+        created_at = event['created_at'] or timezone.now().isoformat()
 
         # Send the message to WebSocket
         await self.send(text_data=json.dumps({
@@ -162,6 +166,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'room_id': room_id,
             'room_name': room_name,
             'cover_image': cover_image,
+            'created_at': created_at,
         }))
 
     # Handling private chat notifications
@@ -170,6 +175,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender = event['sender']
         room_id = event['room_id']
         room_name = event['room_name']
+        created_at = event['created_at'] or timezone.now().isoformat()
 
         # Send notification to WebSocket
         await self.send(text_data=json.dumps({
@@ -178,4 +184,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'sender': sender,
             'room_id': room_id,
             'room_name': room_name,
+            'created_at': created_at,
         }))
