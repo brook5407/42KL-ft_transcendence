@@ -196,7 +196,6 @@ export class ChatListDrawer extends GenericDrawer {
 	 */
 	appendChatRooms(chatRooms) {
 		chatRooms.forEach((chatRoom) => {
-			console.log(chatRoom);
 			const chatRoomElement = this.createChatRoomElement(chatRoom);
 			this.chatListContainer?.appendChild(chatRoomElement);
 		});

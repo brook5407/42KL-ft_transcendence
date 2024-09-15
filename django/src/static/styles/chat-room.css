@@ -126,3 +126,10 @@
 .chat-room__message-received .chat-room__message-bubble {
 	background-color: var(--color-brand-1);
 }
+
+.chat-room__timestamp {
+	font-size: 0.8em;
+	color: var(--color-text-3);
+	margin-top: 5px;
+	align-self: flex-end;
+}

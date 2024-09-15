@@ -7,6 +7,7 @@
  * @property {string} room_id - The ID of the room.
  * @property {string} room_name - The name of the room.
  * @property {string} [cover_image] - The cover image of the room (optional).
+ * @property {string} created_at - The created time of the message.
  */
 
 /**

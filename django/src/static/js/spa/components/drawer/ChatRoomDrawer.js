@@ -20,6 +20,9 @@ export class ChatRoomDrawer extends GenericDrawer {
 		this.spinnerElement = null;
 		this.chatMessagesContainer = null;
 
+		/** @type {WSChatMessage[]} */
+		this.chatMessages = [];
+
 		this.nextPage = 1;
 		this.stillHasNextPage = true;
 		this.renderingNextPage = false;
@@ -45,7 +48,9 @@ export class ChatRoomDrawer extends GenericDrawer {
 		if (!data.next) {
 			this.stillHasNextPage = false;
 		}
-		return data.results;
+		const messages = data.results;
+		this.chatMessages.push(messages);
+		return messages;
 	}
 
 	async renderNextPageMessages() {
@@ -53,7 +58,6 @@ export class ChatRoomDrawer extends GenericDrawer {
 
 		/** @type {Message[]} */
 		const messages = await this.fetchNextPageHistoryMessages();
-		console.log(messages);
 		this.hideLoadingSpinner();
 
 		messages.forEach((message) => {
@@ -155,18 +159,56 @@ export class ChatRoomDrawer extends GenericDrawer {
 	}
 
 	/**
+	 * Format the timestamp based on the difference between the current date and the message date.
+	 * @param {Date} timestamp - The timestamp of the message.
+	 * @returns {string} - The formatted timestamp.
+	 */
+	formatTimestamp(timestamp) {
+		const now = new Date();
+		const messageDate = new Date(timestamp);
+		const diffTime = now - messageDate;
+		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+		if (diffDays === 0) {
+			return `Today, ${messageDate.toLocaleTimeString('en-US', {
+				hour: '2-digit',
+				minute: '2-digit',
+			})}`;
+		} else if (diffDays === 1) {
+			return `Yesterday, ${messageDate.toLocaleTimeString('en-US', {
+				hour: '2-digit',
+				minute: '2-digit',
+			})}`;
+		} else if (diffDays < 7) {
+			return `${diffDays} days ago, ${messageDate.toLocaleTimeString('en-US', {
+				hour: '2-digit',
+				minute: '2-digit',
+			})}`;
+		} else {
+			return messageDate.toLocaleString('en-US', {
+				weekday: 'short', // e.g., 'Mon'
+				month: 'short', // e.g., 'Oct'
+				day: '2-digit', // e.g., '01'
+				year: 'numeric', // e.g., '2023'
+				hour: '2-digit', // e.g., '01 PM'
+				minute: '2-digit', // e.g., '30'
+			});
+		}
+	}
+
+	/**
 	 *
-	 * @param {string} message
+	 * @param {WSChatMessage} message
 	 * @returns {HTMLDivElement}
 	 */
 	createMessageElement(message) {
-		console.log(message);
-		console.log(currentUser);
 		const isSentByCurrentUser =
 			message.sender.user.username === currentUser.username;
 		const messageClass = isSentByCurrentUser
 			? 'chat-room__message-sent'
 			: 'chat-room__message-received';
+		const timestamp = new Date(message.created_at);
+		const formattedTimestamp = this.formatTimestamp(timestamp);
 
 		const messageElem = document.createElement('div');
 		messageElem.className = `chat-room__message ${messageClass}`;
@@ -180,6 +222,7 @@ export class ChatRoomDrawer extends GenericDrawer {
 			<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
 				message.message
 			)}</div>
+			<div class="chat-room__timestamp">${formattedTimestamp}</div>
 		`;
 
 		const avatar = messageElem.querySelector('img.chat-room__avatar');
