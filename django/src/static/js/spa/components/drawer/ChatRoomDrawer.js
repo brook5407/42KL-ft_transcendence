@@ -134,6 +134,16 @@ export class ChatRoomDrawer extends GenericDrawer {
 			}
 		});
 
+		const inviteButton = this.element.querySelector('#pong-invite-icon');
+		inviteButton.addEventListener('click', () => {
+			// WXR TODO: send a pong invite message, expire in 5 mins, able to accept or reject
+			// WXR TODO: add a new model in db for pong invite
+			// WXR TODO: if accepted
+			// 		if the sender user online redirect both user to the pong page
+			//		if the sender user offline, show a toast message showing the sender user is offline
+			// WXR TODO: if rejected, show a toast message to sender if online, showing the invite is rejected
+		});
+
 		const sendButton = this.element.querySelector('#send-button');
 		sendButton.addEventListener('click', sendMessage);
 	}
