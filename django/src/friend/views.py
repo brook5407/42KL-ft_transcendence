@@ -22,7 +22,7 @@ class UserRelationViewSet(viewsets.ModelViewSet):
     serializer_class = UserRelationSerializer
     
     def get_queryset(self):
-        return UserRelation.objects.filter(user=self.request.user, deleted=False)
+        return UserRelation.objects.filter(user=self.request.user)
 
     @action(detail=False, methods=['post'])
     def block(self, request):
@@ -49,7 +49,7 @@ class UserRelationViewSet(viewsets.ModelViewSet):
             return Response({'error': 'friend_id is required'}, status=status.HTTP_400_BAD_REQUEST)
         
         user_relation = get_object_or_404(UserRelation, user=request.user, friend=friend_id)
-        user_relation.delete()
+        user_relation.delete_friend()
         return Response({'status': 'friend deleted'}, status=status.HTTP_204_NO_CONTENT)
     
     @action(detail=False, methods=['get'])
@@ -60,7 +60,7 @@ class UserRelationViewSet(viewsets.ModelViewSet):
         user = get_object_or_404(User, username=username)
         if user == request.user:
             return Response({'status': 'cannot add yourself as a friend'}, status=status.HTTP_400_BAD_REQUEST)
-        elif UserRelation.objects.filter(user=request.user, friend=user, deleted=False).exists():
+        elif UserRelation.objects.filter(user=request.user, friend=user).exists():
             return Response({'status': 'already friends'}, status=status.HTTP_400_BAD_REQUEST)
         profile = get_object_or_404(Profile, user=user)
         serializer = ProfileSerializer(profile)

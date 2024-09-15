@@ -36,7 +36,7 @@
 			<p class="">Wins: {{ wins }}, Losses: {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="profile-bio">{{ user.profile.bio }}</p>
+			<p class="profile-bio">{{ user.profile.bio|default:"This user didn't say anything" }}</p>
 		</div>
 
 		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">Edit Profile</button>

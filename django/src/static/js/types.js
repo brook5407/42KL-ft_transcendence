@@ -1,5 +1,6 @@
 /**
  * @typedef {Object} WSChatMessage
+ * @property {WSChatMessageErrorType} [error] - The error type (optional).
  * @property {string} [type] - The message type, group or private (optional).
  * @property {string} message - The message content.
  * @property {Profile} sender - The sender profile of the message.
@@ -7,6 +8,16 @@
  * @property {string} room_name - The name of the room.
  * @property {string} [cover_image] - The cover image of the room (optional).
  */
+
+/**
+ * @enum {string}
+ */
+const WSChatMessageErrorType = {
+	NOT_FOUND: 'user_not_found',
+	NOT_FRIEND: 'not_friend',
+	BLOCKED: 'blocked',
+	BLOCKED_BY_OTHER: 'blocked_by_other',
+};
 
 /**
  * @typedef {Object} Profile

@@ -1,8 +1,8 @@
 import { getWSHost } from '../websocket.js';
-import { showInfoToast } from '../toast.js';
+import { showErrorToast, showInfoToast } from '../toast.js';
 
 /**
- * @borrows {import('../../../types.js').WSChatMessage}
+ * @borrows {import('../types.js').WSChatMessage}
  */
 
 const wsHost = getWSHost();
@@ -25,30 +25,47 @@ class ChatController {
 
 		/** @type {WSChatMessage} */
 		const data = JSON.parse(event.data);
-		// WXR TODO: add error handling for being blocked or deleted
-		// WXR TODO: fix delete friend cannot add back bug
-		// WXR TODO: can consider add a notification table for persisting notifications
-		// like friend request, friend accepted, friend deleted you, etc.
+		if (data.error) {
+			switch (data.error) {
+				case 'user_not_found':
+					showErrorToast('User not found');
+					break;
+				case 'not_friend':
+					showErrorToast('You are not friend with this user');
+					break;
+				case 'blocked':
+					showErrorToast('You have blocked this friend');
+					break;
+				case 'blocked_by_other':
+					showErrorToast('You are blocked by this friend');
+					break;
+				default:
+					break;
+			}
+			return;
+		}
 		if (!data || !data.message || !data.sender || !data.room_id) {
 			return;
 		}
 
-		if (data.sender.username === window.currentUser.username) {
-			return;
-		}
+		// no need to act to own messages
+		// if (data.sender.username === window.currentUser.username) {
+		// 	return;
+		// }
 
 		if (
 			window.currentDrawer &&
 			window.currentDrawer.name === 'chat-room' &&
 			window.currentDrawer.room_id === data.room_id
 		) {
+			// if currently in the chat room, append the message
 			window.currentDrawer.appendMessage(data);
 		} else if (
 			window.currentDrawer &&
 			window.currentDrawer.name === 'chat-list'
 		) {
+			// if currently in the chat list, move the chat room to the top
 			window.currentDrawer.moveChatRoomToTop(data.room_id, data);
-
 			window.playNotificationSound();
 		} else {
 			this.showToastNotification(data);
@@ -73,17 +90,17 @@ class ChatController {
 				room_id: roomId,
 			})
 		);
-		if (window.currentDrawer && window.currentDrawer.name === 'chat-room') {
-			window.currentDrawer.appendMessage({
-				message,
-				room_id: roomId,
-				sender: {
-					username: currentUser.username,
-					nickname: currentUser.profile.nickname,
-					avatar: currentUser.profile.avatar,
-				},
-			});
-		}
+		// if (window.currentDrawer && window.currentDrawer.name === 'chat-room') {
+		// 	window.currentDrawer.appendMessage({
+		// 		message,
+		// 		room_id: roomId,
+		// 		sender: {
+		// 			username: currentUser.username,
+		// 			nickname: currentUser.profile.nickname,
+		// 			avatar: currentUser.profile.avatar,
+		// 		},
+		// 	});
+		// }
 	}
 
 	_dispatchNewMessageEvent(data) {

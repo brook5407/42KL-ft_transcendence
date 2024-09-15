@@ -11,7 +11,7 @@ class UserRelationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserRelation
-        fields = ['id', 'user', 'friend', 'deleted', 'deleted_at', 'blocked', 'blocked_at', 'created_at', 'updated_at']
+        fields = ['id', 'user', 'friend', 'blocked', 'blocked_at', 'created_at', 'updated_at']
     
     def get_user(self, obj):
         profile = Profile.objects.get(user=obj.user)

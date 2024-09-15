@@ -57,7 +57,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except ChatRoom.DoesNotExist:
             return []
 
-    # Handling incoming messages (for group chat)
     async def receive(self, text_data):
         data = json.loads(text_data)
         message = data['message']
@@ -87,20 +86,45 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
         else:
             other_member = await self.get_other_member(room)
-            await self.channel_layer.group_send(
-                f"private_chats_{other_member.id}",
-                {
-                    'type': 'private_chat_message',
-                    'message': message,
-                    'sender': {
-                        'username': self.user.username,
-                        'nickname': user_profile.nickname,
-                        'avatar': user_profile.avatar.url
-                    },
-                    'room_name': room.name,
-                    'room_id': room_id
-                }
-            )
+            if not other_member:
+                await self.send(text_data=json.dumps({
+                    'error': 'user_not_found',
+                    'message': 'User is no longer available'
+                }))
+                return
+            if not await sync_to_async(lambda: self.user.is_friend(other_member))():
+                await self.send(text_data=json.dumps({
+                    'error': 'not_friend',
+                    'message': 'You are not friend with this user'
+                }))
+                return
+            elif await sync_to_async(lambda: self.user.is_blocked(other_member))():
+                await self.send(text_data=json.dumps({
+                    'error': 'blocked',
+                    'message': 'You have blocked the user'
+                }))
+                return
+            elif await sync_to_async(lambda: other_member.is_blocked(self.user))():
+                await self.send(text_data=json.dumps({
+                    'error': 'blocked_by_other',
+                    'message': 'The user has blocked you'
+                }))
+                return
+            for group in [f"private_chats_{self.user.id}", f"private_chats_{other_member.id}"]:
+                await self.channel_layer.group_send(
+                    group,
+                    {
+                        'type': 'private_chat_message',
+                        'message': message,
+                        'sender': {
+                            'username': self.user.username,
+                            'nickname': user_profile.nickname,
+                            'avatar': user_profile.avatar.url
+                        },
+                        'room_name': room.name,
+                        'room_id': room_id
+                    }
+                )
             
         # Create the chat message in the database
         chat_message = await self.create_chat_message(message, room)
