@@ -7,26 +7,25 @@ export class Snowfall {
 		this.createSnowflakes();
 	}
 
-	createSnowflakes() {
-		for (let i = 0; i < this.snowflakeCount; i++) {
+	async createSnowflakes() {
+		const createOneSnowflake = () => {
 			const snowflake = new Image();
 			snowflake.src = this.snowflakeImageSrc;
 			snowflake.alt = 'Snowflake';
+			snowflake.classList.add('blur');
 			snowflake.classList.add('snowflake');
-			snowflake.style.position = 'absolute';
-			snowflake.style.top = '-50px'; // Start above the viewport
 			snowflake.style.left = Math.random() * 100 + 'vw';
+			snowflake.style.animationDelay = '0s';
+			snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+			snowflake.style.animationTimingFunction = 'linear';
 			snowflake.style.width = snowflake.style.height =
 				Math.random() * 30 + 10 + 'px';
 			snowflake.style.opacity = Math.random();
-			snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // Between 2 and 5 seconds
 
 			// Randomly assign spin animation
-			const spinAnimation =
-				Math.random() > 0.5 ? 'spinClockwise' : 'spinAnticlockwise';
-			snowflake.style.animationName = `fall, ${spinAnimation}`;
-			snowflake.style.animationTimingFunction = 'linear';
-			snowflake.style.animationIterationCount = 'infinite';
+
+			// snowflake.style.animationIterationCount = 'infinite';
+			// snowflake.style.zIndex = Math.min(Math.floor(Math.random() * 100), 1000);
 			snowflake.style.zIndex = -1;
 
 			void snowflake.offsetWidth;
@@ -34,15 +33,25 @@ export class Snowfall {
 			document.body.appendChild(snowflake);
 			this.snowflakes.push(snowflake);
 
+			const spinAnimation =
+				Math.random() > 0.5 ? 'spin-clockwise' : 'spin-anticlockwise';
+			snowflake.style.animationName = `fall, ${spinAnimation}`;
+
 			// Add event listener to reset snowflake position when animation ends
 			snowflake.addEventListener('animationend', () => {
 				this.resetSnowflake(snowflake);
 			});
+		};
+
+		// create snowflakes with a little delay between each
+		for (let i = 0; i < this.snowflakeCount; i++) {
+			// sleep is a helper functino in utils.js
+			await sleep(Math.random() * 100);
+			createOneSnowflake();
 		}
 	}
 
 	resetSnowflake(snowflake) {
-		snowflake.style.top = '-50px'; // Reset to above the viewport
 		snowflake.style.left = Math.random() * 100 + 'vw';
 		snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // Between 2 and 5 seconds
 		snowflake.style.animationName = 'none'; // Reset animation

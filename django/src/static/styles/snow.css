@@ -1,17 +1,21 @@
 @keyframes fall {
 	0% {
-		transform: translateY(0);
+		top: -100px;
 	}
 	100% {
-		transform: translateY(100vh);
+		top: 100vh;
 	}
 }
 
 .snowflake {
-	position: absolute;
-	top: -50px; /* Start above the viewport */
-	animation-timing-function: linear;
-	animation-iteration-count: infinite;
+	position: fixed;
+	width: 20px;
+	height: 20px;
+	opacity: 0.5;
+}
+
+.blur {
+	filter: blur(1.5px);
 }
 
 @keyframes spin-clockwise {

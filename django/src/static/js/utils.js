@@ -18,3 +18,7 @@ window.isHTMLElement = function (str) {
 	tempDiv.innerHTML = str.trim();
 	return tempDiv.childNodes.length > 0 && tempDiv.childNodes[0].nodeType === 1;
 };
+
+window.sleep = function (ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+};
