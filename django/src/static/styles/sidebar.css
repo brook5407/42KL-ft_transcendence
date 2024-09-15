@@ -13,7 +13,7 @@
 	left: 20px;
 	/* width: 80px; */
 	/* height: 430px; */
-	background-color: #83def7;
+	background-color: var(--color-info-3);
 	transform: translateY(-50%);
 	animation: float 2s ease-in-out infinite;
 	border-radius: 24px;

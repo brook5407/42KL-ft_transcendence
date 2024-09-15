@@ -28,25 +28,23 @@
 			<p class="">Wins: {{ wins }}, Losses: {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="profile-bio">
-				{% if friend_profile.bio %}
-					{{ friend_profile.bio }}
-				{% else %}
-					This user didn't say anything
-				{% endif %}
-			</p>
+			<p class="profile-bio">{{ user.profile.bio|default:"This user didn't say anything" }}</p>
 		</div>
 
 		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'game-history.drawer' %}">See Match History</button>
 
-		<div class="action-buttons">
-			{% if friend_is_blocked %}
+		{% if is_friend %}
+			<div class="action-buttons">
+				{% if friend_is_blocked %}
 				<button type="button" id="block-unblock-btn" class="btn unblock-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">Unblock</button>
-			{% else %}
+				{% else %}
 				<button type="button" id="block-unblock-btn" class="btn block-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">Block</button>
-			{% endif %}
-			<button type="button" class="btn delete-btn" onclick="deleteFriend('{{ friend_profile.user.id }}')">Delete</button>
-		</div>
+				{% endif %}
+				<button type="button" class="btn delete-btn" onclick="deleteFriend('{{ friend_profile.user.id }}')">Delete</button>
+			</div>
+		{% else %}
+			<button type="button" class="btn add-friend-btn" onclick="sendFriendRequest('{{ friend_profile.user.username }}')">Add Friend</button>
+		{% endif %}
 	</div>
 {% endblock %}
 
@@ -120,5 +118,29 @@
 			console.error(error);
 		});
 	}
+
+	function sendFriendRequest(receiverUsername) {
+		ajaxWithAuth('/api/friend-requests/', {
+			method: 'POST',
+			body: JSON.stringify({
+				receiver: receiverUsername
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				return response.json().then(errorData => {
+					throw new Error(errorData.status);
+				});
+			}
+		})
+		.then(data => {
+			showSuccessMessage('Friend request sent successfully');
+		});
+	}
+
 </script>
 {% endblock %}

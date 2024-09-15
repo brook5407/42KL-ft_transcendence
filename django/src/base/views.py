@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from allauth.account.models import EmailAddress
+from django.core.exceptions import ObjectDoesNotExist
 from core import settings
 from utils.request_helpers import is_ajax_request
 
@@ -52,6 +53,11 @@ def settings_drawer(request):
 @permission_classes([IsAuthenticated])
 def current_user_profile(request):
     user = request.user
+    try:
+        email_verified = EmailAddress.objects.get(user=user, primary=True) is not None
+    except ObjectDoesNotExist:
+        email_verified = False
+    
     profile = user.profile
     data = {
         'id': user.id,
@@ -59,7 +65,7 @@ def current_user_profile(request):
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
-        'email_verified': True if EmailAddress.objects.get(user=user, primary=True) else False,
+        'email_verified': email_verified,
         'profile': {
             'bio': profile.bio,
             'avatar': profile.avatar.url,

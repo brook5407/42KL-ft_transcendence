@@ -1,15 +1,24 @@
 const TOAST_CONTAINER = document.getElementById('toast-container');
 
-function showToast(message, type, toOpen = null) {
+function showToast(message, title, image = null, type, toOpen = null) {
 	const toast = document.createElement('div');
 	toast.classList.add('toast-box', type);
-	const textBox = document.createElement('span');
-	textBox.textContent = message;
 
-	// if the toast can be clicked to open a drawer or modal, add underline to the text
-	if (toOpen) {
-		textBox.classList.add('underline-text');
-	}
+	const content = `
+		<div class="toast-header">
+			${image ? `<img src="${image}" alt="Avatar" class="toast-avatar">` : ''}
+            <span>${title}</span>
+            <button class="toast-close-button">
+				<i class="fa fa-times"></i>
+			</button>
+        </div>
+        <div class="toast-body">
+            <span>${message}</span>
+			${toOpen ? '<i class="fa fa-link toast-link-icon"></i>' : ''}
+        </div>
+		<div class="toast-progress-bar"></div>
+	`;
+	toast.innerHTML = content;
 
 	const closeToast = () => {
 		toast.classList.remove('show');
@@ -18,24 +27,20 @@ function showToast(message, type, toOpen = null) {
 		}, 500); // Wait for fade out to finish
 	};
 
-	// add a close button
-	const closeButton = document.createElement('button');
-	closeButton.classList.add('toast-close-button');
-	closeButton.innerHTML = '&times;';
+	const closeButton = toast.querySelector('button.toast-close-button');
 	closeButton.addEventListener('click', closeToast);
-
-	toast.appendChild(textBox);
-	toast.appendChild(closeButton);
 	TOAST_CONTAINER.innerHTML = '';
 	TOAST_CONTAINER.appendChild(toast);
 
+	// Wait for the toast to be added to the DOM and show it
 	setTimeout(() => {
 		toast.classList.add('show');
 	}, 100);
 
 	if (toOpen) {
-		textBox.classList.add('clickable');
-		textBox.addEventListener('click', () => {
+		const jumpIcon = toast.querySelector('.toast-link-icon');
+		jumpIcon.classList.add('clickable');
+		jumpIcon.addEventListener('click', () => {
 			const toOpenType = toOpen?.type;
 			if (toOpenType === 'page') {
 				window.location.href = toOpen?.url;
@@ -48,20 +53,53 @@ function showToast(message, type, toOpen = null) {
 		});
 	}
 
-	// Remove the toast after 5 seconds
-	setTimeout(closeToast, 5000);
+	const duration = 5000;
+	animateProgressBar(toast, duration);
+	setTimeout(closeToast, duration + 100);
 }
 
-export function showSuccessToast(message, toOpen = null) {
-	showToast(message, 'success', toOpen);
+function animateProgressBar(toast, duration) {
+	const progressBar = toast.querySelector('.toast-progress-bar');
+	let startTime = null;
+
+	const updateProgressBar = (timestamp) => {
+		if (!startTime) startTime = timestamp;
+		const elapsed = timestamp - startTime;
+		const progress = Math.min((elapsed / duration) * 100, 100);
+		progressBar.style.width = `${100 - progress}%`;
+		if (elapsed < duration) {
+			requestAnimationFrame(updateProgressBar);
+		}
+	};
+
+	requestAnimationFrame(updateProgressBar);
 }
 
-export function showErrorToast(message, toOpen = null) {
-	showToast(message, 'error', toOpen);
+export function showSuccessToast(
+	message,
+	title = 'Success!',
+	image = null,
+	toOpen = null
+) {
+	showToast(message, title, image, 'success', toOpen);
 }
 
-export function showInfoToast(message, toOpen = null) {
-	showToast(message, 'info', toOpen);
+export function showErrorToast(
+	message,
+	title = 'Error!',
+	image = null,
+	toOpen = null
+) {
+	showToast(message, title, image, 'error', toOpen);
+}
+
+export function showInfoToast(
+	message,
+	title = 'Notice!',
+	image = null,
+	toOpen = null
+) {
+	showToast(message, title, image, 'info', toOpen);
 }
 
 window.showSuccessToast = showSuccessToast;

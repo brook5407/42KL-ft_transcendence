@@ -1,0 +1,37 @@
+@keyframes fall {
+	0% {
+		top: -100px;
+	}
+	100% {
+		top: 100vh;
+	}
+}
+
+.snowflake {
+	position: fixed;
+	width: 20px;
+	height: 20px;
+	opacity: 0.5;
+}
+
+.blur {
+	filter: blur(1.5px);
+}
+
+@keyframes spin-clockwise {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes spin-anticlockwise {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(-360deg);
+	}
+}

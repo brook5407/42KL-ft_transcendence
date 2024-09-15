@@ -1,11 +1,9 @@
-/**
- * if in chat list drawer
- * 		any new incoming message should change the last message in a chat room tile if necessary
- * if in chat room drawer
- * 		any new incoming message should append to the chat room
- */
-
 import { getWSHost } from '../websocket.js';
+import { showErrorToast, showInfoToast } from '../toast.js';
+
+/**
+ * @borrows {import('../types.js').WSChatMessage}
+ */
 
 const wsHost = getWSHost();
 
@@ -25,8 +23,54 @@ class ChatController {
 	_onMessage(event) {
 		console.log('Chat socket message:', event.data);
 
-		// WXR TODO: toast notification
-		// WXR TODO: play notification sound
+		/** @type {WSChatMessage} */
+		const data = JSON.parse(event.data);
+		if (data.error) {
+			switch (data.error) {
+				case 'user_not_found':
+					showErrorToast('User not found');
+					break;
+				case 'not_friend':
+					showErrorToast('You are not friend with this user');
+					break;
+				case 'blocked':
+					showErrorToast('You have blocked this friend');
+					break;
+				case 'blocked_by_other':
+					showErrorToast('You are blocked by this friend');
+					break;
+				default:
+					break;
+			}
+			return;
+		}
+		if (!data || !data.message || !data.sender || !data.room_id) {
+			return;
+		}
+
+		// no need to act to own messages
+		// if (data.sender.username === window.currentUser.username) {
+		// 	return;
+		// }
+
+		if (
+			window.currentDrawer &&
+			window.currentDrawer.name === 'chat-room' &&
+			window.currentDrawer.room_id === data.room_id
+		) {
+			// if currently in the chat room, append the message
+			window.currentDrawer.appendMessage(data);
+		} else if (
+			window.currentDrawer &&
+			window.currentDrawer.name === 'chat-list'
+		) {
+			// if currently in the chat list, move the chat room to the top
+			window.currentDrawer.moveChatRoomToTop(data.room_id, data);
+			window.playNotificationSound();
+		} else {
+			this.showToastNotification(data);
+			window.playNotificationSound();
+		}
 
 		this._dispatchNewMessageEvent(event.data);
 	}
@@ -46,6 +90,17 @@ class ChatController {
 				room_id: roomId,
 			})
 		);
+		// if (window.currentDrawer && window.currentDrawer.name === 'chat-room') {
+		// 	window.currentDrawer.appendMessage({
+		// 		message,
+		// 		room_id: roomId,
+		// 		sender: {
+		// 			username: currentUser.username,
+		// 			nickname: currentUser.profile.nickname,
+		// 			avatar: currentUser.profile.avatar,
+		// 		},
+		// 	});
+		// }
 	}
 
 	_dispatchNewMessageEvent(data) {
@@ -55,15 +110,47 @@ class ChatController {
 		document.dispatchEvent(newMessageEvent);
 	}
 
+	showToastNotification(data) {
+		let toOpen = {
+			type: 'drawer',
+			name: 'chat-room',
+			data: {
+				url: 'drawer/chat-room',
+			},
+		};
+		if (data.type === 'private_chat_message') {
+			toOpen.data.queryParams = {
+				username: data.sender.user.username,
+			};
+			showInfoToast(
+				data.message,
+				`${data.sender.nickname}`,
+				data.sender.avatar,
+				toOpen
+			);
+		} else {
+			toOpen.data.queryParams = {
+				room_id: data.room_id,
+			};
+			showInfoToast(
+				`${data.sender.nickname}: ${data.message}`,
+				`${data.room_name}`,
+				data.cover_image,
+				toOpen
+			);
+		}
+	}
+
 	destroy() {
 		this.socket.close();
 	}
 }
 
 document.addEventListener('user-ready', () => {
-	window.chat = new ChatController();
+	window.chatController = new ChatController();
 });
 
 document.addEventListener('user-cleared', () => {
-	window.chat.destroy();
+	window.chatController.destroy();
+	window.chatController = null;
 });

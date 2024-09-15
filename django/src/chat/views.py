@@ -1,6 +1,5 @@
 # views.py
 from django.http import HttpResponseBadRequest
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -11,10 +10,9 @@ from utils.request_helpers import is_ajax_request
 from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from .models import ChatMessage, ChatRoom
-from .serializers import ChatMessageSerializer
+from django.db.models import Q
+from .models import ChatMessage, ChatRoom, ActiveChatRoom
+from .serializers import ChatMessageSerializer, ActiveChatRoomSerializer
 from .pagination import ChatMessagePagination, ActiveChatRoomsPagination
 
 
@@ -28,7 +26,7 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def history(self, request, pk=None):
         room = get_object_or_404(ChatRoom, id=pk)
-        messages = ChatMessage.objects.filter(room=room).order_by('created_at')
+        messages = ChatMessage.objects.filter(room=room).order_by('-created_at')
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(messages, request, view=self)
         if page is not None:
@@ -38,15 +36,50 @@ class ChatMessageViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+class ActiveChatRoomViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    pagination_class = ActiveChatRoomsPagination
+    serializer_class = ActiveChatRoomSerializer
+
+    def get_queryset(self):
+        return ActiveChatRoom.objects.filter(
+                Q(last_message__isnull=False) | Q(room__is_public=True),
+                user=self.request.user
+            ).order_by('-last_message__created_at')
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(queryset, request, view=self)
+        if page is not None:
+            serializer = ActiveChatRoomSerializer(page, many=True, context={'request': request})
+            return paginator.get_paginated_response(serializer.data)
+        serializer = ActiveChatRoomSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path='get-from-roomid/(?P<room_id>[^/.]+)')
+    def get_from_roomid(self, request, room_id=None):
+        user = request.user
+        queryset = self.get_queryset().filter(room_id=room_id, user=user)
+        active_chat = get_object_or_404(queryset)
+        serializer = ActiveChatRoomSerializer(active_chat, context={'request': request})
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['post'], url_path='mark-read/(?P<room_id>[^/.]+)')
+    def mark_read(self, request, room_id=None):
+        user = request.user
+        active_chat = get_object_or_404(ActiveChatRoom, room_id=room_id, user=user)
+        active_chat.unread_count = 0
+        active_chat.save()
+        return Response(status=status.HTTP_200_OK)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def chat_list_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
-    return render(request, 'components/drawers/chat-list.html', {
-        'public_chats': ChatRoom.objects.filter(is_public=True),
-        'private_chats': ChatRoom.get_private_chats(request.user) # WXR TODO: frontend dynamic fetch user's active private chats
-	})
+    return render(request, 'components/drawers/chat-list.html')
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

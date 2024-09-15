@@ -36,6 +36,7 @@ document.body.addEventListener('click', (e) => {
 
 export async function openModal(modalName, data = {}) {
 	const modalClass = MODALS[modalName];
+	data.name = modalName;
 	const modal = new modalClass(data);
 
 	console.log('modalName:', modalName);

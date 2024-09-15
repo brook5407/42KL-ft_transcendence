@@ -4,15 +4,15 @@
 	width: 200px;
 	height: 42px;
 
-	background: #1edddd;
-	border: 1px solid #83def7;
+	background: var(--color-brand-5);
+	border: 1px solid var(--color-info-3);
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	border-radius: 12px;
 
 	font-family: 'Denk One', sans-serif;
 	font-style: bold;
 	font-size: 24px;
-	color: #e5f7fc;
+	color: var(--color-info-1);
 }
 
 .center {
@@ -36,27 +36,27 @@
 }
 
 .oauth-button {
-	background-color: #e4eded;
+	background-color: var(--color-text-1);
 	color: black;
 }
 
 .signin-button {
-	background-color: #83def7;
-	color: #e4eded;
+	background-color: var(--color-info-3);
+	color: var(--color-text-1);
 	font-size: 32px;
 	font-family: 'Denk One', sans-serif;
 }
 
 .pvp-button {
-	background-color: #83def7;
-	color: #e4eded;
+	background-color: var(--color-info-3);
+	color: var(--color-text-1);
 	font-size: 32px;
 	font-family: 'Denk One', sans-serif;
 }
 
 .pve-button {
-	background-color: #eec120;
-	color: #e4eded;
+	background-color: var(--color-warning-5);
+	color: var(--color-text-1);
 	font-size: 32px;
 	font-family: 'Denk One', sans-serif;
 }

@@ -11,7 +11,7 @@ class ChatRoom(BaseModel):
     name = models.CharField(max_length=255)
     members = models.ManyToManyField(User, blank=True, related_name='chatroom_members')
     is_public = models.BooleanField(default=False)
-    cover_image = models.ImageField(upload_to='chatroom_covers/', null=True, blank=True)
+    cover_image = models.ImageField(upload_to='chatroom_covers/', null=True)
     is_group_chat = models.BooleanField(default=False)
 
     def __str__(self):
@@ -61,12 +61,12 @@ class ChatMessage(BaseModel):
         return f"Message from {sender_name} in room {self.room.name} at {self.created_at}: {self.message}"
 
 
-class ActiveChatRoom(models.Model):
-    # The rooms that has at least 1 message in it
-    # WXR TODO: request for this when opening chat-list, and paginate the list
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class ActiveChatRoom(BaseModel):
+    # For chat list display (last message and unread count for a specific user)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
-    last_message = models.ForeignKey(ChatMessage, on_delete=models.CASCADE)
+    last_message = models.ForeignKey(ChatMessage, on_delete=models.CASCADE, null=True, blank=True)
+    unread_count = models.IntegerField(default=0)
     
     class Meta:
         indexes = [
