@@ -47,6 +47,7 @@
 	flex: 1;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 }
 
 .chat-name {
@@ -81,7 +82,11 @@
 }
 
 .last-message {
-	flex: 1; /* Allow the message to take up the remaining space */
+	flex: 1;
+	white-space: nowrap; /* Prevent long messages from wrapping */
+	overflow: hidden; /* Hide any overflow */
+	text-overflow: ellipsis; /* Show an ellipsis (...) if the message is too long */
+	width: 100%;
 }
 
 .unread-count {
