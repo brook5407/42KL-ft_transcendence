@@ -8,9 +8,10 @@ class ChatRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatRoom
         fields = ['id', 'name', 'is_public', 'cover_image', 'is_group_chat']
-    
+        
     def to_representation(self, instance):
         # for private chat room, return the other user's nickname as the room name
+        # and the cover image as the other user's profile picture
         representation = super().to_representation(instance)
         if not instance.is_public and instance.members.count() == 2:
             request = self.context.get('request')
@@ -18,7 +19,9 @@ class ChatRoomSerializer(serializers.ModelSerializer):
                 current_user = request.user
                 other_user = instance.members.exclude(id=current_user.id).first()
                 if other_user:
-                    representation['name'] = other_user.profile.nickname
+                    profile = other_user.profile
+                    representation['name'] = profile.nickname
+                    representation['cover_image'] = profile.profile_picture.url
         return representation
 
 class ChatMessageSerializer(serializers.ModelSerializer):

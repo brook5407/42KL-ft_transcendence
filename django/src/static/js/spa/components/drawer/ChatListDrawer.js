@@ -223,10 +223,10 @@ export class ChatListDrawer extends GenericDrawer {
                 <div class="chat-name">${chatRoom.room.name}</div>
                     <div class="last-message-container">
                         <div class="last-message-sender">${
-													chatRoom.last_message?.sender.nickname + ': '
+													chatRoom.last_message?.sender.nickname || ''
 												}</div>
                         <div class="last-message">${
-													chatRoom.last_message?.message
+													chatRoom.last_message?.message || ''
 												}</div>
                     </div>
             </div>
@@ -234,7 +234,16 @@ export class ChatListDrawer extends GenericDrawer {
 							chatRoom.last_message?.created_at
 						}"></div>
         `;
+
+		// Add unread count
 		div.querySelector('div.chat-image').addUnreadCount(chatRoom.unread_count);
+
+		// Add a colon after the sender's name if it exists
+		if (div.querySelector('.last-message-sender').textContent) {
+			div.querySelector('.last-message-sender').textContent += ': ';
+		}
+
+		// click to chat room
 		div.addEventListener('click', () => {
 			openDrawer('chat-room', {
 				url: 'drawer/chat-room',
@@ -243,7 +252,12 @@ export class ChatListDrawer extends GenericDrawer {
 				},
 			});
 		});
-		this.formatLastMessageTime(div);
+
+		// format the last message timestamp if exist
+		if (chatRoom.last_message) {
+			this.formatLastMessageTime(div);
+		}
+
 		return div;
 	}
 

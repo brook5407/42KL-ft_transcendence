@@ -141,12 +141,20 @@ def search_friend_drawer(request):
 def friend_profile_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
-    friend_user = User.objects.get(username=request.GET.get('username'))
-    is_blocked = UserRelation.objects.filter(user=request.user, friend=friend_user, blocked=True).exists()
+    friend_user = get_object_or_404(User, username=request.GET.get('username'))
     profile = friend_user.profile
     wins, losses = profile.get_wins_losses()
+    if not request.user.is_friend(friend_user):
+        return render(request, 'components/drawers/friend/profile.html', {
+        'friend_profile': profile,
+        'is_friend': False,
+        'wins': wins,
+        'losses': losses
+    })
+    is_blocked = UserRelation.objects.filter(user=request.user, friend=friend_user, blocked=True).exists()
     return render(request, 'components/drawers/friend/profile.html', {
-        'friend_profile': Profile.objects.get(user=friend_user),
+        'friend_profile': profile,
+        'is_friend': True,
         'friend_is_blocked': is_blocked,
         'wins': wins,
         'losses': losses

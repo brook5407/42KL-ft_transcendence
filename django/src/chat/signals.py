@@ -34,7 +34,7 @@ def create_lobby_chat_room_for_new_user(sender, instance, created, **kwargs):
         return
     if instance.is_superuser:
         return
-    lobby_room, created = ChatRoom.objects.get_or_create(name='lobby', is_public=True, is_group_chat=True)
+    lobby_room, created = ChatRoom.objects.get_or_create(name='Lobby', is_public=True, is_group_chat=True, cover_image='lobby.svg')
     lobby_last_message = lobby_room.get_last_message()
     ActiveChatRoom.objects.get_or_create(user=instance, room=lobby_room, last_message=lobby_last_message)
 

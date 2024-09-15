@@ -117,3 +117,7 @@ textarea.form-control {
 .delete-btn {
 	background-color: var(--color-error-5);
 }
+
+.add-friend-btn {
+	background-color: var(--color-success-5);
+}

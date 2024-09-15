@@ -11,25 +11,23 @@ function showLoadingEffect(duration) {
 	// Append the overlay to the body
 	document.body.appendChild(overlay);
 
+	const removeLoadingEffect = () => {
+		if (document.body.contains(overlay)) {
+			document.body.removeChild(overlay);
+		}
+	};
+
 	if (duration) {
 		// Remove the loading effect after the specified duration
-		setTimeout(() => {
-			document.body.removeChild(overlay);
-		}, duration);
+		setTimeout(removeLoadingEffect, duration);
 		return;
 	}
 
 	// maximum loading 10 seconds
-	setTimeout(() => {
-		if (document.body.contains(overlay)) {
-			document.body.removeChild(overlay);
-		}
-	}, 10000);
+	setTimeout(removeLoadingEffect, 10000);
 
 	// Return a function that removes the loading effect
-	return () => {
-		document.body.removeChild(overlay);
-	};
+	return removeLoadingEffect;
 }
 
 window.showLoadingEffect = showLoadingEffect;
