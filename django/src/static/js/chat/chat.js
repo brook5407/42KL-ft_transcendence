@@ -120,7 +120,7 @@ class ChatController {
 		};
 		if (data.type === 'private_chat_message') {
 			toOpen.data.queryParams = {
-				username: data.sender.username,
+				username: data.sender.user.username,
 			};
 			showInfoToast(
 				data.message,

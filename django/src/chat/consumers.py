@@ -75,7 +75,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'group_chat_message',
                     'message': message,
                     'sender': {
-                        'username': self.user.username,
+                        'user': {
+                            'username': self.user.username,
+                            'email': self.user.email,
+                        },
                         'nickname': user_profile.nickname,
                         'avatar': user_profile.avatar.url
                     },
@@ -117,7 +120,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'type': 'private_chat_message',
                         'message': message,
                         'sender': {
-                            'username': self.user.username,
+                            'user': {
+                                'username': self.user.username,
+                                'email': self.user.email,
+                            },
                             'nickname': user_profile.nickname,
                             'avatar': user_profile.avatar.url
                         },

@@ -160,8 +160,10 @@ export class ChatRoomDrawer extends GenericDrawer {
 	 * @returns {HTMLDivElement}
 	 */
 	createMessageElement(message) {
+		console.log(message);
+		console.log(currentUser);
 		const isSentByCurrentUser =
-			message.sender.nickname === currentUser.profile.nickname;
+			message.sender.user.username === currentUser.username;
 		const messageClass = isSentByCurrentUser
 			? 'chat-room__message-sent'
 			: 'chat-room__message-received';
