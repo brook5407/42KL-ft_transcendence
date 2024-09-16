@@ -4,8 +4,20 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponseBadRequest
 from rest_framework import viewsets
-from .models import Player, TournamentRoom, Match
-from .serializers import TournamentRoomSerializer
+from rest_framework.response import Response
+from rest_framework.status import (
+    HTTP_201_CREATED,
+    HTTP_400_BAD_REQUEST,
+    HTTP_200_OK,
+)
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+from .models import Player, TournamentRoom, Match, TournamentPlayer
+from .serializers import (
+    TournamentRoomSerializer,
+    TournamentRoomCreateSerializer,
+    MatchSerializer,
+)
 
 
 @api_view(["GET"])
@@ -37,15 +49,65 @@ def tournament_list_drawer(request):
 
 
 class TournamentRoomViewSet(viewsets.ModelViewSet):
-    queryset = TournamentRoom.objects.all()
+    queryset = TournamentRoom.objects.filter(status=TournamentRoom.Status.WAITING)
     serializer_class = TournamentRoomSerializer
 
-    # WXR TODO: shuffle 5 random tournament rooms
-    # WXR TODO: get tournament room details
-    # WXR TODO: create tournament room
-    # WXR TODO: join tournament room
-    # WXR TODO: leave tournament room, destroy if is owner
-    # WXR TODO: start tournament
+    @action(detail=False, methods=["GET"])
+    def shuffle(self, request):
+        queryset = self.get_queryset().order_by("?")[:5]
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["GET"])
+    def details(self, request, pk=None):
+        tournament_room = get_object_or_404(TournamentRoom, pk=pk)
+        serializer = self.get_serializer(tournament_room)
+        return Response(serializer.data)
+
+    def create(self, request):
+        serializer = TournamentRoomCreateSerializer(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=request.user)
+        return Response(serializer.data, status=HTTP_201_CREATED)
+
+    @action(detail=True, methods=["POST"])
+    def join(self, request, pk=None):
+        tournament_room = get_object_or_404(TournamentRoom, pk=pk)
+        if tournament_room.players.count() >= TournamentRoom.MAX_PLAYERS:
+            return Response(
+                {"detail": "The tournament room is full."}, status=HTTP_400_BAD_REQUEST
+            )
+        position = tournament_room.players.count() + 1
+        tournament_room.add_player(request.user, position)
+        return Response(status=HTTP_201_CREATED)
+
+    @action(detail=True, methods=["POST"])
+    def leave(self, request, pk=None):
+        tournament_room = get_object_or_404(TournamentRoom, pk=pk)
+        if tournament_room.is_owner(request.user):
+            tournament_room.delete()
+        elif tournament_room.is_member(request.user):
+            tournament_room.remove_player(request.user)
+        else:
+            return Response(
+                {"detail": "You are not a member of this tournament room."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+        return Response(status=HTTP_200_OK)
+
+    @action(detail=True, methods=["POST"])
+    def start(self, request, pk=None):
+        tournament_room = get_object_or_404(TournamentRoom, pk=pk)
+        if not tournament_room.is_owner(request.user):
+            return Response(
+                {"detail": "You are not the owner of this tournament room."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+        tournament_room.start()
+        # WXR TODO: trigger necessary events in the consumer
+        return Response(status=HTTP_200_OK)
 
 
 class MatchViewSet(viewsets.ModelViewSet):
@@ -53,4 +115,8 @@ class MatchViewSet(viewsets.ModelViewSet):
     serializer_class = MatchSerializer
 
     # WXR TODO: matchmake (PVP)
+    @action(detail=False, methods=["POST"])
+    def matchmake(self, request):
+        # ELO rating system
+        pass
     # WXR TODO: PVE

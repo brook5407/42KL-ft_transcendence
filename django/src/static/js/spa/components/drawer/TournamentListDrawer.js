@@ -11,8 +11,6 @@ export class TournamentListDrawer extends GenericDrawer {
 		this.tournamentRooms = [];
 
 		this.tournamentListContainer = null;
-
-		this.shufflePageSize = 5;
 	}
 
 	// override
@@ -32,9 +30,6 @@ export class TournamentListDrawer extends GenericDrawer {
 	async fetchShuffledTournamentRooms() {
 		const res = await ajaxWithAuth('/api/tournament-room/shuffle/', {
 			method: 'GET',
-			params: {
-				size: this.shufflePageSize,
-			},
 		});
 
 		if (!res.ok) {
@@ -52,8 +47,12 @@ export class TournamentListDrawer extends GenericDrawer {
 	}
 
 	async shuffleTournamentRooms() {
-		// WXR TODO: remove previous rooms and display loading effect while fetching
+		this.tournamentListContainer.innerHTML = '';
+
+		this.tournamentListContainer.innerHTML = '<div>Loading...</div>';
 		const tournamentRooms = await this.fetchShuffledTournamentRooms();
+		this.tournamentListContainer.innerHTML = '';
+
 		this.appendTournamentRooms(tournamentRooms);
 	}
 
@@ -76,7 +75,12 @@ export class TournamentListDrawer extends GenericDrawer {
 	createChatRoomElement(tournamentRoom) {
 		const div = document.createElement('div');
 
-		// WXR TODO
+		// WXR TODO:
+		// owner avatar
+		// room name
+		// room description
+		// room members avatar (empty positions show a plus sign)
+		// join button
 
 		return div;
 	}

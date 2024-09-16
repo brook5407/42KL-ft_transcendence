@@ -2,8 +2,8 @@ import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from asgiref.sync import async_to_sync
-# from .models import Tournament, Room, Match
+from .models import Player
+
 
 gameHeight = 500
 gameWidth = 800
@@ -254,104 +254,6 @@ class PongConsumer(AsyncWebsocketConsumer):
             'message':message
         }))
 
-# class TournamentConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         self.room_name = self.scope['url_route']['kwargs']['room_name']
-#         self.room_group_name = f'tournament_{self.room_name}'
-
-#         await self.channel_layer.group_add(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-
-#         await self.accept()
-
-#     async def disconnect(self, close_code):
-#         await self.channel_layer.group_discard(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-
-#     async def receive(self, text_data):
-#         data = json.loads(text_data)
-#         message_type = data['type']
-
-#         if message_type == 'join_room':
-#             await self.join_room(data['player_id'])
-#         elif message_type == 'match_result':
-#             await self.update_match_result(data['match_id'], data['winner_id'])
-
-#     async def join_room(self, player_id):
-#         room = await database_sync_to_async(Room.objects.get)(name=self.room_name)
-#         player = await database_sync_to_async(Player.objects.get)(id=player_id)
-#         await database_sync_to_async(room.players.add)(player)
-
-#         if await database_sync_to_async(room.players.count)() == 8:
-#             await self.start_tournament(room)
-
-#     async def start_tournament(self, room):
-#         players = await database_sync_to_async(list)(room.players.all())
-#         await database_sync_to_async(create_matches)(players, "Quarter Finals")
-
-#         await self.channel_layer.group_send(
-#             self.room_group_name,
-#             {
-#                 'type': 'tournament_message',
-#                 'message': 'Tournament started'
-#             }
-#         )
-
-#     async def update_match_result(self, match_id, winner_id):
-#         match = await database_sync_to_async(Match.objects.get)(id=match_id)
-#         winner = await database_sync_to_async(Player.objects.get)(id=winner_id)
-#         await database_sync_to_async(setattr)(match, 'winner', winner)
-#         await database_sync_to_async(match.save)()
-
-#         # Check if all matches in the current round are complete
-#         round_complete = await self.check_round_complete(match.round)
-#         if round_complete:
-#             await self.progress_to_next_round(match.round)
-
-#     async def check_round_complete(self, round_name):
-#         incomplete_matches = await database_sync_to_async(Match.objects.filter)(
-#             tournament__room__name=self.room_name,
-#             round=round_name,
-#             winner__isnull=True
-#         ).count()
-#         return incomplete_matches == 0
-
-#     async def progress_to_next_round(self, current_round):
-#         if current_round == "Quarter Finals":
-#             next_round = "Semi Finals"
-#         elif current_round == "Semi Finals":
-#             next_round = "Final"
-#         else:
-#             return
-
-#         winners = await database_sync_to_async(list)(
-#             Match.objects.filter(
-#                 tournament__room__name=self.room_name,
-#                 round=current_round
-#             ).values_list('winner', flat=True)
-#         )
-#         await database_sync_to_async(create_matches)(winners, next_round)
-
-#         await self.channel_layer.group_send(
-#             self.room_group_name,
-#             {
-#                 'type': 'tournament_message',
-#                 'message': f'{next_round} started'
-#             }
-#         )
-
-#     async def tournament_message(self, event):
-#         message = event['message']
-
-#         await self.send(text_data=json.dumps({
-#             'message': message
-#         }))
-
-
 
 class Paddle:
     def __init__(self, x, y, width, height):
@@ -414,3 +316,90 @@ class Ball:
             'y': self.y,
             'radius': self.radius,
         }
+
+class MatchMakingConsumer(AsyncWebsocketConsumer):
+    """
+        ELO Rating System:
+
+        Ea = 1 / (1 + 10^((Rb - Ra) / 400))
+        Eb = 1 / (1 + 10^((Ra - Rb) / 400))
+        Ra' = Ra + K * (Sa - Ea)
+        Rb' = Rb + K * (Sb - Eb)
+        where:
+            - Ra and Rb are the ratings of players A and B, respectively.
+            - Ea and Eb are the expected scores of players A and B, respectively.
+            - Sa and Sb are the actual scores of players A and B, respectively. (1 for win, 0 for loss)
+            - K is the weight constant (e.g., 32 for chess).
+        In tournament play, just add/sub a fixed value (e.g. 32) to the winner/loser.
+
+        Range for Matching:
+        Match players with others within ±100 Elo points.
+        As the waiting time increases, can expand the range, but not more than ±200 Elo points.
+    """
+    
+    async def connect(self):
+        await self.accept()
+        
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard('matchmaking', self.channel_name)
+    
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        action = data.get('action')
+        
+        if action == 'join_queue':
+            player_id = data.get('player_id')
+            await self.join_queue(player_id)
+    
+    async def join_queue(self, player_id):
+        player = await self.get_player(player_id)
+        if player:
+            await self.channel_layer.group_add('matchmaking', self.channel_name)
+            await self.match_player(player)
+
+    async def get_player(self, player_id):
+        return await database_sync_to_async(Player.objects.get)(id=player_id)
+
+    async def match_player(self, player):
+        elo_range = 100
+        max_elo_range = 200
+        wait_time = 0
+
+        while True:
+            min_elo = player.elo_rating - elo_range
+            max_elo = player.elo_rating + elo_range
+
+            potential_opponents = await database_sync_to_async(Player.objects.filter)(
+                elo_rating__gte=min_elo,
+                elo_rating__lte=max_elo,
+                channel_name__in=await self.get_waiting_players()
+            ).exclude(id=player.id)
+
+            if potential_opponents.exists():
+                opponent = potential_opponents.first()
+                await self.start_match(player, opponent)
+                await self.channel_layer.group_discard('matchmaking', self.channel_name)
+                break
+
+            await asyncio.sleep(2)
+            wait_time += 2
+            elo_range = min(elo_range + 10, max_elo_range)
+
+    async def get_waiting_players(self):
+        group_channels = await self.channel_layer.group_channels("matchmaking")
+        return [channel_name.split(".")[-1] for channel_name in group_channels]
+
+    async def start_match(self, player, opponent):
+        # WXR TODO: Logic to start the match
+        pass
+
+    def calculate_elo(self, Ra, Rb, Sa, Sb, K=32):
+        Ea = 1 / (1 + 10 ** ((Rb - Ra) / 400))
+        Eb = 1 / (1 + 10 ** ((Ra - Rb) / 400))
+        Ra_new = Ra + K * (Sa - Ea)
+        Rb_new = Rb + K * (Sb - Eb)
+        return Ra_new, Rb_new
+    
+    
+    
+    

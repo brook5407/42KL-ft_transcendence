@@ -9,6 +9,7 @@ class TournamentRoomSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "description",
+            "owner",
             "players",
             "winner",
             "matches",
@@ -16,6 +17,23 @@ class TournamentRoomSerializer(serializers.ModelSerializer):
             "ended_at",
             "created_at",
         ]
+
+
+class TournamentRoomCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TournamentRoom
+        fields = [
+            "name",
+            "description",
+        ]
+
+    def create(self, validated_data):
+        owner = self.context["request"].user
+        owner_player = Player.objects.get(user=owner)
+        tournament_room = TournamentRoom.objects.create(
+            owner=owner_player, **validated_data
+        )
+        return tournament_room
 
 
 class PlayerSerializer(serializers.ModelSerializer):

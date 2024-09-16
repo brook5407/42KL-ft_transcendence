@@ -22,16 +22,10 @@
 {% endblock %}
 
 {% comment %}
-- A drawer displaying a list of tournaments
-- A user can click join on a tournament, or create a new tournament
-- A tournament can have either 4 or 8 players
-- The tournament room owner can click start when all players are ready
-- The tournament room owner can kick players
-
 - The players playing in the tournament will play pong normally, others will spectate
 	- Spectators won't be able to do any actions
 	- if the spectator quits and didn't reconnect in 10 seconds, the spectator will be kicked
-- The order will be: 1 vs 2, 3 vs 4, winners vs winners, losers vs losers. Finally decide the winner
+- The order will be: odd vs odd, even vs even, winners vs winners. Finally decide the tournament winner
 - Handle disconnections and reconnections
 	- If a player disconnects, the player will have 10 seconds to reconnect, otherwise the player will be disqualified
 {% endcomment %}

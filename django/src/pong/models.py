@@ -10,13 +10,6 @@ User = get_user_model()
 
 
 class Player(BaseModel):
-    """
-    Range for Matching:
-    You can define a range of acceptable Elo ratings for matching players,
-    e.g., match players with others within ±100 Elo points.
-    As the waiting time increases, you can expand the range.
-    """
-
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -28,21 +21,6 @@ class Player(BaseModel):
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     elo = models.IntegerField(default=1200)
-
-    """
-        ELO Rating System:
-
-        Ea = 1 / (1 + 10^((Rb - Ra) / 400))
-        Eb = 1 / (1 + 10^((Ra - Rb) / 400))
-        Ra' = Ra + K * (Sa - Ea)
-        Rb' = Rb + K * (Sb - Eb)
-        where:
-            - Ra and Rb are the ratings of players A and B, respectively.
-            - Ea and Eb are the expected scores of players A and B, respectively.
-            - K is the weight constant (e.g., 32 for chess).
-        In tournament play, just add/sub a fixed value (e.g. 32) to the winner/loser.
-
-    """
 
     def __str__(self):
         return f"{self.user.username}"
@@ -81,6 +59,7 @@ class TournamentRoom(BaseModel):
 
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
+    owner = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="owner")
     players = models.ManyToManyField(
         "TournamentPlayer", related_name="tournament_players"
     )
@@ -99,6 +78,59 @@ class TournamentRoom(BaseModel):
     )
     ended_at = models.DateTimeField(null=True, blank=True)
     history = GenericRelation("MatchHistory", related_query_name="tournament_history")
+
+    def save(self, *args, **kwargs):
+        if self.players.count() >= self.MAX_PLAYERS:
+            raise ValueError("Maximum number of players exceeded.")
+        super().save(*args, **kwargs)
+
+    def add_player(self, user, position):
+        if position > self.MAX_PLAYERS:
+            raise ValueError("Maximum number of players exceeded.")
+        try:
+            player = Player.objects.get(user=user)
+            tournament_player = TournamentPlayer.objects.create(
+                player=player, tournament=self, position=position
+            )
+        except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
+            raise ValueError("Player or TournamentPlayer does not exist.")
+        self.players.add(tournament_player)
+
+    def remove_player(self, user):
+        try:
+            player = Player.objects.get(user=user)
+            tournament_player = TournamentPlayer.objects.get(
+                player=player, tournament=self
+            )
+        except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
+            raise ValueError("Player or TournamentPlayer does not exist.")
+        # reposition players
+        for player in self.players.all():
+            if player.position > tournament_player.position:
+                player.position -= 1
+                player.save()
+        self.players.remove(tournament_player)
+
+    def is_member(self, user):
+        try:
+            player = Player.objects.get(user=user)
+            tournament_player = TournamentPlayer.objects.get(
+                player=player, tournament=self
+            )
+        except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
+            return False
+        return self.players.filter(player=tournament_player).exists()
+
+    def is_owner(self, user):
+        return self.owner.user == user
+
+    def start(self):
+        self.status = self.Status.ONGOING
+        self.save()
+
+    def end(self):
+        self.status = self.Status.COMPLETED
+        self.save()
 
     def __str__(self):
         return f"Tournament: {self.name}"
