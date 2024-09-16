@@ -15,11 +15,13 @@ User = get_user_model()
 def index(request):
     return render(request, 'index.html')
 
+
 @api_view(['GET'])
 def home(request):
     if is_ajax_request(request):
         return render(request, 'components/pages/home.html')
     return render(request, 'index.html')
+
 
 @api_view(['GET'])
 def signin_modal(request):
@@ -30,11 +32,27 @@ def signin_modal(request):
         return render(request, 'components/modals/signin.html', context=context)
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 
+
 @api_view(['GET'])
 def signup_modal(request):
     if is_ajax_request(request):
         return render(request, 'components/modals/signup.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
+
+@api_view(['GET'])
+def forget_password_modal(request):
+    if is_ajax_request(request):
+        return render(request, 'components/modals/forget-password.html')
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
+
+@api_view(['GET'])
+def reset_password_modal(request):
+    if is_ajax_request(request):
+        return render(request, 'components/modals/reset-password.html')
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
 
 @api_view(['GET'])
 def oauth42_modal(request):
@@ -42,12 +60,14 @@ def oauth42_modal(request):
         return render(request, 'components/modals/42oauth.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def settings_drawer(request):
     if is_ajax_request(request):
         return render(request, 'components/drawers/settings.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

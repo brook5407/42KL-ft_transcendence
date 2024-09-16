@@ -1,6 +1,6 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from django.views import View
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 import requests
 from django.contrib import messages
@@ -19,7 +19,9 @@ from .utils import send_otp_email
 from .models import OnetimePassword
 from dj_rest_auth.views import LoginView
 from dj_rest_auth.app_settings import api_settings
-
+from utils.request_helpers import is_ajax_request
+from rest_framework.decorators import api_view
+from django.http import HttpResponseBadRequest
 
 class CustomAccountAdapter(DefaultAccountAdapter):
     def get_email_confirmation_url(self, request, emailconfirmation):
@@ -131,3 +133,34 @@ class LoginViewCustom(LoginView):
 
         self.login()
         return self.get_response()
+
+
+@api_view(['GET'])
+def ResetPasswordPage(request):
+    if request.query_params:
+        uid = request.query_params.get('$uid')
+        token = request.query_params.get('$token')
+        if uid is None or token is None:
+            return render(request, 'index.html', status=404)
+
+        modal_to_open = {
+            "type": "modal",
+            "name": "resetpassword",
+            "url": reverse('reset_password_modal'),
+        }
+
+        return render(request, 'index.html', context={
+            'modals_and_drawers': [modal_to_open],
+            'uid': uid,
+            'token': token,
+            'store_reset_params': True
+        })
+    
+    return render(request, 'index.html', status=404)
+
+@api_view(['GET'])
+def reset_password_modal(request):
+    if is_ajax_request(request):
+        
+        return render(request, 'components/modals/reset-password.html')
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")

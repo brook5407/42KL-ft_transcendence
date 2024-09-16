@@ -25,6 +25,12 @@
   <body>
     {{ messages|serialize_flash_messages|json_script:"flash-messages" }}
 
+    {% if modals_and_drawers %}
+      {% for item in modals_and_drawers %}
+        <input type="hidden" class="auto-open" value="{{ item.type }}" data-url="{{ item.url }}" data-name="{{ item.name }}" data-params="{{ item.data|default:''|safe }}" />
+      {% endfor %}
+    {% endif %}
+    
     <div id="message-container"></div>
 
     <div id="root"></div>
@@ -50,5 +56,12 @@
     <script type="module" src="{% static 'js/loading.js' %}"></script>
     <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
     <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
+    {% if store_reset_params %}
+    <script>
+      // Store UID and token in localStorage
+      localStorage.setItem('resetPasswordUid', '{{ uid }}');
+      localStorage.setItem('resetPasswordToken', '{{ token }}');
+    </script>
+    {% endif %}
   </body>
 </html>
