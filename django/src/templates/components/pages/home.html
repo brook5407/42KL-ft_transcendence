@@ -30,9 +30,9 @@
 				/>
 			</div>
 			<div class="clickable sidebar-option">
-				<img src="{% static 'images/icons/pong.svg' %}"
+				<img src="{% static 'images/icons/tournament.svg' %}"
 					width="42px" height="42px" alt="Pong Icon"
-					data-drawer="pong"
+					data-drawer="tournament-list" data-drawer-url={% url 'pong.tournament-list-drawer' %}
 				/>
 			</div>
 			<div class="clickable sidebar-option">
@@ -45,9 +45,8 @@
 	</div>
 
 	<div class="center-buttons-container">
-		<a href="{% url 'pong.pvp' %}" class="center-button pvp-button" data-link>{% trans 'PVP' %}</a>
-		<a href="{% url 'pong.pve' %}" class="center-button pve-button" data-link>{% trans 'PVE' %}</a>
-		<a href="{% url 'pong.tournament' %}" class="center-button pvp-button" data-link>Tournament</a>
+		<a href="{% url 'pong.pvp' %}" class="center-button pvp-button" data-link>PVP</a>
+		<a href="{% url 'pong.pve' %}" class="center-button pve-button" data-link>PVE</a>
 	</div>
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin" data-modal-url={% url 'base.signin-modal'  %}>
