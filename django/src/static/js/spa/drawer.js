@@ -4,6 +4,20 @@ import { ChatRoomDrawer } from './components/drawer/ChatRoomDrawer.js';
 import { ChatListDrawer } from './components/drawer/ChatListDrawer.js';
 import { FriendListDrawer } from './components/drawer/FriendListDrawer.js';
 import { FriendRequestsDrawer } from './components/drawer/FriendRequestsDrawer.js';
+import { checkNearestMatch } from './utils.js';
+
+export const DRAWERS = {
+	profile: GenericDrawer,
+	settings: GenericDrawer,
+	'chat-list': ChatListDrawer,
+	'chat-room': ChatRoomDrawer,
+	'friend-list': FriendListDrawer,
+	'friend-requests': FriendRequestsDrawer,
+	'search-friend': GenericDrawer,
+	'friend-profile': GenericDrawer,
+	'profile-edit': GenericDrawer,
+	'match-history': GenericDrawer,
+};
 
 class DrawerStack {
 	constructor() {
@@ -18,12 +32,12 @@ class DrawerStack {
 	/**
 	 * Push a drawer onto the stack.
 	 * @param {string} drawerName - The name of the drawer.
-	 * @param {string} drawerUrl - The URL of the drawer.
+	 * @param {object} drawerData - The data of the drawer.
 	 */
-	push(drawerName, drawerUrl) {
+	push(drawerName, drawerData) {
 		this.stack.push({
 			drawerName,
-			drawerUrl,
+			drawerData,
 		});
 	}
 
@@ -51,40 +65,38 @@ class DrawerStack {
 	}
 }
 
-let currentDrawer = null;
-const drawerStack = new DrawerStack();
-
-export const DRAWERS = {
-	profile: GenericDrawer,
-	settings: GenericDrawer,
-	'chat-list': ChatListDrawer,
-	'chat-room': ChatRoomDrawer,
-	'friend-list': FriendListDrawer,
-	'friend-requests': FriendRequestsDrawer,
-	'search-friend': GenericDrawer,
-	'friend-profile': GenericDrawer,
-};
+window.currentDrawer = null;
+window.drawerStack = new DrawerStack();
 
 // open drawer and back buttons handler
 document.body.addEventListener('click', (e) => {
-	if (e.target.matches('[data-drawer]')) {
+	const drawerElement = checkNearestMatch(e.target, '[data-drawer]', 4);
+	if (drawerElement) {
 		// open drawer
 		e.preventDefault();
-		const drawerName = e.target.getAttribute('data-drawer');
-		const drawerUrl = e.target.getAttribute('data-drawer-url') || '';
-		openDrawer(drawerName, { url: drawerUrl });
+		const drawerName = drawerElement.getAttribute('data-drawer');
+		const url = drawerElement.getAttribute('data-drawer-url') || '';
+		const stateStr = drawerElement.getAttribute('data-state');
+		const state = stateStr ? JSON.parse(stateStr) : {};
+		const propsStr = drawerElement.getAttribute('data-props');
+		const props = propsStr ? JSON.parse(propsStr) : {};
+		const queryParamsStr = drawerElement.getAttribute('data-query-params');
+		const queryParams = queryParamsStr ? JSON.parse(queryParamsStr) : {};
+		openDrawer(drawerName, {
+			url,
+			state,
+			props,
+			queryParams,
+		});
 	} else if (e.target.matches('.drawer-back-btn')) {
-		// open the previous drawer
 		e.preventDefault();
-		currentDrawer?.destroy();
 		drawerStack.pop();
+		// open the previous drawer
 		const drawerToOpen = drawerStack.getCurrentDrawer();
 		if (drawerToOpen) {
-			openDrawer(
-				drawerToOpen.drawerName,
-				{ url: drawerToOpen.drawerUrl },
-				false
-			);
+			openDrawer(drawerToOpen.drawerName, drawerToOpen.drawerData, false);
+		} else {
+			closeDrawer();
 		}
 	}
 });
@@ -97,10 +109,12 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 	// close previous drawer only
 	closeDrawer(false, false);
 	const drawerClass = DRAWERS[drawerName];
-	const drawer = new drawerClass({
-		url: data.url,
-		state: data.state || {},
-	});
+	if (!drawerClass) {
+		console.error('Drawer not found:', drawerName);
+		return;
+	}
+	data.name = drawerName;
+	const drawer = new drawerClass(data);
 
 	console.log('drawerName:', drawerName);
 
@@ -111,7 +125,7 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 
 	currentDrawer = drawer;
 	if (pushStack) {
-		drawerStack.push(drawerName, data.url);
+		drawerStack.push(drawerName, data);
 	}
 	const element = await drawer.render();
 	DRAWER_CONTAINER.innerHTML = '';
@@ -130,16 +144,23 @@ export function closeDrawer(delay = true, emptyStack = true) {
 	const drawer = document.getElementById('drawer');
 	drawerOverlay?.classList.remove('drawer-active');
 	drawer?.classList.remove('drawer-active');
+
 	if (emptyStack) {
 		drawerStack.empty();
 	}
+
 	if (!delay) {
+		// Dispatch the drawer-closed event
+		document.dispatchEvent(new CustomEvent('drawer-closed'));
 		currentDrawer?.destroy();
 		DRAWER_CONTAINER.innerHTML = '';
 		currentDrawer = null;
 		return;
 	}
+
 	setTimeout(() => {
+		// Dispatch the drawer-closed event
+		document.dispatchEvent(new CustomEvent('drawer-closed'));
 		currentDrawer?.destroy();
 		DRAWER_CONTAINER.innerHTML = '';
 		currentDrawer = null;

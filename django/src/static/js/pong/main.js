@@ -3,24 +3,27 @@ import { Ball } from './classes/ball.js';
 import { Table } from './classes/table.js';
 
 // Client-side game setup and rendering
-const gameCanvas = document.getElementById('gameCanvas');
-const matchmaking = document.getElementById('matchmaking');
+const gameContainer = document.getElementById('gameContainer');
 const scoreBoard = document.getElementById('scoreBoard');
+const gameCanvas = document.getElementById('gameCanvas');
+const canvasContainer = document.getElementById('canvasContainer');
+const overlay = document.getElementById('overlay');
+const countdownText = document.getElementById('countdownText');
+const matchmaking = document.getElementById('matchmaking');
+const roomCode = document.getElementById('roomCode');
 
 let paddle1;
 let paddle2;
 let ball;
 let table;
-
-const socket = new WebSocket(`ws://${window.location.host}/ws/pong/${roomName}/`);
 let assignedPaddle = null;
 
-scoreBoard.style.display = 'none'
-gameCanvas.style.display = 'none';
-matchmaking.style.display = 'block';
+const socket = new WebSocket(`ws://${window.location.host}/ws/${gameMode}/${roomName}/`);
+roomCode.innerHTML = roomName;
 
 socket.onopen = function() {
     console.log("WebSocket connection established " + roomName);
+    socket.send(JSON.stringify({ 'game_mode': gameMode}));
 };
 socket.onerror = function(error) {
     console.error("WebSocket error:", error);
@@ -28,12 +31,10 @@ socket.onerror = function(error) {
 socket.onclose = function(event) {
     console.log("WebSocket connection closed:", event);
 };
-
 socket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     // console.log("Raw message data:", e.data);
     // console.log("Parsed data:", data);
-
     // if (data.type) {
     //     console.log("Message type:", data.type);
     // } else {
@@ -42,10 +43,14 @@ socket.onmessage = function(e) {
 
     if (data.type === 'player_assignment') {
         // Store the assigned paddle
+        console.log("player_assignment");
         assignedPaddle = data.player;
     }
-    else if (data.type === 'start_game') {
+    if (data.type === 'start_game') {
         // Both players has connected, start the game
+        console.log("start_game");
+        canvasContainer.height = data.gameHeight;
+        canvasContainer.width = data.gameWidth;
         gameCanvas.height = data.gameHeight;
         gameCanvas.width = data.gameWidth;
         paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white');
@@ -55,8 +60,31 @@ socket.onmessage = function(e) {
         matchmaking.style.display = 'none';
         gameCanvas.style.display = 'block';
         scoreBoard.style.display = 'block';
+        if (assignedPaddle === 'paddle1') {
+            paddle1.color = "lightgreen";
+        } else if (assignedPaddle === 'paddle2') {
+            paddle2.color = "lightgreen";
+        }
     }
-    else if (data.type === 'update_game_state') {
+    if (data.type === 'countdown_game') {
+        console.log("countdown_game");
+        const countdownValue = data.message;
+        countdownText.style.display = 'block';
+        countdownText.innerHTML = countdownValue;
+
+        if (countdownValue === 1) {
+            setTimeout(() => {
+                countdownText.innerHTML = 'Go!';
+            }, 1000);  
+            setTimeout(() => {
+                countdownText.style.display = 'none';
+                overlay.style.display = 'none';
+            }, 2000);
+        }
+        table.draw();
+    }
+    if (data.type === 'update_game_state') {
+        console.log("update_game_state");
         // Update the game state based on the server's response
         paddle1.y = data.paddle1.y;
         paddle2.y = data.paddle2.y;
@@ -68,10 +96,13 @@ socket.onmessage = function(e) {
         // Render the updated game state
         table.draw();
     }
-    else if (data.type === 'end_game') {
+    if (data.type === 'end_game') {
+        console.log("end_game");
         alert(data.message);
+        window.location.href = `http://${window.location.host}/`;
     }
 };
+
 
 // Client Paddle Controls
 document.addEventListener('keydown', (event) => {

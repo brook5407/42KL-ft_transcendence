@@ -5,14 +5,22 @@ export const MODAL_CONTAINER = document.getElementById('modal-container');
 export const DRAWER_CONTAINER = document.getElementById('drawer-container');
 
 export class Component {
-	constructor({ state = {}, url = '', props = {} } = {}) {
+	constructor({
+		name = 'component',
+		state = {},
+		url = '',
+		props = {},
+		queryParams = {},
+	} = {}) {
+		this.name = name;
 		this.element = null;
 		this.state = state;
 		this.props = props;
 		this.className = '';
-		this.queryParams = {};
+		this.queryParams = queryParams;
 		this.url = url;
 		this.scripts = [];
+		this.styles = [];
 
 		this.mounted = false;
 		this.wrapper = null;
@@ -26,6 +34,14 @@ export class Component {
 				method: 'GET',
 				params: queryParams,
 			});
+			if (response.status === 404) {
+				return `
+				<div class="not-found">
+					<h1>404</h1>
+					<p>Page not found</p>
+				</div>
+				`;
+			}
 			const html = await response.text();
 			return html;
 		} catch {
@@ -63,6 +79,32 @@ export class Component {
 			document.body.appendChild(script);
 			this.scripts.push(script);
 		}
+
+		// append all css into head, to avoid FOUC
+		const links = this.wrapper.querySelectorAll('link[rel="stylesheet"]');
+		links.forEach((link) => {
+			// Check if the link is already in the <head> to avoid duplicates
+			if (!document.querySelector(`head link[href="${link.href}"]`)) {
+				const linkClone = link.cloneNode(true);
+				document.head.appendChild(linkClone);
+				this.styles.push(linkClone);
+			}
+			link.remove();
+		});
+
+		// function areStylesLoaded(styles) {
+		// 	return Promise.all(
+		// 		styles.map((style) => {
+		// 			return new Promise((resolve, reject) => {
+		// 				style.onload = () => resolve(style);
+		// 				style.onerror = () =>
+		// 					reject(new Error(`Failed to load stylesheet: ${style.href}`));
+		// 			});
+		// 		})
+		// 	);
+		// }
+
+		// await areStylesLoaded(this.styles);
 
 		this.element = this.wrapper;
 
@@ -112,6 +154,10 @@ export class Component {
 		this.scripts.forEach((script) => {
 			console.log('removing script', script.src || 'custom script');
 			script.remove();
+		});
+		this.styles.forEach((link) => {
+			console.log('removing link', link.href);
+			link.remove();
 		});
 	}
 

@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or 'django-insecure-33mb$m0_l)crq+q80aqlxn1adyt7gn(ex!pnvc42st26pwe0&g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.environ.get('APP_ENV', 'dev') == 'dev' else False
+DEBUG = True if os.environ.get('APP_ENV') == 'dev' else False
 
 APPEND_SLASH=False
 
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'channels',
+    'django_extensions',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,7 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
+
     'base',
     'provider',
     'drf_auth',
@@ -66,7 +67,7 @@ INSTALLED_APPS = [
     'pong',
     'friend',
     'profiles',
-    "game_history"
+    'game_history',
 ]
 
 MIDDLEWARE = [
@@ -101,18 +102,20 @@ TEMPLATES = [
     },
 ]
 
-REDIS_HOST = os.environ.get('REDIS_HOST', '127.0.0.1')
-REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
-REDIS_DB = int(os.getenv('REDIS_DB', 1))
+ASGI_APPLICATION = 'core.asgi.application'
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
-    }
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('127.0.0.1', 6379)],
+#         },
+#     },
+# }
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
 }
 
 WSGI_APPLICATION = 'core.wsgi.application'
@@ -230,7 +233,7 @@ SITE_ID = 1
 
 ACCOUNT_ADAPTER = 'drf_auth.views.CustomAccountAdapter'
 
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory' if not DEBUG else 'optional'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -264,8 +267,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-AUTH_USER_MODEL = 'base.CustomUser'
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.SessionAuthentication',
@@ -281,23 +282,6 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'access_token',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
     'JWT_AUTH_HTTPONLY': False,
-    'JWT_AUTH_SECURE': True,
-}
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'VERIFYING_KEY': None,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken', 'rest_framework_simplejwt.tokens.RefreshToken'),
-    'TOKEN_TYPE_CLAIM': 'token_type',
-    'JTI_CLAIM': 'jti',
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -310,17 +294,11 @@ DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 
 # to set the OTP function
 OTP_AUTH = os.environ.get('OTP_AUTH', 'false').lower() == 'true'
+AUTH_USER_MODEL = 'base.CustomUser'
+
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [(REDIS_HOST, REDIS_PORT)],
-        },
-    },
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer',
-#     },
-# }

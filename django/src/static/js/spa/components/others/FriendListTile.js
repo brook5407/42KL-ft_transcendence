@@ -13,13 +13,21 @@ export class FriendListTile extends Component {
 			.querySelector('.friend-list-tile__avatar')
 			.addEventListener('click', () => {
 				openDrawer('friend-profile', {
-					url: `drawer/friend-drawer?username=${this.friend.user.username}`,
+					url: `drawer/friend-drawer`,
+					queryParams: {
+						username: this.friend.user.username,
+					},
 				});
 			});
 		this.element
-			.querySelector('.icon-action[title="Chat"]')
+			.querySelector('.friend-list-tile__action')
 			.addEventListener('click', () => {
-				// openDrawer('chat'); WXR TODO
+				openDrawer('chat-room', {
+					url: `drawer/chat-room`,
+					queryParams: {
+						username: this.friend.user.username,
+					},
+				});
 			});
 
 		// show online status

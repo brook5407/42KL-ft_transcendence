@@ -1,42 +1,50 @@
+window.notificationSound = new Audio('/static/audio/pop.wav');
+
 // Function to play notification sound
-function playNotificationSound() {
-	const audio = new Audio('/static/audio/pop.wav');
-	audio.play();
-}
-
-window.playNotificationSound = playNotificationSound;
-
-// Extend HTMLElement prototype
-HTMLElement.prototype.notify = function (playSound = true) {
-	// Play notification sound
-	if (playSound) {
-		playNotificationSound();
-	}
-
-	// Create notification dot
-	const dot = document.createElement('div');
-	dot.style.position = 'absolute';
-	dot.style.top = '0';
-	dot.style.right = '0';
-	dot.style.width = '10px';
-	dot.style.height = '10px';
-	dot.style.backgroundColor = 'red';
-	dot.style.borderRadius = '50%';
-	dot.style.zIndex = '1000';
-	dot.style.display = 'block';
-
-	dot.classList.add('notification-dot');
-
-	// Ensure the element has position relative or absolute
-	if (window.getComputedStyle(this).position === 'static') {
-		this.style.position = 'relative';
-	}
-
-	// Append the dot to the element
-	this.appendChild(dot);
+window.playNotificationSound = function () {
+	window.notificationSound.play();
 };
 
-// remove notification dot when clicked
-HTMLElement.prototype.removeNotificationDot = function () {
-	this.querySelector('div.notification-dot').remove();
+HTMLElement.prototype.addUnreadCount = function (count = 1) {
+	if (count <= 0) {
+		return;
+	}
+
+	if (this.tagName === 'IMG') {
+		this.parentElement.addUnreadCount(count);
+		return;
+	}
+
+	// If the element already has a unread count, increment it
+	let unreadCount = this.querySelector('div.unread-count');
+	if (unreadCount) {
+		unreadCount.textContent = parseInt(unreadCount.textContent) + count;
+		return;
+	}
+
+	unreadCount = document.createElement('div');
+	unreadCount.textContent = count;
+	unreadCount.style.position = 'absolute';
+	unreadCount.style.top = '-12px';
+	unreadCount.style.right = '-12px';
+	unreadCount.style.backgroundColor = '#FF0000';
+	unreadCount.style.color = '#FFFFFF';
+	unreadCount.style.borderRadius = '50%';
+	unreadCount.style.padding = '2px';
+	unreadCount.style.fontSize = '12px';
+	unreadCount.classList.add('unread-count');
+
+	this.appendChild(unreadCount);
+};
+
+HTMLElement.prototype.removeUnreadCount = function () {
+	if (this.tagName === 'IMG') {
+		this.parentElement.removeUnreadCount();
+		return;
+	}
+
+	let unreadCount = this.querySelector('div.unread-count');
+	if (unreadCount) {
+		unreadCount.remove();
+	}
 };

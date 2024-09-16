@@ -1,10 +1,12 @@
+import { getWSHost } from '../websocket.js';
+
+const wsHost = getWSHost();
+
 export class FriendRequestsLiveUpdate {
 	constructor() {
 		this.userId = window.currentUser.id;
 		this.username = window.currentUser.username;
-		this.socket = new WebSocket(
-			`ws://${window.location.host}/ws/friend-requests/`
-		);
+		this.socket = new WebSocket(`${wsHost}/ws/friend-requests/`);
 
 		this.socket.onopen = () => {
 			console.log('Friend requests live update socket opened');
@@ -20,17 +22,22 @@ export class FriendRequestsLiveUpdate {
 		if (data.status === 'P') {
 			if (data.receiver !== this.username) return;
 			showInfoMessage(
-				`You have received a friend request from @${data.sender ?? someone}!`
+				`You have received a friend request from @${data.sender ?? 'someone'}!`,
+				{
+					type: 'drawer',
+					name: 'friend-requests',
+					data: { url: 'drawer/friend-requests' },
+				}
 			);
 		} else if (data.status === 'A') {
 			if (data.sender !== this.username) return;
 			showSuccessMessage(
-				`@${data.sender ?? someone} has accepted your friend request!`
+				`@${data.receiver ?? 'someone'} has accepted your friend request!`
 			);
 		} else if (data.status === 'R') {
 			if (data.sender !== this.username) return;
 			showErrorMessage(
-				`@${data.sender ?? someone} has rejected your friend request!`
+				`@${data.receiver ?? 'someone'} has rejected your friend request!`
 			);
 		}
 

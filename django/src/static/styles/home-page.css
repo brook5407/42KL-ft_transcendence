@@ -28,13 +28,6 @@
 	transform: translateX(-50%);
 }
 
-.snowflake {
-	position: fixed;
-	width: 20px;
-	height: 20px;
-	opacity: 0.5;
-}
-
 .center-buttons-container {
 	position: absolute;
 	top: 50%;
@@ -45,45 +38,4 @@
 	gap: 20px;
 	justify-content: center;
 	align-items: center;
-}
-
-@keyframes fall {
-	0% {
-		top: -100px;
-	}
-	100% {
-		top: 100vh;
-	}
-}
-
-@keyframes spin-clockwise {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
-}
-
-@keyframes spin-anticlockwise {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(-360deg);
-	}
-}
-
-#language-switch {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  cursor: pointer;
-}
-
-#flag-icon {
-  width: 30px;
-  height: 20px;
-  border: 1px solid #ddd;
 }

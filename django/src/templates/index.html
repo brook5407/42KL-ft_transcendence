@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 {% load i18n %}
 {% load static %}
+{% load custom_filters %}
 
 <html lang="en">
   <head>
-	<meta charset="UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
-	<link rel="stylesheet" href="{% static 'styles/global.css' %}" />
-	<link rel="stylesheet" href="{% static 'styles/not-found.css' %}" />
-	<link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
-	<link rel="stylesheet" href="{% static 'styles/message.css' %}" />
-	<link rel="stylesheet" href="{% static 'styles/components.css' %}" />
-	<link rel="stylesheet" href="{% static 'styles/loading.css' %}" />
-
-	<title>AIsPong</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/global.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/not-found.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/snow.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/message.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/toast.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/components.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/loading.css' %}" />
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+    <title>AIsPong</title>
   </head>
 
   <body>
+    {{ messages|serialize_flash_messages|json_script:"flash-messages" }}
+
 	<form id="language-switcher" action="{% url 'set_language' %}" method="post" style="display: inline;">
 		{% csrf_token %}
 		<input name="next" type="hidden" value="{{ request.path }}">
@@ -35,30 +40,49 @@
 		{% endfor %}
 	</form>
 
+    {% if modals_and_drawers %}
+      {% for item in modals_and_drawers %}
+        <input type="hidden" class="auto-open" value="{{ item.type }}" data-url="{{ item.url }}" data-name="{{ item.name }}" data-params="{{ item.data|default:''|safe }}" />
+      {% endfor %}
+    {% endif %}
+
+    <div id="message-container"></div>
+
 	{% for message in messages %}
 	  <input type="hidden" class="dj-flash-message" value="{{ message.message }}" data-message-type="{{ message.tags }}">
 	{% endfor %}
 
 	<div id="message-container"></div>
 
-	<div id="root"></div>
+    <div id="root"></div>
 
-	<div id="modal-container"></div>
+    <div id="modal-container"></div>
 
-	<div id="drawer-container"></div>
+    <div id="drawer-container"></div>
 
-	<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-	<script type="module" src="{% static 'js/script.js' %}"></script>
-	<script type="module" src="{% static 'js/utils.js' %}"></script>
-	<script type="module" src="{% static 'js/oauth.js' %}"></script>
-	<script type="module" src="{% static 'js/message.js' %}"></script>
-	<script type="module" src="{% static 'js/spa/modal.js' %}"></script>
-	<script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
-	<script type="module" src="{% static 'js/spa/form.js' %}"></script>
-	<script type="module" src="{% static 'js/notification.js' %}"></script>
-	<script type="module" src="{% static 'js/loading.js' %}"></script>
-	<script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
-	<script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
-	<script type="module" src="{% static 'js/language-switch.js' %}"></script>
+    <div id="toast-container"></div>
+
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="module" src="{% static 'js/script.js' %}"></script>
+    <script type="module" src="{% static 'js/utils.js' %}"></script>
+    <script type="module" src="{% static 'js/oauth.js' %}"></script>
+    <script type="module" src="{% static 'js/message.js' %}"></script>
+    <script type="module" src="{% static 'js/toast.js' %}"></script>
+    <script type="module" src="{% static 'js/websocket.js' %}"></script>
+    <script type="module" src="{% static 'js/chat/chat.js' %}"></script>
+    <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
+    <script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
+    <script type="module" src="{% static 'js/spa/form.js' %}"></script>
+    <script type="module" src="{% static 'js/notification.js' %}"></script>
+    <script type="module" src="{% static 'js/loading.js' %}"></script>
+    <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
+    <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
+    {% if store_reset_params %}
+    <script>
+      // Store UID and token in localStorage
+      localStorage.setItem('resetPasswordUid', '{{ uid }}');
+      localStorage.setItem('resetPasswordToken', '{{ token }}');
+    </script>
+    {% endif %}
   </body>
 </html>

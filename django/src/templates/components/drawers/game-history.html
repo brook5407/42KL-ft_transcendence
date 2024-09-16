@@ -1,0 +1,83 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/game-history.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h3>{{ user.profile.nickname}} Match History</h3>
+{% endblock %}
+
+{% block drawerContent %}
+<div id="game-history-container" class="game-history"></div>
+<div id="loading" style="display: none;">Loading...</div>
+{% endblock %}
+
+{% block drawerScripts %}
+<script>
+document.addEventListener('drawer-opened', () => {
+	let currentPage = 1;
+	const gameHistoryContainer = document.getElementById('game-history-container');
+
+	async function loadGameHistory(page) {
+		if (isLoading) return;
+    	isLoading = true;
+
+		// display loading spinner
+		const loadingElement = document.getElementById('loading');
+    	loadingElement.style.display = 'block';
+
+		try {
+			const response = await ajaxWithAuth('{% url "gamehistory-list" %}', {
+				method: 'GET',
+				params: { page: page },
+			});
+			const data = await response.json();
+			data.results.forEach(game => appendNewGame(game, gameHistoryContainer));
+		} catch (error) {
+			console.error('Error loading game history:', error);
+		} finally {
+			isLoading = false;
+			loadingElement.style.display = 'none';
+		}
+	}
+
+	function appendNewGame(game, container) {
+		const gameDiv = document.createElement('div');
+		gameDiv.classList.add('game-history__game');
+		gameDiv.innerHTML = `
+			<div class="game-history__game-content__player1">
+				<div class="game-history__game-content__player1__avatar">
+					<img src="${game.player1.profile.avatar.url}" alt="avatar" />
+				</div>
+				<div class="game-history__game-content__player1__nickname">${game.player1.nickname}</div>
+			</div>
+			<div class="game-history__game-header">
+				<div class="game-history__game-header__date">${new Date(game.created_at).toLocaleString()}</div>
+				<div class="game-history__game-header__result">${game.score_player1} : ${game.score_player2}</div>
+			</div>
+			<div class="game-history__game-content__player2">
+				<div class="game-history__game-content__player2__avatar">
+					<img src="${game.player2.profile.avatar.url}" alt="avatar" />
+				</div>
+				<div class="game-history__game-content__player2__nickname">${game.player2.nickname}</div>
+			</div>
+		`;
+		container.appendChild(gameDiv);
+	}
+
+	// monitor for the scroll overflow
+	gameHistoryContainer.addEventListener('scroll', () => {
+		if (gameHistoryContainer.scrollTop + gameHistoryContainer.clientHeight >= gameHistoryContainer.scrollHeight) {
+			currentPage++;
+			loadGameHistory(currentPage);
+		}
+	});
+
+	// initial load
+	loadGameHistory(currentPage);
+}
+</script>
+{% endblock %}

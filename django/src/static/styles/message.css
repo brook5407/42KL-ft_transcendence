@@ -7,27 +7,28 @@
 }
 
 .message-box {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
 	padding: 10px 20px;
 	margin-bottom: 10px;
 	border-radius: 5px;
-	color: #fff;
+	color: white;
 	text-align: center;
 	opacity: 0;
 	transition: opacity 0.5s ease-in-out;
 }
 
-.success {
-	background-color: #4caf50; /* Green */
-}
-
-.error {
-	background-color: #f44336; /* Red */
-}
-
-.info {
-	background-color: #4fcdf0; /* Blue */
-}
-
 .fade-in {
 	opacity: 1;
+}
+
+.message-close-button {
+	border: none;
+	line-height: 18px;
+	font-size: 24px;
+	cursor: pointer;
+	color: white;
+	vertical-align: middle;
 }

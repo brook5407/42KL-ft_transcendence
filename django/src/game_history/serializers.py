@@ -10,6 +10,6 @@ class GameHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = GameHistory
         fields = ['id', 'player1', 'player2', 'winner', 'score_player1', 'score_player2',
-                  'game_date', 'player1_username', 'player2_username', 'winner_username']
-        read_only_fields = ['id', 'game_date']
+                  'created_at', 'player1_username', 'player2_username', 'winner_username']
+        read_only_fields = ['id', 'created_at']
 

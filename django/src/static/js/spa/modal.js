@@ -2,6 +2,9 @@ import { MODAL_CONTAINER } from './components/Component.js';
 import { SignIn } from './components/modals/SignIn.js';
 import { SignUp } from './components/modals/SignUp.js';
 import { Oauth42 } from './components/modals/Oauth42.js';
+import { ForgetPassword } from './components/modals/forget-password.js';
+import { ResetPassword } from './components/modals/reset-password.js';
+import { checkNearestMatch } from './utils.js';
 
 let currentModal = null;
 
@@ -9,24 +12,36 @@ export const MODALS = {
 	signin: SignIn,
 	signup: SignUp,
 	oauth42: Oauth42,
+	forgetpassword: ForgetPassword,
+	resetpassword: ResetPassword,
 };
 
 // open modal buttons handler
 document.body.addEventListener('click', (e) => {
-	if (e.target.matches('[data-modal]')) {
+	const modalElement = checkNearestMatch(e.target, '[data-modal]', 3);
+	if (modalElement) {
 		e.preventDefault();
-		const modalName = e.target.getAttribute('data-modal');
-		const modalUrl = e.target.getAttribute('data-modal-url') || '';
-		openModal(modalName, { url: modalUrl });
+		const modalName = modalElement.getAttribute('data-modal');
+		const url = modalElement.getAttribute('data-modal-url') || '';
+		const stateStr = modalElement.getAttribute('data-state');
+		const state = stateStr ? JSON.parse(stateStr) : {};
+		const propsStr = modalElement.getAttribute('data-props');
+		const props = propsStr ? JSON.parse(propsStr) : {};
+		const queryParamsStr = modalElement.getAttribute('data-query-params');
+		const queryParams = queryParamsStr ? JSON.parse(queryParamsStr) : {};
+		openModal(modalName, {
+			url,
+			state,
+			props,
+			queryParams,
+		});
 	}
 });
 
 export async function openModal(modalName, data = {}) {
 	const modalClass = MODALS[modalName];
-	const modal = new modalClass({
-		url: data.url,
-		state: data.state,
-	});
+	data.name = modalName;
+	const modal = new modalClass(data);
 
 	console.log('modalName:', modalName);
 
@@ -37,6 +52,9 @@ export async function openModal(modalName, data = {}) {
 		MODAL_CONTAINER.appendChild(element);
 		setTimeout(() => {
 			activateModal();
+			dispatchModalOpenedEvent({
+				detail: modalName,
+			});
 		}, 100);
 	} else {
 		console.error('Modal not found:', modalName);
@@ -52,6 +70,10 @@ export function closeModal() {
 		MODAL_CONTAINER.innerHTML = '';
 		currentModal?.destroy();
 	}, 500);
+}
+
+function dispatchModalOpenedEvent(e = null) {
+	document.dispatchEvent(new CustomEvent('modal-opened'), e);
 }
 
 function activateModal() {
