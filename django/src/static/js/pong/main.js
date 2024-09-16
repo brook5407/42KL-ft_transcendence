@@ -11,6 +11,7 @@ const fullscreenButton = document.getElementById('fullscreenButton');
 const canvasContainer = document.getElementById('canvasContainer');
 const overlay = document.getElementById('overlay');
 const countdownText = document.getElementById('countdownText');
+const winnerText = document.getElementById('winnerText');
 const matchmaking = document.getElementById('matchmaking');
 const roomCode = document.getElementById('roomCode');
 
@@ -55,18 +56,24 @@ socket.onmessage = function(e) {
         canvasContainer.width = data.gameWidth;
         gameCanvas.height = data.gameHeight;
         gameCanvas.width = data.gameWidth;
-        paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white');
-        paddle2 = new Paddle(data.paddle2.x, data.paddle2.y, data.paddle2.width, data.paddle2.height, 'white');
-        ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, data.ball.radius, data.ball.speed, 'lightblue', 'lightblue');
+        paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, '#1EDDDD');
+        paddle2 = new Paddle(data.paddle2.x, data.paddle2.y, data.paddle2.width, data.paddle2.height, '#1EDDDD');
+        ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, data.ball.radius, data.ball.speed, '#ffffff', '#A0D8F0');
         table = new Table(gameCanvas, paddle1, paddle2, ball);
         matchmaking.style.display = 'none';
         gameCanvas.style.display = 'block';
         score1.style.display = 'block';
         score2.style.display = 'block';
         if (assignedPaddle === 'paddle1') {
-            paddle1.color = "lightgreen";
+            paddle1.color = "#4FCDF0";
+            score1.style.color = "#4FCDF0";
+            paddle2.color = "#EC4242";
+            score2.style.color = "#EC4242";
         } else if (assignedPaddle === 'paddle2') {
-            paddle2.color = "lightgreen";
+            paddle1.color = "#EC4242";
+            score1.style.color = "#EC4242";
+            paddle2.color = "#4FCDF0";
+            score2.style.color = "#4FCDF0";
         }
     }
     if (data.type === 'countdown_game') {
@@ -101,8 +108,27 @@ socket.onmessage = function(e) {
     }
     if (data.type === 'end_game') {
         console.log("end_game");
-        alert(data.message);
-        window.location.href = `http://${window.location.host}/`;
+        // alert(data.message);
+
+        // Make the darker overlay and text visible
+        overlay.style.display = 'flex';
+        winnerText.style.display = 'flex';
+        winnerText.innerText = data.message;
+
+        // Countdown back to main menu
+        let countdown = 11;
+        const countdownInterval = setInterval(() => {
+            countdown -= 1;
+            countdownText.style.fontSize = "12px";
+            countdownText.innerText = `Returning to the main menu in ${countdown} seconds...`;
+            countdownText.style.display = 'flex';
+    
+            if (countdown === 0) {
+                clearInterval(countdownInterval);
+                window.location.href = `http://${window.location.host}/`;
+            }
+        }, 1000);
+        // window.location.href = `http://${window.location.host}/`;
     }
 };
 

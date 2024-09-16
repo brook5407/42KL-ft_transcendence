@@ -217,7 +217,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
             # Check if a player disconnected
             if self.match['player1'] == None or self.match['player2'] == None:
-                winner = 'player1' if self.match['player2'] == None else 'player2'
+                winner = 'Player 1' if self.match['player2'] == None else 'Player 2'
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -229,12 +229,12 @@ class PongConsumer(AsyncWebsocketConsumer):
 
             # End the game if a player reaches a score of 5
             if self.match['score1'] >= 5 or self.match['score2'] >= 5:
-                winner = 'player1' if self.match['score1'] >= 5 else 'player2'
+                winner = 'Player 1' if self.match['score1'] >= 5 else 'Player 2'
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
                         'type': 'end_game',
-                        'message': f'{winner} wins! Game over!',
+                        'message': f'{winner} wins!',
                     }
                 )
                 break  # Exit the game loop
@@ -258,21 +258,21 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'end_game',
             'message': event['message'],
         }))
-        try:
-            game_room = GameRoom.objects.get(room_name=self.room_name)
-            game_room.delete()  # Delete the room when the game is over or a player disconnects
-        except GameRoom.DoesNotExist:
-            pass  # Room already deleted or not found
+        # try:
+        #     game_room = GameRoom.objects.get(room_name=self.room_name)
+        #     game_room.delete()  # Delete the room when the game is over or a player disconnects
+        # except GameRoom.DoesNotExist:
+        #     pass  # Room already deleted or not found
 
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        await self.close()  # Close the WebSocket connection
+        # await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        # await self.close()  # Close the WebSocket connection
 
     def reset_ball(self):
         # Reset the ball to the center of the field
         self.match['ball'].x = gameWidth / 2
         self.match['ball'].y = gameHeight / 2
-        self.match['ball'].x_direction *= -1  # Change direction after score
         self.match['ball'].speed = self.match['ball'].oriSpeed
+        # self.match['ball'].x_direction *= -1  # Change direction after score
 
     async def chat_message(self, event):
         message = event['message']

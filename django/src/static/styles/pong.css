@@ -1,4 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@font-face{
+	font-family:'digital-clock-font';
+	src: url('fonts/digital-7.regular.ttf');
+   }
+
 * {
 	font-family: 'Poppins', sans-serif;
 	text-align: center;
@@ -6,7 +11,7 @@
 }
 #gameContainer {
     position: relative;
-	margin-top: 100px;
+	margin-top: auto;
 }
 #canvasContainer {
     position: relative;
@@ -18,87 +23,129 @@
     width: 100%; /* Match parent container */
     height: 100%; /* Match parent container */
     display: none;
-    border: 3px solid grey;
+    border: 10px solid #0E8F8F;
 }
 
 #overlay {
-    position: absolute;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center;     /* Center horizontally */
+    position: absolute;      /* Ensure it's positioned over the game area */
     top: 0;
     left: 0;
     width: 100%; /* Cover the entire canvas */
     height: 100%; /* Cover the entire canvas */
     background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 48px;
+
+    /* color: white; */
+    /* font-size: 48px; */
     font-weight: bold;
     z-index: 1000;
 }
-#countdownText {
-    text-align: center;
+#winnerText {
 	display: none;
 	color:white;
+    font-size: 24px;
+    margin: 10px 0;
 }
-#score1, #score2{
+#countdownText {
+	display: none;
 	color:white;
+    font-size: 48px;
+    margin: 10px 0;
 }
 .score {
-	font-size: 64px;
-	color: white;
-	/* padding-left: 0;
-    padding-right: 0;
-    margin-left: auto;
-    margin-right: auto; */
-	display: none;
-    position: absolute;
-    top: 50%; /* Center vertically */
-    transform: translateY(-50%);
-    font-size: 3rem; /* Larger font for score visibility */
+    font-size: 5vw; /* Use vw to scale with window width */
     font-weight: bold;
-    color: white;
+    font-family: 'digital-clock-font';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    white-space: nowrap; /* Prevent text from wrapping */
 }
 .left-score {
-    left: 25%;
+    left: 1vw;
+	color: #EC4242;
 }
 .right-score {
-    right: 25%;
+    right: 1vw;
+	color: #4FCDF0;
 }
 #matchmaking, #roomCode {
 	color: white;
 	font-size: 24px;
 	text-align: center;
-	padding-top: 100px;
 }
-/* #resetButton {
-	font-size: 24px;
-	width: 100px;
-	height: 50px;
-	border: 3px solid grey;
-	border-radius: 15px;
-	cursor: pointer;
-	color: black;
-	margin: 10px;
-}
-#pauseButton {
-	font-size: 24px;
-	width: 100px;
-	height: 50px;
-	border: 3px solid grey;
-	border-radius: 15px;
-	cursor: pointer;
-	color: black;
-	margin: 10px;
+
+body {
+	justify-content: center;  /* Center horizontally */
+    align-items: center;      /* Center vertically */
 } */
-/* #blurCanvas {
-	background: rgba(255, 255, 255, 0.8);
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 80vh;
+    background-color: #e0f7fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-select {
-	margin: 10px;
-	width: 100px;
-	height: 30px;
-	text-align: center;
-	border: 3px solid grey;
-	border-radius: 15px;
-} */
+
+.game-area {
+    flex: 2;
+    position: relative;
+    border-radius: 10px;
+    margin: 10px;
+	align-items: center;
+	padding-left: 5vw;
+    padding-right: 5vw;
+}
+
+/* Chat and Scoreboard Container */
+.chat-score-container {
+    display: flex;
+    flex-direction: row;
+    height: 30%;
+    margin: 10px;
+}
+
+/* Score Area */
+.score-area {
+    /* flex: 1; */
+    background-color: #1A9EC7;
+    border: 10px solid #1FB5E4;
+    padding: 10px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.players {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.player img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 10px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+button.flag-btn, button.fullscreen-btn {
+    background-color: #ff5722;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}

@@ -4,25 +4,51 @@
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
 <div id="gameContainer">
-	{% comment %} <div id="scoreBoard">
-		<span id="score1">0</span> : <span id="score2">0</span>
-	</div> {% endcomment %}
-	<div id="canvasContainer">
-		<div id="score1" class="score left-score">0</div>
-		<canvas id="gameCanvas"></canvas>
-		<button id="fullscreenButton">Go Fullscreen</button>
-		<div id="overlay">
-			<div id="countdownText">3</div>
+    <div class="game-container">
+        <div class="game-area">
+			<div id="score1" class="score left-score">0</div>
+			<div id="canvasContainer">
+				<canvas id="gameCanvas"></canvas>
+				<div id="overlay">
+					<div id="winnerText">[Winner]</div>
+					<div id="countdownText">3</div>
+				</div>
+			</div>
+			<div id="score2" class="score right-score">0</div>
+			<div id="matchmaking">Searching for opponent...</div>
+        </div>
+		
+        <div class="score-container">
 		</div>
-		<div id="score2" class="score right-score">0</div>
-	</div>
-	<div id="matchmaking">Searching for opponent...</div>
-	<div id="roomCode">Room Code</div>
-
-	{% comment %} <form id="form">
-		<input type="text" name ="message"/>
-	</form>
-	<div id="messages"></div> {% endcomment %}
+		<div class="score-area">
+				<div id="roomCode">Room Code</div>
+                <div class="current-match">
+                    <h2>Current:</h2>
+                    <div class="players">
+                        <div class="player">
+                            <img src="avatar1.png" alt="Player 1">
+                            <span>VS</span>
+                            <img src="avatar2.png" alt="Player 2">
+                        </div>
+                    </div>
+                </div>
+                <div class="next-match">
+                    <h2>Next:</h2>
+                    <div class="players">
+                        <div class="player">
+                            <img src="avatar3.png" alt="Player 3">
+                            <span>VS</span>
+                            <img src="avatar4.png" alt="Player 4">
+                        </div>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="flag-btn">🏳</button>
+                    <button class="fullscreen-btn">⛶</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
