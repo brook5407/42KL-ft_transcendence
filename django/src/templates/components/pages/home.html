@@ -45,8 +45,8 @@
 	</div>
 
 	<div class="center-buttons-container">
-		<a href="{% url 'pong.pvp' %}" class="center-button pvp-button" data-link>PVP</a>
-		<a href="{% url 'pong.pve' %}" class="center-button pve-button" data-link>PVE</a>
+		<a href="{% url 'pong.pvp' %}" class="center-button pvp-button" data-link>{% trans 'PVP' %}</a>
+		<a href="{% url 'pong.pve' %}" class="center-button pve-button" data-link>{% trans 'PVE' %}</a>
 	</div>
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin" data-modal-url={% url 'base.signin-modal'  %}>
