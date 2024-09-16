@@ -3,9 +3,9 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('home', views.home, name='home'),
+	path('home', views.home, name='home'),
 
-    path('current-user', views.current_user, name='base.current-user'),
+	path('current-user', views.current_user_profile, name='base.current-user'),
 
     # modals
     path('modal/signin-modal', views.signin_modal, name='base.signin-modal'),

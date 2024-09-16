@@ -1,17 +1,60 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 * {
 	font-family: 'Poppins', sans-serif;
-	color: white;
 	text-align: center;
+	color:black;
 }
+#gameContainer {
+    position: relative;
+}
+#canvasContainer {
+    position: relative;
+    display: inline-block;
+    margin: auto;
+}
+
 #gameCanvas {
-	border: 3px solid grey;
+    width: 100%; /* Match parent container */
+    height: 100%; /* Match parent container */
+    display: none;
+    border: 3px solid grey;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Cover the entire canvas */
+    height: 100%; /* Cover the entire canvas */
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    z-index: 1000;
+}
+#countdownText {
+    text-align: center;
+	display: none;
 }
 #scoreBoard {
 	font-size: 64px;
 	color: white;
+	padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+	display: none;
 }
-#resetButton {
+#matchmaking, #roomCode {
+	color: white;
+	font-size: 24px;
+	text-align: center;
+	padding-top: 100px;
+}
+/* #resetButton {
 	font-size: 24px;
 	width: 100px;
 	height: 50px;
@@ -30,8 +73,8 @@
 	cursor: pointer;
 	color: black;
 	margin: 10px;
-}
-#blurCanvas {
+} */
+/* #blurCanvas {
 	background: rgba(255, 255, 255, 0.8);
 }
 select {
@@ -41,4 +84,4 @@ select {
 	text-align: center;
 	border: 3px solid grey;
 	border-radius: 15px;
-}
+} */

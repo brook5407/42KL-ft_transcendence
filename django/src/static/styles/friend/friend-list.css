@@ -8,8 +8,8 @@
 	display: flex;
 	align-items: center;
 	width: 100%;
-	background-color: #befafa;
-	border: 1px solid #657e7e;
+	background-color: var(--color-brand-2);
+	border: 1px solid var(--color-text-5);
 	padding: 10px;
 	box-sizing: border-box;
 }
@@ -27,19 +27,11 @@
 }
 
 .icon-action[title='Chat'] {
-	color: #0ccc1f;
+	color: var(--color-success-6);
 }
 
 .icon-action[title='Chat']:hover {
-	color: #0a8f17;
-}
-
-.icon-action[title='View Profile'] {
-	color: #18c9c9;
-}
-
-.icon-action[title='View Profile']:hover {
-	color: #0e8f8f;
+	color: var(--color-success-7);
 }
 
 .friend-list-tile__avatar {
@@ -51,6 +43,7 @@
 	width: 50px; /* Adjust the size as needed */
 	height: 50px; /* Adjust the size as needed */
 	border-radius: 50%;
+	cursor: pointer;
 }
 
 .friend-list-tile__info {
@@ -59,7 +52,7 @@
 }
 
 .friend-list-tile__nickname {
-	color: #18c9c9;
+	color: var(--color-brand-6);
 	font-weight: bold;
 }
 

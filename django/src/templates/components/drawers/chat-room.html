@@ -11,16 +11,23 @@
 {% endblock %}
 
 {% block drawerContent %}
-{% comment %} <div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="8888" style="display:none;"></div> {% endcomment %}
-<div id="chat-config" data-nickname="{{ user.profile.nickname }}" data-room="{{ chat.id }}" style="display:none;"></div>
+{{ room.id|json_script:"room_id" }}
 
 <div class="chat-container">
-    <div class="chat-messages" id="chat-messages">
+    <div class="chat-messages" id="chat-messages" data-room="public_room">
+        <div id="loading-spinner" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <!-- Messages will be appended here dynamically -->
     </div>
     <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Type a message..." />
-        <button id="send-button" onclick="sendMessage()">
+        <div class="pong-invite-icon" id="pong-invite-icon">
+            <img src="{% static 'images/icons/pong-invite.svg' %}" alt="invite" />
+        </div>
+        <input type="text" id="message-input" data-room="public_room" placeholder="Type a message...">
+        <button id="send-button">
 			<img src="{% static 'images/icons/send.svg' %}" alt="Send" />
 		</button>
     </div>
@@ -28,5 +35,4 @@
 {% endblock %}
 
 {% block drawerScripts %}
-	<script src="{% static 'js/chat/chat.js' %}"></script>
 {% endblock %}

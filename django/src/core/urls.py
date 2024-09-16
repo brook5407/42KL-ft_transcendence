@@ -32,6 +32,7 @@ urlpatterns = [
     path('', include('profiles.urls')),
     path('', include('base.urls')),
     path('', include('friend.urls')),
+    path('', include('game_history.urls')),
 ]
 
 if settings.DEBUG == True:

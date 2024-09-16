@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'channels',
+    'django_extensions',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
     'pong',
     'friend',
     'profiles',
+    'game_history',
 ]
 
 MIDDLEWARE = [
@@ -217,7 +219,7 @@ SITE_ID = 1
 
 ACCOUNT_ADAPTER = 'drf_auth.views.CustomAccountAdapter'
 
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -278,6 +280,8 @@ DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 
 # to set the OTP function
 OTP_AUTH = os.environ.get('OTP_AUTH', 'false').lower() == 'true'
+AUTH_USER_MODEL = 'base.CustomUser'
+
 
 CHANNEL_LAYERS = {
     "default": {

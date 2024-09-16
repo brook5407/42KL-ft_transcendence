@@ -40,7 +40,7 @@
 		if (value === '') {
 			return;
 		}
-		ajax_with_auth('/api/friends/search_friend/', {
+		ajaxWithAuth('/api/friends/search_friend/', {
 			method: 'GET',
 			params: {
 				username: value
@@ -58,12 +58,16 @@
 			appendSearchFriendResult(data);
 		}).catch((error) => {
 			const searchFriendResult = document.getElementById('search-friend-result');
-			searchFriendResult.innerHTML = error.toString();
+			searchFriendResult.innerHTML = `
+				<div class="error-search-result">
+					${error.toString()}
+				</div>
+			`
 		});
 	}
 
 	function sendFriendRequest(receiverUsername) {
-		ajax_with_auth('/api/friend-requests/', {
+		ajaxWithAuth('/api/friend-requests/', {
 			method: 'POST',
 			body: JSON.stringify({
 				receiver: receiverUsername

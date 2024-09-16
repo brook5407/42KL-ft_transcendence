@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load custom_filters %}
 
 <html lang="en">
   <head>
@@ -11,23 +12,18 @@
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/global.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/not-found.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/snow.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/modal.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/message.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/toast.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/components.css' %}" />
-
+    <link rel="stylesheet" href="{% static 'styles/loading.css' %}" />
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
     <title>AIsPong</title>
   </head>
 
   <body>
-    {% for message in messages %}
-      <input type="hidden" class="dj-flash-message" value="{{ message.message }}" data-message-type="{{ message.tags }}">
-    {% endfor %}
-
-    {% if modals_and_drawers %}
-      {% for item in modals_and_drawers %}
-        <input type="hidden" class="auto-open" value="{{ item.type }}" data-url="{{ item.url }}" data-name="{{ item.name }}" data-params="{{ item.data|default:''|safe }}" />
-      {% endfor %}
-    {% endif %}
+    {{ messages|serialize_flash_messages|json_script:"flash-messages" }}
 
     <div id="message-container"></div>
 
@@ -37,13 +33,23 @@
 
     <div id="drawer-container"></div>
 
+    <div id="toast-container"></div>
+
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     <script type="module" src="{% static 'js/script.js' %}"></script>
+    <script type="module" src="{% static 'js/utils.js' %}"></script>
+    <script type="module" src="{% static 'js/oauth.js' %}"></script>
     <script type="module" src="{% static 'js/message.js' %}"></script>
+    <script type="module" src="{% static 'js/toast.js' %}"></script>
+    <script type="module" src="{% static 'js/websocket.js' %}"></script>
+    <script type="module" src="{% static 'js/chat/chat.js' %}"></script>
     <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
     <script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
     <script type="module" src="{% static 'js/spa/form.js' %}"></script>
     <script type="module" src="{% static 'js/notification.js' %}"></script>
+    <script type="module" src="{% static 'js/loading.js' %}"></script>
+    <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
+    <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
     <script type="module" src="{% static 'js/friend/fr-live-update.js' %}"></script>
     {% if store_reset_params %}
     <script>

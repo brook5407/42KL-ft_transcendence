@@ -1,25 +1,98 @@
 @import url('https://fonts.googleapis.com/css2?family=Denk+One&family=Pacifico&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 
 :root {
-  --main-bg-color: #0C2B2B;
-  --logo-text-color: #BEFAFA;
+	--main-bg-color: var(--color-brand-9);
+	--logo-text-color: var(--color-brand-2);
 
-  --font-logo: 'Pacifico', cursive;
-  --font-primary: 'Ubuntu', sans-serif;
-  --font-secondary: 'Denk One', sans-serif;
+	--font-logo: 'Pacifico', cursive;
+	--font-primary: 'Ubuntu', sans-serif;
+	--font-secondary: 'Denk One', sans-serif;
 
-  --drawer-bg-color: #1A9EC7;
+	--drawer-bg-color: var(--color-brand-6);
 
-  --drawer-width: 450px;
-  --drawer-height: 80%;
+	--drawer-width: 450px;
+	--drawer-height: 80%;
+
+	--color-brand-1: #e5fcfc;
+	--color-brand-2: #befafa;
+	--color-brand-3: #81f7f7;
+	--color-brand-4: #42eded;
+	--color-brand-5: #1edddd;
+	--color-brand-6: #18c9c9;
+	--color-brand-7: #0e8f8f;
+	--color-brand-8: #086666;
+	--color-brand-9: #044141;
+
+	--color-text-1: #e4eded;
+	--color-text-2: #d5dfdf;
+	--color-text-3: #adc1c1;
+	--color-text-4: #869d9d;
+	--color-text-5: #657e7e;
+	--color-text-6: #446464;
+	--color-text-7: #1e4141;
+	--color-text-8: #0c2b2b;
+	--color-text-9: #010c0c;
+
+	--color-success-1: #e7fde9;
+	--color-success-2: #b6fabd;
+	--color-success-3: #80f28c;
+	--color-success-4: #48f059;
+	--color-success-5: #22e936;
+	--color-success-6: #0ccc1f;
+	--color-success-7: #0a8f17;
+	--color-success-8: #046b0f;
+	--color-success-9: #033909;
+
+	--color-warning-1: #faf5e3;
+	--color-warning-2: #faebb6;
+	--color-warning-3: #f5db82;
+	--color-warning-4: #f0cc4f;
+	--color-warning-5: #eec120;
+	--color-warning-6: #cca20c;
+	--color-warning-7: #8b6e06;
+	--color-warning-8: #665004;
+	--color-warning-9: #3e3002;
+
+	--color-error-1: #fce6e6;
+	--color-error-2: #fabbbb;
+	--color-error-3: #f88181;
+	--color-error-4: #ec4242;
+	--color-error-5: #e32121;
+	--color-error-6: #c71a1a;
+	--color-error-7: #990c0c;
+	--color-error-8: #710707;
+	--color-error-9: #420202;
+
+	--color-info-1: #e5f7fc;
+	--color-info-2: #c0edfa;
+	--color-info-3: #83def7;
+	--color-info-4: #4fcdf0;
+	--color-info-5: #1fb5e4;
+	--color-info-6: #1a9ec7;
+	--color-info-7: #0e7899;
+	--color-info-8: #06536b;
+	--color-info-9: #022f3e;
 }
 
 body {
-  background-color: var(--main-bg-color);
-  font-family: var(--font-primary);
+	background-color: var(--main-bg-color);
+	font-family: var(--font-primary);
+	overflow: hidden;
 }
 
 h1 {
-  font-family: var(--font-logo);
-  color: var(--logo-text-color);
+	font-family: var(--font-logo);
+	color: var(--logo-text-color);
+}
+
+.success {
+	background-color: var(--color-success-4);
+}
+
+.error {
+	background-color: var(--color-error-4);
+}
+
+.info {
+	background-color: var(--color-info-4);
 }

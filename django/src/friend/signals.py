@@ -5,13 +5,13 @@ from .models import FriendRequest, UserRelation
 @receiver(post_save, sender=FriendRequest)
 def create_user_relation(sender, instance, **kwargs):
     if instance.status == FriendRequest.Status.ACCEPTED:
-        UserRelation.objects.get_or_create(
+        UserRelation.objects.create(
             user=instance.sender,
-            friend=instance.receiver
+            friend=instance.receiver,
         )
-        UserRelation.objects.get_or_create(
+        UserRelation.objects.create(
             user=instance.receiver,
-            friend=instance.sender
+            friend=instance.sender,
         )
         
 @receiver(post_save, sender=FriendRequest)
