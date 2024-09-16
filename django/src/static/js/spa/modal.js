@@ -4,6 +4,7 @@ import { SignUp } from './components/modals/SignUp.js';
 import { Oauth42 } from './components/modals/Oauth42.js';
 import { ForgetPassword } from './components/modals/forget-password.js';
 import { ResetPassword } from './components/modals/reset-password.js';
+import { ChangePassword } from './components/modals/ChangePassword.js';
 import { checkNearestMatch } from './utils.js';
 
 let currentModal = null;
@@ -14,6 +15,7 @@ export const MODALS = {
 	oauth42: Oauth42,
 	forgetpassword: ForgetPassword,
 	resetpassword: ResetPassword,
+	changepassword: ChangePassword,
 };
 
 // open modal buttons handler

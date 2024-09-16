@@ -17,12 +17,23 @@
                 <p class="settings-item">Language</p>
             </div>
             <div class="col-auto">
-                <select class="form-select form-select-sm" aria-label="Language select">
-                    <option selected>One</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>
+                <form id="language-switcher" action="{% url 'set_language' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    <input id="language-input" type="hidden" name="language" value="{{ LANGUAGE_CODE }}">
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        <a href="#" onclick="document.getElementById('language-input').value='{{language.code}}'; document.getElementById('language-switcher').submit();">
+                            {% if language.code == LANGUAGE_CODE %}
+                                <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto;">
+                            {% else %}
+                                <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto; filter: grayscale(100%) brightness(50%);">
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </form>
             </div>
         </div>
         <div class="settings-row row align-items-center">
@@ -30,11 +41,11 @@
                 <p class="settings-item">Password</p>
             </div>
             <div class="col-auto">
-                <button id="change-password-btn" class="btn btn-primary btn-sm" data-drawer="profile-edit" data-drawer-url="">Change Password</button>
+                <button id="change-password-btn" class="btn btn-primary btn-sm" data-modal="changepassword" data-modal-url="{% url 'change_password_modal' %}">Change Password</button>
             </div>
         </div>
         <div class="settings-row row align-items-center">
-            <div class="col">
+            <div class="col">   
                 <p class="settings-item">Snow Fall Intensity</p>
             </div>
             <div class="col-auto slider-container">
