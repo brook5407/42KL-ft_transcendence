@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block drawerHeader %}
-	<h2>{{ friend_profile.nickname }} Profile</h2>
+	<h2>{{ friend_profile.nickname }} {% trans 'Profile' %}</h2>
 {% endblock %}
 
 {% block drawerContent %}
@@ -28,7 +28,13 @@
 			<p class="">Wins: {{ wins }}, Losses: {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="profile-bio">{{ user.profile.bio|default:"This user didn't say anything" }}</p>
+            <p class="profile-bio">
+				{% if friend_profile.bio %}
+					{{ friend_profile.bio }}
+				{% else %}
+					{% trans "This user didn't say anything" %}
+				{% endif %}
+			</p>
 		</div>
 
 		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'game-history.drawer' %}">See Match History</button>

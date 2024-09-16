@@ -1,34 +1,35 @@
 {% extends "components/modals/modal-center.html" %}
+{% load i18n %}
 
 {% block modalHeader %}
-	<h2>Sign Up</h2>
+	<h2>{% trans 'Sign Up' %}</h2>
 {% endblock %}
 
 {% block modalAuthAltText %}
-	Already gave an account? Login <a data-modal="signin" id="signinLink" data-modal-url={% url 'base.signin-modal'  %}>here</a>
+	{% trans 'Already gave an account? Login ' %} <a data-modal="signin" id="signinLink" data-modal-url={% url 'base.signin-modal'  %}>{% trans 'here' %}</a>
 {% endblock %}
 
 {% block modalContent %}
 	<form id="signup-form" class="spa-form" action="{% url 'account_signup' %}">
 		{% csrf_token %}
 		<div class="input-group">
-			<label for="email">Email</label>
+			<label for="email">{% trans 'Email' %}</label>
 			<input type="email" id="email" name="email" class="form-control" required />
 		</div>
 		<div class="input-group">
-			<label for="username">Username</label>
+			<label for="username">{% trans 'Username' %}</label>
 			<input type="text" id="username" name="username" class="form-control" required />
 		</div>
 		<div class="input-group">
-			<label for="password">Password</label>
+			<label for="password">{% trans 'Password' %}</label>
 			<input type="password" id="password" name="password1" class="form-control" required />
 		</div>
 		<div class="input-group">
-			<label for="confirm-password">Confirm Password</label>
+			<label for="confirm-password">{% trans 'Confirm Password' %}</label>
 			<input type="password" id="confirm-password" name="password2" class="form-control" required />
 		</div>
 		<div class="center">
-			<button type="submit" class="submit-button ">Submit</button>
+			<button type="submit" class="submit-button ">{% trans 'Submit' %}</button>
 		</div>
 	</form>
 {% endblock %}
