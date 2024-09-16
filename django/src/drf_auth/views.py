@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-# import username 
+# import username
 # from django.contrib.auth import get_user_model
 
 from allauth.account.models import EmailAddress
@@ -19,6 +19,7 @@ from .utils import send_otp_email
 from .models import OnetimePassword
 from dj_rest_auth.views import LoginView
 from dj_rest_auth.app_settings import api_settings
+from django.utils.translation import gettext_lazy as _
 from utils.request_helpers import is_ajax_request
 from rest_framework.decorators import api_view
 from django.http import HttpResponseBadRequest
@@ -34,7 +35,7 @@ class EmailVerificationView(View):
     def get(self, request, *args, **kwargs):
         key = kwargs.get('key')
         if not key:
-            messages.error(request, 'Verification key is missing')
+            messages.error(request, _('Verification key is missing'))
             return redirect(settings.ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL)
         
         # You can render your index.html template here if needed
@@ -44,7 +45,7 @@ class EmailVerificationView(View):
     def post(self, request, *args, **kwargs):
         key = kwargs.get('key')
         if not key:
-            messages.error(request, 'Verification key is missing')
+            messages.error(request, _('Verification key is missing'))
             return redirect(settings.ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL)
 
         # Construct the URL for the VerifyEmailView
@@ -63,10 +64,10 @@ class EmailVerificationView(View):
 
         if response.status_code == 200:
             # Successful verification
-            messages.success(request, 'Your email has been successfully verified.')
+            messages.success(request, _('Your email has been successfully verified.'))
             return redirect(settings.ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL)
         else:
-            messages.error(request, 'There was an error verifying your email.')
+            messages.error(request, _('There was an error verifying your email.'))
             return redirect(settings.ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL)
             # Handle error cases
 
@@ -86,15 +87,15 @@ class SendOTPView(GenericAPIView):
                 if email_address.verified:
                     send_otp_email(user.email)
                     return Response({
-                        'non_field_errors': ['OTP sent. Please check your email.'],
+                        'non_field_errors': [_('OTP sent. Please check your email.')],
                     }, status=status.HTTP_201_CREATED)
                 else:
                     return Response({
-                        'non_field_errors': ['User email is not verified.']
+                        'non_field_errors': [_('User email is not verified.')]
                     }, status=status.HTTP_400_BAD_REQUEST)
             except user.DoesNotExist:
                 return Response({
-                    'non_field_errors': ['User does not exist.']
+                    'non_field_errors': [_('User does not exist.')]
                 }, status=status.HTTP_400_BAD_REQUEST)
         return Response(self.serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -117,16 +118,16 @@ class LoginViewCustom(LoginView):
             otp_input = data['otp'].strip()
             if otp.code != otp_input:
                 return Response({
-                    'non_field_errors': ['OTP is invalid']
+                    'non_field_errors': [_('OTP is invalid')]
                 }, status=status.HTTP_400_BAD_REQUEST)
             elif otp.code == otp_input:
                 if otp.check_expired():
                     return Response({
-                        'non_field_errors': ['OTP has expired, Please request a new one']
+                        'non_field_errors': [_('OTP has expired, Please request a new one')]
                     }, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({
-                    'non_field_errors': ['OTP is invalid']
+                    'non_field_errors': [_('OTP is invalid')]
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             otp.delete()
@@ -155,12 +156,12 @@ def ResetPasswordPage(request):
             'token': token,
             'store_reset_params': True
         })
-    
+
     return render(request, 'index.html', status=404)
 
 @api_view(['GET'])
 def reset_password_modal(request):
     if is_ajax_request(request):
-        
+
         return render(request, 'components/modals/reset-password.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")

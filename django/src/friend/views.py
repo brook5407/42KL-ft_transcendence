@@ -13,7 +13,7 @@ from .models import UserRelation, FriendRequest
 from .serializers import UserRelationSerializer, FriendRequestSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
-
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -28,40 +28,40 @@ class UserRelationViewSet(viewsets.ModelViewSet):
     def block(self, request):
         friend_id = request.data.get('friend_id')
         if not friend_id:
-            return Response({'error': 'friend_id is required'}, status=400)
+            return Response({'error': _('friend_id is required')}, status=400)
         user_relation = get_object_or_404(UserRelation, user=request.user, friend=friend_id)
         user_relation.block()
-        return Response({'status': 'friend blocked'})
+        return Response({'status': _('friend blocked')})
 
     @action(detail=False, methods=['post'])
     def unblock(self, request):
         friend_id = request.data.get('friend_id')
         if not friend_id:
-            return Response({'error': 'friend_id is required'}, status=400)
+            return Response({'error': _('friend_id is required')}, status=400)
         user_relation = get_object_or_404(UserRelation, user=request.user, friend=friend_id)
         user_relation.unblock()
-        return Response({'status': 'friend unblocked'})
+        return Response({'status': _('friend unblocked')})
 
     @action(detail=False, methods=['delete'])
     def delete(self, request):
         friend_id = request.query_params.get('friend_id')
         if not friend_id:
-            return Response({'error': 'friend_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': _('friend_id is required')}, status=status.HTTP_400_BAD_REQUEST)
         
         user_relation = get_object_or_404(UserRelation, user=request.user, friend=friend_id)
         user_relation.delete_friend()
-        return Response({'status': 'friend deleted'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'status': _('friend deleted')}, status=status.HTTP_204_NO_CONTENT)
     
     @action(detail=False, methods=['get'])
     def search_friend(self, request):
         username = request.query_params.get('username')
         if not username:
-            return Response({'status': 'username query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': _('username query parameter is required')}, status=status.HTTP_400_BAD_REQUEST)
         user = get_object_or_404(User, username=username)
         if user == request.user:
-            return Response({'status': 'cannot add yourself as a friend'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': _('cannot add yourself as a friend')}, status=status.HTTP_400_BAD_REQUEST)
         elif UserRelation.objects.filter(user=request.user, friend=user).exists():
-            return Response({'status': 'already friends'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': _('already friends')}, status=status.HTTP_400_BAD_REQUEST)
         profile = get_object_or_404(Profile, user=user)
         serializer = ProfileSerializer(profile)
         response_data = serializer.data
@@ -82,17 +82,17 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
     def accept(self, request, pk=None):
         friend_request = get_object_or_404(FriendRequest, pk=pk)
         if friend_request.receiver != request.user:
-            return Response({'status': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'status': _('not authorized')}, status=status.HTTP_403_FORBIDDEN)
         friend_request.accept(request.user)
-        return Response({'status': 'friend request accepted'})
+        return Response({'status': _('friend request accepted')})
 
     @action(detail=True, methods=['post'])
     def reject(self, request, pk=None, *args, **kwargs):
         friend_request = get_object_or_404(FriendRequest, pk=pk)
         if friend_request.receiver != request.user:
-            return Response({'status': 'not authorized'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'status': _('not authorized')}, status=status.HTTP_403_FORBIDDEN)
         friend_request.reject(request.user)
-        return Response({'status': 'friend request rejected'}, status=status.HTTP_200_OK)
+        return Response({'status': _('friend request rejected')}, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         sender = request.user
@@ -100,14 +100,14 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
         receiver = get_object_or_404(User, username=receiver_username)
         
         if FriendRequest.objects.filter(sender=sender, receiver=receiver, status=FriendRequest.Status.PENDING).exists():
-            return Response({'status': 'friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': _('friend request already sent')}, status=status.HTTP_400_BAD_REQUEST)
 
         friend_request = FriendRequest.objects.create(
             sender=sender,
             receiver=receiver,
         )
         
-        return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
+        return Response({'status': _('friend request sent')}, status=status.HTTP_201_CREATED)
     
     @action(detail=False, methods=['get'])
     def to_me(self, request):
@@ -159,7 +159,7 @@ def friend_profile_drawer(request):
         'wins': wins,
         'losses': losses
     })
-    
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def friend_chat_drawer(request):
