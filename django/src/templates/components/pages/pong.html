@@ -4,14 +4,17 @@
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
 <div id="gameContainer">
-	<div id="scoreBoard">
+	{% comment %} <div id="scoreBoard">
 		<span id="score1">0</span> : <span id="score2">0</span>
-	</div>
+	</div> {% endcomment %}
 	<div id="canvasContainer">
+		<div id="score1" class="score left-score">0</div>
 		<canvas id="gameCanvas"></canvas>
+		<button id="fullscreenButton">Go Fullscreen</button>
 		<div id="overlay">
 			<div id="countdownText">3</div>
 		</div>
+		<div id="score2" class="score right-score">0</div>
 	</div>
 	<div id="matchmaking">Searching for opponent...</div>
 	<div id="roomCode">Room Code</div>

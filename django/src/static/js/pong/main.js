@@ -4,8 +4,10 @@ import { Table } from './classes/table.js';
 
 // Client-side game setup and rendering
 const gameContainer = document.getElementById('gameContainer');
-const scoreBoard = document.getElementById('scoreBoard');
+const score1 = document.getElementById('score1');
+const score2 = document.getElementById('score2');
 const gameCanvas = document.getElementById('gameCanvas');
+const fullscreenButton = document.getElementById('fullscreenButton');
 const canvasContainer = document.getElementById('canvasContainer');
 const overlay = document.getElementById('overlay');
 const countdownText = document.getElementById('countdownText');
@@ -59,7 +61,8 @@ socket.onmessage = function(e) {
         table = new Table(gameCanvas, paddle1, paddle2, ball);
         matchmaking.style.display = 'none';
         gameCanvas.style.display = 'block';
-        scoreBoard.style.display = 'block';
+        score1.style.display = 'block';
+        score2.style.display = 'block';
         if (assignedPaddle === 'paddle1') {
             paddle1.color = "lightgreen";
         } else if (assignedPaddle === 'paddle2') {
@@ -90,8 +93,6 @@ socket.onmessage = function(e) {
         paddle2.y = data.paddle2.y;
         ball.x = data.ball.x;
         ball.y = data.ball.y;
-        console.log("x: " + ball.x);
-        console.log("y: " + ball.y);
         document.getElementById('score1').innerText = data.score1;
         document.getElementById('score2').innerText = data.score2;
 
@@ -127,6 +128,28 @@ document.addEventListener('keyup', (event) => {
     }
 });
 
+fullscreenButton.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      // Request fullscreen for the canvas
+      canvas.requestFullscreen().catch(err => {
+        alert(`Error attempting to enable fullscreen mode: ${err.message}`);
+      });
+    } else {
+      // Exit fullscreen if already in fullscreen mode
+      document.exitFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    } else {
+      // Revert canvas size after exiting fullscreen
+      canvas.width = gameCanvas.width;
+      canvas.height = gameCanvas.height;
+    }
+  });
 
 
 // let form = document.getElementById('form')

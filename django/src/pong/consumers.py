@@ -86,15 +86,18 @@ class PongConsumer(AsyncWebsocketConsumer):
         MatchManager.remove_player(self.room_name, self.channel_name)
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
-        if self.match['player1'] == None or self.match['player1'] == None:
-            # If there are fewer than 2 players, end the game
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'end_game',
-                    'message': 'A Player has disconnected, Game over!',
-                }
-            )
+        # If a player disconnects
+        # if self.match['player1'] == None:
+        #     winner = self.match['player2'].id
+        # elif self.match['player2'] == None:
+        #     winner = self.match['player1'].id
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'end_game',
+        #         'message': f'A Player has disconnected, {winner} wins! Game over!',
+        #     }
+        # )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -137,9 +140,10 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def pve_mode(self):
         print("ENTERED PVE MODE FUNCTION")
         await self.send(text_data=json.dumps({
-        'type': 'player_assignment',
-        'player': self.player,
+            'type': 'player_assignment',
+            'player': self.player,
         }))
+        self.match['player2'] = "ai"
         await self.channel_layer.group_send(
         self.room_group_name,
         {
@@ -195,6 +199,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 self.match['score1'] += 1
                 self.reset_ball()
 
+            # Collision for paddle and top and bottom of game canvas
             self.match['ball'].check_collision(self.match['paddle1'], self.match['paddle2'])
 
             # Broadcast game state to clients
@@ -209,6 +214,18 @@ class PongConsumer(AsyncWebsocketConsumer):
                     'score2': self.match['score2'],
                 }
             )
+
+            # Check if a player disconnected
+            if self.match['player1'] == None or self.match['player2'] == None:
+                winner = 'player1' if self.match['player2'] == None else 'player2'
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'end_game',
+                        'message': f'{winner} wins! Because other player disconnected!',
+                    }
+                )
+                break  # Exit the game loop
 
             # End the game if a player reaches a score of 5
             if self.match['score1'] >= 5 or self.match['score2'] >= 5:
@@ -248,7 +265,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             pass  # Room already deleted or not found
 
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        # await self.close()  # Close the WebSocket connection
+        await self.close()  # Close the WebSocket connection
 
     def reset_ball(self):
         # Reset the ball to the center of the field
@@ -413,26 +430,9 @@ class Ball:
         self.x += self.speed * self.x_direction
         self.y += self.speed * self.y_direction
 
-    # def check_collision(self, paddle1, paddle2):
-    #     # Y-axis collision with the top and bottom of the game area
-    #     if self.y <= 0 or self.y >= gameHeight - self.radius:
-    #         self.y_direction *= -1
-
-    #     # Paddle collision
-    #     if (self.x <= paddle1.x + paddle1.width and 
-    #         paddle1.y <= self.y <= paddle1.y + paddle1.height):
-    #         self.x_direction = 1
-
-    #     if (self.x >= paddle2.x - self.radius and 
-    #         paddle2.y <= self.y <= paddle2.y + paddle2.height):
-    #         self.x_direction = -1
-
-    #         # Optionally, adjust speed slightly, but cap it
-    #         self.speed = min(self.speed + 1, 15)
-
     def check_collision(self, paddle1, paddle2):
         # Y-axis collision with the top and bottom of the game area
-        if (self.y - self.radius) <= 0 or (self.y + self.radius) >= gameHeight:
+        if (self.y <= 0 and self.y_direction < 0) or (self.y >= gameHeight and self.y_direction > 0):
             self.y_direction *= -1
 
         # Paddle 1 collision (left paddle)
