@@ -1,64 +1,56 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from django.http import JsonResponse
+from django.shortcuts import render
 from utils.request_helpers import is_ajax_request
-from django.contrib.auth.decorators import login_required
-import uuid, secrets, string
-from .models import Player, Tournament, Match, GameRoom
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from django.http import HttpResponseBadRequest
+from rest_framework import viewsets
+from .models import Player, TournamentRoom, Match
+from .serializers import TournamentRoomSerializer
 
-def generate_room_name():
-    length = 5
-    alphabet = string.ascii_uppercase + string.digits
-    return ''.join(secrets.choice(alphabet) for i in range(length))
 
-@login_required
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def pvp_view(request):
-    available_room = GameRoom.objects.filter(is_full=False).first()
-
-    if available_room:
-        room_name = available_room.room_name
-        available_room.is_full = True
-        available_room.save()
-    else:
-        room_name = generate_room_name()
-        GameRoom.objects.create(room_name=room_name)
+    # WXR TODO: Implement the ELO rating system for matchmaking
 
     if is_ajax_request(request):
-        return render(request, 'components/pages/pong.html', {
-            'room_name': room_name,
-            'game_mode': "pvp"
-            })
-    return render(request, 'index.html')
+        return render(request, "components/pages/pong.html", {"game_mode": "pvp"})
+    return render(request, "index.html")
 
-@login_required
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def pve_view(request):
-    room_name = generate_room_name()
     if is_ajax_request(request):
-        return render(request, 'components/pages/pong.html', {
-            'room_name': room_name,
-            'game_mode': "pve"
-            })
-    return render(request, 'index.html')
+        return render(request, "components/pages/pong.html", {"game_mode": "pve"})
+    return render(request, "index.html")
 
-@login_required
-def tournament_view(request):
-    if is_ajax_request(request):
-        return render(request, 'components/pages/tournament_lobby.html')
-    return render(request, 'index.html')
 
-@login_required
-def tournament_create_view(request):
-    room_name = generate_room_name()
-    redirect_url = reverse('pong.tournament_join', kwargs={'room_name': room_name})
-    print(f"Generated room name: {room_name}, Redirect URL: {redirect_url}")  # Debug print
-    return JsonResponse({'redirect_url': redirect_url})
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def tournament_list_drawer(request):
+    if not is_ajax_request(request):
+        return HttpResponseBadRequest(
+            "Error: This endpoint only accepts AJAX requests."
+        )
+    return render(request, "components/drawers/pong/tournament/list.html")
 
-@login_required
-def tournament_join_view(request, room_name):
-    print("tournament join view start")
-    if is_ajax_request(request):
-        return render(request, 'components/pages/tournament.html', {
-            'room_name': room_name,
-            'game_mode': "tournament"
-            })
-    return render(request, 'index.html')
+
+class TournamentRoomViewSet(viewsets.ModelViewSet):
+    queryset = TournamentRoom.objects.all()
+    serializer_class = TournamentRoomSerializer
+
+    # WXR TODO: shuffle 5 random tournament rooms
+    # WXR TODO: get tournament room details
+    # WXR TODO: create tournament room
+    # WXR TODO: join tournament room
+    # WXR TODO: leave tournament room, destroy if is owner
+    # WXR TODO: start tournament
+
+
+class MatchViewSet(viewsets.ModelViewSet):
+    queryset = Match.objects.all()
+    serializer_class = MatchSerializer
+
+    # WXR TODO: matchmake (PVP)
+    # WXR TODO: PVE

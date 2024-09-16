@@ -1,14 +1,40 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/pong/tournament-list.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>Tournaments</h2>
+{% endblock %}
+
+{% block drawerContent %}
+<div id="tournament-list"></div>
+<button class="btn btn-primary">Shuffle Rooms</button>
+<div class="drawer-bottom-right-icon">
+	<img src="{% static 'images/icons/add.svg' %}" alt="Create tournament"
+		data-drawer="tournament-create"
+		data-bs-toggle="tooltip" title="Create Tournament"
+		/>
+</div>
+{% endblock %}
+
+{% comment %}
 - A drawer displaying a list of tournaments
 - A user can click join on a tournament, or create a new tournament
-- A tournament can have 4 players
+- A tournament can have either 4 or 8 players
 - The tournament room owner can click start when all players are ready
 - The tournament room owner can kick players
 
 - The players playing in the tournament will play pong normally, others will spectate
 	- Spectators won't be able to do any actions
-- The order will be: 1 vs 2, 3 vs 4, winners vs winners, losers vs losers. Finally decide first second and third place
+	- if the spectator quits and didn't reconnect in 10 seconds, the spectator will be kicked
+- The order will be: 1 vs 2, 3 vs 4, winners vs winners, losers vs losers. Finally decide the winner
 - Handle disconnections and reconnections
-	- If a player disconnects, the game will pause and wait for the player to reconnect for 10 seconds
-	- If the player does not reconnect, the player will be disqualified
-	- If the player reconnects, the game will resume
-- The tournament will be deleted after it is finished
+	- If a player disconnects, the player will have 10 seconds to reconnect, otherwise the player will be disqualified
+{% endcomment %}
+
+{% block drawerScripts %}
+{% endblock %}

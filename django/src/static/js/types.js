@@ -61,3 +61,53 @@ const WSChatMessageErrorType = {
  * @property {boolean} is_public - is the room public.
  * @property {boolean} is_group_chat - is the room a group chat.
  */
+
+/**
+ * @typedef {Object} TournamentRoom
+ * @property {string} id - The ID of the room.
+ * @property {string} name - The name of the room.
+ * @property {string} description - The description of the room.
+ * @property {Player[]} players - The players of the room.
+ * @property {Player} [winner] - The winner of the room (optional).
+ * @property {TournamentMatch[]} [matches] - The matches of the room (optional).
+ * @property {TournamentStatus} status - The status of the room.
+ * @property {string} created_at - The created time of the room.
+ * @property {string} ended_at - The ended time of the room.
+ */
+
+/**
+ * @typedef {Object} Player
+ * @property {string} id
+ * @property {User} user
+ * @property {number} wins
+ * @property {number} loses
+ * @property {number} elo
+ */
+
+/**
+ * @typedef {Object} TournamentMatch
+ * @property {string} id
+ * @property {TournamentPlayer} winner
+ * @property {TournamentPlayer} loser
+ * @property {number} winner_score
+ * @property {number} loser_score
+ * @property {TournamentRoom} tournament
+ * @property {string} created_at
+ */
+
+/**
+ * @typedef {Object} TournamentPlayer
+ * @property {string} id
+ * @property {Player} player
+ * @property {number} position
+ * @property {TournamentRoom} tournament
+ */
+
+/**
+ * @enum {string}
+ */
+const TournamentStatus = {
+	WAITING: 'W',
+	ONGOING: 'O',
+	COMPLETED: 'C',
+};
