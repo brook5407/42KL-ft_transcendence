@@ -166,8 +166,7 @@ export class ChatRoomDrawer extends GenericDrawer {
 	formatTimestamp(timestamp) {
 		const now = new Date();
 		const messageDate = new Date(timestamp);
-		const diffTime = now - messageDate;
-		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+		const diffDays = now.getDate() - messageDate.getDate();
 
 		if (diffDays === 0) {
 			return `Today, ${messageDate.toLocaleTimeString('en-US', {
