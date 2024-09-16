@@ -1,13 +1,13 @@
 /**
  * @typedef {Object} WSChatMessage
- * @property {WSChatMessageErrorType} [error] - The error type (optional).
- * @property {string} [type] - The message type, group or private (optional).
- * @property {string} message - The message content.
- * @property {Profile} sender - The sender profile of the message.
- * @property {string} room_id - The ID of the room.
- * @property {string} room_name - The name of the room.
- * @property {string} [cover_image] - The cover image of the room (optional).
- * @property {string} created_at - The created time of the message.
+ * @property {WSChatMessageErrorType} [error]
+ * @property {string} [type]
+ * @property {string} message
+ * @property {Profile} sender
+ * @property {string} room_id
+ * @property {string} room_name
+ * @property {string} [cover_image]
+ * @property {string} created_at
  */
 
 /**
@@ -22,42 +22,93 @@ const WSChatMessageErrorType = {
 
 /**
  * @typedef {Object} Profile
- * @property {string} username - The username of the profile.
- * @property {string} nickname - The nickname of the profile.
- * @property {string} avatar - The avatar url of the profile.
- * @property {User} user - The user of the profile.
+ * @property {string} username
+ * @property {string} nickname
+ * @property {string} avatar
+ * @property {User} user
  */
 
 /**
  * @typedef {Object} User
- * @property {string} id - The id of the user.
- * @property {string} username - The username of the user.
- * @property {string} email - The email of the user.
+ * @property {string} id
+ * @property {string} username
+ * @property {string} email
  */
 
 /**
  * @typedef {Object} ActiveChatRoom
- * @property {string} id - The ID of the active chat room.
- * @property {User} user - The user of the active chat room.
- * @property {ChatRoom} room - The ID of the room.
- * @property {Message} [last_message] - The last message of the active chat room.
- * @property {number} unread_count - The unread message count of the active chat room.
+ * @property {string} id
+ * @property {User} user
+ * @property {ChatRoom} room
+ * @property {Message} [last_message]
+ * @property {number} unread_count
  */
 
 /**
  * @typedef {Object} Message
- * @property {string} id - The ID of the message.
- * @property {Profile} sender - The sender profile of the message.
- * @property {string} message - The message content.
- * @property {string} created_at - The created time of the message.
- * @property {ChatRoom} room - The room of the message.
+ * @property {string} id
+ * @property {Profile} sender
+ * @property {string} message
+ * @property {string} created_at
+ * @property {ChatRoom} room
  */
 
 /**
  * @typedef {Object} ChatRoom
- * @property {string} id - The ID of the room.
- * @property {string} name - The name of the room.
- * @property {string} cover_image - The cover image of the room.
- * @property {boolean} is_public - is the room public.
- * @property {boolean} is_group_chat - is the room a group chat.
+ * @property {string} id
+ * @property {string} name
+ * @property {string} cover_image
+ * @property {boolean} is_public
+ * @property {boolean} is_group_chat
  */
+
+/**
+ * @typedef {Object} TournamentRoom
+ * @property {string} id
+ * @property {string} name
+ * @property {string} description
+ * @property {Player} owner
+ * @property {Player[]} players
+ * @property {Player} [winner]
+ * @property {TournamentMatch[]} [matches]
+ * @property {TournamentStatus} status
+ * @property {string} created_at
+ * @property {string} ended_at
+ */
+
+/**
+ * @typedef {Object} Player
+ * @property {string} id
+ * @property {User} user
+ * @property {number} wins
+ * @property {number} loses
+ * @property {number} elo
+ */
+
+/**
+ * @typedef {Object} TournamentMatch
+ * @property {string} id
+ * @property {TournamentPlayer} winner
+ * @property {TournamentPlayer} loser
+ * @property {number} winner_score
+ * @property {number} loser_score
+ * @property {TournamentRoom} tournament
+ * @property {string} created_at
+ */
+
+/**
+ * @typedef {Object} TournamentPlayer
+ * @property {string} id
+ * @property {Player} player
+ * @property {number} position
+ * @property {TournamentRoom} tournament
+ */
+
+/**
+ * @enum {string}
+ */
+const TournamentStatus = {
+	WAITING: 'W',
+	ONGOING: 'O',
+	COMPLETED: 'C',
+};

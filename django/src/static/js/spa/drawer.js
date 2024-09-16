@@ -5,6 +5,7 @@ import { ChatListDrawer } from './components/drawer/ChatListDrawer.js';
 import { FriendListDrawer } from './components/drawer/FriendListDrawer.js';
 import { FriendRequestsDrawer } from './components/drawer/FriendRequestsDrawer.js';
 import { checkNearestMatch } from './utils.js';
+import { TournamentListDrawer } from './components/drawer/TournamentListDrawer.js';
 
 export const DRAWERS = {
 	profile: GenericDrawer,
@@ -17,6 +18,7 @@ export const DRAWERS = {
 	'friend-profile': GenericDrawer,
 	'profile-edit': GenericDrawer,
 	'match-history': GenericDrawer,
+	'tournament-list': TournamentListDrawer,
 };
 
 class DrawerStack {

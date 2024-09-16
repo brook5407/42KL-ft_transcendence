@@ -3,8 +3,6 @@ export class Snowfall {
 		this.snowflakeCount = 50; // WXR TODO: make this adjustable in settings drawer
 		this.snowflakes = [];
 		this.snowflakeImageSrc = '/static/images/snowflake.svg';
-
-		this.createSnowflakes();
 	}
 
 	async createSnowflakes() {
@@ -28,7 +26,7 @@ export class Snowfall {
 			// snowflake.style.zIndex = Math.min(Math.floor(Math.random() * 100), 1000);
 			snowflake.style.zIndex = -1;
 
-			void snowflake.offsetWidth;
+			// void snowflake.offsetWidth;
 
 			document.body.appendChild(snowflake);
 			this.snowflakes.push(snowflake);
@@ -63,16 +61,13 @@ export class Snowfall {
 	}
 
 	startSnowfall() {
-		this.snowflakes.forEach((snowflake) => {
-			snowflake.style.animationName = `fall, ${
-				Math.random() > 0.5 ? 'spin-clockwise' : 'spin-anticlockwise'
-			}`;
-		});
+		this.createSnowflakes();
 	}
 
 	stopSnowfall() {
 		this.snowflakes.forEach((snowflake) => {
-			snowflake.style.animationName = 'none';
+			snowflake.remove();
 		});
+		this.snowflakes = [];
 	}
 }
