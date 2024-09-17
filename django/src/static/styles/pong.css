@@ -4,15 +4,23 @@
 	src: url('fonts/digital-7.regular.ttf');
    }
 
+* {
+    font-family: 'Poppins', sans-serif;
+	text-align: center;
+}
+
 #canvasContainer {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
     position: relative;
 }
 
 #gameCanvas {
     width: 100%; /* Match parent container */
     height: 100%; /* Match parent container */
-    display: none;
-    border: 10px solid #0E8F8F;
+    display: flex;
+    border: 1vw solid #0E8F8F;
 }
 
 #overlay {
@@ -31,18 +39,34 @@
     font-weight: bold;
     z-index: 1000;
 }
+
 #winnerText {
 	display: none;
 	color:white;
     font-size: 24px;
     margin: 10px 0;
 }
+
 #countdownText {
 	display: none;
 	color:white;
     font-size: 48px;
     margin: 10px 0;
 }
+
+#matchmaking {
+    color: white;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;  /* Center horizontally */
+    align-items: center;      /* Center vertically */
+    height: 100vh;
+}
+
+#roomCode {
+    color: white;
+}
+
 .score {
     font-size: 5vw; /* Use vw to scale with window width */
     font-weight: bold;
@@ -60,19 +84,13 @@
     right: 2vw;
 	color: #4FCDF0;
 }
-#matchmaking, #roomCode {
-	color: white;
-	font-size: 24px;
-	text-align: center;
-}
 
 .container {
-	font-family: 'Poppins', sans-serif;
-	text-align: center;
-	color:black;
-    display: flex;
+    display: none;
+    flex-direction: column; /* Stack items vertically */
     justify-content: center;  /* Center horizontally */
     align-items: center;      /* Center vertically */
+    height: 100vh;
 }
 
 .game-area {
@@ -81,7 +99,6 @@
     justify-content: center; /* Centers horizontally */
     align-items: center; /* Centers vertically within available space */
     position: relative;
-    border-radius: 10px;
 	padding-left: 10vw;
     padding-right: 10vw;
 }
@@ -90,13 +107,13 @@
 .details-area {
     background-color: #1A9EC7;
     border: 10px solid #1FB5E4;
-    padding: 20px;
+    padding: 10px;
     color: white;
     display: flex;
     /* flex-direction: column; */
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-    position: fixed;
+    position: relative;
     bottom: 0;
     width: 100%;
     font-weight: bold;
@@ -122,11 +139,6 @@ h2 {
     border-radius: 50%;
     margin: 0 10px;
 }
-
-/* .buttons {
-    display: flex;
-    justify-content: space-between;
-} */
 
 button.flag-btn {
     background-color: red;

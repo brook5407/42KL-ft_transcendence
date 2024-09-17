@@ -2,7 +2,7 @@ import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 from .models import GameRoom
 
 gameHeight = 500
@@ -84,7 +84,15 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         # Remove player from the room in RoomManager
         MatchManager.remove_player(self.room_name, self.channel_name)
+
+        try:
+            game_room = await sync_to_async(GameRoom.objects.get)(room_name=self.room_name)
+            await sync_to_async(game_room.delete)()
+        except GameRoom.DoesNotExist:
+            pass  # Room already deleted or not found
+
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self.close()  # Close the WebSocket connection
 
         # If a player disconnects
         # if self.match['player1'] == None:
@@ -227,7 +235,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 )
                 break  # Exit the game loop
 
-            winningScore = 1
+            winningScore = 10
 
             # End the game if a player reaches a score of winningScore
             if self.match['score1'] >= winningScore or self.match['score2'] >= winningScore:
@@ -260,14 +268,6 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'end_game',
             'message': event['message'],
         }))
-        # try:
-        #     game_room = GameRoom.objects.get(room_name=self.room_name)
-        #     game_room.delete()  # Delete the room when the game is over or a player disconnects
-        # except GameRoom.DoesNotExist:
-        #     pass  # Room already deleted or not found
-
-        # await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        # await self.close()  # Close the WebSocket connection
 
     def reset_ball(self):
         # Reset the ball to the center of the field

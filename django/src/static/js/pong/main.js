@@ -3,10 +3,10 @@ import { Ball } from './classes/ball.js';
 import { Table } from './classes/table.js';
 
 // Client-side game setup and rendering
+const container = document.getElementById('container');
+const gameCanvas = document.getElementById('gameCanvas');
 const score1 = document.getElementById('score1');
 const score2 = document.getElementById('score2');
-const gameCanvas = document.getElementById('gameCanvas');
-const fullscreenButton = document.getElementById('fullscreenButton');
 const canvasContainer = document.getElementById('canvasContainer');
 const overlay = document.getElementById('overlay');
 const countdownText = document.getElementById('countdownText');
@@ -22,6 +22,8 @@ let assignedPaddle = null;
 
 const socket = new WebSocket(`ws://${window.location.host}/ws/${gameMode}/${roomName}/`);
 roomCode.innerHTML = roomName;
+
+
 
 socket.onopen = function() {
     console.log("WebSocket connection established " + roomName);
@@ -60,9 +62,7 @@ socket.onmessage = function(e) {
         ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, data.ball.radius, data.ball.speed, '#ffffff', '#A0D8F0');
         table = new Table(gameCanvas, paddle1, paddle2, ball);
         matchmaking.style.display = 'none';
-        gameCanvas.style.display = 'block';
-        score1.style.display = 'block';
-        score2.style.display = 'block';
+        container.style.display = 'flex';
         if (assignedPaddle === 'paddle1') {
             paddle1.color = "#4FCDF0";
             score1.style.color = "#4FCDF0";
@@ -99,8 +99,8 @@ socket.onmessage = function(e) {
         paddle2.y = data.paddle2.y;
         ball.x = data.ball.x;
         ball.y = data.ball.y;
-        document.getElementById('score1').innerText = data.score1;
-        document.getElementById('score2').innerText = data.score2;
+        score1.innerText = data.score1;
+        score2.innerText = data.score2;
 
         // Render the updated game state
         table.draw();
@@ -124,10 +124,11 @@ socket.onmessage = function(e) {
     
             if (countdown === 0) {
                 clearInterval(countdownInterval);
-                window.location.href = `http://${window.location.host}/`;
+                socket.close();
+                console.log("socket.close()");
+                // window.location.href = `http://${window.location.host}/`;
             }
         }, 1000);
-        // window.location.href = `http://${window.location.host}/`;
     }
 };
 
@@ -152,49 +153,3 @@ document.addEventListener('keyup', (event) => {
         socket.send(JSON.stringify({ 'paddle': assignedPaddle, 'velocity': 0 }));
     }
 });
-
-fullscreenButton.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      // Request fullscreen for the canvas
-      canvas.requestFullscreen().catch(err => {
-        alert(`Error attempting to enable fullscreen mode: ${err.message}`);
-      });
-    } else {
-      // Exit fullscreen if already in fullscreen mode
-      document.exitFullscreen();
-    }
-  });
-
-  document.addEventListener('fullscreenchange', () => {
-    if (document.fullscreenElement) {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    } else {
-      // Revert canvas size after exiting fullscreen
-      canvas.width = gameCanvas.width;
-      canvas.height = gameCanvas.height;
-    }
-  });
-
-
-// let form = document.getElementById('form')
-// form.addEventListener('submit', (e)=> {
-//     e.preventDefault()
-//     let message = e.target.message.value
-//     socket.send(JSON.stringify({
-//         'message':message
-//     }))
-//     form.reset()
-// })
-
-// socket.onmessage = function(e) {
-//     const data = JSON.parse(e.data);
-//     console.log('Data:', data)
-
-//     if (data.type === 'chat'){
-//         let messages = document.getElementById('messages')
-
-//         messages.insertAdjacentHTML('beforeend', `<div>
-//                                 <p>${data.message}</p>
-//                             </div>`)
-//     }
