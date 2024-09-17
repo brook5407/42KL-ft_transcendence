@@ -46,11 +46,12 @@
                 <p class="settings-item">Snow Fall Intensity</p>
             </div>
             <div class="col-auto slider-container">
-                <input type="range" class="form-range" min="0" max="100" step="1" id="snowIntensitySlider">
+                <label for="snowIntensitySlider"></label>
+                <input type="range" class="form-range" min="1" max="100" step="1" id="snowIntensitySlider" value="{{ request.user.profile.snowIntensity }}">
             </div>
         </div>
     </div>
-    <div class="drawer-bottom-right-icon">
+    <div class=" drawer-bottom-right-icon">
         <img id="logout-button" class="clickable" src="{% static 'images/icons/sign-out.svg' %}" width="42px" height="42px" alt="Log out" />
     </div>
 {% endblock %}
@@ -66,19 +67,57 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                console.log('Language switch successful');
-                // Reload the page or update the UI as needed
                 window.location.reload();
             } else {
                 console.error('Error switching language:', data.message);
+                showErrorMessage(data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            showErrorMessage(error.message);
         });
     }
 
-    // We don't need the event listener setup anymore since we're using onclick
-    console.log('Language switcher script loaded');
+    document.addEventListener('drawer-opened', function(e) {
+        setupSnowIntensitySlider()
+    });
+
+    function setupSnowIntensitySlider() {
+        const snowIntensitySlider = document.getElementById('snowIntensitySlider');
+
+        if (snowIntensitySlider) {
+            snowIntensitySlider.addEventListener('change', function () {
+                const intensity = parseInt(this.value, 10);
+                console.log('Snow intensity changed to:', intensity);
+                saveSnowIntensity(intensity);
+            });
+        }
+
+        function saveSnowIntensity(intensity) {
+            ajaxWithAuth('/api/save_snow_intensity/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `snowIntensity=${intensity}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    //refresh the snow in spa
+                    document.cookie = `snow_intensity=${intensity}; path=/; SameSite=Lax;`;
+                    console.log('Snow intensity saved successfully');
+                } else {
+                    console.error('Error saving snow intensity:', data.message);
+                    showErrorMessage(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorMessage(error.message);
+            });
+        }
+    }
 </script>
 {% endblock %}

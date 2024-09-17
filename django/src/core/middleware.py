@@ -11,10 +11,19 @@ class Custom404Middleware(MiddlewareMixin):
         return response
     
 
-class SetUserLanguageMiddleware(MiddlewareMixin):
+class SetUserSettingMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if request.user.is_authenticated:
             user_language = request.user.profile.language
+            snow_intensity = request.user.profile.snowIntensity
             translation.activate(user_language)
             request.LANGUAGE_CODE = user_language
+            request.snow_intensity = snow_intensity
+
+    def process_response(self, request, response):
+        if request.user.is_authenticated and hasattr(request, 'snow_intensity'):
+            snow_intensity = request.snow_intensity
+            if snow_intensity:
+                response.set_cookie('snow_intensity', snow_intensity)
+        return response
 

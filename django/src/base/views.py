@@ -8,7 +8,7 @@ from allauth.account.models import EmailAddress
 from django.core.exceptions import ObjectDoesNotExist
 from core import settings
 from utils.request_helpers import is_ajax_request
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
 from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
@@ -118,3 +118,18 @@ def custom_set_language(request):
         return response
     else:
         return JsonResponse({'status': 'error', 'message': _('Invalid language')}, status=400)
+
+@require_POST
+def save_snow_intensity(request):
+    intensity = request.POST.get('snowIntensity')
+    if intensity is not None:
+        try:
+            intensity = int(intensity)
+            request.user.profile.snowIntensity = intensity
+            request.user.profile.save()
+            return JsonResponse({'status': 'success'})
+
+        except ValueError:
+            return JsonResponse({'status': 'error', 'message': _('Invalid intensity value')}, status=400)
+    else:
+        return JsonResponse({'status': 'error', 'message': _('Invalid intensity value')}, status=400)
