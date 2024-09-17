@@ -1,13 +1,16 @@
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.utils.translation import activate
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from allauth.account.models import EmailAddress
 from django.core.exceptions import ObjectDoesNotExist
 from core import settings
 from utils.request_helpers import is_ajax_request
-
+from django.views.decorators.http import require_POST
 
 User = get_user_model()
 
@@ -93,3 +96,32 @@ def current_user_profile(request):
         }
     }
     return JsonResponse(data)
+
+@require_POST
+@csrf_exempt
+def custom_set_language(request):
+    next_url = request.POST.get('next', request.GET.get('next'))
+    if not url_has_allowed_host_and_scheme(url=next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        next_url = request.META.get('HTTP_REFERER', '/')
+        if not url_has_allowed_host_and_scheme(url=next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+            next_url = '/'
+
+    language = request.POST.get('language', settings.LANGUAGE_CODE)
+    if language and language in [lang[0] for lang in settings.LANGUAGES]:
+        activate(language)
+        request.session[settings.LANGUAGE_CODE] = language
+
+        # Update user's profile language
+        if request.user.is_authenticated:
+            try:
+                profile = request.user.profile
+                profile.language = language
+                profile.save()
+            except request.user.profile.RelatedObjectDoesNotExist:
+                # Handle case where user doesn't have a profile
+                pass
+            
+    response = HttpResponseRedirect(next_url)
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+    return HttpResponseRedirect(next_url)
+
