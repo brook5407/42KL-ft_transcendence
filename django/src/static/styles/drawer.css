@@ -73,6 +73,11 @@ h3 {
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
+	transition: all 0.1s linear;
+}
+
+.drawer-bottom-right-icon:hover {
+	transform: scale(125%);
 }
 
 .back-icon {

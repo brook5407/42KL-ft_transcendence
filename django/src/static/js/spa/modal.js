@@ -2,8 +2,8 @@ import { MODAL_CONTAINER } from './components/Component.js';
 import { SignIn } from './components/modals/SignIn.js';
 import { SignUp } from './components/modals/SignUp.js';
 import { Oauth42 } from './components/modals/Oauth42.js';
-import { ForgetPassword } from './components/modals/forget-password.js';
-import { ResetPassword } from './components/modals/reset-password.js';
+import { ForgetPassword } from './components/modals/ForgetPassword.js';
+import { ResetPassword } from './components/modals/ResetPassword.js';
 import { ChangePassword } from './components/modals/ChangePassword.js';
 import { checkNearestMatch } from './utils.js';
 

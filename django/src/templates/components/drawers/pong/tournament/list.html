@@ -1,0 +1,34 @@
+{% extends "components/drawers/drawer-left.html" %}
+
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/pong/tournament-list.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>Tournaments</h2>
+{% endblock %}
+
+{% block drawerContent %}
+<div id="tournament-list"></div>
+<button class="btn btn-primary">Shuffle Rooms</button>
+<div class="drawer-bottom-right-icon">
+	<img src="{% static 'images/icons/add.svg' %}" alt="Create tournament"
+		data-drawer="tournament-create"
+		data-bs-toggle="tooltip" title="Create Tournament"
+		/>
+</div>
+{% endblock %}
+
+{% comment %}
+- The players playing in the tournament will play pong normally, others will spectate
+	- Spectators won't be able to do any actions
+	- if the spectator quits and didn't reconnect in 10 seconds, the spectator will be kicked
+- The order will be: odd vs odd, even vs even, winners vs winners. Finally decide the tournament winner
+- Handle disconnections and reconnections
+	- If a player disconnects, the player will have 10 seconds to reconnect, otherwise the player will be disqualified
+{% endcomment %}
+
+{% block drawerScripts %}
+{% endblock %}

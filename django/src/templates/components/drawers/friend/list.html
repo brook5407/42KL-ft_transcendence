@@ -13,7 +13,10 @@
 {% block drawerContent %}
 <div id="friend-list"></div>
 <div class="drawer-bottom-right-icon" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %}>
-	<img src="{% static 'images/icons/friend-requests.svg' %}" alt="Friend Requests" data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %} />
+	<img src="{% static 'images/icons/friend-requests.svg' %}" alt="Friend Requests"
+		data-drawer="friend-requests" data-drawer-url={% url 'friend.requests-drawer' %}
+		data-bs-toggle="tooltip" title="Friend Requests"
+		/>
 </div>
 {% endblock %}
 

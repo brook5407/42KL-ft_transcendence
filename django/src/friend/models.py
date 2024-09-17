@@ -13,7 +13,7 @@ User = get_user_model()
 # Create your models here.
 class UserRelation(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_relations")
-    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_relations", default=None)
+    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends", default=None)
     blocked = models.BooleanField(default=False)
     blocked_at = models.DateTimeField(auto_now=False, null=True)
     
@@ -95,19 +95,11 @@ class FriendRequest(BaseModel):
             message
         )
 
-
-def get_friends(self):
-    user_relations = UserRelation.objects.filter(Q(user=self))
-    friend_ids = user_relations.values_list('friend_id', flat=True)
-    friends = User.objects.filter(id__in=friend_ids)
-    return friends
-
 def is_friend(self, user):
     return UserRelation.objects.filter(Q(user=self) & Q(friend=user)).exists()
 
 def is_blocked(self, user):
     return UserRelation.objects.filter(Q(user=self) & Q(friend=user) & Q(blocked=True)).exists()
 
-User.add_to_class('friends', property(get_friends))
 User.add_to_class('is_friend', is_friend)
 User.add_to_class('is_blocked', is_blocked)
