@@ -15,6 +15,6 @@ urlpatterns = [
     path('modal/oauth42-modal', views.oauth42_modal, name='base.oauth42-modal'),
     # drawers
     path('drawer/settings', views.settings_drawer, name='base.settings-drawer'),
-
-    path('set_language/', views.custom_set_language, name='set_language'),
+    # language settings
+    path('api/set_language/', views.custom_set_language, name='set_language'),
 ]
