@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-17 03:03+0000\n"
+"POT-Creation-Date: 2024-09-17 09:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,47 +17,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: core/settings.py:188
+#: base/views.py:120
+msgid "Invalid language"
+msgstr "Salah Bahasa"
+
+#: core/settings.py:191
 msgid "English"
 msgstr "Bahasa Inggeris"
 
-#: core/settings.py:189
+#: core/settings.py:192
 msgid "Malay"
 msgstr "Bahasa Malaysia"
 
-#: core/settings.py:190
+#: core/settings.py:193
 msgid "Chinese"
 msgstr "Bahasa Cina"
 
-#: drf_auth/views.py:38 drf_auth/views.py:48
+#: drf_auth/views.py:39 drf_auth/views.py:49
 msgid "Verification key is missing"
 msgstr "Tiada Kunci pengesahan"
 
-#: drf_auth/views.py:67
+#: drf_auth/views.py:68
 msgid "Your email has been successfully verified."
 msgstr "E-mel anda telah berjaya disahkan."
 
-#: drf_auth/views.py:70
+#: drf_auth/views.py:71
 msgid "There was an error verifying your email."
 msgstr "Berlaku ralat mengesahkan e-mel anda."
 
-#: drf_auth/views.py:90
+#: drf_auth/views.py:91
 msgid "OTP sent. Please check your email."
 msgstr "OTP telah dihantar. Sila semak e-mel anda."
 
-#: drf_auth/views.py:94
+#: drf_auth/views.py:95
 msgid "User email is not verified."
 msgstr "E-mel pengguna tidak disahkan."
 
-#: drf_auth/views.py:98
+#: drf_auth/views.py:99
 msgid "User does not exist."
 msgstr "E-mel pengguna belum disahkan."
 
-#: drf_auth/views.py:121 drf_auth/views.py:130
+#: drf_auth/views.py:122 drf_auth/views.py:131
 msgid "OTP is invalid"
 msgstr "OTP tidak sah"
 
-#: drf_auth/views.py:126
+#: drf_auth/views.py:127
 msgid "OTP has expired, Please request a new one"
 msgstr "OTP telah tamat tempoh, Sila minta yang baharu"
 
@@ -200,9 +204,27 @@ msgstr "Menang:"
 msgid "Losses:"
 msgstr "Kalah:"
 
-#: templates/components/drawers/settings.html:6
+#: templates/components/drawers/settings.html:10
 msgid "Settings"
 msgstr "Tetapan"
+
+#: templates/components/drawers/settings.html:17
+msgid "Language"
+msgstr "Bahasa"
+
+#: templates/components/drawers/settings.html:38
+#: templates/components/modals/signin.html:20
+#: templates/components/modals/signup.html:24
+msgid "Password"
+msgstr "Kata laluan"
+
+#: templates/components/drawers/settings.html:41
+msgid "Change Password"
+msgstr "Tukar Kata Laluan"
+
+#: templates/components/drawers/settings.html:46
+msgid "Snow Fall Intensity"
+msgstr "Intensiti Musim Salji"
 
 #: templates/components/modals/42oauth.html:12
 msgid "Want username and password sign in? Click "
@@ -261,11 +283,6 @@ msgstr "Pengguna baru? Daftar"
 msgid "Username"
 msgstr "Nama pengguna"
 
-#: templates/components/modals/signin.html:20
-#: templates/components/modals/signup.html:24
-msgid "Password"
-msgstr "Kata laluan"
-
 #: templates/components/modals/signin.html:27
 msgid "send"
 msgstr "hantar"
@@ -312,7 +329,7 @@ msgstr "Bilik Pertandingan:"
 
 #: templates/components/pages/tournament_lobby.html:7
 msgid "Tournament Lobby"
-msgstr ""
+msgstr "Lobi Pertandingan"
 
 #: templates/components/pages/tournament_lobby.html:8
 msgid "Create Room"

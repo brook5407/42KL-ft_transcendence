@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-17 03:03+0000\n"
+"POT-Creation-Date: 2024-09-17 09:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,47 +18,51 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: core/settings.py:188
+#: base/views.py:120
+msgid "Invalid language"
+msgstr "语言错误"
+
+#: core/settings.py:191
 msgid "English"
 msgstr "英文"
 
-#: core/settings.py:189
+#: core/settings.py:192
 msgid "Malay"
 msgstr "马来文"
 
-#: core/settings.py:190
+#: core/settings.py:193
 msgid "Chinese"
 msgstr "华文"
 
-#: drf_auth/views.py:38 drf_auth/views.py:48
+#: drf_auth/views.py:39 drf_auth/views.py:49
 msgid "Verification key is missing"
 msgstr "无效验证码"
 
-#: drf_auth/views.py:67
+#: drf_auth/views.py:68
 msgid "Your email has been successfully verified."
 msgstr "您的邮箱验证成功。"
 
-#: drf_auth/views.py:70
+#: drf_auth/views.py:71
 msgid "There was an error verifying your email."
 msgstr "您的邮箱验证失败。"
 
-#: drf_auth/views.py:90
+#: drf_auth/views.py:91
 msgid "OTP sent. Please check your email."
 msgstr "已发送OTP，请查看您的邮箱。"
 
-#: drf_auth/views.py:94
+#: drf_auth/views.py:95
 msgid "User email is not verified."
 msgstr "你的账号未认证"
 
-#: drf_auth/views.py:98
+#: drf_auth/views.py:99
 msgid "User does not exist."
 msgstr "用户不存在"
 
-#: drf_auth/views.py:121 drf_auth/views.py:130
+#: drf_auth/views.py:122 drf_auth/views.py:131
 msgid "OTP is invalid"
 msgstr "无效OTP"
 
-#: drf_auth/views.py:126
+#: drf_auth/views.py:127
 msgid "OTP has expired, Please request a new one"
 msgstr "OTP已过期，请重新请求"
 
@@ -201,9 +205,27 @@ msgstr "胜:"
 msgid "Losses:"
 msgstr "负:"
 
-#: templates/components/drawers/settings.html:6
+#: templates/components/drawers/settings.html:10
 msgid "Settings"
 msgstr "设置"
+
+#: templates/components/drawers/settings.html:17
+msgid "Language"
+msgstr "语言"
+
+#: templates/components/drawers/settings.html:38
+#: templates/components/modals/signin.html:20
+#: templates/components/modals/signup.html:24
+msgid "Password"
+msgstr "密码"
+
+#: templates/components/drawers/settings.html:41
+msgid "Change Password"
+msgstr "更换密码"
+
+#: templates/components/drawers/settings.html:46
+msgid "Snow Fall Intensity"
+msgstr "降雪强度"
 
 #: templates/components/modals/42oauth.html:12
 msgid "Want username and password sign in? Click "
@@ -220,10 +242,8 @@ msgid "42 Login"
 msgstr "42 登录"
 
 #: templates/components/modals/forget-password.html:5
-#, fuzzy
-#| msgid "Confirm Password"
 msgid "Forget Password"
-msgstr "确认密码"
+msgstr "忘记密码"
 
 #: templates/components/modals/forget-password.html:12
 #: templates/components/modals/signup.html:16
@@ -263,11 +283,6 @@ msgstr "新用户？ 请注册"
 #: templates/components/modals/signup.html:20
 msgid "Username"
 msgstr "用户名"
-
-#: templates/components/modals/signin.html:20
-#: templates/components/modals/signup.html:24
-msgid "Password"
-msgstr "密码"
 
 #: templates/components/modals/signin.html:27
 msgid "send"

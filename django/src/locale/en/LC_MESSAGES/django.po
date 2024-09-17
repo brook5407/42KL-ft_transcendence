@@ -1,44 +1,48 @@
-#: core/settings.py:188
+#: base/views.py:120
+msgid "Invalid language"
+msgstr ""
+
+#: core/settings.py:191
 msgid "English"
 msgstr ""
 
-#: core/settings.py:189
+#: core/settings.py:192
 msgid "Malay"
 msgstr ""
 
-#: core/settings.py:190
+#: core/settings.py:193
 msgid "Chinese"
 msgstr ""
 
-#: drf_auth/views.py:38 drf_auth/views.py:48
+#: drf_auth/views.py:39 drf_auth/views.py:49
 msgid "Verification key is missing"
 msgstr ""
 
-#: drf_auth/views.py:67
+#: drf_auth/views.py:68
 msgid "Your email has been successfully verified."
 msgstr ""
 
-#: drf_auth/views.py:70
+#: drf_auth/views.py:71
 msgid "There was an error verifying your email."
 msgstr ""
 
-#: drf_auth/views.py:90
+#: drf_auth/views.py:91
 msgid "OTP sent. Please check your email."
 msgstr ""
 
-#: drf_auth/views.py:94
+#: drf_auth/views.py:95
 msgid "User email is not verified."
 msgstr ""
 
-#: drf_auth/views.py:98
+#: drf_auth/views.py:99
 msgid "User does not exist."
 msgstr ""
 
-#: drf_auth/views.py:121 drf_auth/views.py:130
+#: drf_auth/views.py:122 drf_auth/views.py:131
 msgid "OTP is invalid"
 msgstr ""
 
-#: drf_auth/views.py:126
+#: drf_auth/views.py:127
 msgid "OTP has expired, Please request a new one"
 msgstr ""
 
@@ -181,8 +185,26 @@ msgstr ""
 msgid "Losses:"
 msgstr ""
 
-#: templates/components/drawers/settings.html:6
+#: templates/components/drawers/settings.html:10
 msgid "Settings"
+msgstr ""
+
+#: templates/components/drawers/settings.html:17
+msgid "Language"
+msgstr ""
+
+#: templates/components/drawers/settings.html:38
+#: templates/components/modals/signin.html:20
+#: templates/components/modals/signup.html:24
+msgid "Password"
+msgstr ""
+
+#: templates/components/drawers/settings.html:41
+msgid "Change Password"
+msgstr ""
+
+#: templates/components/drawers/settings.html:46
+msgid "Snow Fall Intensity"
 msgstr ""
 
 #: templates/components/modals/42oauth.html:12
@@ -240,11 +262,6 @@ msgstr ""
 #: templates/components/modals/signin.html:16
 #: templates/components/modals/signup.html:20
 msgid "Username"
-msgstr ""
-
-#: templates/components/modals/signin.html:20
-#: templates/components/modals/signup.html:24
-msgid "Password"
 msgstr ""
 
 #: templates/components/modals/signin.html:27
