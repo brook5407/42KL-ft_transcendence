@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-05 05:37+0000\n"
+"POT-Creation-Date: 2024-09-17 09:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,53 +18,57 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: core/settings.py:185
+#: base/views.py:120
+msgid "Invalid language"
+msgstr "语言错误"
+
+#: core/settings.py:191
 msgid "English"
 msgstr "英文"
 
-#: core/settings.py:186
+#: core/settings.py:192
 msgid "Malay"
 msgstr "马来文"
 
-#: core/settings.py:187
+#: core/settings.py:193
 msgid "Chinese"
 msgstr "华文"
 
-#: drf_auth/views.py:32 drf_auth/views.py:42
+#: drf_auth/views.py:39 drf_auth/views.py:49
 msgid "Verification key is missing"
 msgstr "无效验证码"
 
-#: drf_auth/views.py:61
+#: drf_auth/views.py:68
 msgid "Your email has been successfully verified."
 msgstr "您的邮箱验证成功。"
 
-#: drf_auth/views.py:64
+#: drf_auth/views.py:71
 msgid "There was an error verifying your email."
 msgstr "您的邮箱验证失败。"
 
-#: drf_auth/views.py:84
+#: drf_auth/views.py:91
 msgid "OTP sent. Please check your email."
 msgstr "已发送OTP，请查看您的邮箱。"
 
-#: drf_auth/views.py:88
+#: drf_auth/views.py:95
 msgid "User email is not verified."
 msgstr "你的账号未认证"
 
-#: drf_auth/views.py:92
+#: drf_auth/views.py:99
 msgid "User does not exist."
 msgstr "用户不存在"
 
-#: drf_auth/views.py:115 drf_auth/views.py:124
+#: drf_auth/views.py:122 drf_auth/views.py:131
 msgid "OTP is invalid"
 msgstr "无效OTP"
 
-#: drf_auth/views.py:120
+#: drf_auth/views.py:127
 msgid "OTP has expired, Please request a new one"
 msgstr "OTP已过期，请重新请求"
 
 #: friend/views.py:31 friend/views.py:40 friend/views.py:49
 msgid "friend_id is required"
-msgstr "需要friend_id"
+msgstr "请输入好友ID"
 
 #: friend/views.py:34
 msgid "friend blocked"
@@ -111,12 +115,13 @@ msgid "friend request sent"
 msgstr "好友请求已发送"
 
 #: templates/components/drawers/chat-list.html:10
-msgid "Chat"
-msgstr "聊天"
+msgid "Chat List"
+msgstr "聊天记录"
 
-#: templates/components/drawers/chat-list.html:16
-msgid "Public Chat"
-msgstr "聊天大厅"
+#: templates/components/drawers/chat-room.html:20
+#: templates/components/drawers/game-history.html:15
+msgid "Loading..."
+msgstr "加载中。。。"
 
 #: templates/components/drawers/friend/list.html:10
 msgid "Friends"
@@ -127,9 +132,30 @@ msgstr "好友"
 msgid "Profile"
 msgstr "用户资料"
 
-#: templates/components/drawers/friend/profile.html:32
+#: templates/components/drawers/friend/profile.html:35
 msgid "This user didn't say anything"
 msgstr "无聊天记录"
+
+#: templates/components/drawers/friend/profile.html:66
+msgid "Friend deleted successfully"
+msgstr "好友已被删除"
+
+#: templates/components/drawers/friend/profile.html:97
+msgid "Friend blocked successfully"
+msgstr "好友已被屏蔽"
+
+#: templates/components/drawers/friend/profile.html:119
+msgid "Friend unblocked successfully"
+msgstr "已解除好友屏蔽"
+
+#: templates/components/drawers/friend/profile.html:122
+msgid "Failed to unblock friend"
+msgstr "无法解除好友屏蔽"
+
+#: templates/components/drawers/friend/profile.html:147
+#: templates/components/drawers/friend/search-friend.html:92
+msgid "Friend request sent successfully"
+msgstr "好友请求已发送"
 
 #: templates/components/drawers/friend/requests.html:10
 msgid "Friend Requests"
@@ -139,35 +165,74 @@ msgstr "好友请求"
 msgid "New Friends"
 msgstr "新好友"
 
-#: templates/components/drawers/profile.html:33
+#: templates/components/drawers/friend/search-friend.html:17
+msgid "Search new friends..."
+msgstr "搜寻新对手。。。"
+
+#: templates/components/drawers/friend/search-friend.html:105
+msgid "Already friend"
+msgstr "已是好友"
+
+#: templates/components/drawers/friend/search-friend.html:109
+msgid "Requested"
+msgstr "已请求"
+
+#: templates/components/drawers/game-history.html:10
+msgid "Match History"
+msgstr "对战记录"
+
+#: templates/components/drawers/profile-edit.html:10
 msgid "Edit Profile"
 msgstr "更改用户资料"
 
-#: templates/components/drawers/profile.html:39
+#: templates/components/drawers/profile-edit.html:16
 msgid "Nickname"
 msgstr "昵称"
 
-#: templates/components/drawers/profile.html:43
+#: templates/components/drawers/profile-edit.html:20
 msgid "Bio"
 msgstr "个人简介"
 
-#: templates/components/drawers/profile.html:46
+#: templates/components/drawers/profile-edit.html:23
 msgid "Save"
 msgstr "保存"
 
-#: templates/components/drawers/profile.html:47
-msgid "Cancel"
-msgstr "取消"
+#: templates/components/drawers/profile.html:36
+msgid "Wins:"
+msgstr "胜:"
 
-#: templates/components/drawers/settings.html:6
+#: templates/components/drawers/profile.html:36
+msgid "Losses:"
+msgstr "负:"
+
+#: templates/components/drawers/settings.html:10
 msgid "Settings"
 msgstr "设置"
+
+#: templates/components/drawers/settings.html:17
+msgid "Language"
+msgstr "语言"
+
+#: templates/components/drawers/settings.html:38
+#: templates/components/modals/signin.html:20
+#: templates/components/modals/signup.html:24
+msgid "Password"
+msgstr "密码"
+
+#: templates/components/drawers/settings.html:41
+msgid "Change Password"
+msgstr "更换密码"
+
+#: templates/components/drawers/settings.html:46
+msgid "Snow Fall Intensity"
+msgstr "降雪强度"
 
 #: templates/components/modals/42oauth.html:12
 msgid "Want username and password sign in? Click "
 msgstr "要使用用户名和密码登录？ 点击 "
 
 #: templates/components/modals/42oauth.html:12
+#: templates/components/modals/signin.html:9
 #: templates/components/modals/signup.html:9
 msgid "here"
 msgstr "这里"
@@ -175,6 +240,35 @@ msgstr "这里"
 #: templates/components/modals/42oauth.html:19
 msgid "42 Login"
 msgstr "42 登录"
+
+#: templates/components/modals/forget-password.html:5
+msgid "Forget Password"
+msgstr "忘记密码"
+
+#: templates/components/modals/forget-password.html:12
+#: templates/components/modals/signup.html:16
+msgid "Email"
+msgstr "邮箱"
+
+#: templates/components/modals/forget-password.html:16
+#: templates/components/modals/reset-password.html:22
+#: templates/components/modals/signin.html:31
+#: templates/components/modals/signup.html:32
+msgid "Submit"
+msgstr "提交"
+
+#: templates/components/modals/reset-password.html:5
+msgid "Reset Password"
+msgstr "密码重置"
+
+#: templates/components/modals/reset-password.html:14
+msgid "New Password"
+msgstr "新密码"
+
+#: templates/components/modals/reset-password.html:18
+#: templates/components/modals/signup.html:28
+msgid "Confirm Password"
+msgstr "确认密码"
 
 #: templates/components/modals/signin.html:5
 #: templates/components/pages/home.html:61
@@ -190,19 +284,21 @@ msgstr "新用户？ 请注册"
 msgid "Username"
 msgstr "用户名"
 
-#: templates/components/modals/signin.html:20
-#: templates/components/modals/signup.html:24
-msgid "Password"
-msgstr "密码"
-
 #: templates/components/modals/signin.html:27
 msgid "send"
 msgstr "发送"
 
-#: templates/components/modals/signin.html:31
-#: templates/components/modals/signup.html:32
-msgid "Submit"
-msgstr "提交"
+#: templates/components/modals/signin.html:35
+msgid "Forgot Password?"
+msgstr "忘记密码？"
+
+#: templates/components/modals/signin.html:57
+msgid "OTP sent to your email!"
+msgstr "已发送OTP至您的邮箱。"
+
+#: templates/components/modals/signin.html:61
+msgid "Error requesting OTP. Please try again."
+msgstr "请求 OTP 时出错，请重试。"
 
 #: templates/components/modals/signup.html:5
 msgid "Sign Up"
@@ -211,14 +307,6 @@ msgstr "注册"
 #: templates/components/modals/signup.html:9
 msgid "Already gave an account? Login "
 msgstr "已有账号？ 登录 "
-
-#: templates/components/modals/signup.html:16
-msgid "Email"
-msgstr "邮箱"
-
-#: templates/components/modals/signup.html:28
-msgid "Confirm Password"
-msgstr "确认密码"
 
 #: templates/components/pages/home.html:9
 msgid "AIsPong"
@@ -232,6 +320,28 @@ msgstr "真人对战"
 msgid "PVE"
 msgstr "人机对战"
 
-#: templates/components/pages/pong.html:11
-msgid "Waiting for opponent..."
-msgstr "等待对手。。。"
+#: templates/components/pages/pong.html:16
+msgid "Searching for opponent..."
+msgstr "寻找对手。。。"
+
+#: templates/components/pages/tournament.html:6
+msgid "Tournament Room:"
+msgstr "锦标赛房间："
+
+#: templates/components/pages/tournament_lobby.html:7
+msgid "Tournament Lobby"
+msgstr "锦标赛大厅"
+
+#: templates/components/pages/tournament_lobby.html:8
+msgid "Create Room"
+msgstr "创建房间"
+
+#: templates/components/pages/tournament_lobby.html:12
+msgid "Join Room"
+msgstr "进入房间"
+
+#~ msgid "Public Chat"
+#~ msgstr "聊天大厅"
+
+#~ msgid "Cancel"
+#~ msgstr "取消"

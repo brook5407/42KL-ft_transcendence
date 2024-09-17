@@ -14,7 +14,7 @@
     <div class="container mt-3 settings-container">
         <div class="settings-row row align-items-center">
             <div class="col">
-                <p class="settings-item">Language</p>
+                <p class="settings-item">{% trans 'Language' %}</p>
             </div>
             <div class="col-auto">
                 <div id="language-switcher">
@@ -35,15 +35,15 @@
         </div>
         <div class="settings-row row align-items-center">
             <div class="col">
-                <p class="settings-item">Password</p>
+                <p class="settings-item">{% trans 'Password' %}</p>
             </div>
             <div class="col-auto">
-                <button id="change-password-btn" class="btn btn-primary btn-sm" data-modal="changepassword" data-modal-url="{% url 'change_password_modal' %}">Change Password</button>
+                <button id="change-password-btn" class="btn btn-primary btn-sm" data-modal="changepassword" data-modal-url="{% url 'change_password_modal' %}">{% trans 'Change Password' %}</button>
             </div>
         </div>
         <div class="settings-row row align-items-center">
             <div class="col">   
-                <p class="settings-item">Snow Fall Intensity</p>
+                <p class="settings-item">{% trans 'Snow Fall Intensity' %}</p>
             </div>
             <div class="col-auto slider-container">
                 <input type="range" class="form-range" min="0" max="100" step="1" id="snowIntensitySlider">
