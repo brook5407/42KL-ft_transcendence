@@ -2,15 +2,14 @@ from django.http import HttpResponseBadRequest, JsonResponse, HttpResponseRedire
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.utils.translation import activate
-from django.utils.http import url_has_allowed_host_and_scheme
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from allauth.account.models import EmailAddress
 from django.core.exceptions import ObjectDoesNotExist
 from core import settings
 from utils.request_helpers import is_ajax_request
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -97,16 +96,9 @@ def current_user_profile(request):
     }
     return JsonResponse(data)
 
-@require_POST
-@csrf_exempt
+@require_GET
 def custom_set_language(request):
-    next_url = request.POST.get('next', request.GET.get('next'))
-    if not url_has_allowed_host_and_scheme(url=next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
-        next_url = request.META.get('HTTP_REFERER', '/')
-        if not url_has_allowed_host_and_scheme(url=next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
-            next_url = '/'
-
-    language = request.POST.get('language', settings.LANGUAGE_CODE)
+    language = request.GET.get('language')
     if language and language in [lang[0] for lang in settings.LANGUAGES]:
         activate(language)
         request.session[settings.LANGUAGE_CODE] = language
@@ -120,8 +112,9 @@ def custom_set_language(request):
             except request.user.profile.RelatedObjectDoesNotExist:
                 # Handle case where user doesn't have a profile
                 pass
-            
-    response = HttpResponseRedirect(next_url)
-    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
-    return HttpResponseRedirect(next_url)
 
+        response = JsonResponse({'status': 'success', 'language': language})
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+        return response
+    else:
+        return JsonResponse({'status': 'error', 'message': _('Invalid language')}, status=400)

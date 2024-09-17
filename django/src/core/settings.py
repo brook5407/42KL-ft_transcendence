@@ -176,6 +176,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'en'
+
 LANGUAGE_COOKIE_NAME = 'django_language'
 
 TIME_ZONE = 'UTC'

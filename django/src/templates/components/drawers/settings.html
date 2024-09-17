@@ -17,23 +17,20 @@
                 <p class="settings-item">Language</p>
             </div>
             <div class="col-auto">
-                <form id="language-switcher" action="{% url 'set_language' %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ request.path }}">
+                <div id="language-switcher">
                     {% get_current_language as LANGUAGE_CODE %}
-                    <input id="language-input" type="hidden" name="language" value="{{ LANGUAGE_CODE }}">
                     {% get_available_languages as LANGUAGES %}
                     {% get_language_info_list for LANGUAGES as languages %}
                     {% for language in languages %}
-                        <a href="#" onclick="document.getElementById('language-input').value='{{language.code}}'; document.getElementById('language-switcher').submit();">
-                            {% if language.code == LANGUAGE_CODE %}
-                                <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto;">
-                            {% else %}
-                                <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto; filter: grayscale(100%) brightness(50%);">
-                            {% endif %}
-                        </a>
+                    <button class="language-switch-btn" onclick="switchLanguage('{{ language.code }}')" style="background: none; border: none; padding: 0; cursor: pointer;">
+                        {% if language.code == LANGUAGE_CODE %}
+                            <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto;">
+                        {% else %}
+                            <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto; filter: grayscale(100%) brightness(50%);">
+                        {% endif %}
+                    </button>
                     {% endfor %}
-                </form>
+                </div>
             </div>
         </div>
         <div class="settings-row row align-items-center">
@@ -56,4 +53,32 @@
     <div class="drawer-bottom-right-icon">
         <img id="logout-button" class="clickable" src="{% static 'images/icons/sign-out.svg' %}" width="42px" height="42px" alt="Log out" />
     </div>
+{% endblock %}
+
+{% block drawerScripts %}
+<script>
+    function switchLanguage(languageCode) {
+        console.log('switchLanguage called with:', languageCode);
+        ajaxWithAuth(`/api/set_language/?language=${languageCode}`, {
+            method: 'GET',
+            credentials: 'include', // This is important for including cookies
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log('Language switch successful');
+                // Reload the page or update the UI as needed
+                window.location.reload();
+            } else {
+                console.error('Error switching language:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // We don't need the event listener setup anymore since we're using onclick
+    console.log('Language switcher script loaded');
+</script>
 {% endblock %}
