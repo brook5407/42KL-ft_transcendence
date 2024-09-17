@@ -26,19 +26,19 @@
   <body>
     {{ messages|serialize_flash_messages|json_script:"flash-messages" }}
 
-	<form id="language-switcher" action="{% url 'set_language' %}" method="post" style="display: inline;">
-		{% csrf_token %}
-		<input name="next" type="hidden" value="{{ request.path }}">
-		{% get_current_language as LANGUAGE_CODE %}
-		<input id="language-input" type="hidden" name="language" value="{{ LANGUAGE_CODE }}">
-        {% get_available_languages as LANGUAGES %}
-        {% get_language_info_list for LANGUAGES as languages %}
-        {% for language in languages %}
-			<a href="#" onclick="document.getElementById('language-input').value='{{language.code}}'; document.getElementById('language-switcher').submit();">
-				<img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto;">
-			</a>
-		{% endfor %}
-	</form>
+    <form id="language-switcher" action="{% url 'set_language' %}" method="post" style="display: none;">
+      {% csrf_token %}
+      <input name="next" type="hidden" value="{{ request.path }}">
+      {% get_current_language as LANGUAGE_CODE %}
+      <input id="language-input" type="hidden" name="language" value="{{ LANGUAGE_CODE }}">
+          {% get_available_languages as LANGUAGES %}
+          {% get_language_info_list for LANGUAGES as languages %}
+          {% for language in languages %}
+        <a href="#" onclick="document.getElementById('language-input').value='{{language.code}}'; document.getElementById('language-switcher').submit();">
+          <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto;">
+        </a>
+      {% endfor %}
+    </form>
 
     {% if modals_and_drawers %}
       {% for item in modals_and_drawers %}
@@ -77,6 +77,7 @@
     <script type="module" src="{% static 'js/loading.js' %}"></script>
     <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
     <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
+
     {% if store_reset_params %}
     <script>
       // Store UID and token in localStorage

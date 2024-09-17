@@ -1,0 +1,23 @@
+.settings-item {
+  	margin-bottom: 0;
+	font-size: 25px;
+	color: var(--color-text-2);
+}
+
+.settings-row {
+	margin-bottom: 10px;
+}
+
+.settings-row:last-child {
+	margin-bottom: 0;
+}
+
+.slider-container {
+	width: 150px;
+}
+
+#logout-button {
+	position: absolute;
+	bottom: 0;
+	right: 10px;
+}
