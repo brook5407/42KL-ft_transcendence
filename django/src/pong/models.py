@@ -10,10 +10,9 @@ User = get_user_model()
 
 
 class Player(BaseModel):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        unique=True,
         null=True,
         blank=True,
         related_name="player",
@@ -59,9 +58,12 @@ class TournamentRoom(BaseModel):
 
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
-    owner = models.ForeignKey(Player, on_delete=models.CASCADE, related_name="owner")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner")
     players = models.ManyToManyField(
         "TournamentPlayer", related_name="tournament_players"
+    )
+    players_left = models.ManyToManyField(
+        "TournamentPlayer", related_name="tournament_players_left"
     )
     winner = models.ForeignKey(
         Player,
@@ -84,13 +86,13 @@ class TournamentRoom(BaseModel):
             raise ValueError("Maximum number of players exceeded.")
         super().save(*args, **kwargs)
 
-    def add_player(self, user, position):
-        if position > self.MAX_PLAYERS:
+    def add_player(self, user):
+        if self.players.count() >= self.MAX_PLAYERS:
             raise ValueError("Maximum number of players exceeded.")
         try:
             player = Player.objects.get(user=user)
             tournament_player = TournamentPlayer.objects.create(
-                player=player, tournament=self, position=position
+                player=player, tournament=self
             )
         except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
             raise ValueError("Player or TournamentPlayer does not exist.")
@@ -104,11 +106,6 @@ class TournamentRoom(BaseModel):
             )
         except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
             raise ValueError("Player or TournamentPlayer does not exist.")
-        # reposition players
-        for player in self.players.all():
-            if player.position > tournament_player.position:
-                player.position -= 1
-                player.save()
         self.players.remove(tournament_player)
 
     def is_member(self, user):
@@ -125,8 +122,49 @@ class TournamentRoom(BaseModel):
         return self.owner.user == user
 
     def start(self):
+        if not self.is_owner(self.owner.user):
+            raise ValueError("You are not the owner of this tournament room.")
+        if self.players.count() < 4:
+            raise ValueError("Minimum number of players not met.")
+        if self.players.count() % 2 != 0:
+            raise ValueError("Number of players must be even.")
+        if self.status != self.Status.WAITING:
+            raise ValueError("Tournament is not waiting.")
+        self.players_left.set(self.players.all())
         self.status = self.Status.ONGOING
         self.save()
+
+    def next_match(self):
+        if self.status != self.Status.ONGOING:
+            raise ValueError("Tournament is not ongoing.")
+        if self.players_left.count() == 0:
+            raise ValueError("No players left.")
+        if self.players_left.count() == 1:
+            self.winner = self.players_left.first().player
+            self.save()
+            return None, False # winner is found
+        is_next_round = False
+        if self.matches.filter(status=TournamentMatch.Status.WAITING).count() == 0:
+            self.__next_round()
+            is_next_round = True
+        matches = self.matches.filter(status=TournamentMatch.Status.WAITING).order_by('-created_at')
+        match = matches.first()
+        match.status = TournamentMatch.Status.ONGOING
+        match.save()
+        return match, is_next_round
+
+    def __next_round(self):
+        if self.status != self.Status.ONGOING:
+            raise ValueError("Tournament is not ongoing.")
+        if self.matches.filter(status=TournamentMatch.Status.ONGOING).count() > 0:
+            raise ValueError("There is an ongoing match.")
+        players_left = list(self.players_left.all())
+        for i in range(0, len(players_left), 2):
+            match = TournamentMatch.objects.create(tournament=self)
+            match.winner = players_left[i]
+            match.loser = players_left[i + 1]
+            match.save()
+            self.matches.add(match)
 
     def end(self):
         self.status = self.Status.COMPLETED
@@ -140,19 +178,24 @@ class TournamentPlayer(BaseModel):
     player = models.ForeignKey(
         Player, on_delete=models.CASCADE, related_name="tournament_player"
     )
-    position = models.IntegerField(default=0)
     tournament = models.ForeignKey(
         TournamentRoom, on_delete=models.CASCADE, related_name="tournament_player"
     )
 
     class Meta:
-        ordering = ["position"]
+        ordering = ["created_at"]
 
     def __str__(self):
-        return f"{self.player}: Player {self.position} in {self.tournament}"
+        return f"Player {self.player} in {self.tournament}"
 
 
 class TournamentMatch(BaseModel):
+    class Status(models.TextChoices):
+        WAITING = "W", "Waiting"
+        ONGOING = "O", "Ongoing"
+        COMPLETED = "C", "Completed"
+
+    status = models.CharField(choices=Status.choices, default=Status.WAITING, max_length=1)
     winner = models.ForeignKey(
         TournamentPlayer,
         on_delete=models.SET_NULL,
@@ -191,3 +234,11 @@ class MatchHistory(BaseModel):
 
     def __str__(self):
         return f"{self.player} in {self.match}. Elo change: {self.elo_change}"
+
+
+class UserActiveTournament(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="active_tournament")
+    tournament = models.OneToOneField(TournamentRoom, on_delete=models.CASCADE, null=True, blank=True, default=None)
+
+    def __str__(self):
+        return f"{self.user} in {self.tournament}"

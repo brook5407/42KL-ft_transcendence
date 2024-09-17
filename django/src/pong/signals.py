@@ -1,7 +1,7 @@
 from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from .models import Player
+from .models import Player, UserActiveTournament
 import uuid
 
 
@@ -37,3 +37,8 @@ def create_AI_player(sender, **kwargs):
 def create_player_from_user(sender, instance, created, **kwargs):
     if created:
         Player.objects.create(user=instance)
+        
+@receiver(post_save, sender=User)
+def create_user_active_tournament(sender, instance, created, **kwargs):
+    if created:
+        UserActiveTournament.objects.create(user=instance)

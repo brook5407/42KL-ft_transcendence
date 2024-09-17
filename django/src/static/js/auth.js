@@ -42,12 +42,15 @@ export function getCurrentUser() {
 				throw 'User not logged in';
 			}
 		})
-		.then((data) => {
-			window.currentUser = data;
-			const event = new CustomEvent('user-ready');
-			document.dispatchEvent(event);
-			return data;
-		})
+		.then(
+			/** @param {CurrentUser} data */
+			(data) => {
+				window.currentUser = data;
+				const event = new CustomEvent('user-ready');
+				document.dispatchEvent(event);
+				return data;
+			}
+		)
 		.catch((error) => {
 			console.log(error);
 		});
@@ -64,8 +67,14 @@ export function checkAuth() {
 	return window.currentUser;
 }
 
+export function setCurrentUserActiveTournament(tournamentId) {
+	window.currentUser.active_tournament_id = tournamentId;
+}
+
 window.getCurrentUser = getCurrentUser;
 window.clearCurrentUser = clearCurrentUser;
+window.checkAuth = checkAuth;
+window.setCurrentUserActiveTournament = setCurrentUserActiveTournament;
 
 document.addEventListener('DOMContentLoaded', function () {
 	document.body.addEventListener('click', function (event) {

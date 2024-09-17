@@ -204,7 +204,7 @@ export class ChatRoomDrawer extends GenericDrawer {
 	 */
 	createMessageElement(message) {
 		const isSentByCurrentUser =
-			message.sender.user.username === currentUser.username;
+			message.sender.username === currentUser.username;
 		const messageClass = isSentByCurrentUser
 			? 'chat-room__message-sent'
 			: 'chat-room__message-received';
@@ -215,9 +215,9 @@ export class ChatRoomDrawer extends GenericDrawer {
 		messageElem.className = `chat-room__message ${messageClass}`;
 		messageElem.innerHTML = `
 			<div class="chat-room__avatar-container">
-				<span class="chat-room__nickname">${message.sender.nickname}</span>
-				<img src="${message.sender.avatar}" alt="${
-			message.sender.nickname
+				<span class="chat-room__nickname">${message.sender.profile.nickname}</span>
+				<img src="${message.sender.profile.avatar}" alt="${
+			message.sender.profile.nickname
 		}'s avatar" class="chat-room__avatar">
 			</div>
 			<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
@@ -232,7 +232,7 @@ export class ChatRoomDrawer extends GenericDrawer {
 				openDrawer('friend-profile', {
 					url: `drawer/friend-drawer`,
 					queryParams: {
-						username: message.sender.user.username,
+						username: message.sender.username,
 					},
 				});
 			});

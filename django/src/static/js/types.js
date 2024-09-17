@@ -1,9 +1,21 @@
 /**
+ * @typedef {Object} CurrentUser
+ * @property {string} id
+ * @property {string} username
+ * @property {string} email
+ * @property {string} first_name
+ * @property {string} last_name
+ * @property {boolean} email_verified
+ * @property {Profile} profile
+ * @property {string} active_tournament_id
+ */
+
+/**
  * @typedef {Object} WSChatMessage
  * @property {WSChatMessageErrorType} [error]
  * @property {string} [type]
  * @property {string} message
- * @property {Profile} sender
+ * @property {User} sender
  * @property {string} room_id
  * @property {string} room_name
  * @property {string} [cover_image]
@@ -25,7 +37,6 @@ const WSChatMessageErrorType = {
  * @property {string} username
  * @property {string} nickname
  * @property {string} avatar
- * @property {User} user
  */
 
 /**
@@ -33,6 +44,7 @@ const WSChatMessageErrorType = {
  * @property {string} id
  * @property {string} username
  * @property {string} email
+ * @property {Profile} profile
  */
 
 /**
@@ -47,7 +59,7 @@ const WSChatMessageErrorType = {
 /**
  * @typedef {Object} Message
  * @property {string} id
- * @property {Profile} sender
+ * @property {User} sender
  * @property {string} message
  * @property {string} created_at
  * @property {ChatRoom} room
@@ -67,8 +79,8 @@ const WSChatMessageErrorType = {
  * @property {string} id
  * @property {string} name
  * @property {string} description
- * @property {Player} owner
- * @property {Player[]} players
+ * @property {User} owner
+ * @property {TournamentPlayer[]} players
  * @property {Player} [winner]
  * @property {TournamentMatch[]} [matches]
  * @property {TournamentStatus} status
@@ -88,6 +100,7 @@ const WSChatMessageErrorType = {
 /**
  * @typedef {Object} TournamentMatch
  * @property {string} id
+ * @property {TournamentMatchStatus} status
  * @property {TournamentPlayer} winner
  * @property {TournamentPlayer} loser
  * @property {number} winner_score
@@ -100,8 +113,8 @@ const WSChatMessageErrorType = {
  * @typedef {Object} TournamentPlayer
  * @property {string} id
  * @property {Player} player
- * @property {number} position
  * @property {TournamentRoom} tournament
+ * @property {string} created_at
  */
 
 /**
@@ -111,4 +124,32 @@ const TournamentStatus = {
 	WAITING: 'W',
 	ONGOING: 'O',
 	COMPLETED: 'C',
+};
+
+/**
+ * @enum {string}
+ */
+const TournamentMatchStatus = {
+	WAITING: 'W',
+	ONGOING: 'O',
+	COMPLETED: 'C',
+};
+
+/**
+ * @typedef {Object} WSTournamentMessage
+ * @property {WSTournamentMessageType} type
+ * @property {string} [user_id]
+ * @property {string} message
+ */
+
+/**
+ * @enum {string}
+ */
+const WSTournamentMessageType = {
+	PLAYER_JOINED: 'player_joined',
+	PLAYER_LEFT: 'player_left',
+	OWNER_LEFT: 'owner_left',
+	PLAYER_REJOINED: 'player_rejoined',
+	TOURNAMENT_STARTED: 'tournament_started',
+	ERROR: 'error',
 };

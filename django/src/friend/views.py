@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, render
 
-from profiles.serializers import ProfileSerializer
+from base.serializers import UserSerializer
 from profiles.models import Profile
 from utils.request_helpers import is_ajax_request
 from .models import UserRelation, FriendRequest
@@ -62,8 +62,7 @@ class UserRelationViewSet(viewsets.ModelViewSet):
             return Response({'status': _('cannot add yourself as a friend')}, status=status.HTTP_400_BAD_REQUEST)
         elif UserRelation.objects.filter(user=request.user, friend=user).exists():
             return Response({'status': _('already friends')}, status=status.HTTP_400_BAD_REQUEST)
-        profile = get_object_or_404(Profile, user=user)
-        serializer = ProfileSerializer(profile)
+        serializer = UserSerializer(user)
         response_data = serializer.data
         is_friend = user.friends.filter(id=request.user.id).exists()
         latest_friend_request = FriendRequest.objects.filter(sender=request.user, receiver=user).order_by('-created_at').first()

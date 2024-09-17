@@ -222,7 +222,7 @@ export class ChatListDrawer extends GenericDrawer {
                 <div class="chat-name">${chatRoom.room.name}</div>
                     <div class="last-message-container">
                         <div class="last-message-sender">${
-													chatRoom.last_message?.sender.nickname || ''
+													chatRoom.last_message?.sender.profile.nickname || ''
 												}</div>
                         <div class="last-message">${
 													chatRoom.last_message?.message || ''

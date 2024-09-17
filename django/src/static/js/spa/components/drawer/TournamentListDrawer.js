@@ -11,6 +11,8 @@ export class TournamentListDrawer extends GenericDrawer {
 		this.tournamentRooms = [];
 
 		this.tournamentListContainer = null;
+
+		this.tournamentMaxPlayers = 8;
 	}
 
 	// override
@@ -22,6 +24,12 @@ export class TournamentListDrawer extends GenericDrawer {
 		}
 
 		this.shuffleTournamentRooms();
+
+		document
+			.querySelector('#tournament__shuffle-rooms')
+			?.addEventListener('click', () => {
+				this.shuffleTournamentRooms();
+			});
 	}
 
 	/**
@@ -40,9 +48,9 @@ export class TournamentListDrawer extends GenericDrawer {
 		console.log(data);
 
 		/** @type {TournamentRoom[]} */
-		const tournamentRooms = data.results;
+		const tournamentRooms = data;
 
-		this.ptournamentRooms = tournamentRooms;
+		this.tournamentRooms = tournamentRooms;
 		return tournamentRooms;
 	}
 
@@ -51,6 +59,7 @@ export class TournamentListDrawer extends GenericDrawer {
 
 		this.tournamentListContainer.innerHTML = '<div>Loading...</div>';
 		const tournamentRooms = await this.fetchShuffledTournamentRooms();
+		console.log(tournamentRooms);
 		this.tournamentListContainer.innerHTML = '';
 
 		this.appendTournamentRooms(tournamentRooms);
@@ -74,14 +83,57 @@ export class TournamentListDrawer extends GenericDrawer {
 	 */
 	createChatRoomElement(tournamentRoom) {
 		const div = document.createElement('div');
+		div.className = 'tournament__room-item';
+		div.dataset.roomId = tournamentRoom.id;
+		div.innerHTML = `
+			<div class="tournament__room-owner-avatar">
+				<img src="${tournamentRoom.owner.profile.avatar}" alt="${
+			tournamentRoom.owner.username
+		} avatar" width="50" height="50" />
+			</div>
+			<div class="tournament__room-details">
+				<div class="tournament__room-name">${tournamentRoom.name}</div>
+				<div class="tournament__room-description">${tournamentRoom.description}</div>
+				<div class="tournament__room-members">
+					${tournamentRoom.players
+						.map(
+							(player) => `
+						<div class="tournament__member-avatar">
+							<img src="${player.player.user.profile.avatar}" alt="${player.player.user.username} avatar" width="30" height="30" />
+						</div>
+					`
+						)
+						.join('')}
+					${Array(this.tournamentMaxPlayers - tournamentRoom.players.length)
+						.fill(
+							'<div class="tournament__member-avatar tournament__member-empty"><span>+</span></div>'
+						)
+						.join('')}
+				</div>
+			</div>
+			<div class="tournament__join-button">Join</div>
+		`;
 
-		// WXR TODO:
-		// owner avatar
-		// room name
-		// room description
-		// room members avatar (empty positions show a plus sign)
-		// join button
-
+		// Add event listener for the join button
+		div
+			.querySelector('.tournament__join-button')
+			.addEventListener('click', () => {
+				this.joinTournamentRoom(tournamentRoom.id);
+			});
 		return div;
+	}
+
+	/**
+	 * Function to handle joining a tournament room
+	 * @param {string} roomId
+	 */
+	joinTournamentRoom(roomId) {
+		window.tournamentController.joinTournament(roomId).then((res) => {
+			if (!res) {
+				this.shuffleTournamentRooms();
+			} else {
+				// WXR TODO: open tournament room drawer
+			}
+		});
 	}
 }

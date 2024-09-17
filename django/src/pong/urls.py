@@ -12,9 +12,6 @@ urlpatterns = [
     path("pong/pve/", views.pve_view, name="pong.pve"),
     path("api/", include(router.urls)),
     # drawers
-    path(
-        "drawer/tournament-list/",
-        views.tournament_list_drawer,
-        name="pong.tournament-list-drawer",
-    ),
+    path("drawer/tournament-list/", views.tournament_list_drawer, name="pong.tournament-list-drawer"),
+    path("drawer/tournament-create/", views.tournament_create_drawer, name="pong.tournament-create-drawer"),
 ]

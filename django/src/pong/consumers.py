@@ -2,7 +2,7 @@ import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Player
+from .models import Player, TournamentRoom, Match, TournamentPlayer
 
 
 gameHeight = 500
@@ -400,6 +400,146 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         Rb_new = Rb + K * (Sb - Eb)
         return Ra_new, Rb_new
     
+
+class TournamentConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user = self.scope['user']
+        # WXR TODO: see if user got active tournament, join back if so
+        self.tournament_id = None
+        self.tournament_group_name = None
+        self.tournament : TournamentRoom|None = None
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        # await self.leave_tournament()
+        pass
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        type = data.get('type')
+        if type == 'join_tournament':
+            await self.join_tournament(data['tournament_id'])
+        elif type == 'leave_tournament':
+            await self.leave_tournament(data['tournament_id'])
+        elif type == 'start_tournament':
+            await self.start_tournament(data['tournament_id'])
+        elif type == 'rejoin_tournament':
+            await self.rejoin_tournament(data['tournament_id'])
     
+    def is_in_tournament(self):
+        return self.tournament_group_name is not None
     
+    async def join_tournament(self, tournament_id):
+        if self.is_in_tournament():
+            return
+        self.tournament_id = tournament_id
+        self.tournament_group_name = f'tournament_{self.tournament_id}'
+        self.tournament = await database_sync_to_async(TournamentRoom.objects.get)(id=tournament_id)
+
+        await self.channel_layer.group_add(self.tournament_group_name, self.channel_name)
+
+        await self.channel_layer.group_send(
+            self.tournament_group_name,
+            {
+                'type': 'player_joined',
+                'user': self.user.username,
+                'message': f'User {self.user.username} joined the room.'
+            }
+        )
+    
+    async def leave_tournament(self):
+        if not self.is_in_tournament():
+            return
+        # if user is the owner, delete the tournament
+        if self.user == self.tournament.owner:
+            await self.channel_layer.group_send(
+                self.tournament_group_name,
+                {
+                    'type': 'owner_left',
+                    'message': 'The owner has left the room. The tournament has been canceled.'
+                }
+            )
+            await database_sync_to_async(self.tournament.delete)()
+            self.clear_tournament()
+            return
+
+        self.tournament.remove_player(self.user)
+        self.clear_tournament()
+        await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
+        await self.channel_layer.group_send(
+            self.tournament_group_name,
+            {
+                'type': 'player_left',
+                'user_id': self.user.id,
+                'message': f'User {self.channel_name} left the room.'
+            }
+        )
+        
+    async def start_tournament(self):
+        if not self.is_in_tournament():
+            return
+        if not self.tournament.is_owner(self.user):
+            return
+        try:
+            await database_sync_to_async(self.tournament.start)()
+        except ValueError as e:
+            await self.send(text_data=json.dumps({
+                'type': 'error',
+                'message': str(e),
+            }))
+            return
+        await self.channel_layer.group_send(
+            self.tournament_group_name,
+            {
+                'type': 'tournament_started',
+                'message': 'Tournament has started.'
+            }
+        )
+        
+    async def rejoin_tournament(self, tournament_id):
+        if self.is_in_tournament():
+            return
+        self.tournament_id = tournament_id
+        self.tournament_group_name = f'tournament_{self.tournament_id}'
+        self.tournament = await database_sync_to_async(TournamentRoom.objects.get)(id=tournament_id)
+        await self.channel_layer.group_add(self.tournament_group_name, self.channel_name)
+        await self.channel_layer.group_send(
+            self.tournament_group_name,
+            {
+                'type': 'player_rejoined',
+                'user_id': self.user.id,
+                'message': f'User {self.user.username} re-joined the room.'
+            }
+        )
+        
+    def clear_tournament(self):
+        self.tournament_id = None
+        self.tournament_group_name = None
+        self.tournament = None
+        
+    async def player_joined(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'player_joined',
+            'user_id': event['user_id'],
+            'message': event['message'],
+        }))
+        
+    async def player_left(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'player_left',
+            'user_id': event['user_id'],
+            'message': event['message'],
+        }))
+        
+    async def owner_left(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'owner_left',
+            'message': event['message'],
+        }))
+        
+    async def tournament_started(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'tournament_started',
+            'message': event['message'],
+        }))
     

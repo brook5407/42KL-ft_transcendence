@@ -12,7 +12,7 @@ from rest_framework.status import (
 )
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-from .models import Player, TournamentRoom, Match, TournamentPlayer
+from .models import Player, TournamentRoom, Match, TournamentPlayer, TournamentMatch, UserActiveTournament
 from .serializers import (
     TournamentRoomSerializer,
     TournamentRoomCreateSerializer,
@@ -23,8 +23,6 @@ from .serializers import (
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def pvp_view(request):
-    # WXR TODO: Implement the ELO rating system for matchmaking
-
     if is_ajax_request(request):
         return render(request, "components/pages/pong.html", {"game_mode": "pvp"})
     return render(request, "index.html")
@@ -46,6 +44,15 @@ def tournament_list_drawer(request):
             "Error: This endpoint only accepts AJAX requests."
         )
     return render(request, "components/drawers/pong/tournament/list.html")
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def tournament_create_drawer(request):
+    if not is_ajax_request(request):
+        return HttpResponseBadRequest(
+            "Error: This endpoint only accepts AJAX requests."
+        )
+    return render(request, "components/drawers/pong/tournament/create.html")
 
 
 class TournamentRoomViewSet(viewsets.ModelViewSet):
@@ -69,18 +76,25 @@ class TournamentRoomViewSet(viewsets.ModelViewSet):
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
-        serializer.save(owner=request.user)
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        tournament_room = serializer.save()
+        return Response(tournament_room.id, status=HTTP_201_CREATED)
 
     @action(detail=True, methods=["POST"])
     def join(self, request, pk=None):
         tournament_room = get_object_or_404(TournamentRoom, pk=pk)
+        active_tournament = UserActiveTournament.objects.get(user=request.user)
+        if active_tournament.tournament is not None:
+            return Response(
+                {"detail": "You are already in a tournament room."},
+                status=HTTP_400_BAD_REQUEST,
+            )
         if tournament_room.players.count() >= TournamentRoom.MAX_PLAYERS:
             return Response(
                 {"detail": "The tournament room is full."}, status=HTTP_400_BAD_REQUEST
             )
-        position = tournament_room.players.count() + 1
-        tournament_room.add_player(request.user, position)
+        tournament_room.add_player(request.user)
+        active_tournament.tournament = tournament_room
+        active_tournament.save()
         return Response(status=HTTP_201_CREATED)
 
     @action(detail=True, methods=["POST"])
@@ -95,6 +109,7 @@ class TournamentRoomViewSet(viewsets.ModelViewSet):
                 {"detail": "You are not a member of this tournament room."},
                 status=HTTP_400_BAD_REQUEST,
             )
+        request.user.active_tournament = None
         return Response(status=HTTP_200_OK)
 
     @action(detail=True, methods=["POST"])
@@ -114,9 +129,13 @@ class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
 
-    # WXR TODO: matchmake (PVP)
     @action(detail=False, methods=["POST"])
     def matchmake(self, request):
-        # ELO rating system
+        # WXR TODO: Implement the ELO rating system for matchmaking
+        # Still need create unique room name before matchmaking
         pass
-    # WXR TODO: PVE
+
+    @action(detail=False, methods=["POST"])
+    def pve(self, request):
+        # WXR TODO: start pve game
+        pass
