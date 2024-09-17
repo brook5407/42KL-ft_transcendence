@@ -222,14 +222,16 @@ class PongConsumer(AsyncWebsocketConsumer):
                     self.room_group_name,
                     {
                         'type': 'end_game',
-                        'message': f'{winner} wins! Because other player disconnected!',
+                        'message': f'{winner} wins!\nBecause other player disconnected!',
                     }
                 )
                 break  # Exit the game loop
 
-            # End the game if a player reaches a score of 5
-            if self.match['score1'] >= 5 or self.match['score2'] >= 5:
-                winner = 'Player 1' if self.match['score1'] >= 5 else 'Player 2'
+            winningScore = 1
+
+            # End the game if a player reaches a score of winningScore
+            if self.match['score1'] >= winningScore or self.match['score2'] >= winningScore:
+                winner = 'Player 1' if self.match['score1'] >= winningScore else 'Player 2'
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {

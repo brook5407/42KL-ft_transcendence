@@ -3,53 +3,57 @@
 <link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
-<div id="gameContainer">
-    <div class="game-container">
-        <div class="game-area">
-			<div id="score1" class="score left-score">0</div>
-			<div id="canvasContainer">
-				<canvas id="gameCanvas"></canvas>
-				<div id="overlay">
-					<div id="winnerText">[Winner]</div>
-					<div id="countdownText">3</div>
-				</div>
-			</div>
-			<div id="score2" class="score right-score">0</div>
-			<div id="matchmaking">Searching for opponent...</div>
+<div class="container">
+    
+    <div id="matchmaking">Searching for opponent...</div>
+
+    <div class="game-area">
+        <div id="score1" class="score left-score">0</div>
+        <div id="canvasContainer">
+            <canvas id="gameCanvas"></canvas>
+            <div id="overlay">
+                <div id="winnerText">[Winner]</div>
+                <div id="countdownText">3</div>
+            </div>
         </div>
-		
-        <div class="score-container">
-		</div>
-		<div class="score-area">
-				<div id="roomCode">Room Code</div>
-                <div class="current-match">
-                    <h2>Current:</h2>
-                    <div class="players">
-                        <div class="player">
-                            <img src="avatar1.png" alt="Player 1">
-                            <span>VS</span>
-                            <img src="avatar2.png" alt="Player 2">
-                        </div>
-                    </div>
-                </div>
-                <div class="next-match">
-                    <h2>Next:</h2>
-                    <div class="players">
-                        <div class="player">
-                            <img src="avatar3.png" alt="Player 3">
-                            <span>VS</span>
-                            <img src="avatar4.png" alt="Player 4">
-                        </div>
-                    </div>
-                </div>
-                <div class="buttons">
-                    <button class="flag-btn">🏳</button>
-                    <button class="fullscreen-btn">⛶</button>
+        <div id="score2" class="score right-score">0</div>
+    </div>
+
+    <div class="details-area">
+        <div class="room-code">
+            <h2>Room Code</h2><div id="roomCode">Code</div>
+        </div>
+
+        <div class="current-match">
+            <h2>Current</h2>
+            <div class="players">
+                <div class="player">
+                    <img src="empty_user.png" alt="Player 1">
+                    <span class="players">VS</span>
+                    <img src="empty_user.png" alt="Player 2">
                 </div>
             </div>
         </div>
+
+        <div class="next-match">
+            <h2>Next</h2>
+            <div class="players">
+                <div class="player">
+                    <img src="empty_user.png" alt="Player 3">
+                    <span class="players">VS</span>
+                    <img src="empty_user.png" alt="Player 4">
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="flag-btn">🏳</button>
+            <button class="fullscreen-btn">⛶</button>
+        </div>
     </div>
+
 </div>
+
 
 <script>
 	const roomName = "{{ room_name }}";

@@ -4,19 +4,8 @@
 	src: url('fonts/digital-7.regular.ttf');
    }
 
-* {
-	font-family: 'Poppins', sans-serif;
-	text-align: center;
-	color:black;
-}
-#gameContainer {
-    position: relative;
-	margin-top: auto;
-}
 #canvasContainer {
     position: relative;
-    display: inline-block;
-    margin: auto;
 }
 
 #gameCanvas {
@@ -37,9 +26,8 @@
     width: 100%; /* Cover the entire canvas */
     height: 100%; /* Cover the entire canvas */
     background-color: rgba(0, 0, 0, 0.7);
-
-    /* color: white; */
-    /* font-size: 48px; */
+    color: white;
+    font-size: 48px;
     font-weight: bold;
     z-index: 1000;
 }
@@ -65,11 +53,11 @@
     white-space: nowrap; /* Prevent text from wrapping */
 }
 .left-score {
-    left: 1vw;
+    left: 2vw;
 	color: #EC4242;
 }
 .right-score {
-    right: 1vw;
+    right: 2vw;
 	color: #4FCDF0;
 }
 #matchmaking, #roomCode {
@@ -78,74 +66,88 @@
 	text-align: center;
 }
 
-body {
-	justify-content: center;  /* Center horizontally */
-    align-items: center;      /* Center vertically */
-} */
-
-.game-container {
+.container {
+	font-family: 'Poppins', sans-serif;
+	text-align: center;
+	color:black;
     display: flex;
-    flex-direction: column;
-    width: 80%;
-    height: 80vh;
-    background-color: #e0f7fa;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    justify-content: center;  /* Center horizontally */
+    align-items: center;      /* Center vertically */
 }
 
 .game-area {
-    flex: 2;
+    flex-grow: 1; /* Allows the game area to grow between top and footer */
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically within available space */
     position: relative;
     border-radius: 10px;
-    margin: 10px;
-	align-items: center;
-	padding-left: 5vw;
-    padding-right: 5vw;
+	padding-left: 10vw;
+    padding-right: 10vw;
 }
 
-/* Chat and Scoreboard Container */
-.chat-score-container {
-    display: flex;
-    flex-direction: row;
-    height: 30%;
-    margin: 10px;
-}
-
-/* Score Area */
-.score-area {
-    /* flex: 1; */
+/* Details Area */
+.details-area {
     background-color: #1A9EC7;
     border: 10px solid #1FB5E4;
-    padding: 10px;
+    padding: 20px;
     color: white;
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-weight: bold;
 }
 
-.players {
+h2 {
+    color: black;
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 0;
+}
+.players, .player {
+    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .player img {
+    color: white;
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin: 0 10px;
 }
 
-.buttons {
+/* .buttons {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+} */
+
+button.flag-btn {
+    background-color: red;
+    border-color: red;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
-button.flag-btn, button.fullscreen-btn {
-    background-color: #ff5722;
-    border: none;
-    padding: 10px;
+button.fullscreen-btn {
+    background-color: yellow;
+    border-color: yellow;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
     border-radius: 50%;
     cursor: pointer;
 }

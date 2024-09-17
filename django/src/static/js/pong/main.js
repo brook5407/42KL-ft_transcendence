@@ -3,7 +3,6 @@ import { Ball } from './classes/ball.js';
 import { Table } from './classes/table.js';
 
 // Client-side game setup and rendering
-const gameContainer = document.getElementById('gameContainer');
 const score1 = document.getElementById('score1');
 const score2 = document.getElementById('score2');
 const gameCanvas = document.getElementById('gameCanvas');
