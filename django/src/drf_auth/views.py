@@ -24,12 +24,13 @@ from utils.request_helpers import is_ajax_request
 from rest_framework.decorators import api_view
 from django.http import HttpResponseBadRequest
 
+
 class CustomAccountAdapter(DefaultAccountAdapter):
     def get_email_confirmation_url(self, request, emailconfirmation):
         app_url = settings.APP_URL
         confirmation_key = emailconfirmation.key
         return f'{app_url}/auth/verify/{confirmation_key}/'
-    
+
 
 class EmailVerificationView(View):
     def get(self, request, *args, **kwargs):
@@ -37,7 +38,7 @@ class EmailVerificationView(View):
         if not key:
             messages.error(request, _('Verification key is missing'))
             return redirect(settings.ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL)
-        
+
         # You can render your index.html template here if needed
         # For now, we'll just proceed with the POST request
         return self.post(request, *args, **kwargs)
@@ -159,9 +160,16 @@ def ResetPasswordPage(request):
 
     return render(request, 'index.html', status=404)
 
+
 @api_view(['GET'])
 def reset_password_modal(request):
     if is_ajax_request(request):
-
         return render(request, 'components/modals/reset-password.html')
+    return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
+
+@api_view(['GET'])
+def change_password_modal(request):
+    if is_ajax_request(request):
+        return render(request, 'components/modals/change-password.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")

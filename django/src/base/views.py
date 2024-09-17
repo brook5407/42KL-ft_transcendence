@@ -1,13 +1,15 @@
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.utils.translation import activate
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from allauth.account.models import EmailAddress
 from django.core.exceptions import ObjectDoesNotExist
 from core import settings
 from utils.request_helpers import is_ajax_request
-
+from django.views.decorators.http import require_GET
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -93,3 +95,26 @@ def current_user_profile(request):
         }
     }
     return JsonResponse(data)
+
+@require_GET
+def custom_set_language(request):
+    language = request.GET.get('language')
+    if language and language in [lang[0] for lang in settings.LANGUAGES]:
+        activate(language)
+        request.session[settings.LANGUAGE_CODE] = language
+
+        # Update user's profile language
+        if request.user.is_authenticated:
+            try:
+                profile = request.user.profile
+                profile.language = language
+                profile.save()
+            except request.user.profile.RelatedObjectDoesNotExist:
+                # Handle case where user doesn't have a profile
+                pass
+
+        response = JsonResponse({'status': 'success', 'language': language})
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+        return response
+    else:
+        return JsonResponse({'status': 'error', 'message': _('Invalid language')}, status=400)

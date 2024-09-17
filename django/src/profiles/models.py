@@ -12,6 +12,7 @@ class Profile(BaseModel):
     nickname = models.CharField(max_length=10, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     avatar = models.ImageField(null=True, upload_to='avatars/', default='avatar.svg')
+    language = models.CharField(max_length=7, default='en')
 
     def __str__(self):
         return f'{self.user.username} Profile'
