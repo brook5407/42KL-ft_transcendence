@@ -63,10 +63,10 @@
 		}).then(response => {
 			if (response.ok) {
 				closeDrawer();
-				showSuccessMessage('Friend deleted successfully');
+				showSuccessMessage("{% trans 'Friend deleted successfully' %}");
 				return;
 			}
-			throw new Error('Failed to delete friend');
+			throw new Error("{% trans 'Failed to delete friend' % }");
 		}).catch(error => {
 			console.error(error);
 		});
@@ -94,10 +94,10 @@
 				blockBtn.classList.remove('block-btn');
 				blockBtn.classList.add('unblock-btn');
 				blockBtn.innerText = 'Unblock';
-				showSuccessMessage('Friend blocked successfully');
+				showSuccessMessage("{% trans 'Friend blocked successfully' %}");
 				return;
 			}
-			throw new Error('Failed to block friend');
+			throw new Error("{ % 'Failed to block friend' %}");
 		}).catch(error => {
 			console.error(error);
 		});
@@ -116,10 +116,10 @@
 				unblockBtn.classList.remove('unblock-btn');
 				unblockBtn.classList.add('block-btn');
 				unblockBtn.innerText = 'Block';
-				showSuccessMessage('Friend unblocked successfully');
+				showSuccessMessage("{% trans 'Friend unblocked successfully' %}");
 				return;
 			}
-			throw new Error('Failed to unblock friend');
+			throw new Error("{% trans 'Failed to unblock friend' %}");
 		}).catch(error => {
 			console.error(error);
 		});
@@ -144,7 +144,7 @@
 			}
 		})
 		.then(data => {
-			showSuccessMessage('Friend request sent successfully');
+			showSuccessMessage("{% trans 'Friend request sent successfully' %}");
 		});
 	}
 

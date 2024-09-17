@@ -1,64 +1,44 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
-msgid ""
-msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-05 05:37+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: core/settings.py:185
+#: core/settings.py:188
 msgid "English"
-msgstr "English"
+msgstr ""
 
-#: core/settings.py:186
+#: core/settings.py:189
 msgid "Malay"
-msgstr "Malay"
+msgstr ""
 
-#: core/settings.py:187
+#: core/settings.py:190
 msgid "Chinese"
 msgstr ""
 
-#: drf_auth/views.py:32 drf_auth/views.py:42
+#: drf_auth/views.py:38 drf_auth/views.py:48
 msgid "Verification key is missing"
 msgstr ""
 
-#: drf_auth/views.py:61
+#: drf_auth/views.py:67
 msgid "Your email has been successfully verified."
 msgstr ""
 
-#: drf_auth/views.py:64
+#: drf_auth/views.py:70
 msgid "There was an error verifying your email."
 msgstr ""
 
-#: drf_auth/views.py:84
+#: drf_auth/views.py:90
 msgid "OTP sent. Please check your email."
 msgstr ""
 
-#: drf_auth/views.py:88
+#: drf_auth/views.py:94
 msgid "User email is not verified."
 msgstr ""
 
-#: drf_auth/views.py:92
+#: drf_auth/views.py:98
 msgid "User does not exist."
 msgstr ""
 
-#: drf_auth/views.py:115 drf_auth/views.py:124
+#: drf_auth/views.py:121 drf_auth/views.py:130
 msgid "OTP is invalid"
 msgstr ""
 
-#: drf_auth/views.py:120
+#: drf_auth/views.py:126
 msgid "OTP has expired, Please request a new one"
 msgstr ""
 
@@ -75,10 +55,8 @@ msgid "friend unblocked"
 msgstr ""
 
 #: friend/views.py:53
-#, fuzzy
-#| msgid "Friend Requests"
 msgid "friend deleted"
-msgstr "Friend Requests"
+msgstr ""
 
 #: friend/views.py:59
 msgid "username query parameter is required"
@@ -89,156 +67,213 @@ msgid "cannot add yourself as a friend"
 msgstr ""
 
 #: friend/views.py:64
-#, fuzzy
-#| msgid "New Friends"
 msgid "already friends"
-msgstr "New Friends"
+msgstr ""
 
 #: friend/views.py:85 friend/views.py:93
 msgid "not authorized"
 msgstr ""
 
 #: friend/views.py:87
-#, fuzzy
-#| msgid "Friend Requests"
 msgid "friend request accepted"
-msgstr "Friend Requests"
+msgstr ""
 
 #: friend/views.py:95
-#, fuzzy
-#| msgid "Friend Requests"
 msgid "friend request rejected"
-msgstr "Friend Requests"
+msgstr ""
 
 #: friend/views.py:103
-#, fuzzy
-#| msgid "Friend Requests"
 msgid "friend request already sent"
-msgstr "Friend Requests"
+msgstr ""
 
 #: friend/views.py:110
-#, fuzzy
-#| msgid "Friend Requests"
 msgid "friend request sent"
-msgstr "Friend Requests"
+msgstr ""
 
 #: templates/components/drawers/chat-list.html:10
-msgid "Chat"
-msgstr "Chat"
+msgid "Chat List"
+msgstr ""
 
-#: templates/components/drawers/chat-list.html:16
-msgid "Public Chat"
-msgstr "Public Chat"
+#: templates/components/drawers/chat-room.html:20
+#: templates/components/drawers/game-history.html:15
+msgid "Loading..."
+msgstr ""
 
 #: templates/components/drawers/friend/list.html:10
 msgid "Friends"
-msgstr "Friends"
+msgstr ""
 
 #: templates/components/drawers/friend/profile.html:10
 #: templates/components/drawers/profile.html:10
 msgid "Profile"
-msgstr "Profile"
+msgstr ""
 
-#: templates/components/drawers/friend/profile.html:32
+#: templates/components/drawers/friend/profile.html:35
 msgid "This user didn't say anything"
-msgstr "This user didn't say anything"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:66
+msgid "Friend deleted successfully"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:97
+msgid "Friend blocked successfully"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:119
+msgid "Friend unblocked successfully"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:122
+msgid "Failed to unblock friend"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:147
+#: templates/components/drawers/friend/search-friend.html:92
+msgid "Friend request sent successfully"
+msgstr ""
 
 #: templates/components/drawers/friend/requests.html:10
 msgid "Friend Requests"
-msgstr "Friend Requests"
+msgstr ""
 
 #: templates/components/drawers/friend/search-friend.html:10
 msgid "New Friends"
-msgstr "New Friends"
+msgstr ""
 
-#: templates/components/drawers/profile.html:33
+#: templates/components/drawers/friend/search-friend.html:17
+msgid "Search new friends..."
+msgstr ""
+
+#: templates/components/drawers/friend/search-friend.html:105
+msgid "Already friend"
+msgstr ""
+
+#: templates/components/drawers/friend/search-friend.html:109
+msgid "Requested"
+msgstr ""
+
+#: templates/components/drawers/game-history.html:10
+msgid "Match History"
+msgstr ""
+
+#: templates/components/drawers/profile-edit.html:10
 msgid "Edit Profile"
-msgstr "Edit Profile"
+msgstr ""
 
-#: templates/components/drawers/profile.html:39
+#: templates/components/drawers/profile-edit.html:16
 msgid "Nickname"
-msgstr "Nickname"
+msgstr ""
 
-#: templates/components/drawers/profile.html:43
+#: templates/components/drawers/profile-edit.html:20
 msgid "Bio"
-msgstr "Bio"
+msgstr ""
 
-#: templates/components/drawers/profile.html:46
+#: templates/components/drawers/profile-edit.html:23
 msgid "Save"
 msgstr ""
 
-#: templates/components/drawers/profile.html:47
-msgid "Cancel"
+#: templates/components/drawers/profile.html:36
+msgid "Wins:"
+msgstr ""
+
+#: templates/components/drawers/profile.html:36
+msgid "Losses:"
 msgstr ""
 
 #: templates/components/drawers/settings.html:6
 msgid "Settings"
-msgstr "Settings"
+msgstr ""
 
 #: templates/components/modals/42oauth.html:12
 msgid "Want username and password sign in? Click "
-msgstr "Want username and password sign in? Click "
+msgstr ""
 
 #: templates/components/modals/42oauth.html:12
+#: templates/components/modals/signin.html:9
 #: templates/components/modals/signup.html:9
 msgid "here"
-msgstr "here"
+msgstr ""
 
 #: templates/components/modals/42oauth.html:19
 msgid "42 Login"
-msgstr "42 Login"
+msgstr ""
+
+#: templates/components/modals/forget-password.html:5
+msgid "Forget Password"
+msgstr ""
+
+#: templates/components/modals/forget-password.html:12
+#: templates/components/modals/signup.html:16
+msgid "Email"
+msgstr ""
+
+#: templates/components/modals/forget-password.html:16
+#: templates/components/modals/reset-password.html:22
+#: templates/components/modals/signin.html:31
+#: templates/components/modals/signup.html:32
+msgid "Submit"
+msgstr ""
+
+#: templates/components/modals/reset-password.html:5
+msgid "Reset Password"
+msgstr ""
+
+#: templates/components/modals/reset-password.html:14
+msgid "New Password"
+msgstr ""
+
+#: templates/components/modals/reset-password.html:18
+#: templates/components/modals/signup.html:28
+msgid "Confirm Password"
+msgstr ""
 
 #: templates/components/modals/signin.html:5
 #: templates/components/pages/home.html:61
 msgid "Sign In"
-msgstr "Sign In"
+msgstr ""
 
 #: templates/components/modals/signin.html:9
 msgid "New user? Register"
-msgstr "New user? Register"
+msgstr ""
 
 #: templates/components/modals/signin.html:16
 #: templates/components/modals/signup.html:20
 msgid "Username"
-msgstr "Username"
+msgstr ""
 
 #: templates/components/modals/signin.html:20
 #: templates/components/modals/signup.html:24
 msgid "Password"
-msgstr "Password"
+msgstr ""
 
 #: templates/components/modals/signin.html:27
 msgid "send"
-msgstr "Send"
+msgstr ""
 
-#: templates/components/modals/signin.html:31
-#: templates/components/modals/signup.html:32
-msgid "Submit"
-msgstr "Submit"
+#: templates/components/modals/signin.html:35
+msgid "Forgot Password?"
+msgstr ""
+
+#: templates/components/modals/signin.html:57
+msgid "OTP sent to your email!"
+msgstr ""
+
+#: templates/components/modals/signin.html:61
+msgid "Error requesting OTP. Please try again."
+msgstr ""
 
 #: templates/components/modals/signup.html:5
-#, fuzzy
-#| msgid "Sign In"
 msgid "Sign Up"
-msgstr "Sign In"
+msgstr ""
 
 #: templates/components/modals/signup.html:9
-#, fuzzy
-#| msgid "Already gave an account? Login"
 msgid "Already gave an account? Login "
-msgstr "Already gave an account? Login "
-
-#: templates/components/modals/signup.html:16
-msgid "Email"
-msgstr "Email"
-
-#: templates/components/modals/signup.html:28
-msgid "Confirm Password"
-msgstr "Confirm Password"
+msgstr ""
 
 #: templates/components/pages/home.html:9
 msgid "AIsPong"
-msgstr "AIsPong"
+msgstr ""
 
 #: templates/components/pages/home.html:48
 msgid "PVP"
@@ -248,6 +283,22 @@ msgstr ""
 msgid "PVE"
 msgstr ""
 
-#: templates/components/pages/pong.html:11
-msgid "Waiting for opponent..."
+#: templates/components/pages/pong.html:16
+msgid "Searching for opponent..."
+msgstr ""
+
+#: templates/components/pages/tournament.html:6
+msgid "Tournament Room:"
+msgstr ""
+
+#: templates/components/pages/tournament_lobby.html:7
+msgid "Tournament Lobby"
+msgstr ""
+
+#: templates/components/pages/tournament_lobby.html:8
+msgid "Create Room"
+msgstr ""
+
+#: templates/components/pages/tournament_lobby.html:12
+msgid "Join Room"
 msgstr ""

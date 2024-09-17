@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
-<div>Tournament Room: {{ room_name }}</div>
+<div>{% trans 'Tournament Room:' %} {{ room_name }}</div>
 <form id="form">
     <input type="text" name="message" id="messageInput" autocomplete="off"/>
 </form>
