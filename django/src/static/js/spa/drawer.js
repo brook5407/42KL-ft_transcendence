@@ -20,6 +20,7 @@ export const DRAWERS = {
 	'match-history': GenericDrawer,
 	'tournament-list': TournamentListDrawer,
 	'tournament-create': GenericDrawer,
+	'tournament-room': GenericDrawer,
 };
 
 class DrawerStack {

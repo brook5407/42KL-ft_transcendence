@@ -101,25 +101,25 @@ class TournamentRoom(BaseModel):
     def remove_player(self, user):
         try:
             player = Player.objects.get(user=user)
-            tournament_player = TournamentPlayer.objects.get(
+            tournament_player = TournamentPlayer.objects.filter(
                 player=player, tournament=self
-            )
+            ).first()
         except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
             raise ValueError("Player or TournamentPlayer does not exist.")
         self.players.remove(tournament_player)
+        self.save()
 
     def is_member(self, user):
         try:
             player = Player.objects.get(user=user)
-            tournament_player = TournamentPlayer.objects.get(
+            return TournamentPlayer.objects.filter(
                 player=player, tournament=self
-            )
+            ).exists()
         except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
             return False
-        return self.players.filter(player=tournament_player).exists()
 
     def is_owner(self, user):
-        return self.owner.user == user
+        return self.owner == user
 
     def start(self):
         if not self.is_owner(self.owner.user):
@@ -229,7 +229,7 @@ class MatchHistory(BaseModel):
     )
     elo_change = models.IntegerField(default=0)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
+    object_id = models.CharField(max_length=255)
     content_object = GenericForeignKey("content_type", "object_id")
 
     def __str__(self):
@@ -238,7 +238,7 @@ class MatchHistory(BaseModel):
 
 class UserActiveTournament(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="active_tournament")
-    tournament = models.OneToOneField(TournamentRoom, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    tournament = models.ForeignKey(TournamentRoom, on_delete=models.SET_NULL, null=True, blank=True, default=None)
 
     def __str__(self):
         return f"{self.user} in {self.tournament}"

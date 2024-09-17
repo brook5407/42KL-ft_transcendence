@@ -67,14 +67,9 @@ export function checkAuth() {
 	return window.currentUser;
 }
 
-export function setCurrentUserActiveTournament(tournamentId) {
-	window.currentUser.active_tournament_id = tournamentId;
-}
-
 window.getCurrentUser = getCurrentUser;
 window.clearCurrentUser = clearCurrentUser;
 window.checkAuth = checkAuth;
-window.setCurrentUserActiveTournament = setCurrentUserActiveTournament;
 
 document.addEventListener('DOMContentLoaded', function () {
 	document.body.addEventListener('click', function (event) {

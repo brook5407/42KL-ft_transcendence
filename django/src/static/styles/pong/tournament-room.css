@@ -1,0 +1,85 @@
+.tournament-room {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid #ccc;
+	padding: 20px;
+	margin: 10px;
+	border-radius: 10px;
+	background-color: var(--color-brand-2);
+	cursor: default;
+}
+
+.tournament-room__owner-avatar img {
+	border-radius: 50%;
+}
+
+.tournament-room__details {
+	text-align: center;
+	margin-top: 10px;
+}
+
+.tournament-room__name {
+	font-size: 1.5em;
+	font-weight: bold;
+	color: var(--color-brand-6);
+}
+
+.tournament-room__description {
+	font-size: 1em;
+	color: var(--color-text-7);
+	margin-top: 5px;
+}
+
+.tournament-room__members {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.tournament-room__member-avatar {
+	margin: 0 5px;
+}
+
+.tournament-room__member-avatar img {
+	border-radius: 50%;
+}
+
+.tournament-room__member-empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	border: 1px dashed #ccc;
+	border-radius: 50%;
+	color: #ccc;
+}
+
+.tournament-room__actions {
+	margin-top: 20px;
+}
+
+.tournament-room__start-button,
+.tournament-room__leave-button {
+	padding: 10px 20px;
+	margin: 5px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.tournament-room__start-button {
+	background-color: var(--color-success-4);
+	color: white;
+}
+
+.tournament-room__start-button:disabled {
+	background-color: var(--color-text-3);
+	cursor: not-allowed;
+}
+
+.tournament-room__leave-button {
+	background-color: var(--color-error-4);
+	color: white;
+}

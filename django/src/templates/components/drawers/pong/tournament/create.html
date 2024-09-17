@@ -3,7 +3,6 @@
 {% load static %}
 
 {% block drawerStyles %}
-	<link rel="stylesheet" href="{% static 'styles/pong/tournament-list.css' %}" />
 {% endblock %}
 
 {% block drawerHeader %}
@@ -40,9 +39,16 @@
 		const name = formData.get('name');
 		const description = formData.get('description');
 
-		window.tournamentController.createTournament(name, description).then(() => {
-			// WXR TODO: open tournament room drawer
-		})
+		window.tournamentController.createTournament(name, description).then((tournamentRoomId) => {
+            window.tournamentController.setCurrentTournamentId(tournamentRoomId);
+            showSuccessMessage('Tournament created successfully');
+			openDrawer('tournament-room', {
+                url: '{% url "pong.tournament-room-drawer" %}',
+                queryParams: {
+                    tournament_room_id: tournamentRoomId
+                }
+            });
+		});
 	}
 </script>
 {% endblock %}

@@ -14,4 +14,5 @@ urlpatterns = [
     # drawers
     path("drawer/tournament-list/", views.tournament_list_drawer, name="pong.tournament-list-drawer"),
     path("drawer/tournament-create/", views.tournament_create_drawer, name="pong.tournament-create-drawer"),
+    path("drawer/tournament-room/", views.tournament_room_drawer, name="pong.tournament-room-drawer"),
 ]

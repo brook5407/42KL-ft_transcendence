@@ -1,31 +1,32 @@
-{% extends "components/drawers/drawer-left.html" %}
+import { GenericDrawer } from './GenericDrawer.js';
 
-{% load static %}
+/**
+ * @borrows {import("../../../types.js").TournamentRoom}
+ */
 
-{% block drawerStyles %}
-	<link rel="stylesheet" href="{% static 'styles/pong/tournament-room.css' %}" />
-{% endblock %}
+export class TournamentRoomDrawer extends GenericDrawer {
+	constructor(params) {
+		super(params);
 
-{% block drawerHeader %}
-	<h2 id="drawer-title"></h2>
-{% endblock %}
+		this.tournamentRoomContainer = null;
+		this.tournamentRoomId = this.queryParams.tournament_room_id;
+		this.tournamentMaxPlayers = 8;
+	}
 
-{% block drawerContent %}
-{{ tournament_room|json_script:"tournament_room_json" }}
-<div id="tournament-room"></div>
-{% endblock %}
+	// override
+	async handleDrawerOpened(e) {
+		this.tournamentRoomContainer = document.querySelector('#tournament-room');
 
-{% block drawerScripts %}
-<script>
-	document.addEventListener('drawer-opened', () => {
-		const tournamentRoomContainer = document.querySelector('#tournament-room');
-		const tournamentRoom = JSON.parse(document.querySelector('#tournament_room_json').textContent);
-		console.log(tournamentRoom);
-		const tournamentRoomElement = createTournamentRoom(tournamentRoom);
-		tournamentRoomContainer.appendChild(tournamentRoomElement);
-	}, { once: true });
+		if (!this.tournamentRoomContainer) {
+			return;
+		}
 
-	function createTournamentRoom(tournamentRoom) {
+		const tournamentRoom = await this.fetchTournamentRoom();
+		const tournamentRoomElement = this.createTournamentRoom(tournamentRoom);
+		this.tournamentRoomContainer.appendChild(tournamentRoomElement);
+	}
+
+	createTournamentRoom(tournamentRoom) {
 		const div = document.createElement('div');
 		div.classList.add('tournament-room');
 		div.innerHTML = `
@@ -47,7 +48,7 @@
 					`
 						)
 						.join('')}
-					${Array(window.tournamentMaxPlayers - tournamentRoom.players.length)
+					${Array(this.tournamentMaxPlayers - tournamentRoom.players.length)
 						.fill(
 							'<div class="tournament-room__member-avatar tournament-room__member-empty"><span>+</span></div>'
 						)
@@ -83,10 +84,13 @@
 		}
 
 		leaveButton.addEventListener('click', function () {
-			window.tournamentController.leaveTournament();
+			ajaxWithAuth(`/api/tournament-room/${tournamentRoom.id}/leave/`, {
+				method: 'POST',
+			}).then(() => {
+				closeDrawer();
+			});
 		});
 
 		return div;
 	}
-</script>
-{% endblock %}
+}

@@ -26,7 +26,7 @@ export class TournamentListDrawer extends GenericDrawer {
 		this.shuffleTournamentRooms();
 
 		document
-			.querySelector('#tournament__shuffle-rooms')
+			.querySelector('#tournament-list__shuffle-rooms')
 			?.addEventListener('click', () => {
 				this.shuffleTournamentRooms();
 			});
@@ -71,7 +71,8 @@ export class TournamentListDrawer extends GenericDrawer {
 	 */
 	appendTournamentRooms(tournamentRooms) {
 		tournamentRooms.forEach((tournamentRoom) => {
-			const tournamentRoomElement = this.createChatRoomElement(tournamentRoom);
+			const tournamentRoomElement =
+				this.createTournamentRoomElement(tournamentRoom);
 			this.tournamentListContainer?.appendChild(tournamentRoomElement);
 		});
 	}
@@ -81,24 +82,26 @@ export class TournamentListDrawer extends GenericDrawer {
 	 * @param {TournamentRoom} tournamentRoom
 	 * @returns {HTMLDivElement}
 	 */
-	createChatRoomElement(tournamentRoom) {
+	createTournamentRoomElement(tournamentRoom) {
 		const div = document.createElement('div');
-		div.className = 'tournament__room-item';
-		div.dataset.roomId = tournamentRoom.id;
+		div.className = 'tournament-list__room-item';
+		// div.dataset.tournamentRoomId = tournamentRoom.id;
 		div.innerHTML = `
-			<div class="tournament__room-owner-avatar">
+			<div class="tournament-list__room-owner-avatar">
 				<img src="${tournamentRoom.owner.profile.avatar}" alt="${
 			tournamentRoom.owner.username
 		} avatar" width="50" height="50" />
 			</div>
-			<div class="tournament__room-details">
-				<div class="tournament__room-name">${tournamentRoom.name}</div>
-				<div class="tournament__room-description">${tournamentRoom.description}</div>
-				<div class="tournament__room-members">
+			<div class="tournament-list__room-details">
+				<div class="tournament-list__room-name">${tournamentRoom.name}</div>
+				<div class="tournament-list__room-description">${
+					tournamentRoom.description
+				}</div>
+				<div class="tournament-list__room-members">
 					${tournamentRoom.players
 						.map(
 							(player) => `
-						<div class="tournament__member-avatar">
+						<div class="tournament-list__member-avatar">
 							<img src="${player.player.user.profile.avatar}" alt="${player.player.user.username} avatar" width="30" height="30" />
 						</div>
 					`
@@ -106,17 +109,17 @@ export class TournamentListDrawer extends GenericDrawer {
 						.join('')}
 					${Array(this.tournamentMaxPlayers - tournamentRoom.players.length)
 						.fill(
-							'<div class="tournament__member-avatar tournament__member-empty"><span>+</span></div>'
+							'<div class="tournament-list__member-avatar tournament-list__member-empty"><span>+</span></div>'
 						)
 						.join('')}
 				</div>
 			</div>
-			<div class="tournament__join-button">Join</div>
+			<div class="tournament-list__join-button">Join</div>
 		`;
 
 		// Add event listener for the join button
 		div
-			.querySelector('.tournament__join-button')
+			.querySelector('.tournament-list__join-button')
 			.addEventListener('click', () => {
 				this.joinTournamentRoom(tournamentRoom.id);
 			});
@@ -125,14 +128,17 @@ export class TournamentListDrawer extends GenericDrawer {
 
 	/**
 	 * Function to handle joining a tournament room
-	 * @param {string} roomId
+	 * @param {string} tournamentRoomId
 	 */
-	joinTournamentRoom(roomId) {
-		window.tournamentController.joinTournament(roomId).then((res) => {
+	joinTournamentRoom(tournamentRoomId) {
+		window.tournamentController.joinTournament(tournamentRoomId).then((res) => {
 			if (!res) {
 				this.shuffleTournamentRooms();
 			} else {
-				// WXR TODO: open tournament room drawer
+				openDrawer('tournament-room', {
+					url: '/drawer/tournament-room/',
+					queryParams: { tournament_room_id: tournamentRoomId },
+				});
 			}
 		});
 	}

@@ -93,6 +93,6 @@ def current_user(request):
             'avatar': profile.avatar.url,
             'nickname': profile.nickname,
         },
-        'active_tournament_id': active_tournament.tournament.id if active_tournament else None,
+        'active_tournament_id': active_tournament.tournament.id if active_tournament.tournament else None,
     }
     return JsonResponse(data)

@@ -10,6 +10,7 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_200_OK,
 )
+from asgiref.sync import async_to_sync
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from .models import Player, TournamentRoom, Match, TournamentPlayer, TournamentMatch, UserActiveTournament
@@ -18,6 +19,7 @@ from .serializers import (
     TournamentRoomCreateSerializer,
     MatchSerializer,
 )
+
 
 
 @api_view(["GET"])
@@ -43,7 +45,29 @@ def tournament_list_drawer(request):
         return HttpResponseBadRequest(
             "Error: This endpoint only accepts AJAX requests."
         )
+    user_active_tournament = UserActiveTournament.objects.get(user=request.user)
+    if user_active_tournament.tournament is not None:
+        serializer = TournamentRoomSerializer(user_active_tournament.tournament)
+        return render(request, "components/drawers/pong/tournament/room.html", context={
+            "tournament_room": serializer.data
+        })
     return render(request, "components/drawers/pong/tournament/list.html")
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def tournament_room_drawer(request):
+    if not is_ajax_request(request):
+        return HttpResponseBadRequest(
+            "Error: This endpoint only accepts AJAX requests."
+        )
+    tournament_room_id = request.GET.get("tournament_room_id")
+    if not tournament_room_id:
+        return HttpResponseBadRequest("Error: tournament_room_id is required.")
+    tournament_room = get_object_or_404(TournamentRoom, pk=tournament_room_id)
+    serializer = TournamentRoomSerializer(tournament_room)
+    return render(request, "components/drawers/pong/tournament/room.html", context={
+        "tournament_room": serializer.data
+    })
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -72,11 +96,19 @@ class TournamentRoomViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+        active_tournament = UserActiveTournament.objects.get(user=request.user)
+        if active_tournament.tournament is not None:
+            return Response(
+                {"detail": "You are already in a tournament room."},
+                status=HTTP_400_BAD_REQUEST,
+            )
         serializer = TournamentRoomCreateSerializer(
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         tournament_room = serializer.save()
+        active_tournament.tournament = tournament_room
+        active_tournament.save()
         return Response(tournament_room.id, status=HTTP_201_CREATED)
 
     @action(detail=True, methods=["POST"])
@@ -109,7 +141,12 @@ class TournamentRoomViewSet(viewsets.ModelViewSet):
                 {"detail": "You are not a member of this tournament room."},
                 status=HTTP_400_BAD_REQUEST,
             )
-        request.user.active_tournament = None
+        try:
+            active_tournament = UserActiveTournament.objects.get(user=request.user)
+            active_tournament.tournament = None
+            active_tournament.save()
+        except UserActiveTournament.DoesNotExist:
+            pass
         return Response(status=HTTP_200_OK)
 
     @action(detail=True, methods=["POST"])
