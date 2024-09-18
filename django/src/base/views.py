@@ -8,6 +8,8 @@ from allauth.account.models import EmailAddress
 from django.core.exceptions import ObjectDoesNotExist
 from core import settings
 from utils.request_helpers import is_ajax_request
+from pong.models import UserActiveTournament
+
 from django.views.decorators.http import require_GET, require_POST
 from django.utils.translation import gettext_lazy as _
 
@@ -73,7 +75,7 @@ def settings_drawer(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def current_user_profile(request):
+def current_user(request):
     user = request.user
     try:
         email_verified = EmailAddress.objects.get(user=user, primary=True) is not None
@@ -81,6 +83,7 @@ def current_user_profile(request):
         email_verified = False
     
     profile = user.profile
+    active_tournament = UserActiveTournament.objects.filter(user=user).first()
     data = {
         'id': user.id,
         'username': user.username,
@@ -92,7 +95,8 @@ def current_user_profile(request):
             'bio': profile.bio,
             'avatar': profile.avatar.url,
             'nickname': profile.nickname,
-        }
+        },
+        'active_tournament_id': active_tournament.tournament.id if active_tournament.tournament else None,
     }
     return JsonResponse(data)
 

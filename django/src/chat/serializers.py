@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import ChatMessage, ChatRoom, ActiveChatRoom
 from base.serializers import UserSerializer
-from profiles.serializers import ProfileSerializer
 
 
 class ChatRoomSerializer(serializers.ModelSerializer):
@@ -25,16 +24,12 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         return representation
 
 class ChatMessageSerializer(serializers.ModelSerializer):
-    sender = serializers.SerializerMethodField()
+    sender = UserSerializer(read_only=True)
     room = ChatRoomSerializer(read_only=True)
 
     class Meta:
         model = ChatMessage
         fields = ['id', 'sender', 'message', 'room', 'created_at']
-        
-    def get_sender(self, obj):
-        profile = obj.sender.profile
-        return ProfileSerializer(profile).data
     
 
 class ActiveChatRoomSerializer(serializers.ModelSerializer):

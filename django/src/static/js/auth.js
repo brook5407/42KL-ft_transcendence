@@ -42,12 +42,15 @@ export function getCurrentUser() {
 				throw 'User not logged in';
 			}
 		})
-		.then((data) => {
-			window.currentUser = data;
-			const event = new CustomEvent('user-ready');
-			document.dispatchEvent(event);
-			return data;
-		})
+		.then(
+			/** @param {CurrentUser} data */
+			(data) => {
+				window.currentUser = data;
+				const event = new CustomEvent('user-ready');
+				document.dispatchEvent(event);
+				return data;
+			}
+		)
 		.catch((error) => {
 			console.log(error);
 		});
@@ -66,6 +69,7 @@ export function checkAuth() {
 
 window.getCurrentUser = getCurrentUser;
 window.clearCurrentUser = clearCurrentUser;
+window.checkAuth = checkAuth;
 
 document.addEventListener('DOMContentLoaded', function () {
 	document.body.addEventListener('click', function (event) {

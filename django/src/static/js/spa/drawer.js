@@ -19,6 +19,8 @@ export const DRAWERS = {
 	'profile-edit': GenericDrawer,
 	'match-history': GenericDrawer,
 	'tournament-list': TournamentListDrawer,
+	'tournament-create': GenericDrawer,
+	'tournament-room': GenericDrawer,
 };
 
 class DrawerStack {
@@ -92,16 +94,20 @@ document.body.addEventListener('click', (e) => {
 		});
 	} else if (e.target.matches('.drawer-back-btn')) {
 		e.preventDefault();
-		drawerStack.pop();
-		// open the previous drawer
-		const drawerToOpen = drawerStack.getCurrentDrawer();
-		if (drawerToOpen) {
-			openDrawer(drawerToOpen.drawerName, drawerToOpen.drawerData, false);
-		} else {
-			closeDrawer();
-		}
+		openPreviousDrawer();
 	}
 });
+
+function openPreviousDrawer() {
+	drawerStack.pop();
+	// open the previous drawer
+	const drawerToOpen = drawerStack.getCurrentDrawer();
+	if (drawerToOpen) {
+		openDrawer(drawerToOpen.drawerName, drawerToOpen.drawerData, false);
+	} else {
+		closeDrawer();
+	}
+}
 
 function dispatchDrawerOpenedEvent(e = null) {
 	document.dispatchEvent(new CustomEvent('drawer-opened', e));
@@ -183,3 +189,4 @@ function activateDrawer() {
 // Expose the openDrawer and closeDrawer functions to the global scope
 window.openDrawer = openDrawer;
 window.closeDrawer = closeDrawer;
+window.openPreviousDrawer = openPreviousDrawer;
