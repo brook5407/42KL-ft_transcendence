@@ -1,5 +1,6 @@
 import json
 import asyncio
+import random
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Player, TournamentRoom, Match, TournamentPlayer, TournamentMatch, UserActiveTournament
@@ -9,55 +10,62 @@ from asgiref.sync import async_to_sync
 gameHeight = 500
 gameWidth = 800
 
+class RoomManager:
+    rooms = {}  # A dictionary to map room names to their respective managers
+
+    @classmethod
+    def get_match_manager(cls, room_name):
+        if room_name not in cls.rooms:
+            cls.rooms[room_name] = MatchManager()
+        return cls.rooms[room_name]
+
+    @classmethod
+    def remove_room(cls, room_name):
+        if room_name in cls.rooms:
+            del cls.rooms[room_name]
+
 class MatchManager:
-    matches = {}
-    player_counter = 0
+    def __init__(self):
+        self.channel_names = [] # List of channel_names (WebSocket connections)
+        self.players = [] # List of current players surviving
+        self.matches = []
+        self.match_index = 0
 
-    @classmethod
-    def assign_player_id(cls):
-        cls.player_counter += 1
-        return cls.player_counter
+        self.paddle1 = Paddle(20, 200, 10, 100)
+        self.paddle2 = Paddle(gameWidth - 30, 200, 10, 100)
+        self.ball = Ball(400, 250, 8, 5)
+        self.score1 = 0
+        self.score2 = 0
 
-    @classmethod
-    def create_match(cls, room_name):
-        if room_name not in cls.matches:
-            cls.matches[room_name] = {
-                'player1': None,
-                'player2': None,
-                'paddle1': Paddle(20, 200, 10, 100),
-                'paddle2': Paddle(gameWidth - 30, 200, 10, 100),
-                'ball': Ball(400, 250, 8, 5),
-                'score1': 0,
-                'score2': 0,
-            }
-        return cls.matches[room_name]
+    def add_player(self, channel_name):
+        self.players.append(channel_name)
 
-    @classmethod
-    def assign_player(cls, room_name, channel_name):
-        match = cls.create_match(room_name)
+    def remove_player(self, channel_name):
+        try:
+            self.players.remove(channel_name)
+        except ValueError:
+            print(f"Player {channel_name} not found in the list.")
 
-        if match['player1'] is None:
-            match['player1'] = channel_name
-            return 'paddle1'
-        elif match['player2'] is None:
-            match['player2'] = channel_name
-            return 'paddle2'
-        else:
-            return None  # Room is full
+    def generate_matches(self):
+        if self.has_next_match():
+            return
+        if len(self.players) % 2 != 0:
+            raise ValueError("Tournament requires an even number of players")
 
-    @classmethod
-    def remove_player(cls, room_name, channel_name):
-        match = cls.matches.get(room_name)
+        # Shuffle players and pair them for the matches
+        # random.shuffle(self.players)
+        self.matches = [(self.players[i], self.players[i+1]) for i in range(0, len(self.players), 2)]
 
-        if match:
-            if match['player1'] == channel_name:
-                match['player1'] = None
-            elif match['player2'] == channel_name:
-                match['player2'] = None
+    def get_next_match(self):
+        if self.match_index < len(self.matches):
+            match = self.matches[self.match_index]
+            self.match_index += 1
+            return match
+        return None  # No more matches
 
-            # Optionally: Clear the match when both players leave
-            if match['player1'] is None and match['player2'] is None:
-                del cls.matches[room_name]
+    def has_next_match(self):
+        # Check if there is a next match based on the current match index
+        return self.match_index < len(self.matches)
 
 class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -68,12 +76,8 @@ class PongConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
-        self.match = MatchManager.create_match(self.room_name)
-        self.player = MatchManager.assign_player(self.room_name, self.channel_name)
-        self.id = MatchManager.assign_player_id()
-        print(f"Match: {self.match}")  # Debugging line
-        print(f"Player: {self.player}")  # Debugging line
-        print(f"Game Mode: {self.game_mode}")  # Debugging line
+        self.manager = RoomManager.get_match_manager(self.room_name)
+        self.player = self.manager.add_player(self.channel_name)
 
         if (self.game_mode == "pvp"):
             await self.pvp_mode()
@@ -83,71 +87,76 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.tournament_mode()
 
     async def disconnect(self, close_code):
-        # Remove player from the room in RoomManager
-        MatchManager.remove_player(self.room_name, self.channel_name)
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        try:
+            game_room = await sync_to_async(GameRoom.objects.get)(room_name=self.room_name)
+            await sync_to_async(game_room.delete)()
+        except GameRoom.DoesNotExist:
+            pass  # Room already deleted or not found
 
-        if self.match['player1'] == None or self.match['player1'] == None:
-            # If there are fewer than 2 players, end the game
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'end_game',
-                    'message': 'A Player has disconnected, Game over!',
-                }
-            )
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self.close()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         paddle = data.get('paddle')
         velocity = data.get('velocity')
+        next_match = data.get('next_match')
 
         # Update the paddle's velocity
         if paddle == 'paddle1':
-            self.match['paddle1'].velocity = velocity
+            self.manager.paddle1.velocity = velocity
         elif paddle == 'paddle2':
-            self.match['paddle2'].velocity = velocity
+            self.manager.paddle2.velocity = velocity
 
-        message = data.get('message')
-        if message:
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type':'chat_message',
-                    'message': f'Player {self.id}: {message}'
-                })
+        # if next_match == True:
+        #     if (self.game_mode == "pvp"):
+        #         await self.pvp_mode()
+        #     elif (self.game_mode == "pve"):
+        #         await self.pve_mode()
+        #     elif (self.game_mode == "tournament"):
+        #         await self.tournament_mode()
 
     async def pvp_mode(self):
-        print("ENTERED PVP MODE FUNCTION")
-        if self.player is None:
-            await self.close()
-        else:
-            await self.send(text_data=json.dumps({
-                'type': 'player_assignment',
-                'player': self.player,
-            }))
-        if (self.match['player1'] != None and self.match['player2'] != None):
+        if len(self.manager.players) == 2:
+            self.manager.generate_matches()
+            if self.manager.has_next_match:
+                self.player1, self.player2 = self.manager.get_next_match()
+
+            await self.channel_layer.send(self.player1, {
+                'type': 'paddle_assignment',
+                'message': 'You are Paddle 1!',
+                'paddle': 'paddle1',
+            })
+            await self.channel_layer.send(self.player2, {
+                'type': 'paddle_assignment',
+                'message': 'You are Paddle 2!',
+                'paddle': 'paddle2',
+            })
+
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'start_game',
-                    'message': 'channel_layer.group_send: start_game',
+                    'message': 'Game had started!',
                 })
             asyncio.create_task(self.game_loop())
 
     async def pve_mode(self):
-        print("ENTERED PVE MODE FUNCTION")
-        await self.send(text_data=json.dumps({
-        'type': 'player_assignment',
-        'player': self.player,
-        }))
-        await self.channel_layer.group_send(
-        self.room_group_name,
-        {
-            'type': 'start_game',
-            'message': 'channel_layer.group_send: start_game',
-        })
-        asyncio.create_task(self.game_loop())
+        if len(self.manager.players) == 1:
+            self.player1 = self.channel_name
+            self.player2 = "computer"
+            await self.channel_layer.send(self.player1, {
+                'type': 'paddle_assignment',
+                'message': 'You are Paddle 1!',
+                'paddle': 'paddle1',
+            })
+            await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'start_game',
+                'message': 'channel_layer.group_send: start_game',
+            })
+            asyncio.create_task(self.game_loop())
 
     async def tournament_mode(self):
         print("ENTERED TOURNAMENT MODE FUNCTION")
@@ -159,15 +168,23 @@ class PongConsumer(AsyncWebsocketConsumer):
             }
         )
 
+
+    async def paddle_assignment(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'paddle_assignment',
+            'message': event['message'],
+            'paddle': event['paddle'],
+        }))
+
     async def start_game(self, event):
         await self.send(text_data=json.dumps({
             'type': 'start_game',
             'message': event['message'],
             'gameHeight': gameHeight,
             'gameWidth': gameWidth,
-            'paddle1': self.match['paddle1'].serialize(),
-            'paddle2': self.match['paddle2'].serialize(),
-            'ball': self.match['ball'].serialize(),
+            'paddle1': self.manager.paddle1.serialize(),
+            'paddle2': self.manager.paddle2.serialize(),
+            'ball': self.manager.ball.serialize(),
         }))
         for i in range(3, 0, -1):
             await self.send(text_data=json.dumps({
@@ -180,41 +197,64 @@ class PongConsumer(AsyncWebsocketConsumer):
         await asyncio.sleep(4)
         while True:
             # Update game state
-            self.match['ball'].move()
-            self.match['paddle1'].move()
-            self.match['paddle2'].move()
+            self.manager.ball.move()
+            self.manager.paddle1.move()
+            self.manager.paddle2.move()
+
+            # AI Paddle follows the ball
+            if (self.game_mode == "pve"):
+                self.manager.paddle2.follow_ball(self.manager.ball)
 
             # Check for scoring
-            if self.match['ball'].x <= 0:
-                self.match['score2'] += 1
+            if self.manager.ball.x <= 0:
+                self.manager.score2 += 1
                 self.reset_ball()
-            elif self.match['ball'].x >= gameWidth:
-                self.match['score1'] += 1
+            elif self.manager.ball.x >= gameWidth:
+                self.manager.score1 += 1
                 self.reset_ball()
 
-            self.match['ball'].check_collision(self.match['paddle1'], self.match['paddle2'])
+            # Collision for paddle and top and bottom of game canvas
+            self.manager.ball.check_collision(self.manager.paddle1, self.manager.paddle2)
 
             # Broadcast game state to clients
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'update_game_state',
-                    'paddle1': self.match['paddle1'].serialize(),
-                    'paddle2': self.match['paddle2'].serialize(),
-                    'ball': self.match['ball'].serialize(),
-                    'score1': self.match['score1'],
-                    'score2': self.match['score2'],
+                    'paddle1': self.manager.paddle1.serialize(),
+                    'paddle2': self.manager.paddle2.serialize(),
+                    'ball': self.manager.ball.serialize(),
+                    'score1': self.manager.score1,
+                    'score2': self.manager.score2,
                 }
             )
 
-            # End the game if a player reaches a score of 5
-            if self.match['score1'] >= 5 or self.match['score2'] >= 5:
-                winner = 'player1' if self.match['score1'] >= 5 else 'player2'
+            # Check if a player disconnected
+            if self.player1 == None or self.player2 == None:
+                winner = 'Player 1' if self.player2 == None else 'Player 2'
+                loser = self.player2 if self.player2 == None else self.player1
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
                         'type': 'end_game',
-                        'message': f'{winner} wins! Game over!',
+                        'message': f'{winner} wins!\nBecause other player disconnected!',
+                        'loser': loser,
+                    }
+                )
+                break  # Exit the game loop
+
+            winningScore = 3
+
+            # End the game if a player reaches a score of winningScore
+            if self.manager.score1 >= winningScore or self.manager.score2 >= winningScore:
+                winner = 'Player 1' if self.manager.score1 >= winningScore else 'Player 2'
+                loser = self.player2 if self.manager.score1 >= winningScore else self.player1
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'end_game',
+                        'message': f'{winner} wins!',
+                        'loser': loser,
                     }
                 )
                 break  # Exit the game loop
@@ -233,19 +273,35 @@ class PongConsumer(AsyncWebsocketConsumer):
         }))
 
     async def end_game(self, event):
-        # Send game end message to WebSocket
-        await self.send(text_data=json.dumps({
-            'type': 'end_game',
-            'message': event['message'],
-        }))
-        await self.close()  # Close the WebSocket connection
+        self.manager.remove_player(event['loser'])
+        if self.manager.has_next_match:
+            await self.send(text_data=json.dumps({
+                'type': 'next_match',
+                'message': event['message'],
+            }))
+        else:
+            await self.send(text_data=json.dumps({
+                'type': 'end_game',
+                'message': event['message'],
+            }))
+            
 
     def reset_ball(self):
-        # Reset the ball to the center of the field
-        self.match['ball'].x = gameWidth / 2
-        self.match['ball'].y = gameHeight / 2
-        self.match['ball'].x_direction *= -1  # Change direction after score
-        self.match['ball'].speed = self.match['ball'].oriSpeed
+        self.manager.ball = Ball(400, 250, 8, 5)
+
+    def reset_paddles(self):
+        self.manager.paddle1 = Paddle(20, 200, 10, 100)
+        self.manager.paddle2 = Paddle(gameWidth - 30, 200, 10, 100)
+
+    def reset_score(self):
+        self.manager.score1 = 0
+        self.manager.score2 = 0
+
+    def reset_game(self):
+        self.reset_ball()
+        self.reset_paddles()
+        self.reset_score()
+
 
     async def chat_message(self, event):
         message = event['message']
@@ -263,6 +319,9 @@ class Paddle:
         self.width = width
         self.height = height
         self.velocity = 0
+        self.speed = 10
+        self.mid_x = self.x + (self.width / 2)
+        self.mid_y = self.y + (self.height / 2)
 
     def move(self):
         self.y += self.velocity
@@ -271,6 +330,14 @@ class Paddle:
             self.y = 0
         if self.y > gameHeight - self.height:
             self.y = gameHeight - self.height
+
+    def follow_ball(self, ball):
+        # If ball is below paddle, move down
+        if ball.y > self.y + self.height:
+            self.velocity = self.speed
+        # If ball is above paddle, move up
+        elif ball.y < self.y:
+            self.velocity = -self.speed
 
     def serialize(self):
         return {
@@ -287,29 +354,58 @@ class Ball:
         self.radius = radius
         self.speed = speed
         self.oriSpeed = speed
-        self.x_direction = 1
-        self.y_direction = 1
+        self.x_direction = random.choice([-1, 1])
+        self.y_direction = random.choice([-1, 1])
 
     def move(self):
         self.x += self.speed * self.x_direction
         self.y += self.speed * self.y_direction
 
     def check_collision(self, paddle1, paddle2):
-        # Y-axis collision
-        if self.y <= 0 or self.y >= gameHeight - self.radius:
+        # Y-axis collision with the top and bottom of the game area
+        if (self.y <= 0 and self.y_direction < 0) or (self.y >= gameHeight and self.y_direction > 0):
             self.y_direction *= -1
 
-        # Paddle collision
-        if (self.x <= paddle1.x + paddle1.width and 
+        # Paddle 1 collision (left paddle)
+        if (self.x <= paddle1.x + paddle1.width + self.radius and 
             paddle1.y <= self.y <= paddle1.y + paddle1.height):
-            self.x_direction = 1
+            
+            self.x_direction = 1  # Ball goes to the right
 
+            # Calculate the impact point on the paddle relative to its center
+            hit_pos = (self.y - (paddle1.y + paddle1.height / 2)) / (paddle1.height / 2)
+
+            # Adjust y-direction based on where the ball hits the paddle
+            if hit_pos > 0.5:  # Bottom quarter
+                self.y_direction = 1  # Steeper downward angle
+            elif hit_pos > 0:  # Bottom center
+                self.y_direction = 0.5  # Shallow downward angle
+            elif hit_pos > -0.5:  # Top center
+                self.y_direction = -0.5  # Shallow upward angle
+            else:  # Top quarter
+                self.y_direction = -1  # Steeper upward angle
+            self.speed = min(self.speed + 1, 15)
+
+        # Paddle 2 collision (right paddle)
         if (self.x >= paddle2.x - self.radius and 
             paddle2.y <= self.y <= paddle2.y + paddle2.height):
-            self.x_direction = -1
+            
+            self.x_direction = -1  # Ball goes to the left
 
-            # Optionally, adjust speed slightly, but cap it
+            # Calculate the impact point on the paddle relative to its center
+            hit_pos = (self.y - (paddle2.y + paddle2.height / 2)) / (paddle2.height / 2)
+
+            # Adjust y-direction based on where the ball hits the paddle
+            if hit_pos > 0.5:  # Bottom quarter
+                self.y_direction = 1  # Steeper downward angle
+            elif hit_pos > 0:  # Bottom center
+                self.y_direction = 0.5  # Shallow downward angle
+            elif hit_pos > -0.5:  # Top center
+                self.y_direction = -0.5  # Shallow upward angle
+            else:  # Top quarter
+                self.y_direction = -1  # Steeper upward angle
             self.speed = min(self.speed + 1, 15)
+
 
     def serialize(self):
         return {

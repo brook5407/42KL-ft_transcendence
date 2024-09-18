@@ -1,0 +1,129 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 80vh;
+    background-color: #e0f7fa;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.game-area {
+    flex: 2;
+    background-color: #d4f1f4;
+    position: relative;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+/* Chat and Scoreboard Container */
+.chat-score-container {
+    display: flex;
+    flex-direction: row;
+    height: 30%;
+    margin: 10px;
+}
+
+/* Chat Area */
+.chat-area {
+    flex: 2;
+    background-color: #f7f9fc;
+    border-radius: 10px;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.message {
+    padding: 10px 15px;
+    margin: 5px 0;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.message.left {
+    background-color: #e0e0e0;
+    align-self: flex-start;
+}
+
+.message.right {
+    background-color: #00acc1;
+    color: white;
+    align-self: flex-end;
+}
+
+.message-input {
+    display: flex;
+    margin-top: 10px;
+}
+
+.message-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #bdbdbd;
+}
+
+.message-input button {
+    padding: 10px;
+    background-color: #00acc1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Score Area */
+.score-area {
+    flex: 1;
+    background-color: #0288d1;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.current-match, .next-match {
+    text-align: center;
+}
+
+.players {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.player img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 10px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+button.flag-btn, button.fullscreen-btn {
+    background-color: #ff5722;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}

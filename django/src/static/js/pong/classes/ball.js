@@ -11,13 +11,27 @@ export class Ball {
 	}
 
 	draw(ctx) {
-		ctx.fillStyle = this.color;
-		ctx.strokeStyle = this.borderColor;
-		ctx.lineWidth = 2;
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-		ctx.stroke();
-		ctx.fill();
+        // Create radial gradient for ice effect
+        let gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.3, this.x, this.y, this.radius);
+        gradient.addColorStop(0, "#E0F7FF");  // Light icy blue
+        gradient.addColorStop(1, "#A0D8F0");  // Slightly darker icy blue
+
+        // Apply the ice gradient color to the ball
+        ctx.fillStyle = gradient;
+        
+        // Apply shadow for glowing effect
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'rgba(173, 216, 230, 0.8)';  // Ice glow color
+        
+        // Ball border
+        ctx.strokeStyle = this.borderColor;
+        ctx.lineWidth = 2;
+
+        // Draw the ball
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        ctx.stroke();  // Border stroke
+        ctx.fill();    // Fill ball with gradient
 	}
 
 	move() {

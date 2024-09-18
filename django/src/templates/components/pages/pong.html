@@ -3,24 +3,53 @@
 <link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
-<div id="gameContainer">
-	<div id="scoreBoard">
-		<span id="score1">0</span> : <span id="score2">0</span>
-	</div>
-	<div id="canvasContainer">
-		<canvas id="gameCanvas"></canvas>
-		<div id="overlay">
-			<div id="countdownText">3</div>
-		</div>
-	</div>
-	<div id="matchmaking">{% trans 'Searching for opponent...' %}</div>
-	<div id="roomCode">Room Code</div>
+<div id="matchmaking" class="whiteText">{% trans 'Searching for opponent...' %}</div>
 
-	{% comment %} <form id="form">
-		<input type="text" name ="message"/>
-	</form>
-	<div id="messages"></div> {% endcomment %}
+<div id="container" class="container">
+    
+
+    <div class="game-area">
+        <div id="score1" class="score left-score">0</div>
+        <div id="canvasContainer">
+            <canvas id="gameCanvas"></canvas>
+            <div id="overlay">
+                <div id="winnerText">[Winner]</div>
+                <div id="countdownText">3</div>
+            </div>
+        </div>
+        <div id="score2" class="score right-score">0</div>
+    </div>
+
+    <div class="details-area">
+        <div class="room-code">
+            <h2>Room Code</h2><div id="roomCode">Code</div>
+        </div>
+
+        <div class="current-match">
+            <h2>Current</h2>
+            <div class="players">
+                <div class="player">
+                    <img src="empty_user.png" alt="Player 1">
+                    <span class="players">VS</span>
+                    <img src="empty_user.png" alt="Player 2">
+                </div>
+            </div>
+        </div>
+
+        <div class="next-match">
+            <h2>Next</h2>
+            <div class="players">
+                <div class="player">
+                    <img src="empty_user.png" alt="Player 3">
+                    <span class="players">VS</span>
+                    <img src="empty_user.png" alt="Player 4">
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
 
 <script>
 	const roomName = "{{ room_name }}";

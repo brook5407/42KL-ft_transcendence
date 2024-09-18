@@ -20,11 +20,36 @@ from .serializers import (
     MatchSerializer,
 )
 
+class RoomsManager:
+    def __init__(self):
+        self.rooms = {}
+
+    def generate_room_name(self):
+        length = 5
+        alphabet = string.ascii_uppercase + string.digits
+        return ''.join(secrets.choice(alphabet) for i in range(length))
+    
+    def create_room(self):
+        room_name = self.generate_room_name()
+        self.rooms[room_name] = {"players": []}  # Initialize room
+        return room_name
+
 
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def pvp_view(request):
+    # check for any avaliable room and assign second player to the same room
+    available_room = GameRoom.objects.filter(is_full=False).first()
+
+    if available_room:
+        room_name = available_room.room_name
+        available_room.is_full = True
+        available_room.save()
+    else:
+        room_name = RoomsManager().create_room()
+        GameRoom.objects.create(room_name=room_name)
+
     if is_ajax_request(request):
         return render(request, "components/pages/pong.html", {"game_mode": "pvp"})
     return render(request, "index.html")
@@ -33,6 +58,7 @@ def pvp_view(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def pve_view(request):
+    room_name = RoomsManager().create_room()
     if is_ajax_request(request):
         return render(request, "components/pages/pong.html", {"game_mode": "pve"})
     return render(request, "index.html")
