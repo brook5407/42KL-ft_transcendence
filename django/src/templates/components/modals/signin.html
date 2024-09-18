@@ -38,6 +38,9 @@
 
 {% block modalScripts %}
     <script>
+        let otpCooldown = 60;
+        let timerInterval;
+        
         function otp_click() {
             const username = document.getElementById('username').value; 
             const password = document.getElementById('password').value;
@@ -49,17 +52,38 @@
                 },
                 body: JSON.stringify({ username: username, password: password }),
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(data.message);
+            .then(response => response.json().then(data => {
+                if (response.ok) {
+                    showSuccessMessage("{% trans 'OTP sent to your email!' %}");
+                    startCountdown(document.getElementById('send-otp-button'));
                 } else {
-                    alert("{% trans 'OTP sent to your email!' %}");
+                    throw new Error(data.non_field_errors);
                 }
-            })
+            }))
             .catch(error => {
-                alert("{% trans 'Error requesting OTP. Please try again.' %}");
+                showErrorMessage(error.message);
             });
+        }
+        
+        function startCountdown(button) {
+            let remainingTime = otpCooldown;
+    
+            // Disable the button
+            button.disabled = true;
+            button.textContent = `{% trans 'Resend OTP in ' %}` + remainingTime + 's';
+    
+            // Start the countdown
+            timerInterval = setInterval(() => {
+                remainingTime--;
+    
+                if (remainingTime > 0) {
+                    button.textContent = `{% trans 'Resend OTP in ' %}` + remainingTime + 's';
+                } else {
+                    clearInterval(timerInterval);
+                    button.disabled = false;
+                    button.textContent = `{% trans 'Resend OTP' %}`;
+                }
+            }, 1000); // update every second
         }
     </script>
 {% endblock %}
