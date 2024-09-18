@@ -413,8 +413,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
-        self.clear_tournament()
+        if self.is_in_tournament():
+            await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
+            self.clear_tournament()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
