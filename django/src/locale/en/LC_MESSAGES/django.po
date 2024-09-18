@@ -1,5 +1,9 @@
-#: base/views.py:120
+#: base/views.py:124
 msgid "Invalid language"
+msgstr ""
+
+#: base/views.py:137 base/views.py:139
+msgid "Invalid intensity value"
 msgstr ""
 
 #: core/settings.py:191
@@ -74,23 +78,23 @@ msgstr ""
 msgid "already friends"
 msgstr ""
 
-#: friend/views.py:85 friend/views.py:93
+#: friend/views.py:84 friend/views.py:92
 msgid "not authorized"
 msgstr ""
 
-#: friend/views.py:87
+#: friend/views.py:86
 msgid "friend request accepted"
 msgstr ""
 
-#: friend/views.py:95
+#: friend/views.py:94
 msgid "friend request rejected"
 msgstr ""
 
-#: friend/views.py:103
+#: friend/views.py:102
 msgid "friend request already sent"
 msgstr ""
 
-#: friend/views.py:110
+#: friend/views.py:109
 msgid "friend request sent"
 msgstr ""
 
@@ -113,7 +117,20 @@ msgid "Profile"
 msgstr ""
 
 #: templates/components/drawers/friend/profile.html:35
+#: templates/components/drawers/profile.html:43
 msgid "This user didn't say anything"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:40
+msgid "See Match History"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:49
+msgid "Delete"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:52
+msgid "Add Friend"
 msgstr ""
 
 #: templates/components/drawers/friend/profile.html:66
@@ -149,6 +166,10 @@ msgstr ""
 msgid "Search new friends..."
 msgstr ""
 
+#: templates/components/drawers/friend/search-friend.html:90
+msgid "Friend Request Sent"
+msgstr ""
+
 #: templates/components/drawers/friend/search-friend.html:105
 msgid "Already friend"
 msgstr ""
@@ -159,6 +180,38 @@ msgstr ""
 
 #: templates/components/drawers/game-history.html:10
 msgid "Match History"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/create.html:9
+msgid "Create Tournament"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/create.html:18
+msgid "Name"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/create.html:22
+msgid "Description"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/create.html:25
+#: templates/components/modals/forget-password.html:16
+#: templates/components/modals/reset-password.html:22
+#: templates/components/modals/signin.html:31
+#: templates/components/modals/signup.html:32
+msgid "Submit"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/list.html:10
+msgid "Tournaments"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/list.html:15
+msgid "Shuffle Rooms"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/room.html:70
+msgid "Leave"
 msgstr ""
 
 #: templates/components/drawers/profile-edit.html:10
@@ -230,13 +283,6 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: templates/components/modals/forget-password.html:16
-#: templates/components/modals/reset-password.html:22
-#: templates/components/modals/signin.html:31
-#: templates/components/modals/signup.html:32
-msgid "Submit"
-msgstr ""
-
 #: templates/components/modals/reset-password.html:5
 msgid "Reset Password"
 msgstr ""
@@ -302,20 +348,4 @@ msgstr ""
 
 #: templates/components/pages/pong.html:16
 msgid "Searching for opponent..."
-msgstr ""
-
-#: templates/components/pages/tournament.html:6
-msgid "Tournament Room:"
-msgstr ""
-
-#: templates/components/pages/tournament_lobby.html:7
-msgid "Tournament Lobby"
-msgstr ""
-
-#: templates/components/pages/tournament_lobby.html:8
-msgid "Create Room"
-msgstr ""
-
-#: templates/components/pages/tournament_lobby.html:12
-msgid "Join Room"
 msgstr ""

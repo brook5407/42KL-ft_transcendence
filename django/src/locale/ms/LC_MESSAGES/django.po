@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-17 09:15+0000\n"
+"POT-Creation-Date: 2024-09-18 06:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,9 +17,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: base/views.py:120
+#: base/views.py:124
 msgid "Invalid language"
 msgstr "Salah Bahasa"
+
+#: base/views.py:137 base/views.py:139
+msgid "Invalid intensity value"
+msgstr "Nilai keamatan tidak sah"
 
 #: core/settings.py:191
 msgid "English"
@@ -93,23 +97,23 @@ msgstr "tidak boleh menambah diri anda sebagai kawan"
 msgid "already friends"
 msgstr "sudah kawan"
 
-#: friend/views.py:85 friend/views.py:93
+#: friend/views.py:84 friend/views.py:92
 msgid "not authorized"
 msgstr "tidak dibenarkan"
 
-#: friend/views.py:87
+#: friend/views.py:86
 msgid "friend request accepted"
 msgstr "permintaan rakan diterima"
 
-#: friend/views.py:95
+#: friend/views.py:94
 msgid "friend request rejected"
 msgstr "permintaan rakan ditolak"
 
-#: friend/views.py:103
+#: friend/views.py:102
 msgid "friend request already sent"
 msgstr "permintaan rakan sudah dihantar"
 
-#: friend/views.py:110
+#: friend/views.py:109
 msgid "friend request sent"
 msgstr "permintaan rakan dihantar"
 
@@ -132,8 +136,21 @@ msgid "Profile"
 msgstr "Profil"
 
 #: templates/components/drawers/friend/profile.html:35
+#: templates/components/drawers/profile.html:43
 msgid "This user didn't say anything"
 msgstr "Pengguna ini tidak berkata apa-apa"
+
+#: templates/components/drawers/friend/profile.html:40
+msgid "See Match History"
+msgstr "Lihat Sejarah Perlawanan"
+
+#: templates/components/drawers/friend/profile.html:49
+msgid "Delete"
+msgstr "Padam"
+
+#: templates/components/drawers/friend/profile.html:52
+msgid "Add Friend"
+msgstr "Tambah Rakan"
 
 #: templates/components/drawers/friend/profile.html:66
 msgid "Friend deleted successfully"
@@ -168,6 +185,10 @@ msgstr "Kawan Baru"
 msgid "Search new friends..."
 msgstr "Cari kawan baru..."
 
+#: templates/components/drawers/friend/search-friend.html:90
+msgid "Friend Request Sent"
+msgstr "Permintaan Rakan Dihantar"
+
 #: templates/components/drawers/friend/search-friend.html:105
 msgid "Already friend"
 msgstr "Sudah kawan"
@@ -179,6 +200,38 @@ msgstr "Diminta"
 #: templates/components/drawers/game-history.html:10
 msgid "Match History"
 msgstr "Sejarah Perlawanan"
+
+#: templates/components/drawers/pong/tournament/create.html:9
+msgid "Create Tournament"
+msgstr "Lobi Pertandingan"
+
+#: templates/components/drawers/pong/tournament/create.html:18
+msgid "Name"
+msgstr "Nama"
+
+#: templates/components/drawers/pong/tournament/create.html:22
+msgid "Description"
+msgstr "Penerangan"
+
+#: templates/components/drawers/pong/tournament/create.html:25
+#: templates/components/modals/forget-password.html:16
+#: templates/components/modals/reset-password.html:22
+#: templates/components/modals/signin.html:31
+#: templates/components/modals/signup.html:32
+msgid "Submit"
+msgstr "Hantar"
+
+#: templates/components/drawers/pong/tournament/list.html:10
+msgid "Tournaments"
+msgstr "Pertandingan:"
+
+#: templates/components/drawers/pong/tournament/list.html:15
+msgid "Shuffle Rooms"
+msgstr "Shuffle Bilik"
+
+#: templates/components/drawers/pong/tournament/room.html:70
+msgid "Leave"
+msgstr "Tinggalkan"
 
 #: templates/components/drawers/profile-edit.html:10
 msgid "Edit Profile"
@@ -249,13 +302,6 @@ msgstr "Lupa Kata Laluan"
 msgid "Email"
 msgstr "Alamat e-mel"
 
-#: templates/components/modals/forget-password.html:16
-#: templates/components/modals/reset-password.html:22
-#: templates/components/modals/signin.html:31
-#: templates/components/modals/signup.html:32
-msgid "Submit"
-msgstr "Hantar"
-
 #: templates/components/modals/reset-password.html:5
 msgid "Reset Password"
 msgstr "Tetapkan Semula Kata Laluan"
@@ -323,21 +369,11 @@ msgstr "PVE"
 msgid "Searching for opponent..."
 msgstr "Mencari lawan..."
 
-#: templates/components/pages/tournament.html:6
-msgid "Tournament Room:"
-msgstr "Bilik Pertandingan:"
+#~ msgid "Tournament Lobby"
+#~ msgstr "Lobi Pertandingan"
 
-#: templates/components/pages/tournament_lobby.html:7
-msgid "Tournament Lobby"
-msgstr "Lobi Pertandingan"
-
-#: templates/components/pages/tournament_lobby.html:8
-msgid "Create Room"
-msgstr "Lobi Pertandingan"
-
-#: templates/components/pages/tournament_lobby.html:12
-msgid "Join Room"
-msgstr "Bilik Sertai"
+#~ msgid "Join Room"
+#~ msgstr "Bilik Sertai"
 
 #~ msgid "Public Chat"
 #~ msgstr "Sembang Awam"
