@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
@@ -5,7 +6,7 @@
 
 <div class="snow-container"></div>
 
-<h1 class="logo">AIsPong</h1>
+<h1 class="logo">{% trans 'AIsPong' %}</h1>
 
 {% if user.is_authenticated %}
 	<div class="sidebar-wrapper">
@@ -29,9 +30,9 @@
 				/>
 			</div>
 			<div class="clickable sidebar-option">
-				<img src="{% static 'images/icons/pong.svg' %}"
+				<img src="{% static 'images/icons/tournament.svg' %}"
 					width="42px" height="42px" alt="Pong Icon"
-					data-drawer="pong"
+					onclick="openTournamentDrawer()"
 				/>
 			</div>
 			<div class="clickable sidebar-option">
@@ -44,9 +45,8 @@
 	</div>
 
 	<div class="center-buttons-container">
-		<a href="{% url 'pong.pvp' %}" class="center-button pvp-button" data-link>PVP</a>
-		<a href="{% url 'pong.pve' %}" class="center-button pve-button" data-link>PVE</a>
-		<a href="{% url 'pong.tournament' %}" class="center-button pvp-button" data-link>Tournament</a>
+		<a href="{% url 'pong.pvp' %}" class="center-button pvp-button" data-link>{% trans 'PVP' %}</a>
+		<a href="{% url 'pong.pve' %}" class="center-button pve-button" data-link>{% trans 'PVE' %}</a>
 	</div>
 {% else %}
 	<div class="sidebar sidebar-locked" data-modal="signin" data-modal-url={% url 'base.signin-modal'  %}>
@@ -58,7 +58,7 @@
 
 	<div class="center-buttons-container">
 		<a class="center-button signin-button" data-modal="signin" data-modal-url={% url 'base.signin-modal'  %}>
-			Sign In
+			{% trans 'Sign In' %}
 		</a>
 		<a class="center-button oauth-button" data-modal="oauth42" data-modal-url={% url 'base.oauth42-modal' %}>
 			<img src="{% static 'images/icons/42_Logo.svg' %}"
@@ -68,3 +68,20 @@
 		</a>
 	</div>
 {% endif %}
+
+<script>
+	function openTournamentDrawer() {
+		if (window.currentUser) {
+			if (window.currentUser.active_tournament_id) {
+				openDrawer('tournament-room', {
+					url: '/drawer/tournament-room/',
+					queryParams: { tournament_room_id: window.currentUser.active_tournament_id },
+				});
+			} else {
+				openDrawer('tournament-list', { url: '/drawer/tournament-list/' });
+			}
+		} else {
+			openModal('signin', { url: '/modal/signin-modal' });
+		}
+	}
+</script>

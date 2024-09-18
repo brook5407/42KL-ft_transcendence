@@ -13,9 +13,7 @@ User = get_user_model()
 # Create your models here.
 class UserRelation(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_relations")
-    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_relations", default=None)
-    deleted = models.BooleanField(default=False)
-    deleted_at = models.DateTimeField(auto_now=False, null=True)
+    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends", default=None)
     blocked = models.BooleanField(default=False)
     blocked_at = models.DateTimeField(auto_now=False, null=True)
     
@@ -25,12 +23,10 @@ class UserRelation(BaseModel):
     def __str__(self):
         return f"{self.user.username} - {self.friend.username}"
     
-    def delete(self):
-        if self.deleted:
-            raise ValidationError("User relation is already deleted.")
-        self.deleted = True
-        self.deleted_at = timezone.now()
-        self.save()
+    def delete_friend(self):
+        friend_user_relation = UserRelation.objects.get(user=self.friend, friend=self.user)
+        friend_user_relation.delete()
+        self.delete()
         
     def block(self):
         if self.blocked:
@@ -99,15 +95,11 @@ class FriendRequest(BaseModel):
             message
         )
 
-
-def get_friends(self):
-    user_relations = UserRelation.objects.filter(Q(user=self) & Q(deleted=False))
-    friend_ids = user_relations.values_list('friend_id', flat=True)
-    friends = User.objects.filter(id__in=friend_ids)
-    return friends
-
 def is_friend(self, user):
-    return UserRelation.objects.filter(Q(user=self) & Q(friend=user) & Q(deleted=False)).exists()
+    return UserRelation.objects.filter(Q(user=self) & Q(friend=user)).exists()
 
-User.add_to_class('friends', property(get_friends))
+def is_blocked(self, user):
+    return UserRelation.objects.filter(Q(user=self) & Q(friend=user) & Q(blocked=True)).exists()
+
 User.add_to_class('is_friend', is_friend)
+User.add_to_class('is_blocked', is_blocked)

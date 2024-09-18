@@ -1,0 +1,54 @@
+{% extends "components/drawers/drawer-left.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block drawerStyles %}
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>{% trans 'Create Tournament' %}</h2>
+{% endblock %}
+
+{% block drawerContent %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form id="tournamentForm" onsubmit="createTournament(event)">
+                <div class="mb-3">
+                    <label for="name" class="form-label">{% trans 'Name' %}</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">{% trans 'Description' %}</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
+            </form>
+            <div id="message" class="mt-3"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block drawerScripts %}
+<script>
+	function createTournament(event) {
+		event.preventDefault();
+		const form = document.getElementById('tournamentForm');
+		const formData = new FormData(form);
+		const name = formData.get('name');
+		const description = formData.get('description');
+
+		window.tournamentController.createTournament(name, description).then((tournamentRoomId) => {
+            window.tournamentController.setCurrentTournamentId(tournamentRoomId);
+            showSuccessMessage('Tournament created successfully');
+			openDrawer('tournament-room', {
+                url: '{% url "pong.tournament-room-drawer" %}',
+                queryParams: {
+                    tournament_room_id: tournamentRoomId
+                }
+            });
+		});
+	}
+</script>
+{% endblock %}

@@ -1,11 +1,123 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/settings.css' %}" />
+{% endblock %}
+
 {% block drawerHeader %}
-	<h2>Settings</h2>
+	<h2>{% trans 'Settings' %}</h2>
 {% endblock %}
 
 {% block drawerContent %}
-	<img id="logout-button" class="clickable" src="{% static 'images/icons/sign-out.svg' %}" width="42px" height="42px" alt="Log out" />
+    <div class="container mt-3 settings-container">
+        <div class="settings-row row align-items-center">
+            <div class="col">
+                <p class="settings-item">{% trans 'Language' %}</p>
+            </div>
+            <div class="col-auto">
+                <div id="language-switcher">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                    <button class="language-switch-btn" onclick="switchLanguage('{{ language.code }}')" style="background: none; border: none; padding: 0; cursor: pointer;">
+                        {% if language.code == LANGUAGE_CODE %}
+                            <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto;">
+                        {% else %}
+                            <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto; filter: grayscale(100%) brightness(50%);">
+                        {% endif %}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="settings-row row align-items-center">
+            <div class="col">
+                <p class="settings-item">{% trans 'Password' %}</p>
+            </div>
+            <div class="col-auto">
+                <button id="change-password-btn" class="btn btn-primary btn-sm" data-modal="changepassword" data-modal-url="{% url 'change_password_modal' %}">{% trans 'Change Password' %}</button>
+            </div>
+        </div>
+        <div class="settings-row row align-items-center">
+            <div class="col">   
+                <p class="settings-item">{% trans 'Snow Fall Intensity' %}</p>
+            </div>
+            <div class="col-auto slider-container">
+                <label for="snowIntensitySlider"></label>
+                <input type="range" class="form-range" min="1" max="100" step="1" id="snowIntensitySlider" value="{{ request.user.profile.snowIntensity }}">
+            </div>
+        </div>
+    </div>
+    <div class=" drawer-bottom-right-icon">
+        <img id="logout-button" class="clickable" src="{% static 'images/icons/sign-out.svg' %}" width="42px" height="42px" alt="Log out" />
+    </div>
+{% endblock %}
+
+{% block drawerScripts %}
+<script>
+    function switchLanguage(languageCode) {
+        console.log('switchLanguage called with:', languageCode);
+        ajaxWithAuth(`/api/set_language/?language=${languageCode}`, {
+            method: 'GET',
+            credentials: 'include', // This is important for including cookies
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.reload();
+            } else {
+                console.error('Error switching language:', data.message);
+                showErrorMessage(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showErrorMessage(error.message);
+        });
+    }
+
+    document.addEventListener('drawer-opened', function(e) {
+        setupSnowIntensitySlider()
+    });
+
+    function setupSnowIntensitySlider() {
+        const snowIntensitySlider = document.getElementById('snowIntensitySlider');
+
+        if (snowIntensitySlider) {
+            snowIntensitySlider.addEventListener('change', function () {
+                const intensity = parseInt(this.value, 10);
+                console.log('Snow intensity changed to:', intensity);
+                saveSnowIntensity(intensity);
+            });
+        }
+
+        function saveSnowIntensity(intensity) {
+            ajaxWithAuth('/api/save_snow_intensity/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `snowIntensity=${intensity}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    //refresh the snow in spa
+                    document.cookie = `snow_intensity=${intensity}; path=/; SameSite=Lax;`;
+                    console.log('Snow intensity saved successfully');
+                } else {
+                    console.error('Error saving snow intensity:', data.message);
+                    showErrorMessage(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorMessage(error.message);
+            });
+        }
+    }
+</script>
 {% endblock %}

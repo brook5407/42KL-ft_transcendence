@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -7,14 +7,14 @@
 {% endblock %}
 
 {% block drawerHeader %}
-	<h2>New Friends</h2>
+	<h2>{% trans 'New Friends' %}</h2>
 {% endblock %}
 
 {% block drawerContent %}
 <div class="search-bar">
 	<input 
 		type="text" 
-		placeholder="Search new friends..." 
+		placeholder="{% trans 'Search new friends...' %}" 
 		class="search-bar__input"
 		oninput="searchFriend(this.value)"
 	/>
@@ -87,9 +87,9 @@
 		.then((data) => {
 			const searchFriendResult = document.getElementById('search-friend-result');
 			searchFriendResult.querySelector('.new-friend-tile__action').innerHTML = `
-				<div class="new-friend-tile__badge">Friend Request Sent</div>
+				<div class="new-friend-tile__badge">{% trans 'Friend Request Sent' %}</div>
 			`;
-			showSuccessMessage('Friend request sent successfully');
+			showSuccessMessage("{% trans 'Friend request sent successfully' %}");
 		}).catch((error) => {
 			showErrorMessage(error.toString());
 		});
@@ -102,11 +102,11 @@
 		let actionHTML = '';
 		if (isFriend) {
 			actionHTML = `
-				<div class="new-friend-tile__badge">Already friend</div>
+				<div class="new-friend-tile__badge">{% trans 'Already friend' %}</div>
 			`;
 		} else if (!canAddFriend) {
 			actionHTML = `
-				<div class="new-friend-tile__badge">Requested</div>
+				<div class="new-friend-tile__badge">{% trans 'Requested' %}</div>
 			`;
 		} else {
 			actionHTML = `

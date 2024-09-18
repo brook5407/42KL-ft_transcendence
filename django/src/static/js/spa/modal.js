@@ -2,6 +2,9 @@ import { MODAL_CONTAINER } from './components/Component.js';
 import { SignIn } from './components/modals/SignIn.js';
 import { SignUp } from './components/modals/SignUp.js';
 import { Oauth42 } from './components/modals/Oauth42.js';
+import { ForgetPassword } from './components/modals/ForgetPassword.js';
+import { ResetPassword } from './components/modals/ResetPassword.js';
+import { ChangePassword } from './components/modals/ChangePassword.js';
 import { checkNearestMatch } from './utils.js';
 
 let currentModal = null;
@@ -10,6 +13,9 @@ export const MODALS = {
 	signin: SignIn,
 	signup: SignUp,
 	oauth42: Oauth42,
+	forgetpassword: ForgetPassword,
+	resetpassword: ResetPassword,
+	changepassword: ChangePassword,
 };
 
 // open modal buttons handler
@@ -36,6 +42,7 @@ document.body.addEventListener('click', (e) => {
 
 export async function openModal(modalName, data = {}) {
 	const modalClass = MODALS[modalName];
+	data.name = modalName;
 	const modal = new modalClass(data);
 
 	console.log('modalName:', modalName);

@@ -1,0 +1,351 @@
+#: base/views.py:124
+msgid "Invalid language"
+msgstr ""
+
+#: base/views.py:137 base/views.py:139
+msgid "Invalid intensity value"
+msgstr ""
+
+#: core/settings.py:191
+msgid "English"
+msgstr ""
+
+#: core/settings.py:192
+msgid "Malay"
+msgstr ""
+
+#: core/settings.py:193
+msgid "Chinese"
+msgstr ""
+
+#: drf_auth/views.py:39 drf_auth/views.py:49
+msgid "Verification key is missing"
+msgstr ""
+
+#: drf_auth/views.py:68
+msgid "Your email has been successfully verified."
+msgstr ""
+
+#: drf_auth/views.py:71
+msgid "There was an error verifying your email."
+msgstr ""
+
+#: drf_auth/views.py:91
+msgid "OTP sent. Please check your email."
+msgstr ""
+
+#: drf_auth/views.py:95
+msgid "User email is not verified."
+msgstr ""
+
+#: drf_auth/views.py:99
+msgid "User does not exist."
+msgstr ""
+
+#: drf_auth/views.py:122 drf_auth/views.py:131
+msgid "OTP is invalid"
+msgstr ""
+
+#: drf_auth/views.py:127
+msgid "OTP has expired, Please request a new one"
+msgstr ""
+
+#: friend/views.py:31 friend/views.py:40 friend/views.py:49
+msgid "friend_id is required"
+msgstr ""
+
+#: friend/views.py:34
+msgid "friend blocked"
+msgstr ""
+
+#: friend/views.py:43
+msgid "friend unblocked"
+msgstr ""
+
+#: friend/views.py:53
+msgid "friend deleted"
+msgstr ""
+
+#: friend/views.py:59
+msgid "username query parameter is required"
+msgstr ""
+
+#: friend/views.py:62
+msgid "cannot add yourself as a friend"
+msgstr ""
+
+#: friend/views.py:64
+msgid "already friends"
+msgstr ""
+
+#: friend/views.py:84 friend/views.py:92
+msgid "not authorized"
+msgstr ""
+
+#: friend/views.py:86
+msgid "friend request accepted"
+msgstr ""
+
+#: friend/views.py:94
+msgid "friend request rejected"
+msgstr ""
+
+#: friend/views.py:102
+msgid "friend request already sent"
+msgstr ""
+
+#: friend/views.py:109
+msgid "friend request sent"
+msgstr ""
+
+#: templates/components/drawers/chat-list.html:10
+msgid "Chat List"
+msgstr ""
+
+#: templates/components/drawers/chat-room.html:20
+#: templates/components/drawers/game-history.html:15
+msgid "Loading..."
+msgstr ""
+
+#: templates/components/drawers/friend/list.html:10
+msgid "Friends"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:10
+#: templates/components/drawers/profile.html:10
+msgid "Profile"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:35
+#: templates/components/drawers/profile.html:43
+msgid "This user didn't say anything"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:40
+msgid "See Match History"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:49
+msgid "Delete"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:52
+msgid "Add Friend"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:66
+msgid "Friend deleted successfully"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:97
+msgid "Friend blocked successfully"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:119
+msgid "Friend unblocked successfully"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:122
+msgid "Failed to unblock friend"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:147
+#: templates/components/drawers/friend/search-friend.html:92
+msgid "Friend request sent successfully"
+msgstr ""
+
+#: templates/components/drawers/friend/requests.html:10
+msgid "Friend Requests"
+msgstr ""
+
+#: templates/components/drawers/friend/search-friend.html:10
+msgid "New Friends"
+msgstr ""
+
+#: templates/components/drawers/friend/search-friend.html:17
+msgid "Search new friends..."
+msgstr ""
+
+#: templates/components/drawers/friend/search-friend.html:90
+msgid "Friend Request Sent"
+msgstr ""
+
+#: templates/components/drawers/friend/search-friend.html:105
+msgid "Already friend"
+msgstr ""
+
+#: templates/components/drawers/friend/search-friend.html:109
+msgid "Requested"
+msgstr ""
+
+#: templates/components/drawers/game-history.html:10
+msgid "Match History"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/create.html:9
+msgid "Create Tournament"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/create.html:18
+msgid "Name"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/create.html:22
+msgid "Description"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/create.html:25
+#: templates/components/modals/forget-password.html:16
+#: templates/components/modals/reset-password.html:22
+#: templates/components/modals/signin.html:31
+#: templates/components/modals/signup.html:32
+msgid "Submit"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/list.html:10
+msgid "Tournaments"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/list.html:15
+msgid "Shuffle Rooms"
+msgstr ""
+
+#: templates/components/drawers/pong/tournament/room.html:70
+msgid "Leave"
+msgstr ""
+
+#: templates/components/drawers/profile-edit.html:10
+msgid "Edit Profile"
+msgstr ""
+
+#: templates/components/drawers/profile-edit.html:16
+msgid "Nickname"
+msgstr ""
+
+#: templates/components/drawers/profile-edit.html:20
+msgid "Bio"
+msgstr ""
+
+#: templates/components/drawers/profile-edit.html:23
+msgid "Save"
+msgstr ""
+
+#: templates/components/drawers/profile.html:36
+msgid "Wins:"
+msgstr ""
+
+#: templates/components/drawers/profile.html:36
+msgid "Losses:"
+msgstr ""
+
+#: templates/components/drawers/settings.html:10
+msgid "Settings"
+msgstr ""
+
+#: templates/components/drawers/settings.html:17
+msgid "Language"
+msgstr ""
+
+#: templates/components/drawers/settings.html:38
+#: templates/components/modals/signin.html:20
+#: templates/components/modals/signup.html:24
+msgid "Password"
+msgstr ""
+
+#: templates/components/drawers/settings.html:41
+msgid "Change Password"
+msgstr ""
+
+#: templates/components/drawers/settings.html:46
+msgid "Snow Fall Intensity"
+msgstr ""
+
+#: templates/components/modals/42oauth.html:12
+msgid "Want username and password sign in? Click "
+msgstr ""
+
+#: templates/components/modals/42oauth.html:12
+#: templates/components/modals/signin.html:9
+#: templates/components/modals/signup.html:9
+msgid "here"
+msgstr ""
+
+#: templates/components/modals/42oauth.html:19
+msgid "42 Login"
+msgstr ""
+
+#: templates/components/modals/forget-password.html:5
+msgid "Forget Password"
+msgstr ""
+
+#: templates/components/modals/forget-password.html:12
+#: templates/components/modals/signup.html:16
+msgid "Email"
+msgstr ""
+
+#: templates/components/modals/reset-password.html:5
+msgid "Reset Password"
+msgstr ""
+
+#: templates/components/modals/reset-password.html:14
+msgid "New Password"
+msgstr ""
+
+#: templates/components/modals/reset-password.html:18
+#: templates/components/modals/signup.html:28
+msgid "Confirm Password"
+msgstr ""
+
+#: templates/components/modals/signin.html:5
+#: templates/components/pages/home.html:61
+msgid "Sign In"
+msgstr ""
+
+#: templates/components/modals/signin.html:9
+msgid "New user? Register"
+msgstr ""
+
+#: templates/components/modals/signin.html:16
+#: templates/components/modals/signup.html:20
+msgid "Username"
+msgstr ""
+
+#: templates/components/modals/signin.html:27
+msgid "send"
+msgstr ""
+
+#: templates/components/modals/signin.html:35
+msgid "Forgot Password?"
+msgstr ""
+
+#: templates/components/modals/signin.html:57
+msgid "OTP sent to your email!"
+msgstr ""
+
+#: templates/components/modals/signin.html:61
+msgid "Error requesting OTP. Please try again."
+msgstr ""
+
+#: templates/components/modals/signup.html:5
+msgid "Sign Up"
+msgstr ""
+
+#: templates/components/modals/signup.html:9
+msgid "Already gave an account? Login "
+msgstr ""
+
+#: templates/components/pages/home.html:9
+msgid "AIsPong"
+msgstr ""
+
+#: templates/components/pages/home.html:48
+msgid "PVP"
+msgstr ""
+
+#: templates/components/pages/home.html:49
+msgid "PVE"
+msgstr ""
+
+#: templates/components/pages/pong.html:16
+msgid "Searching for opponent..."
+msgstr ""

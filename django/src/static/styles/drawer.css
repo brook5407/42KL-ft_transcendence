@@ -45,7 +45,7 @@
 .drawer-header h2,
 h3 {
 	margin: 0;
-	color: #fff;
+	color: white;
 	font-family: 'Denk One', sans-serif;
 }
 
@@ -73,6 +73,11 @@ h3 {
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
+	transition: all 0.1s linear;
+}
+
+.drawer-bottom-right-icon:hover {
+	transform: scale(125%);
 }
 
 .back-icon {
@@ -89,8 +94,8 @@ h3 {
 .search-bar {
 	display: flex;
 	align-items: center;
-	background-color: #c0edfa;
-	border: 1px solid #657e7e;
+	background-color: var(--color-info-2);
+	border: 1px solid var(--color-text-5);
 	padding: 5px;
 	border-radius: 5px;
 	width: 100%;
@@ -101,16 +106,16 @@ h3 {
 	flex-grow: 1;
 	border: none;
 	background-color: transparent;
-	color: #000; /* Text color */
+	color: var(--color-text-9); /* Text color */
 	padding: 5px;
 	outline: none;
 }
 
 .search-bar__input::placeholder {
-	color: #657e7e; /* Prompt text color */
+	color: var(--color-text-5); /* Prompt text color */
 }
 
 .search-bar__icon {
-	color: #657e7e; /* Icon color */
+	color: var(--color-text-5); /* Icon color */
 	margin-left: 5px;
 }

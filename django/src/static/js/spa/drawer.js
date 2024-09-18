@@ -5,6 +5,23 @@ import { ChatListDrawer } from './components/drawer/ChatListDrawer.js';
 import { FriendListDrawer } from './components/drawer/FriendListDrawer.js';
 import { FriendRequestsDrawer } from './components/drawer/FriendRequestsDrawer.js';
 import { checkNearestMatch } from './utils.js';
+import { TournamentListDrawer } from './components/drawer/TournamentListDrawer.js';
+
+export const DRAWERS = {
+	profile: GenericDrawer,
+	settings: GenericDrawer,
+	'chat-list': ChatListDrawer,
+	'chat-room': ChatRoomDrawer,
+	'friend-list': FriendListDrawer,
+	'friend-requests': FriendRequestsDrawer,
+	'search-friend': GenericDrawer,
+	'friend-profile': GenericDrawer,
+	'profile-edit': GenericDrawer,
+	'match-history': GenericDrawer,
+	'tournament-list': TournamentListDrawer,
+	'tournament-create': GenericDrawer,
+	'tournament-room': GenericDrawer,
+};
 
 class DrawerStack {
 	constructor() {
@@ -52,25 +69,12 @@ class DrawerStack {
 	}
 }
 
-let currentDrawer = null;
-const drawerStack = new DrawerStack();
-
-export const DRAWERS = {
-	profile: GenericDrawer,
-	settings: GenericDrawer,
-	'chat-list': ChatListDrawer,
-	'chat-room': ChatRoomDrawer,
-	'friend-list': FriendListDrawer,
-	'friend-requests': FriendRequestsDrawer,
-	'search-friend': GenericDrawer,
-	'friend-profile': GenericDrawer,
-	'profile-edit': GenericDrawer,
-	'match-history': GenericDrawer,
-};
+window.currentDrawer = null;
+window.drawerStack = new DrawerStack();
 
 // open drawer and back buttons handler
 document.body.addEventListener('click', (e) => {
-	const drawerElement = checkNearestMatch(e.target, '[data-drawer]', 3);
+	const drawerElement = checkNearestMatch(e.target, '[data-drawer]', 4);
 	if (drawerElement) {
 		// open drawer
 		e.preventDefault();
@@ -90,16 +94,20 @@ document.body.addEventListener('click', (e) => {
 		});
 	} else if (e.target.matches('.drawer-back-btn')) {
 		e.preventDefault();
-		drawerStack.pop();
-		// open the previous drawer
-		const drawerToOpen = drawerStack.getCurrentDrawer();
-		if (drawerToOpen) {
-			openDrawer(drawerToOpen.drawerName, drawerToOpen.drawerData, false);
-		} else {
-			closeDrawer();
-		}
+		openPreviousDrawer();
 	}
 });
+
+function openPreviousDrawer() {
+	drawerStack.pop();
+	// open the previous drawer
+	const drawerToOpen = drawerStack.getCurrentDrawer();
+	if (drawerToOpen) {
+		openDrawer(drawerToOpen.drawerName, drawerToOpen.drawerData, false);
+	} else {
+		closeDrawer();
+	}
+}
 
 function dispatchDrawerOpenedEvent(e = null) {
 	document.dispatchEvent(new CustomEvent('drawer-opened', e));
@@ -113,6 +121,7 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 		console.error('Drawer not found:', drawerName);
 		return;
 	}
+	data.name = drawerName;
 	const drawer = new drawerClass(data);
 
 	console.log('drawerName:', drawerName);
@@ -180,3 +189,4 @@ function activateDrawer() {
 // Expose the openDrawer and closeDrawer functions to the global scope
 window.openDrawer = openDrawer;
 window.closeDrawer = closeDrawer;
+window.openPreviousDrawer = openPreviousDrawer;

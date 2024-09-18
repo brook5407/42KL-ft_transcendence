@@ -1,25 +1,15 @@
 from rest_framework import serializers
 
-from profiles.models import Profile
-from profiles.serializers import ProfileSerializer
 from .models import UserRelation, FriendRequest
 from base.serializers import UserSerializer
 
 class UserRelationSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-    friend = serializers.SerializerMethodField()
+    user = UserSerializer()
+    friend = UserSerializer()
 
     class Meta:
         model = UserRelation
-        fields = ['id', 'user', 'friend', 'deleted', 'deleted_at', 'blocked', 'blocked_at', 'created_at', 'updated_at']
-    
-    def get_user(self, obj):
-        profile = Profile.objects.get(user=obj.user)
-        return ProfileSerializer(profile).data
-
-    def get_friend(self, obj):
-        profile = Profile.objects.get(user=obj.friend)
-        return ProfileSerializer(profile).data
+        fields = ['id', 'user', 'friend', 'blocked', 'blocked_at', 'created_at', 'updated_at']
     
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -27,17 +17,9 @@ class UserRelationSerializer(serializers.ModelSerializer):
         return ret
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    sender = serializers.SerializerMethodField()
-    receiver = serializers.SerializerMethodField()
+    sender = UserSerializer()
+    receiver = UserSerializer()
 
     class Meta:
         model = FriendRequest
         fields = ['id', 'sender', 'receiver', 'status', 'created_at', 'updated_at']
-    
-    def get_sender(self, obj):
-        profile = Profile.objects.get(user=obj.sender)
-        return ProfileSerializer(profile).data
-
-    def get_receiver(self, obj):
-        profile = Profile.objects.get(user=obj.receiver)
-        return ProfileSerializer(profile).data

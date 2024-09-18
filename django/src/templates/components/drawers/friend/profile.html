@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block drawerHeader %}
-	<h2>{{ friend_profile.nickname }} Profile</h2>
+	<h2>{{ friend_profile.nickname }} {% trans 'Profile' %}</h2>
 {% endblock %}
 
 {% block drawerContent %}
@@ -28,25 +28,29 @@
 			<p class="">Wins: {{ wins }}, Losses: {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="profile-bio">
+            <p class="profile-bio">
 				{% if friend_profile.bio %}
 					{{ friend_profile.bio }}
 				{% else %}
-					This user didn't say anything
+					{% trans "This user didn't say anything" %}
 				{% endif %}
 			</p>
 		</div>
 
-		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'game-history.drawer' %}">See Match History</button>
+		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'game-history.drawer' %}">{% trans 'See Match History' %}</button>
 
-		<div class="action-buttons">
-			{% if friend_is_blocked %}
-				<button type="button" id="block-unblock-btn" class="btn unblock-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">Unblock</button>
-			{% else %}
-				<button type="button" id="block-unblock-btn" class="btn block-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">Block</button>
-			{% endif %}
-			<button type="button" class="btn delete-btn" onclick="deleteFriend('{{ friend_profile.user.id }}')">Delete</button>
-		</div>
+		{% if is_friend %}
+			<div class="action-buttons">
+				{% if friend_is_blocked %}
+				<button type="button" id="block-unblock-btn" class="btn unblock-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">{% 'Unblock' %}</button>
+				{% else %}
+				<button type="button" id="block-unblock-btn" class="btn block-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">{% 'Block' %}</button>
+				{% endif %}
+				<button type="button" class="btn delete-btn" onclick="deleteFriend('{{ friend_profile.user.id }}')">{% trans 'Delete' %}</button>
+			</div>
+		{% else %}
+			<button type="button" class="btn add-friend-btn" onclick="sendFriendRequest('{{ friend_profile.user.username }}')">{% trans 'Add Friend' %}</button>
+		{% endif %}
 	</div>
 {% endblock %}
 
@@ -59,10 +63,10 @@
 		}).then(response => {
 			if (response.ok) {
 				closeDrawer();
-				showSuccessMessage('Friend deleted successfully');
+				showSuccessMessage("{% trans 'Friend deleted successfully' %}");
 				return;
 			}
-			throw new Error('Failed to delete friend');
+			throw new Error("{% trans 'Failed to delete friend' % }");
 		}).catch(error => {
 			console.error(error);
 		});
@@ -90,10 +94,10 @@
 				blockBtn.classList.remove('block-btn');
 				blockBtn.classList.add('unblock-btn');
 				blockBtn.innerText = 'Unblock';
-				showSuccessMessage('Friend blocked successfully');
+				showSuccessMessage("{% trans 'Friend blocked successfully' %}");
 				return;
 			}
-			throw new Error('Failed to block friend');
+			throw new Error("{ % trans 'Failed to block friend' %}");
 		}).catch(error => {
 			console.error(error);
 		});
@@ -112,13 +116,37 @@
 				unblockBtn.classList.remove('unblock-btn');
 				unblockBtn.classList.add('block-btn');
 				unblockBtn.innerText = 'Block';
-				showSuccessMessage('Friend unblocked successfully');
+				showSuccessMessage("{% trans 'Friend unblocked successfully' %}");
 				return;
 			}
-			throw new Error('Failed to unblock friend');
+			throw new Error("{% trans 'Failed to unblock friend' %}");
 		}).catch(error => {
 			console.error(error);
 		});
 	}
+
+	function sendFriendRequest(receiverUsername) {
+		ajaxWithAuth('/api/friend-requests/', {
+			method: 'POST',
+			body: JSON.stringify({
+				receiver: receiverUsername
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				return response.json().then(errorData => {
+					throw new Error(errorData.status);
+				});
+			}
+		})
+		.then(data => {
+			showSuccessMessage("{% trans 'Friend request sent successfully' %}");
+		});
+	}
+
 </script>
 {% endblock %}

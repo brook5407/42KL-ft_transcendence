@@ -1,0 +1,25 @@
+{% extends "components/drawers/drawer-left.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block drawerStyles %}
+	<link rel="stylesheet" href="{% static 'styles/pong/tournament-list.css' %}" />
+{% endblock %}
+
+{% block drawerHeader %}
+	<h2>{% trans 'Tournaments' %}</h2>
+{% endblock %}
+
+{% block drawerContent %}
+<div id="tournament-list"></div>
+<button class="btn btn-primary" id="tournament-list__shuffle-rooms">{% trans 'Shuffle Rooms' %}</button>
+<div class="drawer-bottom-right-icon">
+	<img src="{% static 'images/icons/add.svg' %}" alt="Create tournament"
+		data-drawer="tournament-create" data-drawer-url="{% url 'pong.tournament-create-drawer' %}"
+		data-bs-toggle="tooltip" title="Create Tournament"
+		/>
+</div>
+{% endblock %}
+
+{% block drawerScripts %}
+{% endblock %}

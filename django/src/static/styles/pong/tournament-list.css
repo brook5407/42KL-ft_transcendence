@@ -1,0 +1,72 @@
+#tournament-list {
+	overflow-y: auto;
+	max-height: 80%;
+}
+
+.tournament-list__room-item {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	background-color: var(--color-brand-2);
+	cursor: default;
+}
+
+.tournament-list__room-owner-avatar img {
+	border-radius: 50%;
+}
+
+.tournament-list__room-details {
+	flex-grow: 1;
+	margin-left: 10px;
+}
+
+.tournament-list__room-name {
+	font-weight: bold;
+	font-size: 1.2em;
+	color: var(--color-brand-6);
+}
+
+.tournament-list__room-description {
+	color: var(--color-text-7);
+	margin-top: 5px;
+}
+
+.tournament-list__room-members {
+	display: flex;
+	align-items: center;
+	margin-top: 10px;
+}
+
+.tournament-list__member-avatar {
+	margin-right: 5px;
+}
+
+.tournament-list__member-avatar img {
+	border-radius: 50%;
+}
+
+.tournament-list__member-avatar.tournament-list__member-empty {
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px dashed #ccc;
+	border-radius: 50%;
+}
+
+.tournament-list__join-button {
+	background-color: var(--color-info-4);
+	color: white;
+	padding: 5px 10px;
+	border-radius: 5px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.tournament-list__join-button:hover {
+	background-color: var(--color-info-3);
+}

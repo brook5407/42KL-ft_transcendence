@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block drawerHeader %}
-	<h2>Profile</h2>
+	<h2>{% trans 'Profile' %}</h2>
 {% endblock %}
 
 {% block drawerContent %}
@@ -33,10 +33,16 @@
 			<p class="profile-joined">Joined: {{ user.date_joined|date:"d M Y" }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="">Wins: {{ wins }}, Losses: {{ losses }}</p>
+			<p class="">{% trans 'Wins:' %}' {{ wins }}, {% trans 'Losses:' %} {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="profile-bio">{{ user.profile.bio }}</p>
+			<p class="profile-bio">
+				{% if friend_profile.bio %}
+					{{ friend_profile.bio }}
+				{% else %}
+					{% trans "This user didn't say anything" %}
+				{% endif %}
+			</p>
 		</div>
 
 		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">Edit Profile</button>

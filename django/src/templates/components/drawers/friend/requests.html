@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -7,13 +7,16 @@
 {% endblock %}
 
 {% block drawerHeader %}
-	<h2>Friend Requests</h2>
+	<h2>{% trans 'Friend Requests' %}</h2>
 {% endblock %}
 
 {% block drawerContent %}
 <div id="friend-requests"></div>
 <div class="drawer-bottom-right-icon" data-drawer="search-friend" data-drawer-url={% url 'friend.search-friend-drawer' %}>
-	<img src="{% static 'images/icons/search-friend.svg' %}" alt="Search Friend" data-drawer="search-friend" data-drawer-url={% url 'friend.search-friend-drawer' %} />
+	<img src="{% static 'images/icons/search-friend.svg' %}" alt="Search Friend"
+		data-drawer="search-friend" data-drawer-url={% url 'friend.search-friend-drawer' %}
+		data-bs-toggle="tooltip" title="Search New Friend"
+		/>
 </div>
 {% endblock %}
 

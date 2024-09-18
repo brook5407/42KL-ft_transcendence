@@ -6,6 +6,10 @@ window.playNotificationSound = function () {
 };
 
 HTMLElement.prototype.addUnreadCount = function (count = 1) {
+	if (count <= 0) {
+		return;
+	}
+
 	if (this.tagName === 'IMG') {
 		this.parentElement.addUnreadCount(count);
 		return;

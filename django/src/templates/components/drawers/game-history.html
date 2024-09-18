@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -7,12 +7,12 @@
 {% endblock %}
 
 {% block drawerHeader %}
-	<h3>{{ user.profile.nickname}} Match History</h3>
+	<h3>{{ user.profile.nickname}} {% trans 'Match History' %}</h3>
 {% endblock %}
 
 {% block drawerContent %}
 <div id="game-history-container" class="game-history"></div>
-<div id="loading" style="display: none;">Loading...</div>
+<div id="loading" style="display: none;">{% trans 'Loading...' %}</div>
 {% endblock %}
 
 {% block drawerScripts %}
@@ -78,6 +78,6 @@ document.addEventListener('drawer-opened', () => {
 
 	// initial load
 	loadGameHistory(currentPage);
-}
+});
 </script>
 {% endblock %}

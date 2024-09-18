@@ -91,7 +91,7 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
         
     @database_sync_to_async
     def get_online_friends(self):
-        friends = self.user.friends
+        friends = self.user.friends.all()
         online_friends = [friend.id for friend in friends if cache.get(f"user_{friend.id}_online")]
         return online_friends
         

@@ -1,5 +1,5 @@
 {% extends "components/modals/modal-center.html" %}
-
+{% load i18n %}
 {% load allauth account %}
 {% load allauth %}
 {% load socialaccount %}
@@ -9,14 +9,14 @@
 {% endblock %}
 
 {% block modalAuthAltText %}
-	Want username and password sign in? Click <a data-modal="signin" id="signinLink" data-modal-url={% url 'base.signin-modal'  %}>here</a>
+	{% trans 'Want username and password sign in? Click ' %}<a data-modal="signin" id="signinLink" data-modal-url={% url 'base.signin-modal'  %}>{% trans 'here' %}</a>
 {% endblock %}
 
 {% block modalContent %}
 	<form method="post" onsubmit="showLoadingEffect()" action="{% provider_login_url "42" process="login" %}">
 		{% csrf_token %}
 		<div class="center">
-			<button type="submit" class="submit-button">42 Login</button>
+			<button type="submit" class="submit-button">{% trans '42 Login' %}</button>
 		</div>
 	</form>
 {% endblock %}

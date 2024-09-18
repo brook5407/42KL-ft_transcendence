@@ -1,104 +1,102 @@
 export class Snowfall {
-	constructor() {
-		this.intervalId = null;
+    constructor() {
+        this.snowflakes = [];
+        this.snowflakeImageSrc = '/static/images/snowflake.svg';
+        this.updateInterval = null;
+        this.updateSnowflakeCount();
+    }
 
-		this.snowflakeImage = new Image();
-		this.snowflakeImage.src = '/static/images/snowflake.svg';
-		this.snowflakeImage.alt = 'Snowflake';
+    updateSnowflakeCount() {
+        const count = this.getCookie('snow_intensity');
+        this.snowflakeCount = count ? Number(count) : 50;
+    }
 
-		this.snowfallInterval = 100; // Milliseconds
-		this.frameTimes = [];
-		this.maxFrameTimes = 60;
+    getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
 
-		// adjust snowfall intensity based on frame rate every second
-		setInterval(this.measureFrameRate.bind(this), 1000);
-	}
+    async createSnowflakes() {
+        const createOneSnowflake = () => {
+            const snowflake = new Image();
+            snowflake.src = this.snowflakeImageSrc;
+            snowflake.alt = 'Snowflake';
+            snowflake.classList.add('blur', 'snowflake');
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDelay = '0s';
+            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+            snowflake.style.animationTimingFunction = 'linear';
+            snowflake.style.width = snowflake.style.height =
+                Math.random() * 30 + 10 + 'px';
+            snowflake.style.opacity = Math.random();
+            snowflake.style.zIndex = -1;
 
-	measureFrameRate() {
-		let lastFrameTime = performance.now();
+            document.body.appendChild(snowflake);
+            this.snowflakes.push(snowflake);
 
-		const frame = () => {
-			const now = performance.now();
-			const delta = now - lastFrameTime;
-			lastFrameTime = now;
+            const spinAnimation =
+                Math.random() > 0.5 ? 'spin-clockwise' : 'spin-anticlockwise';
+            snowflake.style.animationName = `fall, ${spinAnimation}`;
 
-			this.frameTimes.push(delta);
-			if (this.frameTimes.length > this.maxFrameTimes) {
-				this.frameTimes.shift();
-			}
+            snowflake.addEventListener('animationend', () => {
+                this.resetSnowflake(snowflake);
+            });
+        };
 
-			const averageFrameTime =
-				this.frameTimes.reduce((a, b) => a + b, 0) / this.frameTimes.length;
-			const fps = 1000 / averageFrameTime;
+        while (this.snowflakes.length < this.snowflakeCount) {
+            await this.sleep(Math.random() * 100);
+            createOneSnowflake();
+        }
 
-			this.adjustSnowfallIntensity(fps);
-		};
+        // Remove excess snowflakes if the count has decreased
+        while (this.snowflakes.length > this.snowflakeCount) {
+            const snowflake = this.snowflakes.pop();
+            snowflake.remove();
+        }
+    }
 
-		requestAnimationFrame(frame);
-	}
+    resetSnowflake(snowflake) {
+        snowflake.style.left = Math.random() * 100 + 'vw';
+        snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+        snowflake.style.animationName = 'none';
+        void snowflake.offsetWidth;
+        const spinAnimation =
+            Math.random() > 0.5 ? 'spin-clockwise' : 'spin-anticlockwise';
+        snowflake.style.animationName = `fall, ${spinAnimation}`;
+    }
 
-	adjustSnowfallIntensity(fps) {
-		if (fps < 100) {
-			this.snowfallInterval = Math.min(this.snowfallInterval + 10, 1000); // Increase interval to reduce snowfall
-		} else if (fps > 150) {
-			this.snowfallInterval = Math.max(this.snowfallInterval - 10, 100); // Decrease interval to increase snowfall
-		}
+    startSnowfall() {
+        this.createSnowflakes();
+        this.startUpdateCheck();
+    }
 
-		if (this.intervalId !== null) {
-			clearInterval(this.intervalId);
-			this.intervalId = setInterval(
-				this.createSnowflake.bind(this),
-				this.snowfallInterval
-			);
-		}
-	}
+    stopSnowfall() {
+        this.snowflakes.forEach((snowflake) => {
+            snowflake.remove();
+        });
+        this.snowflakes = [];
+        this.stopUpdateCheck();
+    }
 
-	startSnowfall() {
-		if (this.intervalId === null) {
-			this.intervalId = setInterval(
-				this.createSnowflake.bind(this),
-				this.snowfallInterval
-			);
-		}
-	}
+    startUpdateCheck() {
+        this.updateInterval = setInterval(() => {
+            const oldCount = this.snowflakeCount;
+            this.updateSnowflakeCount();
+            if (oldCount !== this.snowflakeCount) {
+                this.createSnowflakes();
+            }
+        }, 5000); // Check every 5 seconds
+    }
 
-	createSnowflake() {
-		const randomSeed = Math.random();
-		const snowflake = this.snowflakeImage.cloneNode(true);
+    stopUpdateCheck() {
+        if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+            this.updateInterval = null;
+        }
+    }
 
-		snowflake.classList.add('snowflake');
-		snowflake.style.left = Math.random() * 100 + 'vw';
-		snowflake.style.animationDelay = '0s';
-		snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // Between 2 and 5 seconds
-		snowflake.style.animationName =
-			'fall, ' +
-			(Math.random() > 0.5 ? 'spin-clockwise' : 'spin-anticlockwise');
-		snowflake.style.opacity = randomSeed;
-		snowflake.style.width = snowflake.style.height =
-			randomSeed * 30 + 10 + 'px';
-		snowflake.style.zIndex = Math.min(Math.floor(randomSeed * 100), 1000);
-
-		document.body.appendChild(snowflake);
-
-		// Remove snowflake after it falls
-		setTimeout(() => {
-			snowflake.remove();
-		}, parseInt(snowflake.style.animationDuration) * 1000);
-	}
-
-	stopSnowfall() {
-		if (this.intervalId !== null) {
-			clearInterval(this.intervalId);
-			this.intervalId = null;
-		}
-	}
-
-	snowflakeClickEffect(event) {
-		const numSnowflakes = Math.ceil(Math.random() * 10);
-		for (let i = 0; i < numSnowflakes; i++) {
-			const randomX = event.clientX + Math.random() * 50 - 50;
-			const randomY = event.clientY - Math.random() * 100;
-			this.createSnowflake(randomX, randomY);
-		}
-	}
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 }

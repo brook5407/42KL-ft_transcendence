@@ -1,0 +1,382 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-18 06:53+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: base/views.py:124
+msgid "Invalid language"
+msgstr "Salah Bahasa"
+
+#: base/views.py:137 base/views.py:139
+msgid "Invalid intensity value"
+msgstr "Nilai keamatan tidak sah"
+
+#: core/settings.py:191
+msgid "English"
+msgstr "Bahasa Inggeris"
+
+#: core/settings.py:192
+msgid "Malay"
+msgstr "Bahasa Malaysia"
+
+#: core/settings.py:193
+msgid "Chinese"
+msgstr "Bahasa Cina"
+
+#: drf_auth/views.py:39 drf_auth/views.py:49
+msgid "Verification key is missing"
+msgstr "Tiada Kunci pengesahan"
+
+#: drf_auth/views.py:68
+msgid "Your email has been successfully verified."
+msgstr "E-mel anda telah berjaya disahkan."
+
+#: drf_auth/views.py:71
+msgid "There was an error verifying your email."
+msgstr "Berlaku ralat mengesahkan e-mel anda."
+
+#: drf_auth/views.py:91
+msgid "OTP sent. Please check your email."
+msgstr "OTP telah dihantar. Sila semak e-mel anda."
+
+#: drf_auth/views.py:95
+msgid "User email is not verified."
+msgstr "E-mel pengguna tidak disahkan."
+
+#: drf_auth/views.py:99
+msgid "User does not exist."
+msgstr "E-mel pengguna belum disahkan."
+
+#: drf_auth/views.py:122 drf_auth/views.py:131
+msgid "OTP is invalid"
+msgstr "OTP tidak sah"
+
+#: drf_auth/views.py:127
+msgid "OTP has expired, Please request a new one"
+msgstr "OTP telah tamat tempoh, Sila minta yang baharu"
+
+#: friend/views.py:31 friend/views.py:40 friend/views.py:49
+msgid "friend_id is required"
+msgstr "Sila letak friend_id"
+
+#: friend/views.py:34
+msgid "friend blocked"
+msgstr "rakan dihalang"
+
+#: friend/views.py:43
+msgid "friend unblocked"
+msgstr "rakan telah dinyahsekat"
+
+#: friend/views.py:53
+msgid "friend deleted"
+msgstr "rakan dipadamkan"
+
+#: friend/views.py:59
+msgid "username query parameter is required"
+msgstr "parameter pertanyaan nama pengguna diperlukan"
+
+#: friend/views.py:62
+msgid "cannot add yourself as a friend"
+msgstr "tidak boleh menambah diri anda sebagai kawan"
+
+#: friend/views.py:64
+msgid "already friends"
+msgstr "sudah kawan"
+
+#: friend/views.py:84 friend/views.py:92
+msgid "not authorized"
+msgstr "tidak dibenarkan"
+
+#: friend/views.py:86
+msgid "friend request accepted"
+msgstr "permintaan rakan diterima"
+
+#: friend/views.py:94
+msgid "friend request rejected"
+msgstr "permintaan rakan ditolak"
+
+#: friend/views.py:102
+msgid "friend request already sent"
+msgstr "permintaan rakan sudah dihantar"
+
+#: friend/views.py:109
+msgid "friend request sent"
+msgstr "permintaan rakan dihantar"
+
+#: templates/components/drawers/chat-list.html:10
+msgid "Chat List"
+msgstr "Senarai Sembang"
+
+#: templates/components/drawers/chat-room.html:20
+#: templates/components/drawers/game-history.html:15
+msgid "Loading..."
+msgstr "Memuatkan..."
+
+#: templates/components/drawers/friend/list.html:10
+msgid "Friends"
+msgstr "Kawan-kawan"
+
+#: templates/components/drawers/friend/profile.html:10
+#: templates/components/drawers/profile.html:10
+msgid "Profile"
+msgstr "Profil"
+
+#: templates/components/drawers/friend/profile.html:35
+#: templates/components/drawers/profile.html:43
+msgid "This user didn't say anything"
+msgstr "Pengguna ini tidak berkata apa-apa"
+
+#: templates/components/drawers/friend/profile.html:40
+msgid "See Match History"
+msgstr "Lihat Sejarah Perlawanan"
+
+#: templates/components/drawers/friend/profile.html:49
+msgid "Delete"
+msgstr "Padam"
+
+#: templates/components/drawers/friend/profile.html:52
+msgid "Add Friend"
+msgstr "Tambah Rakan"
+
+#: templates/components/drawers/friend/profile.html:66
+msgid "Friend deleted successfully"
+msgstr "Rakan berjaya dipadamkan"
+
+#: templates/components/drawers/friend/profile.html:97
+msgid "Friend blocked successfully"
+msgstr "rakan berjaya dihalang"
+
+#: templates/components/drawers/friend/profile.html:119
+msgid "Friend unblocked successfully"
+msgstr "Rakan berjaya dinyahsekat"
+
+#: templates/components/drawers/friend/profile.html:122
+msgid "Failed to unblock friend"
+msgstr "Gagal menyahsekat rakan"
+
+#: templates/components/drawers/friend/profile.html:147
+#: templates/components/drawers/friend/search-friend.html:92
+msgid "Friend request sent successfully"
+msgstr "Permintaan rakan telah berjaya dihantar"
+
+#: templates/components/drawers/friend/requests.html:10
+msgid "Friend Requests"
+msgstr "Permintaan Rakan"
+
+#: templates/components/drawers/friend/search-friend.html:10
+msgid "New Friends"
+msgstr "Kawan Baru"
+
+#: templates/components/drawers/friend/search-friend.html:17
+msgid "Search new friends..."
+msgstr "Cari kawan baru..."
+
+#: templates/components/drawers/friend/search-friend.html:90
+msgid "Friend Request Sent"
+msgstr "Permintaan Rakan Dihantar"
+
+#: templates/components/drawers/friend/search-friend.html:105
+msgid "Already friend"
+msgstr "Sudah kawan"
+
+#: templates/components/drawers/friend/search-friend.html:109
+msgid "Requested"
+msgstr "Diminta"
+
+#: templates/components/drawers/game-history.html:10
+msgid "Match History"
+msgstr "Sejarah Perlawanan"
+
+#: templates/components/drawers/pong/tournament/create.html:9
+msgid "Create Tournament"
+msgstr "Lobi Pertandingan"
+
+#: templates/components/drawers/pong/tournament/create.html:18
+msgid "Name"
+msgstr "Nama"
+
+#: templates/components/drawers/pong/tournament/create.html:22
+msgid "Description"
+msgstr "Penerangan"
+
+#: templates/components/drawers/pong/tournament/create.html:25
+#: templates/components/modals/forget-password.html:16
+#: templates/components/modals/reset-password.html:22
+#: templates/components/modals/signin.html:31
+#: templates/components/modals/signup.html:32
+msgid "Submit"
+msgstr "Hantar"
+
+#: templates/components/drawers/pong/tournament/list.html:10
+msgid "Tournaments"
+msgstr "Pertandingan:"
+
+#: templates/components/drawers/pong/tournament/list.html:15
+msgid "Shuffle Rooms"
+msgstr "Shuffle Bilik"
+
+#: templates/components/drawers/pong/tournament/room.html:70
+msgid "Leave"
+msgstr "Tinggalkan"
+
+#: templates/components/drawers/profile-edit.html:10
+msgid "Edit Profile"
+msgstr "Edit Profil"
+
+#: templates/components/drawers/profile-edit.html:16
+msgid "Nickname"
+msgstr "Nama panggilan"
+
+#: templates/components/drawers/profile-edit.html:20
+msgid "Bio"
+msgstr "Bio"
+
+#: templates/components/drawers/profile-edit.html:23
+msgid "Save"
+msgstr "Simpan"
+
+#: templates/components/drawers/profile.html:36
+msgid "Wins:"
+msgstr "Menang:"
+
+#: templates/components/drawers/profile.html:36
+msgid "Losses:"
+msgstr "Kalah:"
+
+#: templates/components/drawers/settings.html:10
+msgid "Settings"
+msgstr "Tetapan"
+
+#: templates/components/drawers/settings.html:17
+msgid "Language"
+msgstr "Bahasa"
+
+#: templates/components/drawers/settings.html:38
+#: templates/components/modals/signin.html:20
+#: templates/components/modals/signup.html:24
+msgid "Password"
+msgstr "Kata laluan"
+
+#: templates/components/drawers/settings.html:41
+msgid "Change Password"
+msgstr "Tukar Kata Laluan"
+
+#: templates/components/drawers/settings.html:46
+msgid "Snow Fall Intensity"
+msgstr "Intensiti Musim Salji"
+
+#: templates/components/modals/42oauth.html:12
+msgid "Want username and password sign in? Click "
+msgstr "Ingin log masuk nama pengguna dan kata laluan? klik"
+
+#: templates/components/modals/42oauth.html:12
+#: templates/components/modals/signin.html:9
+#: templates/components/modals/signup.html:9
+msgid "here"
+msgstr "sini"
+
+#: templates/components/modals/42oauth.html:19
+msgid "42 Login"
+msgstr "42 Log Masuk"
+
+#: templates/components/modals/forget-password.html:5
+msgid "Forget Password"
+msgstr "Lupa Kata Laluan"
+
+#: templates/components/modals/forget-password.html:12
+#: templates/components/modals/signup.html:16
+msgid "Email"
+msgstr "Alamat e-mel"
+
+#: templates/components/modals/reset-password.html:5
+msgid "Reset Password"
+msgstr "Tetapkan Semula Kata Laluan"
+
+#: templates/components/modals/reset-password.html:14
+msgid "New Password"
+msgstr "Kata Laluan Baru"
+
+#: templates/components/modals/reset-password.html:18
+#: templates/components/modals/signup.html:28
+msgid "Confirm Password"
+msgstr "Pengesahan Kata Laluan"
+
+#: templates/components/modals/signin.html:5
+#: templates/components/pages/home.html:61
+msgid "Sign In"
+msgstr "Log Masuk"
+
+#: templates/components/modals/signin.html:9
+msgid "New user? Register"
+msgstr "Pengguna baru? Daftar"
+
+#: templates/components/modals/signin.html:16
+#: templates/components/modals/signup.html:20
+msgid "Username"
+msgstr "Nama pengguna"
+
+#: templates/components/modals/signin.html:27
+msgid "send"
+msgstr "hantar"
+
+#: templates/components/modals/signin.html:35
+msgid "Forgot Password?"
+msgstr "Lupa Kata Laluan?"
+
+#: templates/components/modals/signin.html:57
+msgid "OTP sent to your email!"
+msgstr "OTP telah dihantar ke e-mel anda!"
+
+#: templates/components/modals/signin.html:61
+msgid "Error requesting OTP. Please try again."
+msgstr "Ralat meminta OTP. Sila cuba lagi."
+
+#: templates/components/modals/signup.html:5
+msgid "Sign Up"
+msgstr "Daftar"
+
+#: templates/components/modals/signup.html:9
+msgid "Already gave an account? Login "
+msgstr "Sudah daftar? Log Masuk "
+
+#: templates/components/pages/home.html:9
+msgid "AIsPong"
+msgstr "AIsPong"
+
+#: templates/components/pages/home.html:48
+msgid "PVP"
+msgstr "PVP"
+
+#: templates/components/pages/home.html:49
+msgid "PVE"
+msgstr "PVE"
+
+#: templates/components/pages/pong.html:16
+msgid "Searching for opponent..."
+msgstr "Mencari lawan..."
+
+#~ msgid "Tournament Lobby"
+#~ msgstr "Lobi Pertandingan"
+
+#~ msgid "Join Room"
+#~ msgstr "Bilik Sertai"
+
+#~ msgid "Public Chat"
+#~ msgstr "Sembang Awam"
+
+#~ msgid "Cancel"
+#~ msgstr "Batal"
