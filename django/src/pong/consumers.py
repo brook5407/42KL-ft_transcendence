@@ -25,7 +25,8 @@ class RoomManager:
 
 class MatchManager:
     def __init__(self):
-        self.players = [] # List of channel_names (WebSocket connections)
+        self.channel_names = [] # List of channel_names (WebSocket connections)
+        self.players = [] # List of current players surviving
         self.matches = []
         self.match_index = 0
 
@@ -38,12 +39,20 @@ class MatchManager:
     def add_player(self, channel_name):
         self.players.append(channel_name)
 
+    def remove_player(self, channel_name):
+        try:
+            self.players.remove(channel_name)
+        except ValueError:
+            print(f"Player {channel_name} not found in the list.")
+
     def generate_matches(self):
+        if self.has_next_match():
+            return
         if len(self.players) % 2 != 0:
             raise ValueError("Tournament requires an even number of players")
 
         # Shuffle players and pair them for the matches
-        random.shuffle(self.players)
+        # random.shuffle(self.players)
         self.matches = [(self.players[i], self.players[i+1]) for i in range(0, len(self.players), 2)]
 
     def get_next_match(self):
@@ -52,6 +61,10 @@ class MatchManager:
             self.match_index += 1
             return match
         return None  # No more matches
+
+    def has_next_match(self):
+        # Check if there is a next match based on the current match index
+        return self.match_index < len(self.matches)
 
 class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -86,6 +99,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         paddle = data.get('paddle')
         velocity = data.get('velocity')
+        next_match = data.get('next_match')
 
         # Update the paddle's velocity
         if paddle == 'paddle1':
@@ -93,10 +107,19 @@ class PongConsumer(AsyncWebsocketConsumer):
         elif paddle == 'paddle2':
             self.manager.paddle2.velocity = velocity
 
+        # if next_match == True:
+        #     if (self.game_mode == "pvp"):
+        #         await self.pvp_mode()
+        #     elif (self.game_mode == "pve"):
+        #         await self.pve_mode()
+        #     elif (self.game_mode == "tournament"):
+        #         await self.tournament_mode()
+
     async def pvp_mode(self):
         if len(self.manager.players) == 2:
             self.manager.generate_matches()
-            self.player1, self.player2 = self.manager.get_next_match()
+            if self.manager.has_next_match:
+                self.player1, self.player2 = self.manager.get_next_match()
 
             await self.channel_layer.send(self.player1, {
                 'type': 'paddle_assignment',
@@ -208,25 +231,29 @@ class PongConsumer(AsyncWebsocketConsumer):
             # Check if a player disconnected
             if self.player1 == None or self.player2 == None:
                 winner = 'Player 1' if self.player2 == None else 'Player 2'
+                loser = self.player2 if self.player2 == None else self.player1
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
                         'type': 'end_game',
                         'message': f'{winner} wins!\nBecause other player disconnected!',
+                        'loser': loser,
                     }
                 )
                 break  # Exit the game loop
 
-            winningScore = 10
+            winningScore = 3
 
             # End the game if a player reaches a score of winningScore
             if self.manager.score1 >= winningScore or self.manager.score2 >= winningScore:
                 winner = 'Player 1' if self.manager.score1 >= winningScore else 'Player 2'
+                loser = self.player2 if self.manager.score1 >= winningScore else self.player1
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
                         'type': 'end_game',
                         'message': f'{winner} wins!',
+                        'loser': loser,
                     }
                 )
                 break  # Exit the game loop
@@ -245,16 +272,20 @@ class PongConsumer(AsyncWebsocketConsumer):
         }))
 
     async def end_game(self, event):
-        # Send game end message to WebSocket
-        await self.send(text_data=json.dumps({
-            'type': 'end_game',
-            'message': event['message'],
-        }))
+        self.manager.remove_player(event['loser'])
+        if self.manager.has_next_match:
+            await self.send(text_data=json.dumps({
+                'type': 'next_match',
+                'message': event['message'],
+            }))
+        else:
+            await self.send(text_data=json.dumps({
+                'type': 'end_game',
+                'message': event['message'],
+            }))
+            
 
     def reset_ball(self):
-        # self.match['ball'].x = gameWidth / 2
-        # self.match['ball'].y = gameHeight / 2
-        # self.match['ball'].speed = self.match['ball'].oriSpeed
         self.manager.ball = Ball(400, 250, 8, 5)
 
     def reset_paddles(self):

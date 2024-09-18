@@ -58,8 +58,8 @@ socket.onmessage = function(e) {
         canvasContainer.width = data.gameWidth;
         gameCanvas.height = data.gameHeight;
         gameCanvas.width = data.gameWidth;
-        paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, '#1EDDDD');
-        paddle2 = new Paddle(data.paddle2.x, data.paddle2.y, data.paddle2.width, data.paddle2.height, '#1EDDDD');
+        paddle1 = new Paddle(data.paddle1.x, data.paddle1.y, data.paddle1.width, data.paddle1.height, 'white');
+        paddle2 = new Paddle(data.paddle2.x, data.paddle2.y, data.paddle2.width, data.paddle2.height, 'white');
         ball = new Ball(gameCanvas.width / 2, gameCanvas.height / 2, data.ball.radius, data.ball.speed, '#ffffff', '#A0D8F0');
         table = new Table(gameCanvas, paddle1, paddle2, ball);
         matchmaking.style.display = 'none';
@@ -127,6 +127,24 @@ socket.onmessage = function(e) {
                 clearInterval(countdownInterval);
                 // socket.close();
                 // window.location.href = `http://${window.location.host}/`;
+            }
+        }, 1000);
+    }
+    if (data.type === 'next_match') {
+        overlay.style.display = 'flex';
+        winnerText.style.display = 'flex';
+        winnerText.innerText = data.message;
+
+        let countdown = 11;
+        const countdownInterval = setInterval(() => {
+            countdown -= 1;
+            countdownText.style.fontSize = "12px";
+            countdownText.innerText = `Next match starting in ${countdown} seconds...`;
+            countdownText.style.display = 'flex';
+    
+            if (countdown === 0) {
+                clearInterval(countdownInterval);
+                socket.send(JSON.stringify({ 'next_match': true}));
             }
         }, 1000);
     }
