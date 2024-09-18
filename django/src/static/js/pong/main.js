@@ -52,6 +52,9 @@ socket.onmessage = function(e) {
 
     }
     if (data.type === 'start_game') {
+
+        window.audioAssets.bgmSound.loop = true;
+        window.audioAssets.bgmSound.play();
         // Both players has connected, start the game
         console.log("start_game");
         canvasContainer.height = data.gameHeight;
@@ -102,6 +105,26 @@ socket.onmessage = function(e) {
         ball.y = data.ball.y;
         score1.innerText = data.score1;
         score2.innerText = data.score2;
+
+
+        // Sound Effect
+        if (ball.x <= 0) {
+            playScoreSound();
+        } 
+        // console.log("gameCanvas.width:", gameCanvas.width);
+        if (ball.x >= gameCanvas.width) {
+            playScoreSound();
+        }  
+        if (ball.x <= (paddle1.x + paddle1.width + ball.radius)) {
+            if (ball.y > paddle1.y && ball.y < paddle1.y + paddle1.height)
+                // playHitSound();
+                window.audioAssets.hitSound.play();
+        }
+        if (ball.x >= (paddle2.x - ball.radius)) {
+            if (ball.y > paddle2.y && ball.y < paddle2.y + paddle2.height)
+                // playHitSound();
+                window.audioAssets.hitSound.play();
+        }
 
         // Render the updated game state
         table.draw();
