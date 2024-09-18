@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from base.models import BaseModel
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from datetime import timedelta
+from django.utils import timezone
 
 
 User = get_user_model()
@@ -244,3 +246,40 @@ class UserActiveTournament(BaseModel):
 
     def __str__(self):
         return f"{self.user} in {self.tournament}"
+    
+
+class MatchInvitation(BaseModel):
+    INVITATION_EXPIRE_TIME = 60 * 5  # in seconds, 5 minutes
+    class Status(models.TextChoices):
+        WAITING = "W", "Waiting"
+        ACCEPTED = "A", "Accepted"
+        REJECTED = "R", "Rejected"
+
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sender")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="receiver")
+    status = models.CharField(choices=Status.choices, default=Status.WAITING, max_length=1)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name="invitation_match")
+    expired_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"From {self.sender} to {self.receiver}. Match: {self.match}"
+    
+    def create(self, *args, **kwargs):
+        instance = self.model(*args, **kwargs)
+        if instance.status == instance.Status.WAITING:
+            instance.expired_at = instance.created_at + timedelta(seconds=instance.INVITATION_EXPIRE_TIME)
+        instance.save(using=self._db)
+        return instance
+    
+    def is_expired(self):
+        return self.expired_at < timezone.now()
+    
+    def accept(self):
+        self.status = self.Status.ACCEPTED
+        self.expired_at = None
+        self.save()
+        
+    def reject(self):
+        self.status = self.Status.REJECTED
+        self.expired_at = None
+        self.save()

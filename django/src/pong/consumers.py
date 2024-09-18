@@ -597,4 +597,3 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'message': event['message'],
             'tournament_id': event['tournament_id'],
         }))
-    

@@ -133,3 +133,47 @@
 	color: var(--color-text-3);
 	align-self: flex-end;
 }
+
+.chat-room__message-card {
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding: 16px;
+	margin: 8px 0;
+	background-color: #f9f9f9;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.chat-room__message-card-title {
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+
+.chat-room__message-card-icon {
+	font-size: 3rem;
+	margin-bottom: 16px;
+}
+
+.chat-room__message-card-buttons {
+	display: flex;
+	gap: 8px;
+}
+
+.chat-room__message-card-button {
+	padding: 8px 16px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.chat-room__pong-accept-button {
+	background-color: #4caf50;
+	color: white;
+}
+
+.chat-room__pong-reject-button {
+	background-color: #f44336;
+	color: white;
+}

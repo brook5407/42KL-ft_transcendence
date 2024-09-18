@@ -176,3 +176,20 @@ class MatchViewSet(viewsets.ModelViewSet):
     def pve(self, request):
         # WXR TODO: start pve game
         pass
+
+
+class PongInvitationViewSet(viewsets.ViewSet):
+    @action(detail=False, methods=["POST"])
+    def invite(self, request):
+        # WXR TODO: Implement the invitation system
+        pass
+    
+    @action(detail=True, methods=["POST"])
+    def accept(self, request, pk=None):
+        # WXR TODO: Implement the invitation system
+        pass
+    
+    @action(detail=True, methods=["POST"])
+    def reject(self, request, pk=None):
+        # WXR TODO: Implement the invitation system
+        pass

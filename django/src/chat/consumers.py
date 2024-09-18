@@ -190,3 +190,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'room_name': room_name,
             'created_at': created_at,
         }))
+        
+    async def send_pong_invitation(self, event):
+        # WXR TODO: Implement this
+        message = event['message']
+        sender = event['sender']
+        room_id = event['room_id']
+        room_name = event['room_name']
+        created_at = event['created_at'] or timezone.now().isoformat()
+
+        # Send notification to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'send_pong_invitation',
+            'message': message,
+            'sender': sender,
+            'room_id': room_id,
+            'room_name': room_name,
+            'created_at': created_at,
+        }))

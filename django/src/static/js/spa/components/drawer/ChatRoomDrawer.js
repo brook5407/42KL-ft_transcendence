@@ -197,12 +197,33 @@ export class ChatRoomDrawer extends GenericDrawer {
 		}
 	}
 
+	renderMessageBubble(message) {
+		if (message.isInviteMessage) {
+			return `
+				<div class="chat-room__message-card">
+					<div class="chat-room__message-card-title">Jom Pong!</div>
+					<div class="chat-room__message-card-icon">🏓</div>
+					<div class="chat-room__message-card-buttons">
+						<button class="chat-room__message-card-button accept-button">Accept</button>
+						<button class="chat-room__message-card-button reject-button">Reject</button>
+					</div>
+				</div>
+			`;
+		} else {
+			return `
+				<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
+					message.message
+				)}</div>
+			`;
+		}
+	}
+
 	/**
 	 *
 	 * @param {WSChatMessage} message
 	 * @returns {HTMLDivElement}
 	 */
-	createMessageElement(message) {
+	createMessageElement(message, isInviteMessage = false) {
 		const isSentByCurrentUser =
 			message.sender.username === currentUser.username;
 		const messageClass = isSentByCurrentUser
@@ -220,9 +241,7 @@ export class ChatRoomDrawer extends GenericDrawer {
 			message.sender.profile.nickname
 		}'s avatar" class="chat-room__avatar">
 			</div>
-			<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
-				message.message
-			)}</div>
+			${this.renderMessageBubble(message)}
 			<div class="chat-room__timestamp">${formattedTimestamp}</div>
 		`;
 
@@ -241,6 +260,26 @@ export class ChatRoomDrawer extends GenericDrawer {
 				openDrawer('profile', {
 					url: `drawer/profile/`,
 				});
+			});
+		}
+
+		if (isInviteMessage) {
+			const acceptButton = messageElem.querySelector(
+				'.chat-room__pong-accept-button '
+			);
+			const rejectButton = messageElem.querySelector(
+				'.chat-room__pong-reject-button '
+			);
+
+			acceptButton.addEventListener('click', () => {
+				// WXR TODO: send a pong invite accept message
+				// if the sender user is online, redirect both user to the pong page
+				// if the sender user is offline, show a toast message showing the sender user is offline
+			});
+
+			rejectButton.addEventListener('click', () => {
+				// WXR TODO: send a pong invite reject message
+				// show a toast message to sender if online, showing the invite is rejected
 			});
 		}
 
