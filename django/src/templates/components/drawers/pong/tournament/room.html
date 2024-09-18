@@ -1,5 +1,5 @@
 {% extends "components/drawers/drawer-left.html" %}
-
+{% load i18n %}
 {% load static %}
 
 {% block drawerStyles %}
@@ -67,7 +67,7 @@
 				`
 						: ''
 				}
-				<button class="tournament-room__leave-button">Leave</button>
+				<button class="tournament-room__leave-button">{% trans 'Leave' %}</button>
 			</div>
 		`;
 

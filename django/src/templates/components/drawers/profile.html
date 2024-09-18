@@ -36,7 +36,13 @@
 			<p class="">{% trans 'Wins:' %}' {{ wins }}, {% trans 'Losses:' %} {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="profile-bio">{{ user.profile.bio|default:"{% trans 'This user didn't say anything' %}" }}</p>
+			<p class="profile-bio">
+				{% if friend_profile.bio %}
+					{{ friend_profile.bio }}
+				{% else %}
+					{% trans "This user didn't say anything" %}
+				{% endif %}
+			</p>
 		</div>
 
 		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">Edit Profile</button>

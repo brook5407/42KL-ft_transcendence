@@ -87,7 +87,7 @@
 		.then((data) => {
 			const searchFriendResult = document.getElementById('search-friend-result');
 			searchFriendResult.querySelector('.new-friend-tile__action').innerHTML = `
-				<div class="new-friend-tile__badge">Friend Request Sent</div>
+				<div class="new-friend-tile__badge">{% trans 'Friend Request Sent' %}</div>
 			`;
 			showSuccessMessage("{% trans 'Friend request sent successfully' %}");
 		}).catch((error) => {
