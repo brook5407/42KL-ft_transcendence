@@ -34,8 +34,8 @@ const WSChatMessageErrorType = {
 
 /**
  * @typedef {Object} Profile
- * @property {string} username
  * @property {string} nickname
+ * @property {string} bio
  * @property {string} avatar
  */
 
