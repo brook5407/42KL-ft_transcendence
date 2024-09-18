@@ -40,10 +40,17 @@
     <script>
         let otpCooldown = 60;
         let timerInterval;
+        let isButtonFrozen = false;
         
         function otp_click() {
+            if (isButtonFrozen) return;
+        
             const username = document.getElementById('username').value; 
             const password = document.getElementById('password').value;
+            const button = document.getElementById('send-otp-button');
+        
+            // Freeze the button immediately
+            freezeButton(button);
             
             ajax('auth/send-otp', { 
                 method: 'POST',
@@ -55,33 +62,40 @@
             .then(response => response.json().then(data => {
                 if (response.ok) {
                     showSuccessMessage("{% trans 'OTP sent to your email!' %}");
-                    startCountdown(document.getElementById('send-otp-button'));
+                    startCountdown(button);
                 } else {
                     throw new Error(data.non_field_errors);
                 }
             }))
             .catch(error => {
                 showErrorMessage(error.message);
+                // Even if there's an error, keep the button frozen
+                isButtonFrozen = false;
+                button.disabled = false;
             });
+        }
+        
+        function freezeButton(button) {
+            isButtonFrozen = true;
+            button.disabled = true;
         }
         
         function startCountdown(button) {
             let remainingTime = otpCooldown;
-    
-            // Disable the button
-            button.disabled = true;
+        
             button.textContent = `{% trans 'Resend OTP in ' %}` + remainingTime + 's';
-    
+        
             // Start the countdown
             timerInterval = setInterval(() => {
                 remainingTime--;
-    
+        
                 if (remainingTime > 0) {
                     button.textContent = `{% trans 'Resend OTP in ' %}` + remainingTime + 's';
                 } else {
                     clearInterval(timerInterval);
                     button.disabled = false;
                     button.textContent = `{% trans 'Resend OTP' %}`;
+                    isButtonFrozen = false;
                 }
             }, 1000); // update every second
         }
