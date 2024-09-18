@@ -57,7 +57,6 @@ class FortyTwoOAuth2ClientMixin(object):
             callback_url,
             scope,
         )
-        print(client)
         return client
 
 
@@ -83,17 +82,17 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
                 response.set_cookie(
                     settings.REST_AUTH['JWT_AUTH_COOKIE'],
                     access_token,
-                    httponly=False,
+                    httponly=True,
                     secure=True,
-                    samesite='Lax',
+                    samesite='Strict',
                     expires=time.time() + access_token_lifetime.total_seconds()
                 )
                 response.set_cookie(
                     settings.REST_AUTH['JWT_AUTH_REFRESH_COOKIE'],
                     refresh_token,
-                    httponly=False,
+                    httponly=True,
                     secure=True,
-                    samesite='Lax',
+                    samesite='Strict',
                     expires=time.time() + refresh_token_lifetime.total_seconds()
                 )
                 response.set_cookie(
@@ -101,7 +100,7 @@ class FortyTwoOAuth2CallbackView(FortyTwoOAuth2ClientMixin, OAuth2CallbackView):
                     'true',
                     httponly=False,
                     secure=True,
-                    samesite='Lax',
+                    samesite='Strict',
                     expires=None,
                     max_age=None
                 )
