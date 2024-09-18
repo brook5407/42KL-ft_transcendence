@@ -1,6 +1,7 @@
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.utils.translation import activate
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from allauth.account.models import EmailAddress
@@ -9,6 +10,8 @@ from core import settings
 from utils.request_helpers import is_ajax_request
 from pong.models import UserActiveTournament
 
+from django.views.decorators.http import require_GET, require_POST
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -96,3 +99,41 @@ def current_user(request):
         'active_tournament_id': active_tournament.tournament.id if active_tournament.tournament else None,
     }
     return JsonResponse(data)
+
+@require_GET
+def custom_set_language(request):
+    language = request.GET.get('language')
+    if language and language in [lang[0] for lang in settings.LANGUAGES]:
+        activate(language)
+        request.session[settings.LANGUAGE_CODE] = language
+
+        # Update user's profile language
+        if request.user.is_authenticated:
+            try:
+                profile = request.user.profile
+                profile.language = language
+                profile.save()
+            except request.user.profile.RelatedObjectDoesNotExist:
+                # Handle case where user doesn't have a profile
+                pass
+
+        response = JsonResponse({'status': 'success', 'language': language})
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+        return response
+    else:
+        return JsonResponse({'status': 'error', 'message': _('Invalid language')}, status=400)
+
+@require_POST
+def save_snow_intensity(request):
+    intensity = request.POST.get('snowIntensity')
+    if intensity is not None:
+        try:
+            intensity = int(intensity)
+            request.user.profile.snowIntensity = intensity
+            request.user.profile.save()
+            return JsonResponse({'status': 'success'})
+
+        except ValueError:
+            return JsonResponse({'status': 'error', 'message': _('Invalid intensity value')}, status=400)
+    else:
+        return JsonResponse({'status': 'error', 'message': _('Invalid intensity value')}, status=400)

@@ -15,4 +15,7 @@ urlpatterns = [
     path('modal/oauth42-modal', views.oauth42_modal, name='base.oauth42-modal'),
     # drawers
     path('drawer/settings', views.settings_drawer, name='base.settings-drawer'),
+    # language settings
+    path('api/set_language/', views.custom_set_language, name='set_language'),
+    path('api/save_snow_intensity/', views.save_snow_intensity, name='save_snow_intensity'),
 ]
