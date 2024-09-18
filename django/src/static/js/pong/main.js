@@ -45,10 +45,11 @@ socket.onmessage = function(e) {
     //     console.error("Message type is undefined");
     // }
 
-    if (data.type === 'player_assignment') {
+    if (data.type === 'paddle_assignment') {
         // Store the assigned paddle
-        console.log("player_assignment");
-        assignedPaddle = data.player;
+        console.log("paddle_assignment: " + data.paddle);
+        assignedPaddle = data.paddle;
+
     }
     if (data.type === 'start_game') {
         // Both players has connected, start the game
@@ -124,8 +125,7 @@ socket.onmessage = function(e) {
     
             if (countdown === 0) {
                 clearInterval(countdownInterval);
-                socket.close();
-                console.log("socket.close()");
+                // socket.close();
                 // window.location.href = `http://${window.location.host}/`;
             }
         }, 1000);
