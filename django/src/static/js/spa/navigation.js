@@ -80,6 +80,7 @@ export async function router() {
 	const element = await component.render();
 	ROOT_ELEMENT.innerHTML = '';
 	ROOT_ELEMENT.appendChild(element);
+	document.dispatchEvent(new Event('page-loaded'));
 }
 
 export function navigateTo(url, title = 'AIsPong') {

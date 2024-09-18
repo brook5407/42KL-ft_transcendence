@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from utils.request_helpers import is_ajax_request
+from utils.request_helpers import is_ajax_request, authenticated_view
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponseBadRequest
@@ -19,53 +19,28 @@ from .serializers import (
     TournamentRoomCreateSerializer,
     MatchSerializer,
 )
-
-class RoomsManager:
-    def __init__(self):
-        self.rooms = {}
-
-    def generate_room_name(self):
-        length = 5
-        alphabet = string.ascii_uppercase + string.digits
-        return ''.join(secrets.choice(alphabet) for i in range(length))
-    
-    def create_room(self):
-        room_name = self.generate_room_name()
-        self.rooms[room_name] = {"players": []}  # Initialize room
-        return room_name
-
+from django.contrib.auth.decorators import login_required
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def pvp_view(request):
-    # check for any avaliable room and assign second player to the same room
-    available_room = GameRoom.objects.filter(is_full=False).first()
-
-    if available_room:
-        room_name = available_room.room_name
-        available_room.is_full = True
-        available_room.save()
-    else:
-        room_name = RoomsManager().create_room()
-        GameRoom.objects.create(room_name=room_name)
-
     if is_ajax_request(request):
         return render(request, "components/pages/pong.html", {"game_mode": "pvp"})
     return render(request, "index.html")
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def pve_view(request):
-    room_name = RoomsManager().create_room()
+    match = Match.objects.create()
     if is_ajax_request(request):
-        return render(request, "components/pages/pong.html", {"game_mode": "pve"})
+        return render(request, "components/pages/pong.html", {"game_mode": "pve", "match_id": match.id})
     return render(request, "index.html")
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def tournament_list_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest(
@@ -80,7 +55,7 @@ def tournament_list_drawer(request):
     return render(request, "components/drawers/pong/tournament/list.html")
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def tournament_room_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest(
@@ -96,7 +71,7 @@ def tournament_room_drawer(request):
     })
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def tournament_create_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest(

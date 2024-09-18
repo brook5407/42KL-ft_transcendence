@@ -10,26 +10,9 @@ from asgiref.sync import async_to_sync
 gameHeight = 500
 gameWidth = 800
 
-class RoomManager:
-    rooms = {}  # A dictionary to map room names to their respective managers
-
-    @classmethod
-    def get_match_manager(cls, room_name):
-        if room_name not in cls.rooms:
-            cls.rooms[room_name] = MatchManager()
-        return cls.rooms[room_name]
-
-    @classmethod
-    def remove_room(cls, room_name):
-        if room_name in cls.rooms:
-            del cls.rooms[room_name]
-
 class MatchManager:
     def __init__(self):
-        self.channel_names = [] # List of channel_names (WebSocket connections)
-        self.players = [] # List of current players surviving
-        self.matches = []
-        self.match_index = 0
+        self.players = []  # maximum 2 players
 
         self.paddle1 = Paddle(20, 200, 10, 100)
         self.paddle2 = Paddle(gameWidth - 30, 200, 10, 100)
@@ -38,6 +21,8 @@ class MatchManager:
         self.score2 = 0
 
     def add_player(self, channel_name):
+        if len(self.players) >= 2:
+            return
         self.players.append(channel_name)
 
     def remove_player(self, channel_name):
@@ -45,131 +30,115 @@ class MatchManager:
             self.players.remove(channel_name)
         except ValueError:
             print(f"Player {channel_name} not found in the list.")
+            
+    def get_players(self):
+        return self.players[0:2]
 
-    def generate_matches(self):
-        if self.has_next_match():
-            return
-        if len(self.players) % 2 != 0:
-            raise ValueError("Tournament requires an even number of players")
 
-        # Shuffle players and pair them for the matches
-        # random.shuffle(self.players)
-        self.matches = [(self.players[i], self.players[i+1]) for i in range(0, len(self.players), 2)]
+class RoomManager:
+    rooms = {}  # A dictionary to map room ids to their respective managers
 
-    def get_next_match(self):
-        if self.match_index < len(self.matches):
-            match = self.matches[self.match_index]
-            self.match_index += 1
-            return match
-        return None  # No more matches
+    @classmethod
+    def get_match_manager(cls, room_id) -> MatchManager:
+        if room_id not in cls.rooms:
+            cls.rooms[room_id] = MatchManager()
+        return cls.rooms[room_id]
 
-    def has_next_match(self):
-        # Check if there is a next match based on the current match index
-        return self.match_index < len(self.matches)
+    @classmethod
+    def remove_room(cls, room_id):
+        if room_id in cls.rooms:
+            del cls.rooms[room_id]
+
 
 class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        self.user = self.scope['user']
         self.game_mode = self.scope['url_route']['kwargs']['game_mode']
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'pong_{self.room_name}'
+        self.room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room_group_name = f'pong_{self.room_id}'
+        self.paddle = None
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
-        self.manager = RoomManager.get_match_manager(self.room_name)
+        self.manager = RoomManager.get_match_manager(self.room_id)
         self.player = self.manager.add_player(self.channel_name)
 
         if (self.game_mode == "pvp"):
-            await self.pvp_mode()
+            await self.wait_for_opponent()
         elif (self.game_mode == "pve"):
             await self.pve_mode()
-        elif (self.game_mode == "tournament"):
-            await self.tournament_mode()
+            
+    async def wait_for_opponent(self):
+        while len(self.manager.players) < 2:
+            return
+        await self.pvp_mode()
 
     async def disconnect(self, close_code):
-        try:
-            game_room = await sync_to_async(GameRoom.objects.get)(room_name=self.room_name)
-            await sync_to_async(game_room.delete)()
-        except GameRoom.DoesNotExist:
-            pass  # Room already deleted or not found
-
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        if self.room_group_name:
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         await self.close()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        paddle = data.get('paddle')
-        velocity = data.get('velocity')
-        next_match = data.get('next_match')
+        movement = data.get('movement')
+        if not movement:
+            return
+        
+        velocity = 0
+        if movement == 'up':
+            velocity = -10
+        elif movement == 'down':
+            velocity = 10
+        elif movement == 'stop':
+            velocity = 0
 
         # Update the paddle's velocity
-        if paddle == 'paddle1':
+        if self.paddle == 'paddle1':
             self.manager.paddle1.velocity = velocity
-        elif paddle == 'paddle2':
+        elif self.paddle == 'paddle2':
             self.manager.paddle2.velocity = velocity
 
-        # if next_match == True:
-        #     if (self.game_mode == "pvp"):
-        #         await self.pvp_mode()
-        #     elif (self.game_mode == "pve"):
-        #         await self.pve_mode()
-        #     elif (self.game_mode == "tournament"):
-        #         await self.tournament_mode()
-
     async def pvp_mode(self):
-        if len(self.manager.players) == 2:
-            self.manager.generate_matches()
-            if self.manager.has_next_match:
-                self.player1, self.player2 = self.manager.get_next_match()
+        self.player1, self.player2 = self.manager.get_players()
 
-            await self.channel_layer.send(self.player1, {
-                'type': 'paddle_assignment',
-                'message': 'You are Paddle 1!',
-                'paddle': 'paddle1',
-            })
-            await self.channel_layer.send(self.player2, {
-                'type': 'paddle_assignment',
-                'message': 'You are Paddle 2!',
-                'paddle': 'paddle2',
-            })
+        await self.channel_layer.send(self.player1, {
+            'type': 'paddle_assignment',
+            'message': 'You are Paddle 1!',
+            'paddle': 'paddle1',
+        })
+        await self.channel_layer.send(self.player2, {
+            'type': 'paddle_assignment',
+            'message': 'You are Paddle 2!',
+            'paddle': 'paddle2',
+        })
 
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'start_game',
-                    'message': 'Game had started!',
-                })
-            asyncio.create_task(self.game_loop())
-
-    async def pve_mode(self):
-        if len(self.manager.players) == 1:
-            self.player1 = self.channel_name
-            self.player2 = "computer"
-            await self.channel_layer.send(self.player1, {
-                'type': 'paddle_assignment',
-                'message': 'You are Paddle 1!',
-                'paddle': 'paddle1',
-            })
-            await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'start_game',
-                'message': 'channel_layer.group_send: start_game',
-            })
-            asyncio.create_task(self.game_loop())
-
-    async def tournament_mode(self):
-        print("ENTERED TOURNAMENT MODE FUNCTION")
         await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'chat_message',
-                'message': f'Player {self.id} has joined the chat',
-            }
-        )
+                'type': 'start_game',
+                'message': 'Game had started!',
+            })
+        asyncio.create_task(self.game_loop())
 
+    async def pve_mode(self):
+        self.player1 = self.channel_name
+        self.player2 = "computer"
+        await self.channel_layer.send(self.player1, {
+            'type': 'paddle_assignment',
+            'message': 'You are Paddle 1!',
+            'paddle': 'paddle1',
+        })
+        await self.channel_layer.group_send(
+        self.room_group_name,
+        {
+            'type': 'start_game',
+            'message': 'channel_layer.group_send: start_game',
+        })
+        asyncio.create_task(self.game_loop())
 
     async def paddle_assignment(self, event):
+        self.paddle = event['paddle']
         await self.send(text_data=json.dumps({
             'type': 'paddle_assignment',
             'message': event['message'],
@@ -177,6 +146,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game(self, event):
+        print("start_game")
         await self.send(text_data=json.dumps({
             'type': 'start_game',
             'message': event['message'],
@@ -274,16 +244,10 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def end_game(self, event):
         self.manager.remove_player(event['loser'])
-        if self.manager.has_next_match:
-            await self.send(text_data=json.dumps({
-                'type': 'next_match',
-                'message': event['message'],
-            }))
-        else:
-            await self.send(text_data=json.dumps({
-                'type': 'end_game',
-                'message': event['message'],
-            }))
+        await self.send(text_data=json.dumps({
+            'type': 'end_game',
+            'message': event['message'],
+        }))
             
 
     def reset_ball(self):
@@ -301,15 +265,6 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.reset_ball()
         self.reset_paddles()
         self.reset_score()
-
-
-    async def chat_message(self, event):
-        message = event['message']
-
-        await self.send(text_data=json.dumps({
-            'type':'chat',
-            'message':message
-        }))
 
 
 class Paddle:
@@ -434,61 +389,80 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         As the waiting time increases, can expand the range, but not more than ±200 Elo points.
     """
     
+    connected_players = {}  # 
+    
     async def connect(self):
-        await self.accept()
+        self.user = self.scope['user']
+        player = await self.get_player(self.user)
+        if player:
+            await self.channel_layer.group_add('matchmaking', self.channel_name)
+            await self.accept()
+            self.connected_players[self.channel_name] = await self.get_player_elo(player)
+            await self.match_player(player)
+        else:
+            await self.close()
         
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard('matchmaking', self.channel_name)
+        if self.channel_name in self.connected_players:
+            del self.connected_players[self.channel_name]
     
     async def receive(self, text_data):
         data = json.loads(text_data)
-        action = data.get('action')
-        
-        if action == 'join_queue':
-            player_id = data.get('player_id')
-            await self.join_queue(player_id)
-    
-    async def join_queue(self, player_id):
-        player = await self.get_player(player_id)
-        if player:
-            await self.channel_layer.group_add('matchmaking', self.channel_name)
-            await self.match_player(player)
 
-    async def get_player(self, player_id):
-        return await database_sync_to_async(Player.objects.get)(id=player_id)
+    @database_sync_to_async
+    def get_player(self, user):
+        return Player.objects.get(user=user)
+    
+    @database_sync_to_async
+    def get_player_elo(self, player):
+        return player.elo
+    
+    @database_sync_to_async
+    def create_match(self):
+        match = Match.objects.create()
+        return match
 
     async def match_player(self, player):
         elo_range = 100
-        max_elo_range = 200
-        wait_time = 0
 
-        while True:
-            min_elo = player.elo_rating - elo_range
-            max_elo = player.elo_rating + elo_range
+        player_elo = await self.get_player_elo(player)
+        min_elo = player_elo - elo_range
+        max_elo = player_elo + elo_range
 
-            potential_opponents = await database_sync_to_async(Player.objects.filter)(
-                elo_rating__gte=min_elo,
-                elo_rating__lte=max_elo,
-                channel_name__in=await self.get_waiting_players()
-            ).exclude(id=player.id)
+        potential_opponents = [
+            channel_name for channel_name, elo in self.connected_players.items()
+            if min_elo <= elo <= max_elo and channel_name != self.channel_name
+        ]
 
-            if potential_opponents.exists():
-                opponent = potential_opponents.first()
-                await self.start_match(player, opponent)
-                await self.channel_layer.group_discard('matchmaking', self.channel_name)
-                break
-
-            await asyncio.sleep(2)
-            wait_time += 2
-            elo_range = min(elo_range + 10, max_elo_range)
-
-    async def get_waiting_players(self):
-        group_channels = await self.channel_layer.group_channels("matchmaking")
-        return [channel_name.split(".")[-1] for channel_name in group_channels]
-
-    async def start_match(self, player, opponent):
-        # WXR TODO: Logic to start the match
-        pass
+        if potential_opponents:
+            opponent_channel_name = potential_opponents[0]
+            match = await self.create_match()
+            
+            # Inform the opponent
+            await self.channel_layer.send(
+                opponent_channel_name,
+                {
+                    'type': 'start_match',
+                    'match_id': match.id,
+                }
+            )
+            
+            await self.channel_layer.send(
+                self.channel_name,
+                {
+                    'type': 'start_match',
+                    'match_id': match.id,
+                }
+            )
+            
+    async def start_match(self, event):
+        match_id = event['match_id']
+        await self.send(text_data=json.dumps({
+            'type': 'start_match',
+            'match_id': match_id,
+        }))
+            
 
     def calculate_elo(self, Ra, Rb, Sa, Sb, K=32):
         Ea = 1 / (1 + 10 ** ((Rb - Ra) / 400))

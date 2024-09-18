@@ -1,11 +1,12 @@
 {% load static %}
+{% load i18n %}
 
 <link rel="stylesheet" href="{% static 'styles/pong.css' %}" />
 <link rel="stylesheet" href="{% static 'styles/home-page.css' %}" />
 
 <div id="matchmaking" class="whiteText">{% trans 'Searching for opponent...' %}</div>
 
-<div id="container" class="container">
+<div id="pong-game-container" class="container">
     
 
     <div class="game-area">
@@ -51,8 +52,7 @@
 </div>
 
 
-<script>
-	const roomName = "{{ room_name }}";
-	const gameMode = "{{ game_mode }}";
-</script>
-<script type="module" src="{% static 'js/pong/main.js' %}"></script>
+{{ game_mode|json_script:"game_mode" }}
+{% if game_mode == 'pve' %}
+    {{ match_id|json_script:"match_id" }}
+{% endif %}
