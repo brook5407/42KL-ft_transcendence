@@ -39,8 +39,8 @@ class TournamentController {
 	}
 
 	_onMessage(e) {
+		/** @type {WSTournamentMessage} */
 		const data = JSON.parse(e.data);
-		console.log(data);
 
 		if (data.user_id === window.currentUser.id) {
 			console.log('Ignoring own message');
@@ -49,29 +49,107 @@ class TournamentController {
 
 		switch (data.type) {
 			case 'player_joined':
-				showInfoToast('Player joined');
-				// WXR TODO: update tournament room UI if needed
+				showInfoToast(data.message);
+				this._updateTournamentRoom(data);
 				break;
 			case 'player_left':
-				showInfoToast('Player left');
-				// WXR TODO: update tournament room UI if needed
+				showInfoToast(data.message);
+				this._updateTournamentRoom(data);
 				break;
 			case 'owner_left':
-				showInfoToast('Owner left');
-				// closeDrawer() if on the tournament room drawer
+				showInfoToast(data.message);
+				if (window.currentDrawer.name === 'tournament-room') {
+					closeDrawer();
+				}
 				break;
 			case 'player_rejoined':
-				showInfoToast('Player rejoined');
-				// WXR TODO: update tournament room UI if needed
+				showInfoToast(data.message);
+				this._updateTournamentRoom(data);
 				break;
 			case 'tournament_started':
-				showInfoToast('Tournament started');
+				showInfoToast(data.message);
 				break;
 			case 'error':
 				showErrorToast(data.message);
 				break;
 			default:
 				console.error('Unknown message type:', data.type);
+		}
+	}
+
+	/**
+	 *
+	 * @param {WSTournamentMessage} data
+	 */
+	async _updateTournamentRoom(data) {
+		if (window.currentDrawer.name !== 'tournament-room') {
+			return;
+		}
+
+		const tournamentMembersContainer = document.querySelector(
+			'.tournament-room__members'
+		);
+
+		/** @type {TournamentRoom} */
+		const tournamentRoom = await this.fetchTournamentRoomDetails(
+			data.tournament_id
+		);
+		if (!tournamentRoom) {
+			return;
+		}
+		console.log(tournamentRoom);
+
+		if (tournamentRoom.status !== 'W') {
+			// tournament has started or completed
+			// WXR TODO: reconnect to the tournament room if needed
+			return;
+		}
+
+		tournamentMembersContainer.innerHTML = `
+		${tournamentRoom.players
+			.map(
+				(player) => `
+			<div class="tournament-room__member-avatar">
+				<img src="${player.player.user.profile.avatar}" alt="${player.player.user.username} avatar" width="30" height="30" />
+			</div>
+		`
+			)
+			.join('')}
+		${Array(window.tournamentMaxPlayers - tournamentRoom.players.length)
+			.fill(
+				'<div class="tournament-room__member-avatar tournament-room__member-empty"><span>+</span></div>'
+			)
+			.join('')}
+		`;
+
+		if (tournamentRoom.owner.id === window.currentUser.id) {
+			const startButton = document.querySelector(
+				'.tournament-room__start-button'
+			);
+			if (
+				tournamentRoom.players.length >= 4 &&
+				tournamentRoom.players.length % 2 === 0
+			) {
+				startButton.removeAttribute('disabled');
+			} else {
+				startButton.setAttribute('disabled', '');
+			}
+		}
+	}
+
+	async fetchTournamentRoomDetails(tournamentId) {
+		try {
+			const res = await ajaxWithAuth(
+				`/api/tournament-room/${tournamentId}/details/`,
+				{
+					method: 'GET',
+				}
+			);
+			return await res.json();
+		} catch (error) {
+			console.error(error);
+			showErrorToast('Failed to fetch tournament room details');
+			return null;
 		}
 	}
 
@@ -197,6 +275,7 @@ class TournamentController {
 	}
 
 	destroy() {
+		this.reset();
 		this.socket.close();
 	}
 }

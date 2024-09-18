@@ -139,6 +139,7 @@ const TournamentMatchStatus = {
  * @typedef {Object} WSTournamentMessage
  * @property {WSTournamentMessageType} type
  * @property {string} [user_id]
+ * @property {string} tournament_id
  * @property {string} message
  */
 

@@ -413,8 +413,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # await self.leave_tournament()
-        pass
+        await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
+        self.clear_tournament()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -441,6 +441,15 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             self.tournament_group_name = f'tournament_{self.tournament_id}'
             self.tournament = active_tournament.tournament
             async_to_sync(self.channel_layer.group_add)(self.tournament_group_name, self.channel_name)
+            async_to_sync(self.channel_layer.group_send)(
+                self.tournament_group_name,
+                {
+                    'type': 'player_rejoined',
+                    'user_id': self.user.id,
+                    'message': f'User {self.user.username} re-joined the room.',
+                    'tournament_id': self.tournament_id,
+                }
+            )
     
     async def create_tournament(self, event):
         if self.is_in_tournament():
@@ -465,7 +474,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'player_joined',
                 'user_id': self.user.id,
-                'message': f'User {self.user.username} joined the room.'
+                'message': f'User {self.user.username} joined the tournament.',
+                'tournament_id': self.tournament_id,
             }
         )
     
@@ -474,25 +484,27 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             return
         # if user is the owner, delete the tournament
         if await self.is_owner():
-            await database_sync_to_async(self.tournament.delete)()
+            # await database_sync_to_async(self.tournament.delete)()
             await self.channel_layer.group_send(
                 self.tournament_group_name,
                 {
                     'type': 'owner_left',
-                    'message': 'The owner has left the room. The tournament has been canceled.'
+                    'message': 'The owner has left the tournament room. The tournament has been canceled.',
+                    'tournament_id': self.tournament_id,
                 }
             )
             await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
             self.clear_tournament()
             return
 
-        await database_sync_to_async(self.tournament.remove_player)(self.user)
+        # await database_sync_to_async(self.tournament.remove_player)(self.user)
         await self.channel_layer.group_send(
             self.tournament_group_name,
             {
                 'type': 'player_left',
                 'user_id': self.user.id,
-                'message': f'User {self.channel_name} left the room.'
+                'message': f'User {self.user.username} left the tournament room.',
+                'tournament_id': self.tournament_id,
             }
         )
         await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
@@ -515,7 +527,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             self.tournament_group_name,
             {
                 'type': 'tournament_started',
-                'message': 'Tournament has started.'
+                'message': 'Tournament has started.',
+                'tournament_id': self.tournament_id,
             }
         )
         
@@ -532,7 +545,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'player_rejoined',
                 'user_id': self.user.id,
-                'message': f'User {self.user.username} re-joined the room.'
+                'message': f'User {self.user.username} re-joined the room.',
+                'tournament_id': self.tournament_id,
             }
         )
         
@@ -550,6 +564,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'type': 'player_joined',
             'user_id': event['user_id'],
             'message': event['message'],
+            'tournament_id': event['tournament_id'],
         }))
         
     async def player_left(self, event):
@@ -557,12 +572,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'type': 'player_left',
             'user_id': event['user_id'],
             'message': event['message'],
+            'tournament_id': event['tournament_id'],
         }))
         
     async def owner_left(self, event):
         await self.send(text_data=json.dumps({
             'type': 'owner_left',
             'message': event['message'],
+            'tournament_id': event['tournament_id'],
         }))
         
     async def player_rejoined(self, event):
@@ -570,11 +587,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'type': 'player_rejoined',
             'user_id': event['user_id'],
             'message': event['message'],
+            'tournament_id': event['tournament_id'],
         }))
         
     async def tournament_started(self, event):
         await self.send(text_data=json.dumps({
             'type': 'tournament_started',
             'message': event['message'],
+            'tournament_id': event['tournament_id'],
         }))
     

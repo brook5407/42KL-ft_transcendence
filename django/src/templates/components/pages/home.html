@@ -32,7 +32,7 @@
 			<div class="clickable sidebar-option">
 				<img src="{% static 'images/icons/tournament.svg' %}"
 					width="42px" height="42px" alt="Pong Icon"
-					data-drawer="tournament-list" data-drawer-url={% url 'pong.tournament-list-drawer' %}
+					onclick="openTournamentDrawer()"
 				/>
 			</div>
 			<div class="clickable sidebar-option">
@@ -68,3 +68,20 @@
 		</a>
 	</div>
 {% endif %}
+
+<script>
+	function openTournamentDrawer() {
+		if (window.currentUser) {
+			if (window.currentUser.active_tournament_id) {
+				openDrawer('tournament-room', {
+					url: '/drawer/tournament-room/',
+					queryParams: { tournament_room_id: window.currentUser.active_tournament_id },
+				});
+			} else {
+				openDrawer('tournament-list', { url: '/drawer/tournament-list/' });
+			}
+		} else {
+			openModal('signin', { url: '/modal/signin-modal' });
+		}
+	}
+</script>

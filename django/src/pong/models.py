@@ -97,16 +97,18 @@ class TournamentRoom(BaseModel):
         except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
             raise ValueError("Player or TournamentPlayer does not exist.")
         self.players.add(tournament_player)
+        self.save()
 
     def remove_player(self, user):
         try:
             player = Player.objects.get(user=user)
-            tournament_player = TournamentPlayer.objects.filter(
+            tournament_player = TournamentPlayer.objects.get(
                 player=player, tournament=self
-            ).first()
+            )
         except (Player.DoesNotExist, TournamentPlayer.DoesNotExist):
             raise ValueError("Player or TournamentPlayer does not exist.")
         self.players.remove(tournament_player)
+        tournament_player.delete()
         self.save()
 
     def is_member(self, user):

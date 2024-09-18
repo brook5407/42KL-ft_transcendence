@@ -17,11 +17,11 @@
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	transform: translateY(calc(100% + 20px + 10px));
 	transition: all 0.3s ease-in-out;
-	min-width: 250px;
-	max-width: 250px;
+	min-width: 360px;
+	max-width: 360px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	min-height: 60px;
+	min-height: 120px;
 }
 
 .toast-box.show {
@@ -60,6 +60,7 @@
 
 .toast-body span {
 	flex: 1; /* Allow the message to fill the available space */
+	align-self: flex-start;
 }
 
 .toast-close-button {
