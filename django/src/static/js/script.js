@@ -2,12 +2,15 @@ import { router } from './spa/navigation.js';
 import { getCurrentUser } from './auth.js';
 import { openModal } from './spa/modal.js';
 import { openDrawer } from './spa/drawer.js';
+import { refreshJWT } from './spa/ajax.js';
 
-router();
+window.onload = async function () {
+	await refreshJWT();
+	getCurrentUser(false);
+	router();
+};
 
-getCurrentUser();
-
-document.addEventListener('DOMContentLoaded', function(e) {
+document.addEventListener('DOMContentLoaded', function (e) {
 	const autoOpenItems = document.querySelectorAll('.auto-open');
 
 	autoOpenItems.forEach((item) => {

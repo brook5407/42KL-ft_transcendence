@@ -6,10 +6,8 @@ import requests
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import get_user_model
-
-# import username
-# from django.contrib.auth import get_user_model
-
+from rest_framework_simplejwt.views import TokenRefreshView
+from django.http import JsonResponse, HttpResponseBadRequest
 from allauth.account.models import EmailAddress
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -22,7 +20,6 @@ from dj_rest_auth.app_settings import api_settings
 from django.utils.translation import gettext_lazy as _
 from utils.request_helpers import is_ajax_request
 from rest_framework.decorators import api_view
-from django.http import HttpResponseBadRequest
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
@@ -173,3 +170,24 @@ def change_password_modal(request):
     if is_ajax_request(request):
         return render(request, 'components/modals/change-password.html')
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get('refresh_token')
+        if refresh_token:
+            request.data['refresh'] = refresh_token
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            access_token = response.data['access']
+            response = JsonResponse({'detail': 'Token refreshed successfully'})
+            access_token_lifetime = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
+            response.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=True,
+                samesite='Strict',
+                max_age=int(access_token_lifetime.total_seconds())
+            )
+        return response

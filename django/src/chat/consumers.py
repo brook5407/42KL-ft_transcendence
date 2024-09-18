@@ -76,12 +76,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'group_chat_message',
                     'message': message,
                     'sender': {
-                        'user': {
-                            'username': self.user.username,
-                            'email': self.user.email,
-                        },
-                        'nickname': user_profile.nickname,
-                        'avatar': user_profile.avatar.url
+                        'id': self.user.id,
+                        'username': self.user.username,
+                        'email': self.user.email,
+                        'profile': {
+                            'nickname': user_profile.nickname,
+                            'bio': user_profile.bio,
+                            'avatar': user_profile.avatar.url,
+                        }
                     },
                     'room_name': room.name,
                     'cover_image': room.cover_image.url,
@@ -122,12 +124,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'type': 'private_chat_message',
                         'message': message,
                         'sender': {
-                            'user': {
-                                'username': self.user.username,
-                                'email': self.user.email,
-                            },
-                            'nickname': user_profile.nickname,
-                            'avatar': user_profile.avatar.url
+                           'id': self.user.id,
+                            'username': self.user.username,
+                            'email': self.user.email,
+                            'profile': {
+                                'nickname': user_profile.nickname,
+                                'bio': user_profile.bio,
+                                'avatar': user_profile.avatar.url,
+                            }
                         },
                         'room_name': room.name,
                         'room_id': room_id,
