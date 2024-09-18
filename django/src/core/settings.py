@@ -82,7 +82,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'core.middleware.Custom404Middleware',
-    'core.middleware.SetUserLanguageMiddleware',
+    'core.middleware.SetUserSettingMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
