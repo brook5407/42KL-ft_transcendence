@@ -131,7 +131,6 @@ class PongConsumer(AsyncWebsocketConsumer):
                 'type': 'start_game',
                 'message': 'Game had started!',
             })
-        asyncio.create_task(self.game_loop())
 
     async def pve_mode(self):
         self.player1 = self.channel_name
@@ -147,7 +146,6 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'start_game',
             'message': 'channel_layer.group_send: start_game',
         })
-        asyncio.create_task(self.game_loop())
 
     async def paddle_assignment(self, event):
         self.paddle = event['paddle']
@@ -174,21 +172,32 @@ class PongConsumer(AsyncWebsocketConsumer):
                 'message': i,
             }))
             await asyncio.sleep(1)
+        asyncio.create_task(self.game_loop())
 
     async def game_loop(self):
         winner_channel = None
         winner_score = 0
         loser_score = 0
-        await asyncio.sleep(4)
+        ai_last_update = 0
+        await asyncio.sleep(1)
+
         while True:
             # Update game state
             self.manager.ball.move()
             self.manager.paddle1.move()
             self.manager.paddle2.move()
 
-            # AI Paddle follows the ball
+            # AI updates once per second
             if (self.game_mode == "pve"):
-                self.manager.paddle2.follow_ball(self.manager.ball)
+                current_time = asyncio.get_event_loop().time()
+                if (current_time - ai_last_update >= 1): # AI updates view once per second
+                    target_y = self.manager.paddle2.predict_ball_position(self.manager.ball)
+                    ai_last_update = current_time
+                    print("target_y: " + str(target_y) + " time: " + str(ai_last_update))
+                if (self.manager.ball.x_direction > 0):
+                    self.manager.paddle2.simulate_keyboard_input(target_y)
+                else:
+                    self.manager.paddle2.simulate_keyboard_input(gameHeight / 2)
 
             # Check for scoring
             if self.manager.ball.x <= 0:
@@ -269,7 +278,6 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'end_game',
             'message': event['message'],
         }))
-            
 
     def reset_ball(self):
         self.manager.ball = Ball(400, 250, 8, 5)
@@ -287,15 +295,14 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.reset_paddles()
         self.reset_score()
 
-
 class Paddle:
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.velocity = 0
-        self.speed = 10
+        self.velocity = 0 # current paddle velocity (0: stationary, -10: moving down, 10: moving up)
+        self.speed = 10 # how fast the paddle moves up or down during button pressed down
         self.mid_x = self.x + (self.width / 2)
         self.mid_y = self.y + (self.height / 2)
 
@@ -307,14 +314,6 @@ class Paddle:
         if self.y > gameHeight - self.height:
             self.y = gameHeight - self.height
 
-    def follow_ball(self, ball):
-        # If ball is below paddle, move down
-        if ball.y > self.y + self.height:
-            self.velocity = self.speed
-        # If ball is above paddle, move up
-        elif ball.y < self.y:
-            self.velocity = -self.speed
-
     def serialize(self):
         return {
             'x': self.x,
@@ -322,6 +321,39 @@ class Paddle:
             'width': self.width,
             'height': self.height,
         }
+
+    # AI Functions
+    def simulate_keyboard_input(self, target_y):
+        # Prediction logic: check where the ball will be and simulate human-like reaction
+        paddle_mid_y = self.y + self.height / 2
+        threshold = self.height / 8
+
+        if target_y > paddle_mid_y + threshold:
+            self.velocity = self.speed  # Simulate down key
+        elif target_y < paddle_mid_y - threshold:
+            self.velocity = -self.speed  # Simulate up key
+        else:
+            self.velocity = 0
+
+
+    def predict_ball_position(self, ball):
+        # Track ball’s predicted movement for up to 1 second in the future
+        future_y = ball.y
+        future_x = ball.x
+        future_y_direction = ball.y_direction
+        future_x_direction = ball.x_direction
+
+        while future_x < gameWidth - self.width:  # Predict future position until the ball reaches the paddle
+            future_x += ball.speed * ball.x_direction
+            future_y += ball.speed * future_y_direction
+
+            # Reverse y-direction when the ball hits top or bottom
+            if future_y <= 0 or future_y >= gameHeight:
+                future_y_direction *= -1
+            if future_x_direction < 0:
+                break
+
+        return future_y
 
 class Ball:
     def __init__(self, x, y, radius, speed):
@@ -389,6 +421,49 @@ class Ball:
             'y': self.y,
             'radius': self.radius,
         }
+
+# class PongAI:
+#     def __init__(self, paddle, ball, game_height):
+#         self.paddle = paddle  # The AI's paddle
+#         self.ball = ball  # The ball object
+#         self.game_height = game_height  # Height of the game area
+#         self.last_known_ball_position = None
+#         self.last_known_ball_velocity = None
+#         self.update_interval = 1  # AI updates once per second
+    
+#     def update(self):
+#         """Update the AI's view of the game once per second."""
+#         self.last_known_ball_position = (self.ball.x, self.ball.y)
+#         self.last_known_ball_velocity = (self.ball.vx, self.ball.vy)
+        
+#         # Predict where the ball will be when it reaches the AI's side
+#         predicted_y = self.predict_ball_position()
+        
+#         # Move the paddle towards the predicted position
+#         self.move_paddle(predicted_y)
+    
+#     def predict_ball_position(self):
+#         """Predict the ball's future position based on its velocity and position."""
+#         time_until_ball_reaches_paddle = (self.paddle.x - self.ball.x) / self.ball.vx
+        
+#         # Predict future Y position by projecting the ball's trajectory
+#         predicted_y = self.ball.y + self.ball.vy * time_until_ball_reaches_paddle
+        
+#         # Handle ball bounces off the top or bottom walls
+#         if predicted_y < 0 or predicted_y > self.game_height:
+#             predicted_y = self.game_height - abs(predicted_y % self.game_height)  # Reflect the bounce
+        
+#         return predicted_y
+    
+#     def move_paddle(self, predicted_y):
+#         """Move the paddle towards the predicted Y position, simulating key inputs."""
+#         if predicted_y < self.paddle.y:
+#             # Simulate 'up' key input
+#             self.paddle.move_up()
+#         elif predicted_y > self.paddle.y:
+#             # Simulate 'down' key input
+#             self.paddle.move_down()
+
 
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     """
