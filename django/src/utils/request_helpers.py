@@ -1,8 +1,7 @@
 from django.http import HttpRequest
 from functools import wraps
-from django.shortcuts import render, redirect
-import requests
-from django.conf import settings
+from django.shortcuts import redirect
+from rest_framework.exceptions import AuthenticationFailed
 
 
 def is_ajax_request(request: HttpRequest):
@@ -13,6 +12,8 @@ def authenticated_view(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
+            if is_ajax_request(request):
+                raise AuthenticationFailed("User is not authenticated")
             return redirect('index')
         
         # User is authenticated, proceed with the view
