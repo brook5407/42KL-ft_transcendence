@@ -7,6 +7,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       default_network:
         aliases:
@@ -51,6 +53,18 @@ services:
       default_network:
         aliases:
           - nginx
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+     - '6379:6379'
+    tty: true
+    networks:
+      default_network:
+        aliases:
+          - redis
+
 
 volumes:
   postgres_data:
