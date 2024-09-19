@@ -258,28 +258,44 @@ class MatchInvitation(BaseModel):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sender")
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="receiver")
     status = models.CharField(choices=Status.choices, default=Status.WAITING, max_length=1)
-    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name="invitation_match")
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, null=True, related_name="invitation_match")
     expired_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"From {self.sender} to {self.receiver}. Match: {self.match}"
     
-    def create(self, *args, **kwargs):
-        instance = self.model(*args, **kwargs)
-        if instance.status == instance.Status.WAITING:
-            instance.expired_at = instance.created_at + timedelta(seconds=instance.INVITATION_EXPIRE_TIME)
-        instance.save(using=self._db)
-        return instance
+    def save(self, *args, **kwargs):
+        if self.status == self.Status.WAITING and not self.expired_at:
+            self.expired_at = timezone.now() + timedelta(seconds=self.INVITATION_EXPIRE_TIME)
+        super().save(*args, **kwargs)
     
     def is_expired(self):
         return self.expired_at < timezone.now()
     
     def accept(self):
+        if self.status != self.Status.WAITING:
+            raise ValueError("Invitation is not waiting.")
         self.status = self.Status.ACCEPTED
         self.expired_at = None
         self.save()
         
     def reject(self):
+        if self.status != self.Status.WAITING:
+            raise ValueError("Invitation is not waiting.")
         self.status = self.Status.REJECTED
         self.expired_at = None
         self.save()
+        
+    def create_match(self):
+        if self.status != self.Status.ACCEPTED:
+            raise ValueError("Invitation is not accepted.")
+        if self.match:
+            raise ValueError("Match already exists.")
+        match = Match.objects.create(
+            winner=self.sender.player,
+            loser=self.receiver.player,
+            type=Match.MatchType.PVP
+        )
+        self.match = match
+        self.save()
+        return match

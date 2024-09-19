@@ -89,14 +89,14 @@ export class FriendRequestTile extends Component {
 		return `
 		<div class="friend-request-tile">
 			<div class="friend-request-tile__avatar">
-				<img src="${sender?.avatar ?? ''}" alt="avatar" />
+				<img src="${sender.profile.avatar ?? ''}" alt="avatar" />
 			</div>
 			<div class="friend-request-tile__info">
 				<div class="friend-request-tile__nickname">${
-					sender?.nickname ?? 'Anonymous'
+					sender.profile.nickname ?? 'Anonymous'
 				}</div>
 				<div class="friend-request-tile__username">@${
-					sender?.user.username ?? 'anonymous'
+					sender?.username ?? 'anonymous'
 				}</div>
 			</div>
 			${actionsHTML}

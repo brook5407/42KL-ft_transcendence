@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import ChatMessage, ChatRoom, ActiveChatRoom
 from base.serializers import UserSerializer
+from pong.serializers import MatchInvitationSerializer
 
 
 class ChatRoomSerializer(serializers.ModelSerializer):
@@ -26,10 +27,11 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 class ChatMessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
     room = ChatRoomSerializer(read_only=True)
+    match_invitation = MatchInvitationSerializer(read_only=True)
 
     class Meta:
         model = ChatMessage
-        fields = ['id', 'sender', 'message', 'room', 'created_at']
+        fields = ['id', 'sender', 'message', 'room', 'match_invitation', 'created_at']
     
 
 class ActiveChatRoomSerializer(serializers.ModelSerializer):

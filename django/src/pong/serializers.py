@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from base.serializers import UserSerializer
-from .models import Player, TournamentRoom, Match, TournamentPlayer, TournamentMatch
+from .models import Player, TournamentRoom, Match, TournamentPlayer, TournamentMatch, UserActiveTournament, MatchInvitation
 
 
 class TournamentRoomCreateSerializer(serializers.ModelSerializer):
@@ -86,5 +86,23 @@ class TournamentRoomSerializer(serializers.ModelSerializer):
             "matches",
             "status",
             "ended_at",
+            "created_at",
+        ]
+
+
+class MatchInvitationSerializer(serializers.ModelSerializer):
+    match = MatchSerializer(read_only=True)
+    sender = UserSerializer(read_only=True)
+    receiver = UserSerializer(read_only=True)
+
+    class Meta:
+        model = MatchInvitation
+        fields = [
+            "id",
+            "sender",
+            "receiver",
+            "match",
+            "status",
+            "expired_at",
             "created_at",
         ]

@@ -15,7 +15,7 @@ export class FriendListTile extends Component {
 				openDrawer('friend-profile', {
 					url: `drawer/friend-drawer`,
 					queryParams: {
-						username: this.friend.user.username,
+						username: this.friend.username,
 					},
 				});
 			});
@@ -25,7 +25,10 @@ export class FriendListTile extends Component {
 				openDrawer('chat-room', {
 					url: `drawer/chat-room`,
 					queryParams: {
-						username: this.friend.user.username,
+						username: this.friend.username,
+					},
+					props: {
+						is_group_chat: false,
 					},
 				});
 			});
@@ -34,7 +37,7 @@ export class FriendListTile extends Component {
 		this.element
 			.querySelectorAll('.friend-list-tile__avatar img')
 			.forEach((avatar) => {
-				if (window.onlineFriendIds.includes(this.friend.user.id)) {
+				if (window.onlineFriendIds.includes(this.friend.id)) {
 					avatar.addOnlineStatus();
 				}
 			});
@@ -45,15 +48,15 @@ export class FriendListTile extends Component {
 			return '';
 		}
 		return `
-		<div class="friend-list-tile" data-user-id="${this.friend.user.id}">
+		<div class="friend-list-tile" data-user-id="${this.friend.id}">
 			<div class="friend-list-tile__avatar">
-				<img src="${this.friend.avatar ?? ''}" alt="avatar" />
+				<img src="${this.friend.profile.avatar ?? ''}" alt="avatar" />
 			</div>
 			<div class="friend-list-tile__info">
 				<div class="friend-list-tile__nickname">${
-					this.friend.nickname ?? 'Anonymous'
+					this.friend.profile.nickname ?? 'Anonymous'
 				}</div>
-				<div class="friend-list-tile__username">@${this.friend.user.username}</div>
+				<div class="friend-list-tile__username">@${this.friend.username}</div>
 			</div>
 			<div class="friend-list-tile__action">
 				<a class="icon-action" title="Chat">

@@ -26,6 +26,10 @@ from django.contrib.auth.decorators import login_required
 @authenticated_view
 def pvp_view(request):
     if is_ajax_request(request):
+        match_id = request.GET.get("match_id")
+        print(match_id)
+        if match_id:
+            return render(request, "components/pages/pong.html", {"game_mode": "pvp", "match_id": match_id})
         return render(request, "components/pages/pong.html", {"game_mode": "pvp"})
     return render(request, "index.html")
 
@@ -163,34 +167,15 @@ class TournamentRoomViewSet(viewsets.ModelViewSet):
         return Response(status=HTTP_200_OK)
 
 
-class MatchViewSet(viewsets.ModelViewSet):
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
-
-    @action(detail=False, methods=["POST"])
-    def matchmake(self, request):
-        # WXR TODO: Implement the ELO rating system for matchmaking
-        # Still need create unique room name before matchmaking
-        pass
-
-    @action(detail=False, methods=["POST"])
-    def pve(self, request):
-        # WXR TODO: start pve game
-        pass
-
-
 class PongInvitationViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["POST"])
     def invite(self, request):
-        # WXR TODO: Implement the invitation system
         pass
     
     @action(detail=True, methods=["POST"])
     def accept(self, request, pk=None):
-        # WXR TODO: Implement the invitation system
         pass
     
     @action(detail=True, methods=["POST"])
     def reject(self, request, pk=None):
-        # WXR TODO: Implement the invitation system
         pass

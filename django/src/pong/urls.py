@@ -5,7 +5,6 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r"tournament-room", views.TournamentRoomViewSet)
-router.register(r"matchmaking", views.MatchViewSet)
 
 urlpatterns = [
     path("pong/pvp/", views.pvp_view, name="pong.pvp"),

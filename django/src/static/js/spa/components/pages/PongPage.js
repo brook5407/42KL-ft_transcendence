@@ -6,26 +6,25 @@ import { MatchMakingManager } from '../../../pong/matchmaking.js';
 export class PongPage extends GenericPage {
 	constructor(params) {
 		super(params);
-		if (this.url === '' || this.url === null) {
-			this.url = '/pong';
-		}
 	}
 
 	async handlePageLoaded(e) {
-		console.log('page loaded');
+		this.matchId = document.getElementById('match_id')?.textContent;
+		if (this.matchId) {
+			this.matchId = JSON.parse(this.matchId);
+		}
 		this.gameMode = document.getElementById('game_mode').textContent;
 		if (this.gameMode) {
 			this.gameMode = JSON.parse(this.gameMode);
 		}
-		console.log('game mode:', this.gameMode);
+
+		if (this.matchId) {
+			this.startGame(this.matchId);
+			return;
+		}
+
 		if (this.gameMode === 'pvp') {
 			this.startMatchmaking();
-		} else {
-			this.matchId = document.getElementById('match_id').textContent;
-			if (this.matchId) {
-				this.matchId = JSON.parse(this.matchId);
-			}
-			this.startGame(this.matchId);
 		}
 	}
 
