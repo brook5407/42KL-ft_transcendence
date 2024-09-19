@@ -39,6 +39,7 @@ class Match(BaseModel):
     class MatchType(models.TextChoices):
         PVP = "P", "PVP"
         PVE = "E", "PVE"
+        FRIEND = "F", "Friend"
 
     winner = models.ForeignKey(
         Player, on_delete=models.SET_NULL, null=True, related_name="match_winner"
@@ -302,7 +303,7 @@ class MatchInvitation(BaseModel):
         match = Match.objects.create(
             winner=self.sender.player,
             loser=self.receiver.player,
-            type=Match.MatchType.PVP
+            type=Match.MatchType.FRIEND
         )
         self.match = match
         self.save()
