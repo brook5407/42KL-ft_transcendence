@@ -13,7 +13,7 @@ from rest_framework.status import (
 from asgiref.sync import async_to_sync
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-from .models import Player, TournamentRoom, Match, TournamentPlayer, TournamentMatch, UserActiveTournament
+from .models import Player, TournamentRoom, Match, TournamentPlayer, UserActiveTournament
 from .serializers import (
     TournamentRoomSerializer,
     TournamentRoomCreateSerializer,
@@ -27,7 +27,6 @@ from django.contrib.auth.decorators import login_required
 def pvp_view(request):
     if is_ajax_request(request):
         match_id = request.GET.get("match_id")
-        print(match_id)
         if match_id:
             return render(request, "components/pages/pong.html", {"game_mode": "pvp", "match_id": match_id})
         return render(request, "components/pages/pong.html", {"game_mode": "pvp"})
@@ -42,6 +41,16 @@ def pve_view(request):
         return render(request, "components/pages/pong.html", {"game_mode": "pve", "match_id": match.id})
     return render(request, "index.html")
 
+@api_view(["GET"])
+@authenticated_view
+def tournament_view(request):
+    if is_ajax_request(request):
+        tournament_id = request.GET.get("tournament_id")
+        return render(request, "components/pages/pong.html", {
+            "game_mode": "tournament",
+            "tournament_id": tournament_id
+        })
+    return render(request, "index.html")
 
 @api_view(["GET"])
 @authenticated_view
@@ -163,7 +172,6 @@ class TournamentRoomViewSet(viewsets.ModelViewSet):
                 status=HTTP_400_BAD_REQUEST,
             )
         tournament_room.start()
-        # WXR TODO: trigger necessary events in the consumer
         return Response(status=HTTP_200_OK)
 
 

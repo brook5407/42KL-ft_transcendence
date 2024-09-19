@@ -24,10 +24,6 @@ export const ROUTES = {
 		component: PongPage,
 		data: { url: '/pong/tournament/' },
 	},
-	'^/pong/tournament/[^/]+/?$': {
-		component: PongPage,
-		dynamic: true,
-	},
 };
 
 // global variable to keep track of the current root component
