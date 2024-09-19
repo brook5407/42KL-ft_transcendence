@@ -245,12 +245,32 @@ class PongConsumer(AsyncWebsocketConsumer):
         if winner_player_id != placeholder_winner.id:
             match.winner = placeholder_loser
             match.loser = placeholder_winner
+        winner_elo = match.winner.elo
+        loser_elo = match.loser.elo
+
+        # Calculate new Elo ratings
+        winner_new_elo, loser_new_elo = self.calculate_elo(
+            Ra=winner_elo,
+            Rb=loser_elo,
+            Sa=1,  # Winner's score (1 for win)
+            Sb=0   # Loser's score (0 for loss)
+        )
+        print(winner_elo, loser_elo, winner_new_elo, loser_new_elo)
+        match.winner.elo = winner_new_elo
+        match.loser.elo = loser_new_elo
         match.winner.add_win()
         match.loser.add_loss()
         match.winner_score = winner_score
         match.loser_score = loser_score
         match.ended_at = timezone.now()
         match.save()
+        
+    def calculate_elo(self, Ra, Rb, Sa, Sb, K=32):
+        Ea = 1 / (1 + 10 ** ((Rb - Ra) / 400))
+        Eb = 1 / (1 + 10 ** ((Ra - Rb) / 400))
+        Ra_new = Ra + K * (Sa - Ea)
+        Rb_new = Rb + K * (Sb - Eb)
+        return Ra_new, Rb_new
 
     async def update_game_state(self, event):
         # Send updated game state to WebSocket
@@ -506,14 +526,6 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             'type': 'start_match',
             'match_id': match_id,
         }))
-            
-
-    def calculate_elo(self, Ra, Rb, Sa, Sb, K=32):
-        Ea = 1 / (1 + 10 ** ((Rb - Ra) / 400))
-        Eb = 1 / (1 + 10 ** ((Ra - Rb) / 400))
-        Ra_new = Ra + K * (Sa - Ea)
-        Rb_new = Rb + K * (Sb - Eb)
-        return Ra_new, Rb_new
     
 
 class TournamentConsumer(AsyncWebsocketConsumer):
