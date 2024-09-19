@@ -182,10 +182,14 @@ export class GameClient {
 	}
 
 	endGame(data) {
-		if (this.score1 > this.score2) {
+		if (this.score1 > this.score2 && (this.assignedPaddle === 'paddle1')) {
+				window.audioAssets.winSound.play();
+		} else if (this.score1 < this.score2 && (this.assignedPaddle === 'paddle2')) {
 			window.audioAssets.winSound.play();
-		} else {
+		} else if (this.score1 != this.score2) {
 			window.audioAssets.loseSound.play();
+		} else {
+			window.audioAssets.drawSound.play();
 		}
 		console.log('end_game');
 		this.overlay.style.display = 'flex';
