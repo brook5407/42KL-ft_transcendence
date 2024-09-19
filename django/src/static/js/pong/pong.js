@@ -5,6 +5,43 @@ import { getWSHost } from '../websocket.js';
 
 const wsHost = getWSHost();
 
+// Define global variables or functions
+window.audioAssets = {
+    hitSound: new Audio('/static/audio/hit.mp3'),
+    scoreSound: new Audio('/static/audio/score.mp3'),
+    bgmSound: new Audio('/static/audio/bgm.mp3')
+};
+
+// Preload the audio files
+window.audioAssets.hitSound.load();
+window.audioAssets.scoreSound.load();
+window.audioAssets.bgmSound.load();
+
+window.audioAssets.hitSound.addEventListener('canplaythrough', () => {
+    console.log('Hit sound preloaded');
+});
+
+window.audioAssets.scoreSound.addEventListener('canplaythrough', () => {
+    console.log('Score sound preloaded');
+});
+
+window.audioAssets.bgmSound.addEventListener('canplaythrough', () => {
+    console.log('Background music preloaded');
+});
+
+// Optionally handle errors
+window.audioAssets.hitSound.addEventListener('error', () => {
+    console.error('Failed to preload hit sound');
+});
+
+window.audioAssets.scoreSound.addEventListener('error', () => {
+    console.error('Failed to preload score sound');
+});
+
+window.audioAssets.bgmSound.addEventListener('error', () => {
+    console.error('Failed to preload background music');
+});
+
 export class GameClient {
 	constructor(gameMode, roomId) {
 		this.gameMode = gameMode;
@@ -85,6 +122,9 @@ export class GameClient {
 
 	startGame(data) {
 		console.log('start_game');
+        window.audioAssets.bgmSound.loop = true;
+        window.audioAssets.bgmSound.play();
+
 		this.canvasContainer.height = data.gameHeight;
 		this.canvasContainer.width = data.gameWidth;
 		this.gameCanvas.height = data.gameHeight;
@@ -159,10 +199,30 @@ export class GameClient {
 		this.score1.innerText = data.score1;
 		this.score2.innerText = data.score2;
 
+		// Sound Effect
+		if ((this.ball.x - this.ball.radius) <= 0 ) {
+			window.audioAssets.scoreSound.play();
+		} 
+		if (this.ball.x >= this.gameCanvas.width - this.ball.radius) {
+			window.audioAssets.scoreSound.play();
+		}  
+		if (this.ball.x <= (this.paddle1.x + this.paddle1.width + this.ball.radius)) {
+			if (this.ball.y > this.paddle1.y && this.ball.y < this.paddle1.y + this.paddle1.height)
+				window.audioAssets.hitSound.play();
+		}
+		if (this.ball.x >= (this.paddle2.x - this.ball.radius)) {
+			if (this.ball.y > this.paddle2.y && this.ball.y < this.paddle2.y + this.paddle2.height)
+				window.audioAssets.hitSound.play();
+		}
+
 		this.table.draw();
 	}
 
 	endGame(data) {
+		if (window.audioAssets && window.audioAssets.bgmSound) {
+			window.audioAssets.bgmSound.pause();
+			window.audioAssets.bgmSound.currentTime = 0;
+		}
 		console.log('end_game');
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
