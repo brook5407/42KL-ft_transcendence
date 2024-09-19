@@ -10,6 +10,7 @@ from django.utils import timezone
 
 gameHeight = 500
 gameWidth = 800
+winningScore = 3
 
 class MatchManager:
     def __init__(self):
@@ -223,8 +224,6 @@ class PongConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-            winningScore = 3
-
             # End the game if a player reaches a score of winningScore
             if self.manager.score1 >= winningScore or self.manager.score2 >= winningScore:
                 winner = 'Player 1' if self.manager.score1 >= winningScore else 'Player 2'
@@ -369,6 +368,13 @@ class Ball:
         self.x += self.speed * self.x_direction
         self.y += self.speed * self.y_direction
 
+    def serialize(self):
+        return {
+            'x': self.x,
+            'y': self.y,
+            'radius': self.radius,
+        }
+
     def check_collision(self, paddle1, paddle2):
         # Y-axis collision with the top and bottom of the game area
         if (self.y <= 0 and self.y_direction < 0) or (self.y >= gameHeight and self.y_direction > 0):
@@ -382,17 +388,7 @@ class Ball:
 
             # Calculate the impact point on the paddle relative to its center
             hit_pos = (self.y - (paddle1.y + paddle1.height / 2)) / (paddle1.height / 2)
-
-            # Adjust y-direction based on where the ball hits the paddle
-            if hit_pos > 0.5:  # Bottom quarter
-                self.y_direction = 1  # Steeper downward angle
-            elif hit_pos > 0:  # Bottom center
-                self.y_direction = 0.5  # Shallow downward angle
-            elif hit_pos > -0.5:  # Top center
-                self.y_direction = -0.5  # Shallow upward angle
-            else:  # Top quarter
-                self.y_direction = -1  # Steeper upward angle
-            self.speed = min(self.speed + 1, 15)
+            self.reflect_angle(hit_pos)
 
         # Paddle 2 collision (right paddle)
         if (self.x >= paddle2.x - self.radius and 
@@ -402,25 +398,30 @@ class Ball:
 
             # Calculate the impact point on the paddle relative to its center
             hit_pos = (self.y - (paddle2.y + paddle2.height / 2)) / (paddle2.height / 2)
+            self.reflect_angle(hit_pos)
 
-            # Adjust y-direction based on where the ball hits the paddle
-            if hit_pos > 0.5:  # Bottom quarter
-                self.y_direction = 1  # Steeper downward angle
-            elif hit_pos > 0:  # Bottom center
-                self.y_direction = 0.5  # Shallow downward angle
-            elif hit_pos > -0.5:  # Top center
-                self.y_direction = -0.5  # Shallow upward angle
-            else:  # Top quarter
-                self.y_direction = -1  # Steeper upward angle
-            self.speed = min(self.speed + 1, 15)
-
-
-    def serialize(self):
-        return {
-            'x': self.x,
-            'y': self.y,
-            'radius': self.radius,
-        }
+    def reflect_angle(self, hit_pos):
+        # Adjust y-direction based on where the ball hits the paddle
+        if hit_pos > 0.9:  # Bottom edge (steep angle)
+            self.y_direction = 1
+            self.speed = min(self.speed + 10, 15)
+        elif hit_pos > 0.8:  # Bottom quarter (steeper angle)
+            self.y_direction = 0.8
+        elif hit_pos > 0.6:
+            self.y_direction = 0.6
+        elif hit_pos > 0.3:
+            self.y_direction = 0.3
+        elif hit_pos > -0.3:
+            self.y_direction = -0.3
+        elif hit_pos > -0.6:
+            self.y_direction = -0.6
+        elif hit_pos > -0.8: # Top quarter (steeper angle)
+            self.y_direction = -0.8
+        elif hit_pos > -0.9: # Top edge (steep angle)
+            self.y_direction = -1
+            self.speed = min(self.speed + 10, 15)
+        self.speed = min(self.speed + 1, 15)
+        print("ball speed: " + str(self.speed))
 
 # class PongAI:
 #     def __init__(self, paddle, ball, game_height):
