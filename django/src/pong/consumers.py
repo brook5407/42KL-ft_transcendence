@@ -245,6 +245,8 @@ class PongConsumer(AsyncWebsocketConsumer):
         if winner_player_id != placeholder_winner.id:
             match.winner = placeholder_loser
             match.loser = placeholder_winner
+        match.winner.add_win()
+        match.loser.add_loss()
         match.winner_score = winner_score
         match.loser_score = loser_score
         match.ended_at = timezone.now()

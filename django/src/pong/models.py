@@ -25,6 +25,14 @@ class Player(BaseModel):
 
     def __str__(self):
         return f"{self.user.username}"
+    
+    def add_win(self):
+        self.wins += 1
+        self.save()
+    
+    def add_loss(self):
+        self.losses += 1
+        self.save()
 
 
 class Match(BaseModel):
