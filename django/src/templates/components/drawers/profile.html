@@ -66,10 +66,10 @@
         
             if (file) {
                 if (!file.type.startsWith('image/')) {
-                    alert('Please select a valid image file.');
+                    alert("{% trans 'Please select a valid image file.' %}");
                     this.value = ''; // Clear the file input
                 } else if (file.size > maxSize) {
-                    alert('The selected file is too large. Please select a file smaller than 1 MB.');
+                    alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
                     this.value = ''; // Clear the file input
                 } else {
                     document.querySelector('#avatar-form input[type="submit"]').click(); // Submit if it's a valid image

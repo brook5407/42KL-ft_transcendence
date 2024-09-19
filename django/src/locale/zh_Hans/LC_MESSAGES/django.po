@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-18 06:53+0000\n"
+"POT-Creation-Date: 2024-09-19 02:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,35 +38,35 @@ msgstr "马来文"
 msgid "Chinese"
 msgstr "华文"
 
-#: drf_auth/views.py:39 drf_auth/views.py:49
+#: drf_auth/views.py:36 drf_auth/views.py:46
 msgid "Verification key is missing"
 msgstr "无效验证码"
 
-#: drf_auth/views.py:68
+#: drf_auth/views.py:65
 msgid "Your email has been successfully verified."
 msgstr "您的邮箱验证成功。"
 
-#: drf_auth/views.py:71
+#: drf_auth/views.py:68
 msgid "There was an error verifying your email."
 msgstr "您的邮箱验证失败。"
 
-#: drf_auth/views.py:91
+#: drf_auth/views.py:88
 msgid "OTP sent. Please check your email."
 msgstr "已发送OTP，请查看您的邮箱。"
 
-#: drf_auth/views.py:95
+#: drf_auth/views.py:92
 msgid "User email is not verified."
 msgstr "你的账号未认证"
 
-#: drf_auth/views.py:99
+#: drf_auth/views.py:96
 msgid "User does not exist."
 msgstr "用户不存在"
 
-#: drf_auth/views.py:122 drf_auth/views.py:131
+#: drf_auth/views.py:119 drf_auth/views.py:128
 msgid "OTP is invalid"
 msgstr "无效OTP"
 
-#: drf_auth/views.py:127
+#: drf_auth/views.py:124
 msgid "OTP has expired, Please request a new one"
 msgstr "OTP已过期，请重新请求"
 
@@ -136,6 +136,16 @@ msgstr "好友"
 msgid "Profile"
 msgstr "用户资料"
 
+#: templates/components/drawers/friend/profile.html:28
+#: templates/components/drawers/profile.html:36
+msgid "Wins:"
+msgstr "胜:"
+
+#: templates/components/drawers/friend/profile.html:28
+#: templates/components/drawers/profile.html:36
+msgid "Losses:"
+msgstr "负:"
+
 #: templates/components/drawers/friend/profile.html:35
 #: templates/components/drawers/profile.html:43
 msgid "This user didn't say anything"
@@ -144,6 +154,14 @@ msgstr "无聊天记录"
 #: templates/components/drawers/friend/profile.html:40
 msgid "See Match History"
 msgstr "查看对战记录"
+
+#: templates/components/drawers/friend/profile.html:45
+msgid "Unblock"
+msgstr "解除屏蔽"
+
+#: templates/components/drawers/friend/profile.html:47
+msgid "Block"
+msgstr "屏蔽"
 
 #: templates/components/drawers/friend/profile.html:49
 msgid "Delete"
@@ -215,6 +233,7 @@ msgid "Description"
 msgstr "描述"
 
 #: templates/components/drawers/pong/tournament/create.html:25
+#: templates/components/modals/change-password.html:24
 #: templates/components/modals/forget-password.html:16
 #: templates/components/modals/reset-password.html:22
 #: templates/components/modals/signin.html:31
@@ -250,13 +269,13 @@ msgstr "个人简介"
 msgid "Save"
 msgstr "保存"
 
-#: templates/components/drawers/profile.html:36
-msgid "Wins:"
-msgstr "胜:"
+#: templates/components/drawers/profile.html:69
+msgid "Please select a valid image file."
+msgstr "请选择一个图像文件。"
 
-#: templates/components/drawers/profile.html:36
-msgid "Losses:"
-msgstr "负:"
+#: templates/components/drawers/profile.html:72
+msgid "The selected file is too large. Please select a file smaller than 1 MB."
+msgstr "所选文件太大。请选择小于 1 MB 的文件。"
 
 #: templates/components/drawers/settings.html:10
 msgid "Settings"
@@ -273,6 +292,7 @@ msgid "Password"
 msgstr "密码"
 
 #: templates/components/drawers/settings.html:41
+#: templates/components/modals/change-password.html:5
 msgid "Change Password"
 msgstr "更换密码"
 
@@ -294,6 +314,19 @@ msgstr "这里"
 msgid "42 Login"
 msgstr "42 登录"
 
+#: templates/components/modals/change-password.html:12
+msgid "Old Password"
+msgstr "久密码"
+
+#: templates/components/modals/change-password.html:16
+#: templates/components/modals/reset-password.html:14
+msgid "New Password"
+msgstr "新密码"
+
+#: templates/components/modals/change-password.html:20
+msgid "Confirm New Password"
+msgstr "确认新密码"
+
 #: templates/components/modals/forget-password.html:5
 msgid "Forget Password"
 msgstr "忘记密码"
@@ -306,10 +339,6 @@ msgstr "邮箱"
 #: templates/components/modals/reset-password.html:5
 msgid "Reset Password"
 msgstr "密码重置"
-
-#: templates/components/modals/reset-password.html:14
-msgid "New Password"
-msgstr "新密码"
 
 #: templates/components/modals/reset-password.html:18
 #: templates/components/modals/signup.html:28
@@ -338,13 +367,18 @@ msgstr "发送"
 msgid "Forgot Password?"
 msgstr "忘记密码？"
 
-#: templates/components/modals/signin.html:57
+#: templates/components/modals/signin.html:64
 msgid "OTP sent to your email!"
 msgstr "已发送OTP至您的邮箱。"
 
-#: templates/components/modals/signin.html:61
-msgid "Error requesting OTP. Please try again."
-msgstr "请求 OTP 时出错，请重试。"
+#: templates/components/modals/signin.html:86
+#: templates/components/modals/signin.html:93
+msgid "Resend OTP in "
+msgstr "重新发送OTP： "
+
+#: templates/components/modals/signin.html:97
+msgid "Resend OTP"
+msgstr "重新发送OTP"
 
 #: templates/components/modals/signup.html:5
 msgid "Sign Up"
@@ -366,9 +400,16 @@ msgstr "真人对战"
 msgid "PVE"
 msgstr "人机对战"
 
-#: templates/components/pages/pong.html:16
+#: templates/components/pages/pong.html:17
 msgid "Searching for opponent..."
 msgstr "寻找对手。。。"
+
+#: templates/components/pages/pong.html:18
+msgid "Room Code"
+msgstr "房间号码"
+
+#~ msgid "Error requesting OTP. Please try again."
+#~ msgstr "请求 OTP 时出错，请重试。"
 
 #~ msgid "Tournament Lobby"
 #~ msgstr "锦标赛大厅"
