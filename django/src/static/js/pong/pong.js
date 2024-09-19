@@ -39,16 +39,16 @@ export class GameClient {
 	}
 
 	onOpen() {
-		console.log('WebSocket connection established ' + this.roomId);
+		console.log('Pong game WebSocket connection established ' + this.roomId);
 		this.socket.send(JSON.stringify({ game_mode: this.gameMode }));
 	}
 
 	onError(error) {
-		console.error('WebSocket error:', error);
+		console.error('Pong game WebSocket error:', error);
 	}
 
 	onClose(event) {
-		console.log('WebSocket connection closed:', event);
+		console.log('Pong game WebSocket connection closed:', event);
 	}
 
 	onMessage(e) {
@@ -177,7 +177,7 @@ export class GameClient {
 
 			if (countdown === 0) {
 				clearInterval(countdownInterval);
-				// WXR TODO: end the game, server should handle the save match history
+				navigateTo('/');
 			}
 		}, 1000);
 	}
@@ -236,7 +236,6 @@ export class GameClient {
 	}
 
 	destroy() {
-		console.log('destroying game client');
 		this.detachEventListeners();
 		this.socket.close();
 	}

@@ -47,7 +47,6 @@ export class ChatListDrawer extends GenericDrawer {
 		}
 
 		const data = await res.json();
-		console.log(data);
 		this.nextPage++;
 		if (!data.next) {
 			this.stillHasNextPage = false;

@@ -5,6 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Player, TournamentRoom, Match, TournamentPlayer, TournamentMatch, UserActiveTournament
 from asgiref.sync import async_to_sync
+from django.utils import timezone
 
 
 gameHeight = 500
@@ -12,7 +13,12 @@ gameWidth = 800
 
 class MatchManager:
     def __init__(self):
-        self.players = []  # maximum 2 players
+        '''
+            players: {
+                channel_name: player_id,
+            }
+        '''
+        self.players = {}  # maximum 2 players
 
         self.paddle1 = Paddle(20, 200, 10, 100)
         self.paddle2 = Paddle(gameWidth - 30, 200, 10, 100)
@@ -20,19 +26,20 @@ class MatchManager:
         self.score1 = 0
         self.score2 = 0
 
-    def add_player(self, channel_name):
+    def add_player(self, channel_name, player_id):
         if len(self.players) >= 2:
             return
-        self.players.append(channel_name)
+        self.players[channel_name] = player_id
 
     def remove_player(self, channel_name):
-        try:
-            self.players.remove(channel_name)
-        except ValueError:
-            print(f"Player {channel_name} not found in the list.")
+        self.players.pop(channel_name, None)
             
-    def get_players(self):
-        return self.players[0:2]
+    def get_player_id_from_channel_name(self, channel_name):
+        player_id = self.players.get(channel_name, None)
+        return player_id
+            
+    def get_players_channels(self):
+        return self.players.keys()
 
 
 class RoomManager:
@@ -54,20 +61,25 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         self.game_mode = self.scope['url_route']['kwargs']['game_mode']
-        self.room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room_id = self.scope['url_route']['kwargs']['room_id'] # room_id is the match_id
         self.room_group_name = f'pong_{self.room_id}'
         self.paddle = None
-
+        
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
         self.manager = RoomManager.get_match_manager(self.room_id)
-        self.player = self.manager.add_player(self.channel_name)
+        self.player = await self.get_player(self.user)
+        self.manager.add_player(self.channel_name, self.player.id)
 
         if (self.game_mode == "pvp"):
             await self.wait_for_opponent()
         elif (self.game_mode == "pve"):
             await self.pve_mode()
+            
+    @database_sync_to_async
+    def get_player(self, user):
+        return Player.objects.get(user=user)
             
     async def wait_for_opponent(self):
         while len(self.manager.players) < 2:
@@ -100,7 +112,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.manager.paddle2.velocity = velocity
 
     async def pvp_mode(self):
-        self.player1, self.player2 = self.manager.get_players()
+        self.player1, self.player2 = self.manager.get_players_channels()
 
         await self.channel_layer.send(self.player1, {
             'type': 'paddle_assignment',
@@ -164,6 +176,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(1)
 
     async def game_loop(self):
+        winner_channel = None
+        winner_score = 0
+        loser_score = 0
         await asyncio.sleep(4)
         while True:
             # Update game state
@@ -199,26 +214,15 @@ class PongConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-            # Check if a player disconnected
-            if self.player1 == None or self.player2 == None:
-                winner = 'Player 1' if self.player2 == None else 'Player 2'
-                loser = self.player2 if self.player2 == None else self.player1
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'end_game',
-                        'message': f'{winner} wins!\nBecause other player disconnected!',
-                        'loser': loser,
-                    }
-                )
-                break  # Exit the game loop
-
             winningScore = 3
 
             # End the game if a player reaches a score of winningScore
             if self.manager.score1 >= winningScore or self.manager.score2 >= winningScore:
                 winner = 'Player 1' if self.manager.score1 >= winningScore else 'Player 2'
                 loser = self.player2 if self.manager.score1 >= winningScore else self.player1
+                winner_channel = self.player1 if self.manager.score1 >= winningScore else self.player2
+                winner_score = self.manager.score1 if self.manager.score1 >= winningScore else self.manager.score2
+                loser_score = self.manager.score2 if self.manager.score1 >= winningScore else self.manager.score1
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -230,6 +234,21 @@ class PongConsumer(AsyncWebsocketConsumer):
                 break  # Exit the game loop
 
             await asyncio.sleep(1/60)  # Run at ~60 FPS
+        winner_player_id = self.manager.get_player_id_from_channel_name(winner_channel)
+        await self.set_match_end(winner_player_id, winner_score, loser_score)
+    
+    @database_sync_to_async
+    def set_match_end(self, winner_player_id, winner_score, loser_score):
+        match = Match.objects.get(id=self.room_id)
+        placeholder_winner = match.winner
+        placeholder_loser = match.loser
+        if winner_player_id != placeholder_winner.id:
+            match.winner = placeholder_loser
+            match.loser = placeholder_winner
+        match.winner_score = winner_score
+        match.loser_score = loser_score
+        match.ended_at = timezone.now()
+        match.save()
 
     async def update_game_state(self, event):
         # Send updated game state to WebSocket
@@ -438,8 +457,12 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         return player.elo
     
     @database_sync_to_async
-    def create_match(self):
-        match = Match.objects.create()
+    def create_match(self, player, opponent_player_id):
+        match = Match.objects.create(
+            winner=player,
+            loser_id=opponent_player_id,
+            type=Match.MatchType.PVP
+        )
         return match
 
     async def match_player(self, player):
@@ -450,13 +473,13 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         max_elo = player_elo + elo_range
 
         potential_opponents = [
-            player_info['channel_name'] for player_id, player_info in self.connected_players.items()
+            (player_id, player_info['channel_name']) for player_id, player_info in self.connected_players.items()
             if min_elo <= player_info['elo'] <= max_elo and player_info['channel_name'] != self.channel_name
         ]
 
         if potential_opponents:
-            opponent_channel_name = potential_opponents[0]
-            match = await self.create_match()
+            opponent_channel_name = potential_opponents[0][1]
+            match = await self.create_match(player, potential_opponents[0][0])
             
             # Inform the opponent
             await self.channel_layer.send(

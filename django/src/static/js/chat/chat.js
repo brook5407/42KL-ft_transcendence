@@ -57,7 +57,6 @@ class ChatController {
 				showErrorToast('Your friend rejected your invitation');
 			} else if (data.action === 'accept_acknowledgement') {
 				showSuccessToast('Both player ready! Starting the game...');
-				console.log(data);
 				console.log('match id: ', data.match_id);
 				navigateTo(`/pong/pvp/?match_id=${data.match_id}`);
 			}

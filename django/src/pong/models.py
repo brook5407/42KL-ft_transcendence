@@ -41,7 +41,7 @@ class Match(BaseModel):
     winner_score = models.IntegerField(default=0)
     loser_score = models.IntegerField(default=0)
     type = models.CharField(
-        max_length=1, choices=MatchType.choices, null=True, blank=True
+        max_length=1, choices=MatchType.choices, null=True, blank=True, default=MatchType.PVP
     )
     ended_at = models.DateTimeField(null=True, blank=True)
     history = GenericRelation("MatchHistory", related_query_name="match_history")

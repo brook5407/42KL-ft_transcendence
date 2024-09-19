@@ -222,7 +222,6 @@ export class ChatRoomDrawer extends GenericDrawer {
 	 */
 	renderMessageBubble(message) {
 		let invitationExpiresAt = null;
-		console.log(message);
 		if (message.match_invitation && message.match_invitation.expired_at) {
 			invitationExpiresAt = new Date(message.match_invitation.expired_at);
 		} else if (
