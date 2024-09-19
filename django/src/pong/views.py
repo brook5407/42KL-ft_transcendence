@@ -36,7 +36,13 @@ def pvp_view(request):
 @api_view(["GET"])
 @authenticated_view
 def pve_view(request):
-    match = Match.objects.create()
+    player = Player.objects.get(user=request.user)
+    ai_player = Player.objects.get(user__username="aiskosong")
+    match = Match.objects.create(
+        winner=player,
+        loser=ai_player,
+        type=Match.MatchType.PVE
+    )
     if is_ajax_request(request):
         return render(request, "components/pages/pong.html", {"game_mode": "pve", "match_id": match.id})
     return render(request, "index.html")
