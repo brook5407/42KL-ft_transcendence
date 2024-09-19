@@ -54,6 +54,8 @@
 const MatchType = {
 	PVP: 'P',
 	PVE: 'E',
+	FRIEND: 'F',
+	TOURNAMENT: 'T',
 };
 
 /**
@@ -125,7 +127,7 @@ const WSChatMessageErrorType = {
  * @property {User} owner
  * @property {TournamentPlayer[]} players
  * @property {Player} [winner]
- * @property {TournamentMatch[]} [matches]
+ * @property {Match[]} [matches]
  * @property {TournamentStatus} status
  * @property {string} created_at
  * @property {string} ended_at
@@ -138,18 +140,6 @@ const WSChatMessageErrorType = {
  * @property {number} wins
  * @property {number} loses
  * @property {number} elo
- */
-
-/**
- * @typedef {Object} TournamentMatch
- * @property {string} id
- * @property {TournamentMatchStatus} status
- * @property {TournamentPlayer} winner
- * @property {TournamentPlayer} loser
- * @property {number} winner_score
- * @property {number} loser_score
- * @property {TournamentRoom} tournament
- * @property {string} created_at
  */
 
 /**
