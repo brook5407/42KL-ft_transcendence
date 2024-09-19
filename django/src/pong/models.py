@@ -12,7 +12,7 @@ User = get_user_model()
 
 
 class Player(BaseModel):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         null=True,

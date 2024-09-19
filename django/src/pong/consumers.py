@@ -389,26 +389,45 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         As the waiting time increases, can expand the range, but not more than ±200 Elo points.
     """
     
-    connected_players = {}  # 
+    '''
+        connected_players: {
+            player_id: {
+                channel_name: channel_name,
+                elo: elo,
+            }
+        }
+    '''
+    connected_players = {}
     
     async def connect(self):
         self.user = self.scope['user']
         player = await self.get_player(self.user)
         if player:
+            self.player_id = await self.get_player_id(player)
+            if self.player_id in self.connected_players:
+                await self.close()
+                return
             await self.channel_layer.group_add('matchmaking', self.channel_name)
             await self.accept()
-            self.connected_players[self.channel_name] = await self.get_player_elo(player)
+            self.connected_players[self.player_id] = {
+                'channel_name': self.channel_name,
+                'elo': await self.get_player_elo(player)
+            }
+            print(self.connected_players)
             await self.match_player(player)
         else:
             await self.close()
         
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard('matchmaking', self.channel_name)
-        if self.channel_name in self.connected_players:
-            del self.connected_players[self.channel_name]
+        self.connected_players.pop(self.player_id, None)
     
     async def receive(self, text_data):
         data = json.loads(text_data)
+
+    @database_sync_to_async
+    def get_player_id(self, player):
+        return player.id
 
     @database_sync_to_async
     def get_player(self, user):
@@ -431,8 +450,8 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         max_elo = player_elo + elo_range
 
         potential_opponents = [
-            channel_name for channel_name, elo in self.connected_players.items()
-            if min_elo <= elo <= max_elo and channel_name != self.channel_name
+            player_info['channel_name'] for player_id, player_info in self.connected_players.items()
+            if min_elo <= player_info['elo'] <= max_elo and player_info['channel_name'] != self.channel_name
         ]
 
         if potential_opponents:
