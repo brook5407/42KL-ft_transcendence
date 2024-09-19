@@ -7,9 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from allauth.account.models import EmailAddress
 from django.core.exceptions import ObjectDoesNotExist
 from core import settings
-from utils.request_helpers import is_ajax_request
+from utils.request_helpers import is_ajax_request, authenticated_view
 from pong.models import UserActiveTournament
-
 from django.views.decorators.http import require_GET, require_POST
 from django.utils.translation import gettext_lazy as _
 
@@ -66,7 +65,7 @@ def oauth42_modal(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def settings_drawer(request):
     if is_ajax_request(request):
         return render(request, 'components/drawers/settings.html')
@@ -74,7 +73,7 @@ def settings_drawer(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def current_user(request):
     user = request.user
     try:

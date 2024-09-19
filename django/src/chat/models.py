@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 from base.models import BaseModel
+from pong.models import MatchInvitation
 import uuid
 
 
@@ -48,6 +49,7 @@ class ChatRoom(BaseModel):
 class ChatMessage(BaseModel):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
     message = models.TextField()  # for game invitation, message will have a /invite prefix
+    match_invitation = models.OneToOneField(MatchInvitation, on_delete=models.CASCADE, null=True, blank=True)
     room = models.ForeignKey(ChatRoom, related_name='chat_messages', on_delete=models.CASCADE)
 
     class Meta:

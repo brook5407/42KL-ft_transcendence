@@ -86,13 +86,13 @@ h1 {
 }
 
 .success {
-	background-color: var(--color-success-4);
+	background-color: var(--color-success-5);
 }
 
 .error {
-	background-color: var(--color-error-4);
+	background-color: var(--color-error-5);
 }
 
 .info {
-	background-color: var(--color-info-4);
+	background-color: var(--color-info-5);
 }

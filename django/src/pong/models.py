@@ -4,13 +4,15 @@ from django.contrib.auth import get_user_model
 from base.models import BaseModel
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from datetime import timedelta
+from django.utils import timezone
 
 
 User = get_user_model()
 
 
 class Player(BaseModel):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         null=True,
@@ -23,12 +25,21 @@ class Player(BaseModel):
 
     def __str__(self):
         return f"{self.user.username}"
+    
+    def add_win(self):
+        self.wins += 1
+        self.save()
+    
+    def add_loss(self):
+        self.losses += 1
+        self.save()
 
 
 class Match(BaseModel):
     class MatchType(models.TextChoices):
         PVP = "P", "PVP"
         PVE = "E", "PVE"
+        FRIEND = "F", "Friend"
 
     winner = models.ForeignKey(
         Player, on_delete=models.SET_NULL, null=True, related_name="match_winner"
@@ -39,7 +50,7 @@ class Match(BaseModel):
     winner_score = models.IntegerField(default=0)
     loser_score = models.IntegerField(default=0)
     type = models.CharField(
-        max_length=1, choices=MatchType.choices, null=True, blank=True
+        max_length=1, choices=MatchType.choices, null=True, blank=True, default=MatchType.PVP
     )
     ended_at = models.DateTimeField(null=True, blank=True)
     history = GenericRelation("MatchHistory", related_query_name="match_history")
@@ -244,3 +255,56 @@ class UserActiveTournament(BaseModel):
 
     def __str__(self):
         return f"{self.user} in {self.tournament}"
+    
+
+class MatchInvitation(BaseModel):
+    INVITATION_EXPIRE_TIME = 60 * 5  # in seconds, 5 minutes
+    class Status(models.TextChoices):
+        WAITING = "W", "Waiting"
+        ACCEPTED = "A", "Accepted"
+        REJECTED = "R", "Rejected"
+
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sender")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="receiver")
+    status = models.CharField(choices=Status.choices, default=Status.WAITING, max_length=1)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, null=True, related_name="invitation_match")
+    expired_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"From {self.sender} to {self.receiver}. Match: {self.match}"
+    
+    def save(self, *args, **kwargs):
+        if self.status == self.Status.WAITING and not self.expired_at:
+            self.expired_at = timezone.now() + timedelta(seconds=self.INVITATION_EXPIRE_TIME)
+        super().save(*args, **kwargs)
+    
+    def is_expired(self):
+        return self.expired_at < timezone.now()
+    
+    def accept(self):
+        if self.status != self.Status.WAITING:
+            raise ValueError("Invitation is not waiting.")
+        self.status = self.Status.ACCEPTED
+        self.expired_at = None
+        self.save()
+        
+    def reject(self):
+        if self.status != self.Status.WAITING:
+            raise ValueError("Invitation is not waiting.")
+        self.status = self.Status.REJECTED
+        self.expired_at = None
+        self.save()
+        
+    def create_match(self):
+        if self.status != self.Status.ACCEPTED:
+            raise ValueError("Invitation is not accepted.")
+        if self.match:
+            raise ValueError("Match already exists.")
+        match = Match.objects.create(
+            winner=self.sender.player,
+            loser=self.receiver.player,
+            type=Match.MatchType.FRIEND
+        )
+        self.match = match
+        self.save()
+        return match

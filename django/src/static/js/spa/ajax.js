@@ -23,12 +23,8 @@ export function ajax(url, options) {
 	return fetch(url, fetchOptions);
 }
 
-export async function ajaxWithAuth(
-	url,
-	options,
-	needRefreshJWT = true,
-	retries = 0
-) {
+export async function ajaxWithAuth(url, options) {
+	await refreshJWT();
 	options.headers = constructRequestHeader(options.headers);
 
 	const fetchOptions = Object.assign(
@@ -49,17 +45,9 @@ export async function ajaxWithAuth(
 	}
 
 	const response = await fetch(url, fetchOptions);
-	if (response.status === 401 && needRefreshJWT) {
-		if (retries >= 2) {
-			// Redirect to login page
-			navigateTo('/');
-			return response;
-		}
-		const status = await refreshJWT();
-		if (!status) return response;
-		// Retry the original request with new access token
-		const retryResponse = await ajaxWithAuth(url, options, true, retries + 1);
-		return retryResponse;
+	if (response.status === 401) {
+		navigateTo('/');
+		return response;
 	}
 
 	return response;

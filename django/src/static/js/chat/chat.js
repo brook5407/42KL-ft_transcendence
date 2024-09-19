@@ -1,5 +1,6 @@
 import { getWSHost } from '../websocket.js';
 import { showErrorToast, showInfoToast } from '../toast.js';
+import { navigateTo } from '../spa/navigation.js';
 
 /**
  * @borrows {import('../types.js').WSChatMessage}
@@ -48,10 +49,19 @@ class ChatController {
 			return;
 		}
 
-		// no need to act to own messages
-		// if (data.sender.username === window.currentUser.username) {
-		// 	return;
-		// }
+		if (data.type === 'pong_invitation_message') {
+			if (data.action === 'accept') {
+				showSuccessToast('Your friend accepted your invitation');
+				this.acknowledgePongInvitation(data.room_id, data.match_invitation_id);
+			} else if (data.action === 'reject') {
+				showErrorToast('Your friend rejected your invitation');
+			} else if (data.action === 'accept_acknowledgement') {
+				showSuccessToast('Both player ready! Starting the game...');
+				console.log('match id: ', data.match_id);
+				navigateTo(`/pong/pvp/?match_id=${data.match_id}`);
+			}
+			return;
+		}
 
 		if (
 			window.currentDrawer &&
@@ -60,6 +70,10 @@ class ChatController {
 		) {
 			// if currently in the chat room, append the message
 			window.currentDrawer.appendMessage(data);
+			// mark the chat as read
+			ajaxWithAuth(`/api/active-chat/mark-read/${data.room_id}/`, {
+				method: 'POST',
+			});
 		} else if (
 			window.currentDrawer &&
 			window.currentDrawer.name === 'chat-list'
@@ -86,21 +100,43 @@ class ChatController {
 	async sendMessage(message, roomId) {
 		this.socket.send(
 			JSON.stringify({
+				type: 'chat_message',
 				message,
 				room_id: roomId,
 			})
 		);
-		// if (window.currentDrawer && window.currentDrawer.name === 'chat-room') {
-		// 	window.currentDrawer.appendMessage({
-		// 		message,
-		// 		room_id: roomId,
-		// 		sender: {
-		// 			username: currentUser.username,
-		// 			nickname: currentUser.profile.nickname,
-		// 			avatar: currentUser.profile.avatar,
-		// 		},
-		// 	});
-		// }
+	}
+
+	async acceptPongInvitation(roomId, matchInvitationId) {
+		this.socket.send(
+			JSON.stringify({
+				type: 'pong_invitation',
+				room_id: roomId,
+				match_invitation_id: matchInvitationId,
+				accept: true,
+			})
+		);
+	}
+
+	async rejectPongInvitation(roomId, matchInvitationId) {
+		this.socket.send(
+			JSON.stringify({
+				type: 'pong_invitation',
+				room_id: roomId,
+				match_invitation_id: matchInvitationId,
+				accept: false,
+			})
+		);
+	}
+
+	async acknowledgePongInvitation(roomId, matchInvitationId) {
+		this.socket.send(
+			JSON.stringify({
+				type: 'pong_invitation_accept_acknowledgement',
+				room_id: roomId,
+				match_invitation_id: matchInvitationId,
+			})
+		);
 	}
 
 	_dispatchNewMessageEvent(data) {

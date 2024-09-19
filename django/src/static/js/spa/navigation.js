@@ -51,6 +51,13 @@ export async function router() {
 		pathname = pathname.slice(0, -1);
 	}
 
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	const queryParams = {};
+	urlParams.forEach((value, key) => {
+		queryParams[key] = value;
+	});
+
 	let match = ROUTES[pathname];
 	if (!match) {
 		// try regular expression match
@@ -70,9 +77,9 @@ export async function router() {
 	if (!match) {
 		component = new NotFoundPage({});
 	} else if (match.dynamic) {
-		component = new match.component({ url: pathname });
+		component = new match.component({ url: pathname, queryParams });
 	} else {
-		component = new match.component(match.data);
+		component = new match.component({ ...match.data, queryParams });
 	}
 
 	window.currentRootComponent?.destroy();
@@ -80,9 +87,17 @@ export async function router() {
 	const element = await component.render();
 	ROOT_ELEMENT.innerHTML = '';
 	ROOT_ELEMENT.appendChild(element);
+	document.dispatchEvent(new Event('page-loaded'));
 }
 
 export function navigateTo(url, title = 'AIsPong') {
+	if (typeof window.closeDrawer === 'function') {
+		window.closeDrawer();
+	}
+
+	if (typeof window.closeModal === 'function') {
+		window.closeModal();
+	}
 	history.pushState(null, null, url);
 	router();
 	document.title = title;

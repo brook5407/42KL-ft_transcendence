@@ -6,7 +6,7 @@
 
 <div id="matchmaking" class="whiteText">{% trans 'Searching for opponent...' %}</div>
 
-<div id="container" class="container">
+<div id="pong-game-container" class="container">
     
 
     <div class="game-area">
@@ -52,9 +52,7 @@
 </div>
 
 
-<script>
-	const roomName = "{{ room_name }}";
-	const gameMode = "{{ game_mode }}";
-</script>
-<script src="{% static 'js/pong/preload.js' %}"></script>
-<script type="module" src="{% static 'js/pong/main.js' %}"></script>
+{{ game_mode|json_script:"game_mode" }}
+{% if match_id %}
+    {{ match_id|json_script:"match_id" }}
+{% endif %}
