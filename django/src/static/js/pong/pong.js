@@ -5,43 +5,6 @@ import { getWSHost } from '../websocket.js';
 
 const wsHost = getWSHost();
 
-// Define global variables or functions
-window.audioAssets = {
-    hitSound: new Audio('/static/audio/hit.mp3'),
-    scoreSound: new Audio('/static/audio/score.mp3'),
-    bgmSound: new Audio('/static/audio/bgm.mp3')
-};
-
-// Preload the audio files
-window.audioAssets.hitSound.load();
-window.audioAssets.scoreSound.load();
-window.audioAssets.bgmSound.load();
-
-window.audioAssets.hitSound.addEventListener('canplaythrough', () => {
-    console.log('Hit sound preloaded');
-});
-
-window.audioAssets.scoreSound.addEventListener('canplaythrough', () => {
-    console.log('Score sound preloaded');
-});
-
-window.audioAssets.bgmSound.addEventListener('canplaythrough', () => {
-    console.log('Background music preloaded');
-});
-
-// Optionally handle errors
-window.audioAssets.hitSound.addEventListener('error', () => {
-    console.error('Failed to preload hit sound');
-});
-
-window.audioAssets.scoreSound.addEventListener('error', () => {
-    console.error('Failed to preload score sound');
-});
-
-window.audioAssets.bgmSound.addEventListener('error', () => {
-    console.error('Failed to preload background music');
-});
-
 export class GameClient {
 	constructor(gameMode, roomId) {
 		this.gameMode = gameMode;
@@ -122,7 +85,7 @@ export class GameClient {
 
 	startGame(data) {
 		console.log('start_game');
-        window.audioAssets.bgmSound.loop = true;
+        // window.audioAssets.bgmSound.loop = true;
         window.audioAssets.bgmSound.play();
 
 		this.canvasContainer.height = data.gameHeight;
@@ -219,9 +182,10 @@ export class GameClient {
 	}
 
 	endGame(data) {
-		if (window.audioAssets && window.audioAssets.bgmSound) {
-			window.audioAssets.bgmSound.pause();
-			window.audioAssets.bgmSound.currentTime = 0;
+		if (this.score1 > this.score2) {
+			window.audioAssets.winSound.play();
+		} else {
+			window.audioAssets.loseSound.play();
 		}
 		console.log('end_game');
 		this.overlay.style.display = 'flex';
@@ -296,6 +260,10 @@ export class GameClient {
 	}
 
 	destroy() {
+		if (window.audioAssets && window.audioAssets.bgmSound) {
+			window.audioAssets.bgmSound.pause();
+			window.audioAssets.bgmSound.currentTime = 0;
+		}
 		this.detachEventListeners();
 		this.socket.close();
 	}

@@ -56,7 +56,13 @@
 
     <div id="toast-container"></div>
 
+    <audio id="background-music" autoplay loop>
+      <source src="{% static 'audio/bgm2.mp3' %}" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/pong/preload.js' %}"></script>
     <script type="module" src="{% static 'js/script.js' %}"></script>
     <script type="module" src="{% static 'js/utils.js' %}"></script>
     <script type="module" src="{% static 'js/oauth.js' %}"></script>

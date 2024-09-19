@@ -1,14 +1,24 @@
+
 // Define global variables or functions
 window.audioAssets = {
+    homeBGM: new Audio('/static/audio/bgm2.mp3'),
     hitSound: new Audio('/static/audio/hit.mp3'),
     scoreSound: new Audio('/static/audio/score.mp3'),
-    bgmSound: new Audio('/static/audio/bgm.mp3')
+    bgmSound: new Audio('/static/audio/bgm.mp3'),
+	winSound: new Audio('/static/audio/76 小喇叭.mp3'),
+	loseSound: new Audio('/static/audio/92 Nooo.mp3')
 };
 
 // Preload the audio files
+window.audioAssets.homeBGM.load();
 window.audioAssets.hitSound.load();
 window.audioAssets.scoreSound.load();
 window.audioAssets.bgmSound.load();
+window.audioAssets.winSound.load();
+window.audioAssets.loseSound.load();
+
+window.audioAssets.homeBGM.loop = true;
+window.audioAssets.bgmSound.loop = true;
 
 window.audioAssets.hitSound.addEventListener('canplaythrough', () => {
     console.log('Hit sound preloaded');
