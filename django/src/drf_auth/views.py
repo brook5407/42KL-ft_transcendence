@@ -82,15 +82,21 @@ class SendOTPView(GenericAPIView):
             try:
                 user = get_user_model().objects.get(username=data['username'])
                 email_address = EmailAddress.objects.get(user=user)
-                if email_address.verified:
+                if settings.ACCOUNT_EMAIL_VERIFICATION == 'mandatory':
+                    if email_address.verified:
+                        send_otp_email(user.email)
+                        return Response({
+                            'non_field_errors': [_('OTP sent. Please check your email.')],
+                        }, status=status.HTTP_201_CREATED)
+                    else:
+                        return Response({
+                            'non_field_errors': [_('User email is not verified.')]
+                        }, status=status.HTTP_400_BAD_REQUEST)
+                else:
                     send_otp_email(user.email)
                     return Response({
                         'non_field_errors': [_('OTP sent. Please check your email.')],
                     }, status=status.HTTP_201_CREATED)
-                else:
-                    return Response({
-                        'non_field_errors': [_('User email is not verified.')]
-                    }, status=status.HTTP_400_BAD_REQUEST)
             except user.DoesNotExist:
                 return Response({
                     'non_field_errors': [_('User does not exist.')]
