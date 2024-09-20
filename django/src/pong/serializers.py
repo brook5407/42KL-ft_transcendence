@@ -30,6 +30,9 @@ class PlayerSerializer(serializers.ModelSerializer):
 
 
 class MatchSerializer(serializers.ModelSerializer):
+    winner = PlayerSerializer(read_only=True)
+    loser = PlayerSerializer(read_only=True)
+
     class Meta:
         model = Match
         fields = [

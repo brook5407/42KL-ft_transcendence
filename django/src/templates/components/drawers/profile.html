@@ -33,7 +33,7 @@
 			<p class="profile-joined">Joined: {{ user.date_joined|date:"d M Y" }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="">{% trans 'Wins:' %}' {{ wins }}, {% trans 'Losses:' %} {{ losses }}</p>
+			<p class="">{% trans 'Wins:' %} {{ wins }}, {% trans 'Losses:' %} {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
 			<p class="profile-bio">
@@ -44,6 +44,8 @@
 				{% endif %}
 			</p>
 		</div>
+
+		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'pong.match-history-drawer' %}">{% trans 'See Match History' %}</button>
 
 		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">Edit Profile</button>
 	</div>

@@ -37,7 +37,14 @@
 			</p>
 		</div>
 
-		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'game-history.drawer' %}">{% trans 'See Match History' %}</button>
+		<button id="see-match-history-btn"
+			class="btn btn-primary"
+			data-drawer="match-history"
+			data-drawer-url="{% url 'pong.match-history-drawer' %}"
+			data-query-params='{"username": "{{ friend_profile.user.username }}"}'
+		>
+			{% trans 'See Match History' %}
+		</button>
 
 		{% if is_friend %}
 			<div class="action-buttons">
