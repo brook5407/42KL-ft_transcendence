@@ -105,20 +105,29 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'core.asgi.application'
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('redis', 6379)],
+if not DEBUG:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [('redis', 6379)],
+            },
         },
-    },
-}
+    }
 
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer',
-#     },
-# }
+    REST_FRAMEWORK = {
+        'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',  # Only JSON responses
+        ),
+    }
+
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
+
 
 WSGI_APPLICATION = 'core.wsgi.application'
 ASGI_APPLICATION = 'core.asgi.application'
