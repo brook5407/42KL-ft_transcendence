@@ -293,7 +293,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema'
 }
 if not DEBUG:
-    REST_FRAMEWORK += {
+    REST_FRAMEWORK = {
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',  # Only JSON responses
         ),
