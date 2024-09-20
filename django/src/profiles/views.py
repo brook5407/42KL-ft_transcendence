@@ -6,11 +6,11 @@ from rest_framework import serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from profiles.serializers import ProfileSerializer
-from utils.request_helpers import is_ajax_request
+from utils.request_helpers import is_ajax_request, authenticated_view
 from .models import Profile
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def profile_drawer(request):
     if is_ajax_request(request):
         profile = request.user.profile
@@ -23,7 +23,7 @@ def profile_drawer(request):
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def profile_edit_drawer(request):
     if is_ajax_request(request):
         return render(request, 'components/drawers/profile-edit.html', {

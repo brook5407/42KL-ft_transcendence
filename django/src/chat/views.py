@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import permission_classes
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
-from utils.request_helpers import is_ajax_request
+from utils.request_helpers import is_ajax_request, authenticated_view
 from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -75,14 +75,14 @@ class ActiveChatRoomViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def chat_list_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/chat-list.html')
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def chat_room_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")

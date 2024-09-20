@@ -1,6 +1,7 @@
 import { getWSHost } from '../websocket.js';
 import { showErrorToast, showInfoToast } from '../toast.js';
 import { showSuccessMessage } from '../message.js';
+import { navigateTo } from '../spa/navigation.js';
 
 const wsHost = getWSHost();
 
@@ -8,7 +9,7 @@ class TournamentController {
 	constructor() {
 		this.socket = new WebSocket(`${wsHost}/ws/tournament/`);
 		this.socket.onopen = this._onOpen.bind(this);
-		this.socket.onmessage = this._onMessage.bind(this);
+		this.socket.addEventListener('message', this._onMessage.bind(this));
 		this.socket.onclose = this._onClose.bind(this);
 		this.socket.onerror = this._onError.bind(this);
 
@@ -19,6 +20,21 @@ class TournamentController {
 	setCurrentTournamentId(tournamentId) {
 		this.currentTournamentId = tournamentId;
 		window.currentUser.active_tournament_id = tournamentId;
+	}
+
+	attachTournamentClient(tournamentClient) {
+		this.tournamentClient = tournamentClient;
+		this.tournamentClientMessageHandler =
+			tournamentClient.onMessage.bind(tournamentClient);
+		this.tournamentClient.socket = this.socket;
+	}
+
+	detachTournamentClient() {
+		if (!this.tournamentClient) {
+			return;
+		}
+		this.tournamentClient = null;
+		this.tournamentClientMessageHandler = null;
 	}
 
 	_onOpen() {
@@ -41,6 +57,7 @@ class TournamentController {
 	_onMessage(e) {
 		/** @type {WSTournamentMessage} */
 		const data = JSON.parse(e.data);
+		// console.log('Tournament WS message:', data);
 
 		if (data.user_id === window.currentUser.id) {
 			console.log('Ignoring own message');
@@ -68,12 +85,22 @@ class TournamentController {
 				break;
 			case 'tournament_started':
 				showInfoToast(data.message);
+				navigateTo(`/pong/tournament/?tournament_id=${data.tournament_id}`);
+				break;
+			case 'tournament_ended':
+				showInfoToast(data.message);
+				this.detachTournamentClient();
+				navigateTo('/');
 				break;
 			case 'error':
 				showErrorToast(data.message);
 				break;
-			default:
-				console.error('Unknown message type:', data.type);
+			// default:
+			// 	console.error('Unknown message type:', data.type);
+		}
+
+		if (this.tournamentClientMessageHandler) {
+			this.tournamentClientMessageHandler(e);
 		}
 	}
 
@@ -100,8 +127,7 @@ class TournamentController {
 		console.log(tournamentRoom);
 
 		if (tournamentRoom.status !== 'W') {
-			// tournament has started or completed
-			// WXR TODO: reconnect to the tournament room if needed
+			navigateTo(`/pong/tournament/?tournament_id=${data.tournament_id}`);
 			return;
 		}
 
@@ -137,6 +163,11 @@ class TournamentController {
 		}
 	}
 
+	/**
+	 *
+	 * @param {string} tournamentId
+	 * @returns {Promise<TournamentRoom>}
+	 */
 	async fetchTournamentRoomDetails(tournamentId) {
 		try {
 			const res = await ajaxWithAuth(
@@ -145,7 +176,7 @@ class TournamentController {
 					method: 'GET',
 				}
 			);
-			return await res.json();
+			return res.json();
 		} catch (error) {
 			console.error(error);
 			showErrorToast('Failed to fetch tournament room details');
@@ -160,6 +191,12 @@ class TournamentController {
 		}
 
 		if (this.currentTournamentId === tournamentId) {
+			const tournamentRoom = await this.fetchTournamentRoomDetails(
+				tournamentId
+			);
+			if (!tournamentRoom) {
+				return false;
+			}
 			console.log('rejoin');
 			this.socket.send(
 				JSON.stringify({
@@ -167,6 +204,9 @@ class TournamentController {
 					tournament_id: tournamentId,
 				})
 			);
+			if (tournamentRoom.owner.id === window.currentUser.id) {
+				this.isOwner = true;
+			}
 			openDrawer('tournament-room', {
 				url: '/drawer/tournament-room/',
 				queryParams: { tournament_room_id: tournamentId },
@@ -266,7 +306,11 @@ class TournamentController {
 			return;
 		}
 		console.log('Starting tournament');
-		this.socket.send(JSON.stringify({ type: 'start_tournament' }));
+		ajaxWithAuth(`/api/tournament-room/${this.currentTournamentId}/start/`, {
+			method: 'POST',
+		}).then((res) => {
+			this.socket.send(JSON.stringify({ type: 'start_tournament' }));
+		});
 	}
 
 	reset() {

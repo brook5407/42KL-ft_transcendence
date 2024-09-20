@@ -30,7 +30,7 @@ def create_AI_player(sender, **kwargs):
         profile.bio = "I am unbeatable!"
         profile.avatar = "aibot.jpg"
         profile.save()
-        Player.objects.create(user=ai_user)
+        # Player.objects.create(user=ai_user)
 
 
 @receiver(post_save, sender=User)

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from utils.request_helpers import is_ajax_request
+from utils.request_helpers import is_ajax_request, authenticated_view
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponseBadRequest
@@ -13,33 +13,53 @@ from rest_framework.status import (
 from asgiref.sync import async_to_sync
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-from .models import Player, TournamentRoom, Match, TournamentPlayer, TournamentMatch, UserActiveTournament
+from .models import Player, TournamentRoom, Match, TournamentPlayer, UserActiveTournament
 from .serializers import (
     TournamentRoomSerializer,
     TournamentRoomCreateSerializer,
     MatchSerializer,
 )
-
+from django.contrib.auth.decorators import login_required
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def pvp_view(request):
     if is_ajax_request(request):
+        match_id = request.GET.get("match_id")
+        if match_id:
+            return render(request, "components/pages/pong.html", {"game_mode": "pvp", "match_id": match_id})
         return render(request, "components/pages/pong.html", {"game_mode": "pvp"})
     return render(request, "index.html")
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def pve_view(request):
+    player = Player.objects.get(user=request.user)
+    ai_player = Player.objects.get(user__username="aiskosong")
+    match = Match.objects.create(
+        winner=player,
+        loser=ai_player,
+        type=Match.MatchType.PVE
+    )
     if is_ajax_request(request):
-        return render(request, "components/pages/pong.html", {"game_mode": "pve"})
+        return render(request, "components/pages/pong.html", {"game_mode": "pve", "match_id": match.id})
     return render(request, "index.html")
 
+@api_view(["GET"])
+@authenticated_view
+def tournament_view(request):
+    if is_ajax_request(request):
+        tournament_id = request.GET.get("tournament_id")
+        return render(request, "components/pages/pong.html", {
+            "game_mode": "tournament",
+            "tournament_id": tournament_id
+        })
+    return render(request, "index.html")
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def tournament_list_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest(
@@ -54,7 +74,7 @@ def tournament_list_drawer(request):
     return render(request, "components/drawers/pong/tournament/list.html")
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def tournament_room_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest(
@@ -70,7 +90,7 @@ def tournament_room_drawer(request):
     })
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def tournament_create_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest(
@@ -158,21 +178,18 @@ class TournamentRoomViewSet(viewsets.ModelViewSet):
                 status=HTTP_400_BAD_REQUEST,
             )
         tournament_room.start()
-        # WXR TODO: trigger necessary events in the consumer
         return Response(status=HTTP_200_OK)
 
 
-class MatchViewSet(viewsets.ModelViewSet):
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
-
+class PongInvitationViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["POST"])
-    def matchmake(self, request):
-        # WXR TODO: Implement the ELO rating system for matchmaking
-        # Still need create unique room name before matchmaking
+    def invite(self, request):
         pass
-
-    @action(detail=False, methods=["POST"])
-    def pve(self, request):
-        # WXR TODO: start pve game
+    
+    @action(detail=True, methods=["POST"])
+    def accept(self, request, pk=None):
+        pass
+    
+    @action(detail=True, methods=["POST"])
+    def reject(self, request, pk=None):
         pass

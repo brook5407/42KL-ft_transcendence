@@ -30,7 +30,7 @@ export class Table {
 	}
 
 	clearBoard() {
-		this.ctx.fillStyle = 'black';
+		this.ctx.fillStyle = '#BEFAFA';
 		this.ctx.fillRect(0, 0, this.gameWidth, this.gameHeight);
 	}
 

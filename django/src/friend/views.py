@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, render
 
 from base.serializers import UserSerializer
 from profiles.models import Profile
-from utils.request_helpers import is_ajax_request
+from utils.request_helpers import is_ajax_request, authenticated_view
 from .models import UserRelation, FriendRequest
 from .serializers import UserRelationSerializer, FriendRequestSerializer
 from django.contrib.auth import get_user_model
@@ -115,28 +115,28 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def friend_list_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/friend/list.html')
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def friend_requests_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/friend/requests.html')
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def search_friend_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
     return render(request, 'components/drawers/friend/search-friend.html')
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def friend_profile_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
@@ -160,7 +160,7 @@ def friend_profile_drawer(request):
     })
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authenticated_view
 def friend_chat_drawer(request):
     if not is_ajax_request(request):
         return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")

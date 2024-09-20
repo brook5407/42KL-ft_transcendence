@@ -1,87 +1,165 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@font-face{
+	font-family:'digital-clock-font';
+	src: url('fonts/digital-7.regular.ttf');
+   }
+
 * {
-	font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
 	text-align: center;
-	color:black;
 }
-#gameContainer {
-    position: relative;
-}
+
 #canvasContainer {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
     position: relative;
-    display: inline-block;
-    margin: auto;
 }
 
 #gameCanvas {
     width: 100%; /* Match parent container */
     height: 100%; /* Match parent container */
-    display: none;
-    border: 3px solid grey;
+    display: flex;
+    border: 1vw solid #0E8F8F;
 }
 
 #overlay {
-    position: absolute;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center;     /* Center horizontally */
+    position: absolute;      /* Ensure it's positioned over the game area */
     top: 0;
     left: 0;
     width: 100%; /* Cover the entire canvas */
     height: 100%; /* Cover the entire canvas */
     background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     color: white;
     font-size: 48px;
     font-weight: bold;
     z-index: 1000;
 }
+
+#winnerText {
+	display: none;
+	color:white;
+    font-size: 24px;
+    margin: 10px 0;
+}
+
 #countdownText {
-    text-align: center;
 	display: none;
+	color:white;
+    font-size: 48px;
+    margin: 10px 0;
 }
-#scoreBoard {
-	font-size: 64px;
-	color: white;
-	padding-left: 0;
-    padding-right: 0;
-    margin-left: auto;
-    margin-right: auto;
-	display: none;
+
+#matchmaking {
+    color: white;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;  /* Center horizontally */
+    align-items: center;      /* Center vertically */
+    height: 100vh;
 }
-#matchmaking, #roomCode {
-	color: white;
-	font-size: 24px;
-	text-align: center;
-	padding-top: 100px;
+
+#roomCode {
+    color: white;
 }
-/* #resetButton {
-	font-size: 24px;
-	width: 100px;
-	height: 50px;
-	border: 3px solid grey;
-	border-radius: 15px;
-	cursor: pointer;
-	color: black;
-	margin: 10px;
+
+.score {
+    font-size: 5vw; /* Use vw to scale with window width */
+    font-weight: bold;
+    font-family: 'digital-clock-font';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    white-space: nowrap; /* Prevent text from wrapping */
 }
-#pauseButton {
-	font-size: 24px;
-	width: 100px;
-	height: 50px;
-	border: 3px solid grey;
-	border-radius: 15px;
-	cursor: pointer;
-	color: black;
-	margin: 10px;
-} */
-/* #blurCanvas {
-	background: rgba(255, 255, 255, 0.8);
+.left-score {
+    left: 2vw;
+	color: #EC4242;
 }
-select {
-	margin: 10px;
-	width: 100px;
-	height: 30px;
-	text-align: center;
-	border: 3px solid grey;
-	border-radius: 15px;
-} */
+.right-score {
+    right: 2vw;
+	color: #4FCDF0;
+}
+
+.container {
+    display: none;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center;  /* Center horizontally */
+    align-items: center;      /* Center vertically */
+    height: 100vh;
+}
+
+.game-area {
+    flex-grow: 1; /* Allows the game area to grow between top and footer */
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically within available space */
+    position: relative;
+	padding-left: 10vw;
+    padding-right: 10vw;
+}
+
+/* Details Area */
+.details-area {
+    background-color: #1A9EC7;
+    border: 10px solid #1FB5E4;
+    padding: 10px;
+    color: white;
+    display: flex;
+    /* flex-direction: column; */
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-weight: bold;
+}
+
+h2 {
+    color: black;
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 0;
+}
+.players, .player {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.player img {
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 10px;
+}
+
+button.flag-btn {
+    background-color: red;
+    border-color: red;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+button.fullscreen-btn {
+    background-color: yellow;
+    border-color: yellow;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}

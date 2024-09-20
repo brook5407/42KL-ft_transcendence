@@ -13,14 +13,59 @@
 /**
  * @typedef {Object} WSChatMessage
  * @property {WSChatMessageErrorType} [error]
- * @property {string} [type]
+ * @property {string} [type] // 'group_chat_message', 'private_chat_message', 'pong_invitation_message'
+ * @property {string} [action] // accept, reject
  * @property {string} message
+ * @property {MatchInvitation} [match_invitation]
+ * @property {string} [match_invitation_id]
  * @property {User} sender
  * @property {string} room_id
  * @property {string} room_name
  * @property {string} [cover_image]
  * @property {string} created_at
  */
+
+/**
+ * @typedef {Object} MatchInvitation
+ * @property {string} id
+ * @property {User} sender
+ * @property {User} receiver
+ * @property {Match} match
+ * @property {MatchInvitationStatus} status
+ * @property {string} expired_at
+ * @property {string} created_at
+ */
+
+/**
+ * @typedef {Object} Match
+ * @property {string} id
+ * @property {Player} winner
+ * @property {Player} loser
+ * @property {number} winner_score
+ * @property {number} loser_score
+ * @property {MatchType} type
+ * @property {string} ended_at
+ * @property {string} created_at
+ */
+
+/**
+ * @enum {string}
+ */
+const MatchType = {
+	PVP: 'P',
+	PVE: 'E',
+	FRIEND: 'F',
+	TOURNAMENT: 'T',
+};
+
+/**
+ * @enum {string}
+ */
+const MatchInvitationStatus = {
+	WAITING: 'W',
+	ACCEPTED: 'A',
+	REJECTED: 'R',
+};
 
 /**
  * @enum {string}
@@ -82,7 +127,7 @@ const WSChatMessageErrorType = {
  * @property {User} owner
  * @property {TournamentPlayer[]} players
  * @property {Player} [winner]
- * @property {TournamentMatch[]} [matches]
+ * @property {Match[]} [matches]
  * @property {TournamentStatus} status
  * @property {string} created_at
  * @property {string} ended_at
@@ -95,18 +140,6 @@ const WSChatMessageErrorType = {
  * @property {number} wins
  * @property {number} loses
  * @property {number} elo
- */
-
-/**
- * @typedef {Object} TournamentMatch
- * @property {string} id
- * @property {TournamentMatchStatus} status
- * @property {TournamentPlayer} winner
- * @property {TournamentPlayer} loser
- * @property {number} winner_score
- * @property {number} loser_score
- * @property {TournamentRoom} tournament
- * @property {string} created_at
  */
 
 /**
