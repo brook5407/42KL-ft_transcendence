@@ -297,6 +297,12 @@ if not DEBUG:
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',  # Only JSON responses
         ),
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            # 'rest_framework.authentication.SessionAuthentication',
+            'rest_framework.authentication.TokenAuthentication',
+            'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+        ),
+        'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema'
     }
 
 SIMPLE_JWT = {
