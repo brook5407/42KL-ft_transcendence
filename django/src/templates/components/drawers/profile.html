@@ -37,8 +37,8 @@
 		</div>
 		<div class="profile-info-item">
 			<p class="profile-bio">
-				{% if friend_profile.bio %}
-					{{ friend_profile.bio }}
+				{% if user.profile.bio %}
+					{{ user.profile.bio }}
 				{% else %}
 					{% trans "This user didn't say anything" %}
 				{% endif %}
