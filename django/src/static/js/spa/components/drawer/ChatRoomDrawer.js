@@ -13,6 +13,8 @@ export class ChatRoomDrawer extends GenericDrawer {
 		super(params);
 
 		this.room_id = null;
+		this.isGroupChat = false;
+		this.lastInviteTimestamp = null;
 
 		this.spinnerHTML = `
 			<div class="spinner-border text-primary" role="status">
@@ -96,6 +98,7 @@ export class ChatRoomDrawer extends GenericDrawer {
 				document.querySelector('#room_id')?.textContent || '""'
 			);
 		}
+		this.isGroupChat = this.props.is_group_chat;
 
 		// mark the chat as read
 		ajaxWithAuth(`/api/active-chat/mark-read/${this.room_id}/`, {
@@ -124,8 +127,12 @@ export class ChatRoomDrawer extends GenericDrawer {
 			}
 		});
 
-		const sendMessage = () => {
-			const message = chatInput.value;
+		const sendMessage = (value) => {
+			let message = value;
+			if (!message) {
+				const chatInput = this.element.querySelector('#message-input');
+				message = chatInput.value;
+      }
 			if (message.length > MAX_MESSAGE_LENGTH) {
 				alert(`Message is too long! Please limit your message to ${MAX_MESSAGE_LENGTH} characters.`);
 				return;
@@ -145,16 +152,27 @@ export class ChatRoomDrawer extends GenericDrawer {
 		});
 
 		const inviteButton = this.element.querySelector('#pong-invite-icon');
-		inviteButton.addEventListener('click', () => {
-			// WXR TODO:
-			// send a pong invite message, expire in 5 mins, able to accept or reject
-			// add a new model in db for pong invite
-			// if accepted
-			// 		if the sender user online redirect both user to the pong page
-			//		if the sender user offline, show a toast message showing the sender user is offline
-			// if rejected, show a toast message to sender if online, showing the invite is rejected
-			// friend games are not gonna affect ELO points
-		});
+		if (inviteButton) {
+			inviteButton.addEventListener('click', () => {
+				if (
+					this.lastInviteTimestamp &&
+					Date.now() - this.lastInviteTimestamp < 5000
+				) {
+					return;
+				}
+				// if accepted
+				// 		if the sender user online redirect both user to the pong page
+				//		if the sender user offline, show a toast message showing the sender user is offline
+				// if rejected, show a toast message to sender if online, showing the invite is rejected
+				// friend games are not gonna affect ELO points
+				sendMessage('/invite');
+				this.lastInviteTimestamp = Date.now();
+				inviteButton.classList.add('disabled');
+				setTimeout(() => {
+					inviteButton.classList.remove('disabled');
+				}, 5000);
+			});
+		}
 
 		const sendButton = this.element.querySelector('#send-button');
 		sendButton.addEventListener('click', sendMessage);
@@ -205,10 +223,48 @@ export class ChatRoomDrawer extends GenericDrawer {
 
 	/**
 	 *
-	 * @param {WSChatMessage} message
+	 * @param {WSChatMessage|Message} message
+	 * @returns {string}
+	 */
+	renderMessageBubble(message) {
+		let invitationExpiresAt = null;
+		if (message.match_invitation && message.match_invitation.expired_at) {
+			invitationExpiresAt = new Date(message.match_invitation.expired_at);
+		} else if (
+			!message.match_invitation &&
+			message.message.startsWith('/invite')
+		) {
+			invitationExpiresAt = new Date();
+			invitationExpiresAt.setMinutes(invitationExpiresAt.getMinutes() + 5);
+		}
+		if (message.match_invitation || message.message.startsWith('/invite')) {
+			const status = message.match_invitation?.status || 'W';
+			return `
+				<div class="chat-room__message-card" data-status="${status}" data-expires-at="${invitationExpiresAt?.toISOString()}">
+					<div class="chat-room__message-card-title">Jom Pong!</div>
+					<div class="chat-room__message-card-icon">🏓</div>
+					<div class="chat-room__message-card-status"></div>
+					<div class="chat-room__message-card-buttons">
+						<button class="chat-room__message-card-button chat-room__pong-accept-button">Accept</button>
+						<button class="chat-room__message-card-button chat-room__pong-reject-button">Reject</button>
+					</div>
+				</div>
+			`;
+		} else {
+			return `
+				<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
+					message.message
+				)}</div>
+			`;
+		}
+	}
+
+	/**
+	 *
+	 * @param {WSChatMessage|Message} message
 	 * @returns {HTMLDivElement}
 	 */
-	createMessageElement(message) {
+	createMessageElement(message, isInviteMessage = false) {
 		const isSentByCurrentUser =
 			message.sender.username === currentUser.username;
 		const messageClass = isSentByCurrentUser
@@ -226,9 +282,7 @@ export class ChatRoomDrawer extends GenericDrawer {
 			message.sender.profile.nickname
 		}'s avatar" class="chat-room__avatar">
 			</div>
-			<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
-				message.message
-			)}</div>
+			${this.renderMessageBubble(message)}
 			<div class="chat-room__timestamp">${formattedTimestamp}</div>
 		`;
 
@@ -248,6 +302,84 @@ export class ChatRoomDrawer extends GenericDrawer {
 					url: `drawer/profile/`,
 				});
 			});
+		}
+
+		if (message.match_invitation || message.message.startsWith('/invite')) {
+			const invitationCard = messageElem.querySelector(
+				'.chat-room__message-card'
+			);
+			const invitationStatusContainer = invitationCard.querySelector(
+				'.chat-room__message-card-status'
+			);
+			const acceptButton = invitationCard.querySelector(
+				'.chat-room__pong-accept-button'
+			);
+			const rejectButton = invitationCard.querySelector(
+				'.chat-room__pong-reject-button'
+			);
+			const invitationStatus = invitationCard.getAttribute('data-status');
+			if (invitationStatus === 'W') {
+				const expiredAtString = invitationCard.getAttribute('data-expires-at');
+				const expiresAt = new Date(expiredAtString);
+				const currentTime = Date.now();
+				let remainingTime = Math.floor((expiresAt - currentTime) / 1000);
+
+				if (remainingTime <= 0) {
+					// If the invitation is already expired
+					invitationStatusContainer.textContent = 'Expired';
+					acceptButton.disabled = true;
+					rejectButton.disabled = true;
+					acceptButton.classList.add('disabled');
+					rejectButton.classList.add('disabled');
+				} else {
+					// Initialize the countdown timer
+					invitationStatusContainer.textContent = `Expires in ${remainingTime} seconds`;
+
+					const countdownInterval = setInterval(() => {
+						remainingTime -= 1;
+						invitationStatusContainer.textContent = `Expires in ${remainingTime} seconds`;
+
+						if (remainingTime <= 0) {
+							clearInterval(countdownInterval);
+							invitationStatusContainer.textContent = 'Expired';
+							acceptButton.disabled = true;
+							rejectButton.disabled = true;
+							acceptButton.classList.add('disabled');
+							rejectButton.classList.add('disabled');
+						}
+					}, 1000);
+
+					if (!isSentByCurrentUser) {
+						acceptButton.addEventListener('click', () => {
+							// if the sender user is online, redirect both user to the pong page
+							// if the sender user is offline, show a toast message showing the sender user is offline
+							window.chatController.acceptPongInvitation(
+								this.room_id,
+								message.match_invitation?.id || message.match_invitation_id
+							);
+						});
+
+						rejectButton.addEventListener('click', () => {
+							window.chatController.rejectPongInvitation(
+								this.room_id,
+								message.match_invitation?.id || message.match_invitation_id
+							);
+						});
+					} else {
+						acceptButton.disabled = true;
+						rejectButton.disabled = true;
+						acceptButton.classList.add('disabled');
+						rejectButton.classList.add('disabled');
+					}
+				}
+			} else {
+				invitationStatusContainer.textContent =
+					invitationStatus === 'A' ? 'Accepted' : 'Rejected';
+				acceptButton.disabled = true;
+				rejectButton.disabled = true;
+				acceptButton.classList.add('disabled');
+				rejectButton.classList.add('disabled');
+			}
 		}
 
 		return messageElem;

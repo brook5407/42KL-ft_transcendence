@@ -24,17 +24,13 @@ export function logout() {
 	router();
 }
 
-export function getCurrentUser(needRefreshJWT = true) {
-	return ajaxWithAuth(
-		'/current-user',
-		{
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			},
+export function getCurrentUser() {
+	return ajaxWithAuth('/current-user', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
 		},
-		needRefreshJWT
-	)
+	})
 		.then((response) => {
 			if (response.ok) {
 				return response.json();

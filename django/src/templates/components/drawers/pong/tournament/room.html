@@ -76,9 +76,7 @@
 		if (tournamentRoom.owner.id === window.currentUser.id) {
 			const startButton = div.querySelector('.tournament-room__start-button');
 			startButton.addEventListener('click', function () {
-				ajaxWithAuth('WXR TODO', {
-					method: 'POST',
-				});
+				window.tournamentController.startTournament();
 			});
 		}
 

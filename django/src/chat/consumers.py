@@ -4,6 +4,7 @@ from django.db.models import Q
 from asgiref.sync import sync_to_async
 from django.utils import timezone
 from .models import ChatRoom, ChatMessage
+from pong.models import MatchInvitation
 import json
 
 
@@ -60,6 +61,105 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+        type = data['type']
+        if type == 'chat_message':
+            await self.handle_message(data)
+        elif type == 'pong_invitation':
+            await self.handle_pong_invitation(data)
+        elif type == 'pong_invitation_accept_acknowledgement':
+            await self.handle_pong_invitation_accept_acknowledgement(data)
+            
+    async def handle_pong_invitation_accept_acknowledgement(self, data):
+        room_id = data['room_id']
+        room = await self.get_room(room_id)
+        match_invitation_id = data['match_invitation_id']
+        user_profile = await sync_to_async(lambda: self.user.profile)()
+        other_member = await self.get_other_member(room)
+        
+        await self.accept_pong_invitation(match_invitation_id)
+        match_id = await self.create_match(match_invitation_id)
+        
+        for group in [f"private_chats_{self.user.id}", f"private_chats_{other_member.id}"]:
+            await self.channel_layer.group_send(
+                group,
+                {
+                    'type': 'pong_invitation_message',
+                    'action': 'accept_acknowledgement',
+                    'message': f'Pong invitation accept acknowledged',
+                    'sender': {
+                        'id': self.user.id,
+                        'username': self.user.username,
+                        'email': self.user.email,
+                        'profile': {
+                            'nickname': user_profile.nickname,
+                            'bio': user_profile.bio,
+                            'avatar': user_profile.avatar.url,
+                        }
+                    },
+                    'match_invitation_id': match_invitation_id,
+                    'match_id': match_id,
+                    'room_id': room_id,
+                    'room_name': room.name,
+                    'created_at': timezone.now().isoformat(),
+                }
+            )
+            
+    @database_sync_to_async
+    def create_match(self, match_invitation_id):
+        match_invitation = MatchInvitation.objects.get(id=match_invitation_id)
+        match = match_invitation.create_match()
+        return match.id
+    
+    @database_sync_to_async
+    def accept_pong_invitation(self, match_invitation_id):
+        match_invitation = MatchInvitation.objects.get(id=match_invitation_id)
+        if match_invitation.status == 'W':
+            match_invitation.accept()
+        
+    @database_sync_to_async
+    def reject_pong_invitation(self, match_invitation_id):
+        match_invitation = MatchInvitation.objects.get(id=match_invitation_id)
+        if match_invitation.status == 'W':
+            match_invitation.reject()
+            
+    async def handle_pong_invitation(self, data):
+        accept = data['accept']
+        room_id = data['room_id']
+        match_invitation_id = data['match_invitation_id']
+        
+        room = await self.get_room(room_id)
+        if room.is_group_chat:
+            return
+        user_profile = await sync_to_async(lambda: self.user.profile)()
+        other_member = await self.get_other_member(room)
+        
+        if not accept:
+            await self.reject_pong_invitation(match_invitation_id)
+        
+        await self.channel_layer.group_send(
+            f"private_chats_{other_member.id}",
+            {
+                'type': 'pong_invitation_message',
+                'action': 'accept' if accept else 'reject',
+                'message': f'Pong invitation {"accepted" if accept else "rejected"}',
+                'sender': {
+                    'id': self.user.id,
+                    'username': self.user.username,
+                    'email': self.user.email,
+                    'profile': {
+                        'nickname': user_profile.nickname,
+                        'bio': user_profile.bio,
+                        'avatar': user_profile.avatar.url,
+                    }
+                },
+                'match_invitation_id': match_invitation_id,
+                'room_id': room_id,
+                'room_name': room.name,
+                'created_at': timezone.now().isoformat(),
+            }
+        )
+    
+    async def handle_message(self, data):
         message = data['message']
         room_id = data['room_id']
         
@@ -91,6 +191,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'created_at': timezone.now().isoformat(),
                 }
             )
+            chat_message = await self.create_chat_message(message, room)
         else:
             other_member = await self.get_other_member(room)
             if not other_member:
@@ -117,6 +218,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message': 'The user has blocked you'
                 }))
                 return
+
+            chat_message = await self.create_chat_message(message, room)
             for group in [f"private_chats_{self.user.id}", f"private_chats_{other_member.id}"]:
                 await self.channel_layer.group_send(
                     group,
@@ -133,14 +236,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                 'avatar': user_profile.avatar.url,
                             }
                         },
+                        'match_invitation_id': chat_message.match_invitation.id if chat_message.match_invitation else None,
                         'room_name': room.name,
                         'room_id': room_id,
                         'created_at': timezone.now().isoformat(),
                     }
                 )
-            
-        # Create the chat message in the database
-        chat_message = await self.create_chat_message(message, room)
         
     @database_sync_to_async
     def get_room(self, room_id):
@@ -148,6 +249,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def create_chat_message(self, message, room):
+        if message.startswith('/invite'):
+            match_invitation = MatchInvitation.objects.create(sender=self.user, receiver=room.members.exclude(id=self.user.id).first())
+            return ChatMessage.objects.create(message=message, sender=self.user, room=room, match_invitation=match_invitation)
         return ChatMessage.objects.create(message=message, sender=self.user, room=room)
 
     @database_sync_to_async
@@ -177,6 +281,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def private_chat_message(self, event):
         message = event['message']
         sender = event['sender']
+        match_invitation_id = event.get('match_invitation_id', None)
         room_id = event['room_id']
         room_name = event['room_name']
         created_at = event['created_at'] or timezone.now().isoformat()
@@ -186,6 +291,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'type': 'private_chat_message',
             'message': message,
             'sender': sender,
+            'match_invitation_id': match_invitation_id,
+            'room_id': room_id,
+            'room_name': room_name,
+            'created_at': created_at,
+        }))
+        
+    async def pong_invitation_message(self, event):
+        action = event['action']
+        message = event['message']
+        sender = event['sender']
+        match_invitation_id = event.get('match_invitation_id', None)
+        match_id = event.get('match_id', None)
+        room_id = event['room_id']
+        room_name = event['room_name']
+        created_at = event['created_at'] or timezone.now().isoformat()
+
+        # Send notification to WebSocket
+        await self.send(text_data=json.dumps({
+            'type': 'pong_invitation_message',
+            'action': action,
+            'message': message,
+            'sender': sender,
+            'match_invitation_id': match_invitation_id,
+            'match_id': match_id,
             'room_id': room_id,
             'room_name': room_name,
             'created_at': created_at,

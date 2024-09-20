@@ -90,3 +90,6 @@ function activateModal() {
 
 	document.getElementById('modalOverlay').addEventListener('click', closeModal);
 }
+
+window.openModal = openModal;
+window.closeModal = closeModal;

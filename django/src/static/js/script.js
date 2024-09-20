@@ -6,7 +6,7 @@ import { refreshJWT } from './spa/ajax.js';
 
 window.onload = async function () {
 	await refreshJWT();
-	getCurrentUser(false);
+	getCurrentUser();
 	router();
 };
 

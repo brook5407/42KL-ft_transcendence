@@ -47,7 +47,6 @@ export class ChatListDrawer extends GenericDrawer {
 		}
 
 		const data = await res.json();
-		console.log(data);
 		this.nextPage++;
 		if (!data.next) {
 			this.stillHasNextPage = false;
@@ -142,7 +141,7 @@ export class ChatListDrawer extends GenericDrawer {
 			if (Object.keys(wsChatMessage).length > 0) {
 				// Update the element with the new data
 				chatRoomElement.querySelector('.last-message-sender').textContent =
-					wsChatMessage.sender.nickname;
+					wsChatMessage.sender.profile.nickname;
 				chatRoomElement.querySelector('.last-message').textContent =
 					wsChatMessage.message;
 				chatRoomElement
@@ -248,6 +247,9 @@ export class ChatListDrawer extends GenericDrawer {
 				url: 'drawer/chat-room',
 				queryParams: {
 					room_id: chatRoom.room.id,
+				},
+				props: {
+					is_group_chat: chatRoom.room.is_group_chat,
 				},
 			});
 		});
