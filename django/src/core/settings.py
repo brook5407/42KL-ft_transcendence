@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     'pong',
     'friend',
     'profiles',
-    'game_history',
 ]
 
 MIDDLEWARE = [

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.templatetags.static import static
 from base.models import BaseModel
-from game_history.models import WinsLosses
+from pong.models import Player
 
 
 User = get_user_model()
@@ -29,5 +29,5 @@ class Profile(BaseModel):
         return self.avatar.url
     
     def get_wins_losses(self):
-        model, created = WinsLosses.objects.get_or_create(user=self.user)
-        return model.wins, model.losses
+        player = Player.objects.get(user=self.user)
+        return player.wins, player.losses
