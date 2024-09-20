@@ -6,6 +6,7 @@ from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKe
 from django.contrib.contenttypes.models import ContentType
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import F, ExpressionWrapper, fields
 
 
 User = get_user_model()
@@ -40,6 +41,7 @@ class Match(BaseModel):
         PVP = "P", "PVP"
         PVE = "E", "PVE"
         FRIEND = "F", "Friend"
+        TOURNAMENT = "T", "Tournament"
 
     winner = models.ForeignKey(
         Player, on_delete=models.SET_NULL, null=True, related_name="match_winner"
@@ -84,7 +86,7 @@ class TournamentRoom(BaseModel):
         blank=True,
     )
     matches = models.ManyToManyField(
-        "TournamentMatch", related_name="tournament_matches"
+        Match, related_name="tournament_matches"
     )
     status = models.CharField(
         max_length=1, choices=Status.choices, default=Status.WAITING
@@ -135,7 +137,7 @@ class TournamentRoom(BaseModel):
         return self.owner == user
 
     def start(self):
-        if not self.is_owner(self.owner.user):
+        if not self.is_owner(self.owner):
             raise ValueError("You are not the owner of this tournament room.")
         if self.players.count() < 4:
             raise ValueError("Minimum number of players not met.")
@@ -155,29 +157,25 @@ class TournamentRoom(BaseModel):
         if self.players_left.count() == 1:
             self.winner = self.players_left.first().player
             self.save()
-            return None, False # winner is found
-        is_next_round = False
-        if self.matches.filter(status=TournamentMatch.Status.WAITING).count() == 0:
-            self.__next_round()
-            is_next_round = True
-        matches = self.matches.filter(status=TournamentMatch.Status.WAITING).order_by('-created_at')
-        match = matches.first()
-        match.status = TournamentMatch.Status.ONGOING
-        match.save()
-        return match, is_next_round
+            return None # winner found, tournament ended
+        players_left_sorted = self.players_left.all()
+        next_2_players = players_left_sorted[:2]
+        match = Match.objects.create(
+            winner=next_2_players[0].player, loser=next_2_players[1].player, type=Match.MatchType.TOURNAMENT
+        )
+        self.matches.add(match)
+        next_2_players[0].last_match_at = timezone.now()
+        next_2_players[1].last_match_at = timezone.now()
+        return match
 
-    def __next_round(self):
+    def finish_match(self, match):
         if self.status != self.Status.ONGOING:
             raise ValueError("Tournament is not ongoing.")
-        if self.matches.filter(status=TournamentMatch.Status.ONGOING).count() > 0:
-            raise ValueError("There is an ongoing match.")
-        players_left = list(self.players_left.all())
-        for i in range(0, len(players_left), 2):
-            match = TournamentMatch.objects.create(tournament=self)
-            match.winner = players_left[i]
-            match.loser = players_left[i + 1]
-            match.save()
-            self.matches.add(match)
+        if match not in self.matches.all():
+            raise ValueError("Match is not in this tournament.")
+        if match.winner not in [player.player for player in self.players_left.all()]:
+            raise ValueError("Winner is not in the next round.")
+        self.players_left.remove(TournamentPlayer.objects.get(player=match.loser, tournament=self))
 
     def end(self):
         self.status = self.Status.COMPLETED
@@ -194,44 +192,13 @@ class TournamentPlayer(BaseModel):
     tournament = models.ForeignKey(
         TournamentRoom, on_delete=models.CASCADE, related_name="tournament_player"
     )
+    last_match_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        ordering = ["created_at"]
+        ordering = ["last_match_at"]
 
     def __str__(self):
         return f"Player {self.player} in {self.tournament}"
-
-
-class TournamentMatch(BaseModel):
-    class Status(models.TextChoices):
-        WAITING = "W", "Waiting"
-        ONGOING = "O", "Ongoing"
-        COMPLETED = "C", "Completed"
-
-    status = models.CharField(choices=Status.choices, default=Status.WAITING, max_length=1)
-    winner = models.ForeignKey(
-        TournamentPlayer,
-        on_delete=models.SET_NULL,
-        related_name="tournament_match_winner",
-        null=True,
-        blank=True,
-    )
-    loser = models.ForeignKey(
-        TournamentPlayer,
-        on_delete=models.SET_NULL,
-        related_name="tournament_match_loser",
-        null=True,
-        blank=True,
-    )
-    winner_score = models.IntegerField(default=0)
-    loser_score = models.IntegerField(default=0)
-    tournament = models.ForeignKey(
-        TournamentRoom, on_delete=models.CASCADE, related_name="tournament_match"
-    )
-
-    def __str__(self):
-        return f"{self.winner} vs {self.loser}. winner: {self.winner}"
-
 
 class MatchHistory(BaseModel):
     player = models.ForeignKey(

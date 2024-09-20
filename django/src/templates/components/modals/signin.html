@@ -14,16 +14,16 @@
 		{% csrf_token %}
 		<div class="input-group">
 			<label for="username">{% trans 'Username' %}</label>
-			<input type="text" id="username" name="username" class="form-control" required />
+			<input type="text" id="username" name="username" class="form-control" maxlength="20" minlength="6" required />
 		</div>
 		<div class="input-group">
 			<label for="password">{% trans 'Password' %}</label>
-			<input type="password" id="password" name="password" class="form-control" required />
+			<input type="password" id="password" name="password" class="form-control" maxlength="20" minlength="6" required />
 		</div>
         {% if otp_auth %}
             <div class="input-group otp-group">
                 <label for="otp">OTP</label>
-                <input type="number" id="otp" name="otp" class="form-control" required />
+                <input type="text" id="otp" name="otp" class="form-control" maxlength="6" minlength="6" inputmode="numeric" pattern="\d{6}" required />
                 <button type="button" id="send-otp-button" class="send-otp" onclick="otp_click()">{% trans 'send' %}</button>
             </div>
         {% endif %}
@@ -38,9 +38,19 @@
 
 {% block modalScripts %}
     <script>
+        let otpCooldown = 60;
+        let timerInterval;
+        let isButtonFrozen = false;
+        
         function otp_click() {
+            if (isButtonFrozen) return;
+        
             const username = document.getElementById('username').value; 
             const password = document.getElementById('password').value;
+            const button = document.getElementById('send-otp-button');
+        
+            // Freeze the button immediately
+            freezeButton(button);
             
             ajax('auth/send-otp', { 
                 method: 'POST',
@@ -49,17 +59,45 @@
                 },
                 body: JSON.stringify({ username: username, password: password }),
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(data.message);
+            .then(response => response.json().then(data => {
+                if (response.ok) {
+                    showSuccessMessage("{% trans 'OTP sent to your email!' %}");
+                    startCountdown(button);
                 } else {
-                    alert("{% trans 'OTP sent to your email!' %}");
+                    throw new Error(data.non_field_errors);
                 }
-            })
+            }))
             .catch(error => {
-                alert("{% trans 'Error requesting OTP. Please try again.' %}");
+                showErrorMessage(error.message);
+                // Even if there's an error, keep the button frozen
+                isButtonFrozen = false;
+                button.disabled = false;
             });
+        }
+        
+        function freezeButton(button) {
+            isButtonFrozen = true;
+            button.disabled = true;
+        }
+        
+        function startCountdown(button) {
+            let remainingTime = otpCooldown;
+        
+            button.textContent = `{% trans 'Resend OTP in ' %}` + remainingTime + 's';
+        
+            // Start the countdown
+            timerInterval = setInterval(() => {
+                remainingTime--;
+        
+                if (remainingTime > 0) {
+                    button.textContent = `{% trans 'Resend OTP in ' %}` + remainingTime + 's';
+                } else {
+                    clearInterval(timerInterval);
+                    button.disabled = false;
+                    button.textContent = `{% trans 'Resend OTP' %}`;
+                    isButtonFrozen = false;
+                }
+            }, 1000); // update every second
         }
     </script>
 {% endblock %}

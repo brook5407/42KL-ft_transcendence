@@ -24,10 +24,6 @@ export const ROUTES = {
 		component: PongPage,
 		data: { url: '/pong/tournament/' },
 	},
-	'^/pong/tournament/[^/]+/?$': {
-		component: PongPage,
-		dynamic: true,
-	},
 };
 
 // global variable to keep track of the current root component
@@ -44,9 +40,9 @@ document.body.addEventListener('click', (e) => {
 	}
 });
 
-export async function router() {
+export async function router(data) {
 	// remove trailing slash
-	let pathname = window.location.pathname;
+	let pathname = data?.url || window.location.pathname;
 	if (pathname.length > 1 && pathname[pathname.length - 1] === '/') {
 		pathname = pathname.slice(0, -1);
 	}

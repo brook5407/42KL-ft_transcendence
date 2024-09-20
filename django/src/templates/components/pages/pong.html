@@ -7,8 +7,6 @@
 <div id="matchmaking" class="whiteText">{% trans 'Searching for opponent...' %}</div>
 
 <div id="pong-game-container" class="container">
-    
-
     <div class="game-area">
         <div id="score1" class="score left-score">0</div>
         <div id="canvasContainer">
@@ -21,7 +19,7 @@
         <div id="score2" class="score right-score">0</div>
     </div>
 
-    <div class="details-area">
+    <div class="details-area" style="display: none;">
         <div class="room-code">
             <h2>Room Code</h2><div id="roomCode">Code</div>
         </div>
@@ -49,10 +47,10 @@
         </div>
     </div>
 
-</div>
-
-
 {{ game_mode|json_script:"game_mode" }}
 {% if match_id %}
     {{ match_id|json_script:"match_id" }}
+{% endif %}
+{% if tournament_id %}
+    {{ tournament_id|json_script:"tournament_id" }}
 {% endif %}
