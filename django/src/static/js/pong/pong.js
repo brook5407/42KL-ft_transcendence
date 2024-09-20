@@ -262,6 +262,9 @@ export class TournamentClient {
 			case 'next_match':
 				// this.nextMatch(data);
 				break;
+			case 'tournament_ended':
+				this.tournamentEnd(data);
+				break;
 			default:
 				console.error('Unknown message type:', data.type);
 		}
@@ -369,6 +372,26 @@ export class TournamentClient {
 		// 		navigateTo('/');
 		// 	}
 		// }, 1000);
+	}
+
+	tournamentEnd(data) {
+		console.log('tournament_end');
+		this.overlay.style.display = 'flex';
+		this.winnerText.style.display = 'flex';
+		this.winnerText.innerText = data.message;
+
+		let countdown = 11;
+		const countdownInterval = setInterval(() => {
+			countdown -= 1;
+			this.countdownText.style.fontSize = '12px';
+			this.countdownText.innerText = `Returning to the main menu in ${countdown} seconds...`;
+			this.countdownText.style.display = 'flex';
+
+			if (countdown === 0) {
+				clearInterval(countdownInterval);
+				navigateTo('/');
+			}
+		}, 1000);
 	}
 
 	attachEventListeners() {

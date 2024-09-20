@@ -45,10 +45,6 @@ export async function ajaxWithAuth(url, options) {
 	}
 
 	const response = await fetch(url, fetchOptions);
-	if (response.status === 401) {
-		navigateTo('/');
-		return response;
-	}
 
 	return response;
 }
