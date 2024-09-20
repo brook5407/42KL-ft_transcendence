@@ -73,7 +73,9 @@ window.currentDrawer = null;
 window.drawerStack = new DrawerStack();
 
 // open drawer and back buttons handler
+console.log("asdfsfsad")
 document.body.addEventListener('click', (e) => {
+	console.log("fuck")
 	const drawerElement = checkNearestMatch(e.target, '[data-drawer]', 4);
 	if (drawerElement) {
 		// open drawer
