@@ -75,8 +75,8 @@
     {% if store_reset_params %}
     <script>
       // Store UID and token in localStorage
-      localStorage.setItem('resetPasswordUid', '{{ uid }}');
-      localStorage.setItem('resetPasswordToken', '{{ token }}');
+      document.cookie = 'resetPasswordUid={{ uid }}';
+      document.cookie = 'resetPasswordToken={{ token }}';
     </script>
     {% endif %}
   </body>

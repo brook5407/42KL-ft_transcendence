@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
 				submitForm(event.target, method, signin);
 			} else if (event.target.matches('#signup-form')) {
 				submitForm(event.target, method, signup);
+			} else if (event.target.matches('#reset-password-form')) {
+				submitForm(event.target, method, (data) => {
+					window.location.href = '/';
+				});
 			} else {
 				submitForm(event.target, method);
 			}
@@ -44,6 +48,8 @@ function submitForm(form, method = 'POST', callback) {
 					let errorMessage = 'An error occurred';
 					if (errorData.non_field_errors) {
 						errorMessage = errorData.non_field_errors.join(' ');
+					}else if (errorData.detail) {
+						errorMessage = errorData.detail;
 					} else {
 						// Handle field-specific errors
 						const fieldErrors = [];
