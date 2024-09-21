@@ -222,10 +222,7 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 
-if APP_ENV == 'railway':
-    MEDIA_ROOT = os.environ["RAILWAY_VOLUME_MOUNT_PATH"]
-else:
-    MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 STORAGES = {
     'default': {
