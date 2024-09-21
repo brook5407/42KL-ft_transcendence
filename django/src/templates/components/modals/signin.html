@@ -40,17 +40,12 @@
     <script>
         let otpCooldown = 60;
         let timerInterval;
-        let isButtonFrozen = false;
         
         function otp_click() {
-            if (isButtonFrozen) return;
-        
             const username = document.getElementById('username').value; 
             const password = document.getElementById('password').value;
             const button = document.getElementById('send-otp-button');
-        
-            // Freeze the button immediately
-            freezeButton(button);
+            const closeLoadingEffect = showLoadingEffect();
             
             ajax('auth/send-otp', { 
                 method: 'POST',
@@ -61,6 +56,7 @@
             })
             .then(response => response.json().then(data => {
                 if (response.ok) {
+                    closeLoadingEffect();
                     showSuccessMessage("{% trans 'OTP sent to your email!' %}");
                     startCountdown(button);
                 } else {
@@ -68,17 +64,11 @@
                 }
             }))
             .catch(error => {
+                closeLoadingEffect();
                 showErrorMessage(error.message);
-                // Even if there's an error, keep the button frozen
-                isButtonFrozen = false;
-                button.disabled = false;
             });
         }
         
-        function freezeButton(button) {
-            isButtonFrozen = true;
-            button.disabled = true;
-        }
         
         function startCountdown(button) {
             let remainingTime = otpCooldown;
@@ -93,9 +83,7 @@
                     button.textContent = `{% trans 'Resend OTP in ' %}` + remainingTime + 's';
                 } else {
                     clearInterval(timerInterval);
-                    button.disabled = false;
                     button.textContent = `{% trans 'Resend OTP' %}`;
-                    isButtonFrozen = false;
                 }
             }, 1000); // update every second
         }
