@@ -54,6 +54,7 @@ services:
     depends_on:
       - django
       - cert
+      - kibana
     networks:
       default_network:
         aliases:
