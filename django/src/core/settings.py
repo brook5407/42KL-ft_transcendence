@@ -222,10 +222,7 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 
-if APP_ENV == 'railway':
-    MEDIA_ROOT = os.environ["RAILWAY_VOLUME_MOUNT_PATH"]
-else:
-    MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 STORAGES = {
     'default': {
@@ -355,35 +352,50 @@ OTP_AUTH = os.environ.get('OTP_AUTH', 'false').lower() == 'true'
 AUTH_USER_MODEL = 'base.CustomUser'
 DJANGO_SUPERUSER_CREATE=os.environ.get('DJANGO_SUPERUSER_CREATE', 'false').lower() == 'true'
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'verbose': {
-#             'format': '{levelname} {asctime} {module} {message}',
-#             'style': '{',
-#         },
-#         'simple': {
-#             'format': '{levelname} {message}',
-#             'style': '{',
-#         },
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG' if DEBUG else 'INFO',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'verbose' if not DEBUG else 'simple',
-#         },
-#     },
-#     'root': {
-#         'handlers': ['console'],
-#         'level': 'DEBUG' if DEBUG else 'INFO',
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG' if DEBUG else 'INFO',
-#             'propagate': True,
-#         },
-#     },
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose' if not DEBUG else 'simple',
+        },
+        'logstash': {
+            'level': 'WARNING',
+            'class': 'logstash.TCPLogstashHandler',
+            'host': os.environ.get('LOGSTASH_HOST', 'logstash'),
+            'port': 5000,  # Default value: 5000
+            'version': 1,
+            'message_type': 'django_logstash',  # 'type' field in logstash message. Default value: 'logstash'.
+            'fqdn': False,  # Fully qualified domain name. Default value: false.
+            'tags': ['django.request'],  # list of tags. Default: None.
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG' if DEBUG else 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['logstash'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
+}
