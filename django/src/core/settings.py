@@ -350,7 +350,11 @@ DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 # to set the OTP function
 OTP_AUTH = os.environ.get('OTP_AUTH', 'false').lower() == 'true'
 AUTH_USER_MODEL = 'base.CustomUser'
+
 DJANGO_SUPERUSER_CREATE=os.environ.get('DJANGO_SUPERUSER_CREATE', 'false').lower() == 'true'
+DJANGO_SUPERUSER_EMAIL = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
+DJANGO_SUPERUSER_USERNAME = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
+DJANGO_SUPERUSER_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'adminpassword')
 
 LOGGING = {
     'version': 1,
