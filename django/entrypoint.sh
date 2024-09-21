@@ -13,7 +13,7 @@ python manage.py migrate
 
 # Create superuser if DJANGO_SUPERUSER_CREATE is set to 'true'
 if [ "$DJANGO_SUPERUSER_CREATE" = "true" ]; then
-    python manage.py createsuperuser --noinput --username "$DJANGO_SUPERUSER_USERNAME" --email "$DJANGO_SUPERUSER_EMAIL"
+    python manage.py createsuperuser --noinput --username $DJANGO_SUPERUSER_USERNAME --email $DJANGO_SUPERUSER_EMAIL
 fi
 
 # Start the server
