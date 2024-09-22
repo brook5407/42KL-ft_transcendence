@@ -81,7 +81,7 @@
 
     document.addEventListener('drawer-opened', function(e) {
         setupSnowIntensitySlider()
-    });
+    }, {once: true});
 
     function setupSnowIntensitySlider() {
         const snowIntensitySlider = document.getElementById('snowIntensitySlider');

@@ -18,7 +18,7 @@ class OnetimePassword(BaseModel):
 
     def save(self, *args, **kwargs):
         if not self.expired_at:
-            self.expired_at = timezone.now() + timedelta(minutes=2)
+            self.expired_at = timezone.now() + timedelta(minutes=1)
         super(OnetimePassword, self).save(*args, **kwargs)
 
     def check_expired(self):

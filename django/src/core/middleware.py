@@ -24,6 +24,6 @@ class SetUserSettingMiddleware(MiddlewareMixin):
         if request.user.is_authenticated and hasattr(request, 'snow_intensity'):
             snow_intensity = request.snow_intensity
             if snow_intensity:
-                response.set_cookie('snow_intensity', snow_intensity)
+                response.set_cookie('snow_intensity', snow_intensity, samesite='Lax')
         return response
 

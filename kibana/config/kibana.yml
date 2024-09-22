@@ -1,0 +1,19 @@
+# Kibana configuration for Docker setup with Nginx reverse proxy
+
+# Kibana server settings
+server.name: kibana
+server.host: "0"
+server.port: 5601
+
+# Elasticsearch connection
+elasticsearch.url: http://elasticsearch:9200
+
+# Path configuration for reverse proxy
+server.basePath: "/kibana"
+
+# Logging settings
+logging.verbose: false
+
+# Other settings you might want to consider
+# elasticsearch.pingTimeout: 1500
+# elasticsearch.requestTimeout: 30000

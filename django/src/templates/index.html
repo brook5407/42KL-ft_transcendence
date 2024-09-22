@@ -3,11 +3,16 @@
 {% load static %}
 {% load custom_filters %}
 
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AIsPong - Play pong against AI opponents and join tournaments. Improve your skills and compete with players worldwide." />
+    <meta name="keywords" content="AIsPong, pong game, AI opponent, online tournament, multiplayer game" />
+    <link rel="canonical" href="{{ request.build_absolute_uri }}" />
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
@@ -19,26 +24,45 @@
     <link rel="stylesheet" href="{% static 'styles/toast.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/components.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/loading.css' %}" />
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
-    <title>AIsPong</title>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js" defer></script>
+    <title>AIsPong - Play Pong Against AI | Online Tournaments</title>
+      
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "AIsPong",
+      "url": "{{ request.build_absolute_uri }}",
+      "description": "Play Pong against AI opponents and join online tournaments. Improve your skills and compete with players worldwide.",
+      "applicationCategory": "Game",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      }
+    }
+    </script>
+      
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}" defer></script>
+    <script type="module" src="/static/js/script.js" defer></script>
+    <script type="module" src="/static/js/utils.js" defer></script>
+    <script type="module" src="/static/js/oauth.js" defer></script>
+    <script type="module" src="/static/js/message.js" defer></script>
+    <script type="module" src="/static/js/toast.js" defer></script>
+    <script type="module" src="/static/js/websocket.js" defer></script>
+    <script type="module" src="/static/js/chat/chat.js" defer></script>
+    <script type="module" src="/static/js/spa/modal.js" defer></script>
+    <script type="module" src="/static/js/spa/drawer.js" defer></script>
+    <script type="module" src="/static/js/spa/form.js" defer></script>
+    <script type="module" src="/static/js/notification.js" defer></script>
+    <script type="module" src="/static/js/loading.js" defer></script>
+    <script type="module" src="/static/js/onlineStatus.js" defer></script>
+    <script type="module" src="/static/js/friend/frLiveUpdate.js" defer></script>
+    <script type="module" src="/static/js/pong/tournament.js" defer></script>  
   </head>
 
   <body>
     {{ messages|serialize_flash_messages|json_script:"flash-messages" }}
-
-    <!-- <form id="language-switcher" action="{% url 'set_language' %}" method="post" style="display: none;">
-      {% csrf_token %}
-      <input name="next" type="hidden" value="{{ request.path }}">
-      {% get_current_language as LANGUAGE_CODE %}
-      <input id="language-input" type="hidden" name="language" value="{{ LANGUAGE_CODE }}">
-          {% get_available_languages as LANGUAGES %}
-          {% get_language_info_list for LANGUAGES as languages %}
-          {% for language in languages %}
-        <a href="#" onclick="document.getElementById('language-input').value='{{language.code}}'; document.getElementById('language-switcher').submit();">
-          <img src="/static/images/icons/{{language.name_local}}.svg" alt="{{ language.code }}" style="width:30px; height:auto;">
-        </a>
-      {% endfor %}
-    </form> -->
 
     {% if modals_and_drawers %}
       {% for item in modals_and_drawers %}
@@ -55,28 +79,12 @@
     <div id="drawer-container"></div>
 
     <div id="toast-container"></div>
-
-    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    <script type="module" src="{% static 'js/script.js' %}"></script>
-    <script type="module" src="{% static 'js/utils.js' %}"></script>
-    <script type="module" src="{% static 'js/oauth.js' %}"></script>
-    <script type="module" src="{% static 'js/message.js' %}"></script>
-    <script type="module" src="{% static 'js/toast.js' %}"></script>
-    <script type="module" src="{% static 'js/websocket.js' %}"></script>
-    <script type="module" src="{% static 'js/chat/chat.js' %}"></script>
-    <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
-    <script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
-    <script type="module" src="{% static 'js/spa/form.js' %}"></script>
-    <script type="module" src="{% static 'js/notification.js' %}"></script>
-    <script type="module" src="{% static 'js/loading.js' %}"></script>
-    <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
-    <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
-    <script type="module" src="{% static 'js/pong/tournament.js' %}"></script>
+    
     {% if store_reset_params %}
     <script>
       // Store UID and token in localStorage
-      localStorage.setItem('resetPasswordUid', '{{ uid }}');
-      localStorage.setItem('resetPasswordToken', '{{ token }}');
+      document.cookie = 'resetPasswordUid={{ uid }}';
+      document.cookie = 'resetPasswordToken={{ token }}';
     </script>
     {% endif %}
   </body>

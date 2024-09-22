@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-18 06:53+0000\n"
+"POT-Creation-Date: 2024-09-19 02:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,35 +37,35 @@ msgstr "Bahasa Malaysia"
 msgid "Chinese"
 msgstr "Bahasa Cina"
 
-#: drf_auth/views.py:39 drf_auth/views.py:49
+#: drf_auth/views.py:36 drf_auth/views.py:46
 msgid "Verification key is missing"
 msgstr "Tiada Kunci pengesahan"
 
-#: drf_auth/views.py:68
+#: drf_auth/views.py:65
 msgid "Your email has been successfully verified."
 msgstr "E-mel anda telah berjaya disahkan."
 
-#: drf_auth/views.py:71
+#: drf_auth/views.py:68
 msgid "There was an error verifying your email."
 msgstr "Berlaku ralat mengesahkan e-mel anda."
 
-#: drf_auth/views.py:91
+#: drf_auth/views.py:88
 msgid "OTP sent. Please check your email."
 msgstr "OTP telah dihantar. Sila semak e-mel anda."
 
-#: drf_auth/views.py:95
+#: drf_auth/views.py:92
 msgid "User email is not verified."
 msgstr "E-mel pengguna tidak disahkan."
 
-#: drf_auth/views.py:99
+#: drf_auth/views.py:96
 msgid "User does not exist."
 msgstr "E-mel pengguna belum disahkan."
 
-#: drf_auth/views.py:122 drf_auth/views.py:131
+#: drf_auth/views.py:119 drf_auth/views.py:128
 msgid "OTP is invalid"
 msgstr "OTP tidak sah"
 
-#: drf_auth/views.py:127
+#: drf_auth/views.py:124
 msgid "OTP has expired, Please request a new one"
 msgstr "OTP telah tamat tempoh, Sila minta yang baharu"
 
@@ -135,6 +135,16 @@ msgstr "Kawan-kawan"
 msgid "Profile"
 msgstr "Profil"
 
+#: templates/components/drawers/friend/profile.html:28
+#: templates/components/drawers/profile.html:36
+msgid "Wins:"
+msgstr "Menang:"
+
+#: templates/components/drawers/friend/profile.html:28
+#: templates/components/drawers/profile.html:36
+msgid "Losses:"
+msgstr "Kalah:"
+
 #: templates/components/drawers/friend/profile.html:35
 #: templates/components/drawers/profile.html:43
 msgid "This user didn't say anything"
@@ -143,6 +153,14 @@ msgstr "Pengguna ini tidak berkata apa-apa"
 #: templates/components/drawers/friend/profile.html:40
 msgid "See Match History"
 msgstr "Lihat Sejarah Perlawanan"
+
+#: templates/components/drawers/friend/profile.html:45
+msgid "Unblock"
+msgstr "Nyahsekat"
+
+#: templates/components/drawers/friend/profile.html:47
+msgid "Block"
+msgstr "blok"
 
 #: templates/components/drawers/friend/profile.html:49
 msgid "Delete"
@@ -214,6 +232,7 @@ msgid "Description"
 msgstr "Penerangan"
 
 #: templates/components/drawers/pong/tournament/create.html:25
+#: templates/components/modals/change-password.html:24
 #: templates/components/modals/forget-password.html:16
 #: templates/components/modals/reset-password.html:22
 #: templates/components/modals/signin.html:31
@@ -249,13 +268,13 @@ msgstr "Bio"
 msgid "Save"
 msgstr "Simpan"
 
-#: templates/components/drawers/profile.html:36
-msgid "Wins:"
-msgstr "Menang:"
+#: templates/components/drawers/profile.html:69
+msgid "Please select a valid image file."
+msgstr "Sila pilih fail imej yang sah."
 
-#: templates/components/drawers/profile.html:36
-msgid "Losses:"
-msgstr "Kalah:"
+#: templates/components/drawers/profile.html:72
+msgid "The selected file is too large. Please select a file smaller than 1 MB."
+msgstr "Sila pilih fail yang lebih kecil daripada 1 MB"
 
 #: templates/components/drawers/settings.html:10
 msgid "Settings"
@@ -272,6 +291,7 @@ msgid "Password"
 msgstr "Kata laluan"
 
 #: templates/components/drawers/settings.html:41
+#: templates/components/modals/change-password.html:5
 msgid "Change Password"
 msgstr "Tukar Kata Laluan"
 
@@ -293,6 +313,19 @@ msgstr "sini"
 msgid "42 Login"
 msgstr "42 Log Masuk"
 
+#: templates/components/modals/change-password.html:12
+msgid "Old Password"
+msgstr "Kata laluan"
+
+#: templates/components/modals/change-password.html:16
+#: templates/components/modals/reset-password.html:14
+msgid "New Password"
+msgstr "Kata Laluan Baru"
+
+#: templates/components/modals/change-password.html:20
+msgid "Confirm New Password"
+msgstr "Pengesahan Kata Laluan Baharu"
+
 #: templates/components/modals/forget-password.html:5
 msgid "Forget Password"
 msgstr "Lupa Kata Laluan"
@@ -305,10 +338,6 @@ msgstr "Alamat e-mel"
 #: templates/components/modals/reset-password.html:5
 msgid "Reset Password"
 msgstr "Tetapkan Semula Kata Laluan"
-
-#: templates/components/modals/reset-password.html:14
-msgid "New Password"
-msgstr "Kata Laluan Baru"
 
 #: templates/components/modals/reset-password.html:18
 #: templates/components/modals/signup.html:28
@@ -337,13 +366,18 @@ msgstr "hantar"
 msgid "Forgot Password?"
 msgstr "Lupa Kata Laluan?"
 
-#: templates/components/modals/signin.html:57
+#: templates/components/modals/signin.html:64
 msgid "OTP sent to your email!"
 msgstr "OTP telah dihantar ke e-mel anda!"
 
-#: templates/components/modals/signin.html:61
-msgid "Error requesting OTP. Please try again."
-msgstr "Ralat meminta OTP. Sila cuba lagi."
+#: templates/components/modals/signin.html:86
+#: templates/components/modals/signin.html:93
+msgid "Resend OTP in "
+msgstr "Hantar semula OTP masuk "
+
+#: templates/components/modals/signin.html:97
+msgid "Resend OTP"
+msgstr "Hantar semula OTP"
 
 #: templates/components/modals/signup.html:5
 msgid "Sign Up"
@@ -365,9 +399,16 @@ msgstr "PVP"
 msgid "PVE"
 msgstr "PVE"
 
-#: templates/components/pages/pong.html:16
+#: templates/components/pages/pong.html:17
 msgid "Searching for opponent..."
 msgstr "Mencari lawan..."
+
+#: templates/components/pages/pong.html:18
+msgid "Room Code"
+msgstr "Kod Bilik"
+
+#~ msgid "Error requesting OTP. Please try again."
+#~ msgstr "Ralat meminta OTP. Sila cuba lagi."
 
 #~ msgid "Tournament Lobby"
 #~ msgstr "Lobi Pertandingan"

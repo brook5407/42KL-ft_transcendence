@@ -25,7 +25,7 @@
 			<p class="profile-email">{{ friend_profile.user.email }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="">Wins: {{ wins }}, Losses: {{ losses }}</p>
+			<p class="">{% trans 'Wins:' %} {{ wins }}, {% trans 'Losses:' %} {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
             <p class="profile-bio">
@@ -37,14 +37,21 @@
 			</p>
 		</div>
 
-		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'game-history.drawer' %}">{% trans 'See Match History' %}</button>
+		<button id="see-match-history-btn"
+			class="btn btn-primary"
+			data-drawer="match-history"
+			data-drawer-url="{% url 'pong.match-history-drawer' %}"
+			data-query-params='{"username": "{{ friend_profile.user.username }}"}'
+		>
+			{% trans 'See Match History' %}
+		</button>
 
 		{% if is_friend %}
 			<div class="action-buttons">
 				{% if friend_is_blocked %}
-				<button type="button" id="block-unblock-btn" class="btn unblock-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">{% 'Unblock' %}</button>
+				<button type="button" id="block-unblock-btn" class="btn unblock-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">{% trans 'Unblock' %}</button>
 				{% else %}
-				<button type="button" id="block-unblock-btn" class="btn block-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">{% 'Block' %}</button>
+				<button type="button" id="block-unblock-btn" class="btn block-btn" onclick="toggleBlockFriend('{{ friend_profile.user.id }}')">{% trans 'Block' %}</button>
 				{% endif %}
 				<button type="button" class="btn delete-btn" onclick="deleteFriend('{{ friend_profile.user.id }}')">{% trans 'Delete' %}</button>
 			</div>

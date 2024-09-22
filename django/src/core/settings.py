@@ -34,8 +34,17 @@ DEBUG = True if os.environ.get('APP_ENV') == 'dev' else False
 APPEND_SLASH=False
 
 # WARNING: '*' is for development only
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://42pong.brookchin.tech']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if not DEBUG else ['*']
+
+CSRF_TRUSTED_ORIGINS = (os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+                        if not DEBUG else ['http://localhost:8000/', 'http://127.0.0.1:8000'])
+
+# CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://42pong.brookchin.tech']
 
 # Application definition
 
@@ -68,7 +77,6 @@ INSTALLED_APPS = [
     'pong',
     'friend',
     'profiles',
-    'game_history',
 ]
 
 MIDDLEWARE = [
@@ -106,14 +114,22 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'core.asgi.application'
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+if not DEBUG:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [(os.environ.get('REDIS_HOST', 'redis'), os.environ.get('REDIS_PORT', 6379))],
+            },
         },
-    },
-}
+    }
+
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 WSGI_APPLICATION = 'core.wsgi.application'
 ASGI_APPLICATION = 'core.asgi.application'
@@ -206,10 +222,7 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 
-if APP_ENV == 'railway':
-    MEDIA_ROOT = os.environ["RAILWAY_VOLUME_MOUNT_PATH"]
-else:
-    MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 STORAGES = {
     'default': {
@@ -239,6 +252,8 @@ LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT = '/'
 
 ACCOUNT_EMAIL_REQUIRED = True
+
+LOGOUT_ON_PASSWORD_CHANGE = False
 
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 
@@ -274,6 +289,18 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema'
 }
+if not DEBUG:
+    REST_FRAMEWORK = {
+        'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',  # Only JSON responses
+        ),
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            # 'rest_framework.authentication.SessionAuthentication',
+            'rest_framework.authentication.TokenAuthentication',
+            'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+        ),
+        'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema'
+    }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
@@ -323,3 +350,56 @@ DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 # to set the OTP function
 OTP_AUTH = os.environ.get('OTP_AUTH', 'false').lower() == 'true'
 AUTH_USER_MODEL = 'base.CustomUser'
+
+DJANGO_SUPERUSER_CREATE=os.environ.get('DJANGO_SUPERUSER_CREATE', 'false').lower() == 'true'
+DJANGO_SUPERUSER_EMAIL = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
+DJANGO_SUPERUSER_USERNAME = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
+DJANGO_SUPERUSER_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'adminpassword')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose' if not DEBUG else 'simple',
+        },
+        'logstash': {
+            'level': 'WARNING',
+            'class': 'logstash.TCPLogstashHandler',
+            'host': os.environ.get('LOGSTASH_HOST', 'logstash'),
+            'port': 5000,  # Default value: 5000
+            'version': 1,
+            'message_type': 'django_logstash',  # 'type' field in logstash message. Default value: 'logstash'.
+            'fqdn': False,  # Fully qualified domain name. Default value: false.
+            'tags': ['django.request'],  # list of tags. Default: None.
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG' if DEBUG else 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['logstash'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
+}

@@ -16,7 +16,7 @@ def send_otp_email(email):
     otp_code = generate_otp()
     user = User.objects.get(email=email)
     email_body = (f'Hi {user.username},\n\nYou have requested for a One-Time Password (OTP) to login your account.\n\n'
-                  f'OTP: Enter {otp_code} within 6 minutes.\n\nYour faithfully,\nIce Pong Team')
+                  f'OTP: Enter {otp_code} within 1 minutes.\n\nYour faithfully,\nIce Pong Team')
     from_email = settings.EMAIL_HOST_USER
 
     if OnetimePassword.objects.filter(user=user).exists():

@@ -6,6 +6,8 @@ import { GenericDrawer } from './GenericDrawer.js';
  * @borrows {import('../../../types.js').Profile}
  */
 
+const MAX_MESSAGE_LENGTH = 50;
+
 export class ChatRoomDrawer extends GenericDrawer {
 	constructor(params) {
 		super(params);
@@ -130,6 +132,10 @@ export class ChatRoomDrawer extends GenericDrawer {
 			if (!message) {
 				const chatInput = this.element.querySelector('#message-input');
 				message = chatInput.value;
+      }
+			if (message.length > MAX_MESSAGE_LENGTH) {
+				alert(`Message is too long! Please limit your message to ${MAX_MESSAGE_LENGTH} characters.`);
+				return;
 			}
 			if (!message) {
 				return;

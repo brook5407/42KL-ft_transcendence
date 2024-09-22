@@ -18,35 +18,35 @@ msgstr ""
 msgid "Chinese"
 msgstr ""
 
-#: drf_auth/views.py:39 drf_auth/views.py:49
+#: drf_auth/views.py:36 drf_auth/views.py:46
 msgid "Verification key is missing"
 msgstr ""
 
-#: drf_auth/views.py:68
+#: drf_auth/views.py:65
 msgid "Your email has been successfully verified."
 msgstr ""
 
-#: drf_auth/views.py:71
+#: drf_auth/views.py:68
 msgid "There was an error verifying your email."
 msgstr ""
 
-#: drf_auth/views.py:91
+#: drf_auth/views.py:88
 msgid "OTP sent. Please check your email."
 msgstr ""
 
-#: drf_auth/views.py:95
+#: drf_auth/views.py:92
 msgid "User email is not verified."
 msgstr ""
 
-#: drf_auth/views.py:99
+#: drf_auth/views.py:96
 msgid "User does not exist."
 msgstr ""
 
-#: drf_auth/views.py:122 drf_auth/views.py:131
+#: drf_auth/views.py:119 drf_auth/views.py:128
 msgid "OTP is invalid"
 msgstr ""
 
-#: drf_auth/views.py:127
+#: drf_auth/views.py:124
 msgid "OTP has expired, Please request a new one"
 msgstr ""
 
@@ -116,6 +116,16 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
+#: templates/components/drawers/friend/profile.html:28
+#: templates/components/drawers/profile.html:36
+msgid "Wins:"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:28
+#: templates/components/drawers/profile.html:36
+msgid "Losses:"
+msgstr ""
+
 #: templates/components/drawers/friend/profile.html:35
 #: templates/components/drawers/profile.html:43
 msgid "This user didn't say anything"
@@ -123,6 +133,14 @@ msgstr ""
 
 #: templates/components/drawers/friend/profile.html:40
 msgid "See Match History"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:45
+msgid "Unblock"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:47
+msgid "Block"
 msgstr ""
 
 #: templates/components/drawers/friend/profile.html:49
@@ -195,6 +213,7 @@ msgid "Description"
 msgstr ""
 
 #: templates/components/drawers/pong/tournament/create.html:25
+#: templates/components/modals/change-password.html:24
 #: templates/components/modals/forget-password.html:16
 #: templates/components/modals/reset-password.html:22
 #: templates/components/modals/signin.html:31
@@ -230,12 +249,12 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: templates/components/drawers/profile.html:36
-msgid "Wins:"
+#: templates/components/drawers/profile.html:69
+msgid "Please select a valid image file."
 msgstr ""
 
-#: templates/components/drawers/profile.html:36
-msgid "Losses:"
+#: templates/components/drawers/profile.html:72
+msgid "The selected file is too large. Please select a file smaller than 1 MB."
 msgstr ""
 
 #: templates/components/drawers/settings.html:10
@@ -253,6 +272,7 @@ msgid "Password"
 msgstr ""
 
 #: templates/components/drawers/settings.html:41
+#: templates/components/modals/change-password.html:5
 msgid "Change Password"
 msgstr ""
 
@@ -274,6 +294,19 @@ msgstr ""
 msgid "42 Login"
 msgstr ""
 
+#: templates/components/modals/change-password.html:12
+msgid "Old Password"
+msgstr ""
+
+#: templates/components/modals/change-password.html:16
+#: templates/components/modals/reset-password.html:14
+msgid "New Password"
+msgstr ""
+
+#: templates/components/modals/change-password.html:20
+msgid "Confirm New Password"
+msgstr ""
+
 #: templates/components/modals/forget-password.html:5
 msgid "Forget Password"
 msgstr ""
@@ -285,10 +318,6 @@ msgstr ""
 
 #: templates/components/modals/reset-password.html:5
 msgid "Reset Password"
-msgstr ""
-
-#: templates/components/modals/reset-password.html:14
-msgid "New Password"
 msgstr ""
 
 #: templates/components/modals/reset-password.html:18
@@ -318,12 +347,17 @@ msgstr ""
 msgid "Forgot Password?"
 msgstr ""
 
-#: templates/components/modals/signin.html:57
+#: templates/components/modals/signin.html:64
 msgid "OTP sent to your email!"
 msgstr ""
 
-#: templates/components/modals/signin.html:61
-msgid "Error requesting OTP. Please try again."
+#: templates/components/modals/signin.html:86
+#: templates/components/modals/signin.html:93
+msgid "Resend OTP in "
+msgstr ""
+
+#: templates/components/modals/signin.html:97
+msgid "Resend OTP"
 msgstr ""
 
 #: templates/components/modals/signup.html:5
@@ -346,6 +380,10 @@ msgstr ""
 msgid "PVE"
 msgstr ""
 
-#: templates/components/pages/pong.html:16
+#: templates/components/pages/pong.html:17
 msgid "Searching for opponent..."
+msgstr ""
+
+#: templates/components/pages/pong.html:18
+msgid "Room Code"
 msgstr ""

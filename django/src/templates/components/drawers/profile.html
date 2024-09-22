@@ -16,7 +16,7 @@
 			<img src="{{ user.profile.get_avatar_url }}" alt="Profile Image" class="profile-avatar" />
 			<span class="edit-icon" onclick="document.getElementById('avatar-input').click()">✏️</span>
 			<form id="avatar-form" action="{% url 'profile.detail' %}" class="spa-form" method="PUT" style="display: none;">
-				<input type="file" id="avatar-input" name="avatar" onchange="previewAvatar(event)">
+				<input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="previewAvatar(event)">
 				<input type="submit">
 			</form>
 		</div>
@@ -33,17 +33,19 @@
 			<p class="profile-joined">Joined: {{ user.date_joined|date:"d M Y" }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="">{% trans 'Wins:' %}' {{ wins }}, {% trans 'Losses:' %} {{ losses }}</p>
+			<p class="">{% trans 'Wins:' %} {{ wins }}, {% trans 'Losses:' %} {{ losses }}</p>
 		</div>
 		<div class="profile-info-item">
 			<p class="profile-bio">
-				{% if friend_profile.bio %}
-					{{ friend_profile.bio }}
+				{% if user.profile.bio %}
+					{{ user.profile.bio }}
 				{% else %}
 					{% trans "This user didn't say anything" %}
 				{% endif %}
 			</p>
 		</div>
+
+		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'pong.match-history-drawer' %}">{% trans 'See Match History' %}</button>
 
 		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">Edit Profile</button>
 	</div>
@@ -60,7 +62,22 @@
 		reader.readAsDataURL(event.target.files[0]);
 
 		// submit the avatar form in a spa manner
-		document.querySelector('#avatar-form input[type="submit"]').click();
+		document.querySelector('#avatar-form input[type="file"]').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const maxSize = 1024 * 1024; // 1 MB in bytes
+        
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    alert("{% trans 'Please select a valid image file.' %}");
+                    this.value = ''; // Clear the file input
+                } else if (file.size > maxSize) {
+                    alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
+                    this.value = ''; // Clear the file input
+                } else {
+                    document.querySelector('#avatar-form input[type="submit"]').click(); // Submit if it's a valid image
+                }
+            }
+        });
 	}
 </script>
 {% endblock %}

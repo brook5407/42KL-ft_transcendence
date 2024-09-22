@@ -19,7 +19,12 @@ from .serializers import (
     TournamentRoomCreateSerializer,
     MatchSerializer,
 )
-from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 @api_view(["GET"])
@@ -36,7 +41,13 @@ def pvp_view(request):
 @api_view(["GET"])
 @authenticated_view
 def pve_view(request):
-    match = Match.objects.create()
+    player = Player.objects.get(user=request.user)
+    ai_player = Player.objects.get(user__username="aiskosong")
+    match = Match.objects.create(
+        winner=player,
+        loser=ai_player,
+        type=Match.MatchType.PVE
+    )
     if is_ajax_request(request):
         return render(request, "components/pages/pong.html", {"game_mode": "pve", "match_id": match.id})
     return render(request, "index.html")
@@ -91,6 +102,50 @@ def tournament_create_drawer(request):
             "Error: This endpoint only accepts AJAX requests."
         )
     return render(request, "components/drawers/pong/tournament/create.html")
+
+@api_view(['GET'])
+@authenticated_view
+def match_history_drawer(request):
+    if not is_ajax_request(request):
+        return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
+    username = request.GET.get('username')
+    if username:
+        user = get_object_or_404(User, username=username)
+    else:
+        user = request.user
+    return render(request, 'components/drawers/game-history.html', context={
+        'user': user
+    })
+
+
+class MatchHistoryViewSet(viewsets.ModelViewSet):
+    queryset = Match.objects.all().order_by("-ended_at")
+
+    def list(self, request):
+        username = request.query_params.get("username")
+        if username:
+            user = get_object_or_404(User, username=username)
+        else:
+            user = request.user
+        player = Player.objects.get(user=user)
+        queryset = self.queryset.filter(
+            Q(winner=player) | Q(loser=player)
+        )
+        paginator = PageNumberPagination()
+        paginator.page_size = 10  # Set the page size as needed
+        paginated_queryset = paginator.paginate_queryset(queryset, request)
+
+        # Serialize the paginated queryset
+        serializer = MatchSerializer(paginated_queryset, many=True)
+
+        # Return the paginated response
+        return paginator.get_paginated_response(serializer.data)
+
+    @action(detail=True, methods=["GET"])
+    def details(self, request, pk=None):
+        match = get_object_or_404(Match, pk=pk)
+        serializer = MatchSerializer(match)
+        return Response(serializer.data)
 
 
 class TournamentRoomViewSet(viewsets.ModelViewSet):
