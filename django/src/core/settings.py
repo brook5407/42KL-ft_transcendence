@@ -33,11 +33,16 @@ DEBUG = True if os.environ.get('APP_ENV') == 'dev' else False
 
 APPEND_SLASH=False
 
-# WARNING: '*' is for development only
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+else:
+    SECURE_PROXY_SSL_HEADER = None
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if not DEBUG else ['*']
 
@@ -356,50 +361,51 @@ DJANGO_SUPERUSER_EMAIL = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example
 DJANGO_SUPERUSER_USERNAME = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
 DJANGO_SUPERUSER_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'adminpassword')
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+if not DEBUG:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {message}',
+                'style': '{',
+            },
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
+        'handlers': {
+            'console': {
+                'level': 'DEBUG' if DEBUG else 'INFO',
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose' if not DEBUG else 'simple',
+            },
+            'logstash': {
+                'level': 'WARNING',
+                'class': 'logstash.TCPLogstashHandler',
+                'host': os.environ.get('LOGSTASH_HOST', 'logstash'),
+                'port': 5000,  # Default value: 5000
+                'version': 1,
+                'message_type': 'django_logstash',  # 'type' field in logstash message. Default value: 'logstash'.
+                'fqdn': False,  # Fully qualified domain name. Default value: false.
+                'tags': ['django.request'],  # list of tags. Default: None.
+            },
         },
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose' if not DEBUG else 'simple',
-        },
-        'logstash': {
-            'level': 'WARNING',
-            'class': 'logstash.TCPLogstashHandler',
-            'host': os.environ.get('LOGSTASH_HOST', 'logstash'),
-            'port': 5000,  # Default value: 5000
-            'version': 1,
-            'message_type': 'django_logstash',  # 'type' field in logstash message. Default value: 'logstash'.
-            'fqdn': False,  # Fully qualified domain name. Default value: false.
-            'tags': ['django.request'],  # list of tags. Default: None.
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG' if DEBUG else 'INFO',
-    },
-    'loggers': {
-        'django': {
+        'root': {
             'handlers': ['console'],
             'level': 'DEBUG' if DEBUG else 'INFO',
-            'propagate': True,
         },
-        'django.request': {
-            'handlers': ['logstash'],
-            'level': 'WARNING',
-            'propagate': True,
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'DEBUG' if DEBUG else 'INFO',
+                'propagate': True,
+            },
+            'django.request': {
+                'handlers': ['logstash'],
+                'level': 'WARNING',
+                'propagate': True,
+            },
         },
-    },
-}
+    }
