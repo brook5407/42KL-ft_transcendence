@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-19 02:46+0000\n"
+"POT-Creation-Date: 2024-09-23 08:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,23 +18,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: base/views.py:124
+#: base/views.py:123
 msgid "Invalid language"
 msgstr "语言错误"
 
-#: base/views.py:137 base/views.py:139
+#: base/views.py:136 base/views.py:138
 msgid "Invalid intensity value"
 msgstr "强度值无效"
 
-#: core/settings.py:191
+#: core/settings.py:208
 msgid "English"
 msgstr "英文"
 
-#: core/settings.py:192
+#: core/settings.py:209
 msgid "Malay"
 msgstr "马来文"
 
-#: core/settings.py:193
+#: core/settings.py:210
 msgid "Chinese"
 msgstr "华文"
 
@@ -50,23 +50,23 @@ msgstr "您的邮箱验证成功。"
 msgid "There was an error verifying your email."
 msgstr "您的邮箱验证失败。"
 
-#: drf_auth/views.py:88
+#: drf_auth/views.py:89 drf_auth/views.py:98
 msgid "OTP sent. Please check your email."
 msgstr "已发送OTP，请查看您的邮箱。"
 
-#: drf_auth/views.py:92
+#: drf_auth/views.py:93
 msgid "User email is not verified."
 msgstr "你的账号未认证"
 
-#: drf_auth/views.py:96
+#: drf_auth/views.py:102
 msgid "User does not exist."
 msgstr "用户不存在"
 
-#: drf_auth/views.py:119 drf_auth/views.py:128
+#: drf_auth/views.py:125 drf_auth/views.py:134
 msgid "OTP is invalid"
 msgstr "无效OTP"
 
-#: drf_auth/views.py:124
+#: drf_auth/views.py:130
 msgid "OTP has expired, Please request a new one"
 msgstr "OTP已过期，请重新请求"
 
@@ -127,6 +127,10 @@ msgstr "聊天记录"
 msgid "Loading..."
 msgstr "加载中。。。"
 
+#: templates/components/drawers/chat-room.html:31
+msgid "Type a message or type /invite"
+msgstr "输入信息或输入 /invite"
+
 #: templates/components/drawers/friend/list.html:10
 msgid "Friends"
 msgstr "好友"
@@ -151,43 +155,44 @@ msgstr "负:"
 msgid "This user didn't say anything"
 msgstr "无聊天记录"
 
-#: templates/components/drawers/friend/profile.html:40
+#: templates/components/drawers/friend/profile.html:46
+#: templates/components/drawers/profile.html:48
 msgid "See Match History"
 msgstr "查看对战记录"
 
-#: templates/components/drawers/friend/profile.html:45
+#: templates/components/drawers/friend/profile.html:52
 msgid "Unblock"
 msgstr "解除屏蔽"
 
-#: templates/components/drawers/friend/profile.html:47
+#: templates/components/drawers/friend/profile.html:54
 msgid "Block"
 msgstr "屏蔽"
 
-#: templates/components/drawers/friend/profile.html:49
+#: templates/components/drawers/friend/profile.html:56
 msgid "Delete"
 msgstr "删除"
 
-#: templates/components/drawers/friend/profile.html:52
+#: templates/components/drawers/friend/profile.html:59
 msgid "Add Friend"
 msgstr "添加好友"
 
-#: templates/components/drawers/friend/profile.html:66
+#: templates/components/drawers/friend/profile.html:73
 msgid "Friend deleted successfully"
 msgstr "好友已被删除"
 
-#: templates/components/drawers/friend/profile.html:97
+#: templates/components/drawers/friend/profile.html:104
 msgid "Friend blocked successfully"
 msgstr "好友已被屏蔽"
 
-#: templates/components/drawers/friend/profile.html:119
+#: templates/components/drawers/friend/profile.html:126
 msgid "Friend unblocked successfully"
 msgstr "已解除好友屏蔽"
 
-#: templates/components/drawers/friend/profile.html:122
+#: templates/components/drawers/friend/profile.html:129
 msgid "Failed to unblock friend"
 msgstr "无法解除好友屏蔽"
 
-#: templates/components/drawers/friend/profile.html:147
+#: templates/components/drawers/friend/profile.html:154
 #: templates/components/drawers/friend/search-friend.html:92
 msgid "Friend request sent successfully"
 msgstr "好友请求已发送"
@@ -208,11 +213,11 @@ msgstr "搜寻新对手。。。"
 msgid "Friend Request Sent"
 msgstr "好友请求已发送"
 
-#: templates/components/drawers/friend/search-friend.html:105
+#: templates/components/drawers/friend/search-friend.html:106
 msgid "Already friend"
 msgstr "已是好友"
 
-#: templates/components/drawers/friend/search-friend.html:109
+#: templates/components/drawers/friend/search-friend.html:110
 msgid "Requested"
 msgstr "已请求"
 
@@ -221,6 +226,7 @@ msgid "Match History"
 msgstr "对战记录"
 
 #: templates/components/drawers/pong/tournament/create.html:9
+#: templates/components/drawers/pong/tournament/list.html:19
 msgid "Create Tournament"
 msgstr "创建比赛"
 
@@ -241,6 +247,10 @@ msgstr "描述"
 msgid "Submit"
 msgstr "提交"
 
+#: templates/components/drawers/pong/tournament/create.html:44
+msgid "Tournament created successfully"
+msgstr "锦标赛创建成功"
+
 #: templates/components/drawers/pong/tournament/list.html:10
 msgid "Tournaments"
 msgstr "锦标赛"
@@ -249,11 +259,16 @@ msgstr "锦标赛"
 msgid "Shuffle Rooms"
 msgstr "随机房间"
 
+#: templates/components/drawers/pong/tournament/room.html:66
+msgid "Start"
+msgstr "开始"
+
 #: templates/components/drawers/pong/tournament/room.html:70
 msgid "Leave"
 msgstr "离开"
 
 #: templates/components/drawers/profile-edit.html:10
+#: templates/components/drawers/profile.html:50
 msgid "Edit Profile"
 msgstr "更改用户资料"
 
@@ -269,11 +284,11 @@ msgstr "个人简介"
 msgid "Save"
 msgstr "保存"
 
-#: templates/components/drawers/profile.html:69
+#: templates/components/drawers/profile.html:71
 msgid "Please select a valid image file."
 msgstr "请选择一个图像文件。"
 
-#: templates/components/drawers/profile.html:72
+#: templates/components/drawers/profile.html:74
 msgid "The selected file is too large. Please select a file smaller than 1 MB."
 msgstr "所选文件太大。请选择小于 1 MB 的文件。"
 
@@ -367,16 +382,16 @@ msgstr "发送"
 msgid "Forgot Password?"
 msgstr "忘记密码？"
 
-#: templates/components/modals/signin.html:64
+#: templates/components/modals/signin.html:60
 msgid "OTP sent to your email!"
 msgstr "已发送OTP至您的邮箱。"
 
-#: templates/components/modals/signin.html:86
-#: templates/components/modals/signin.html:93
+#: templates/components/modals/signin.html:76
+#: templates/components/modals/signin.html:83
 msgid "Resend OTP in "
 msgstr "重新发送OTP： "
 
-#: templates/components/modals/signin.html:97
+#: templates/components/modals/signin.html:86
 msgid "Resend OTP"
 msgstr "重新发送OTP"
 
@@ -400,13 +415,34 @@ msgstr "真人对战"
 msgid "PVE"
 msgstr "人机对战"
 
-#: templates/components/pages/pong.html:17
+#: templates/components/pages/pong.html:7
 msgid "Searching for opponent..."
 msgstr "寻找对手。。。"
 
-#: templates/components/pages/pong.html:18
+#: templates/components/pages/pong.html:15
+msgid "[Winner]"
+msgstr "[赢家]"
+
+#: templates/components/pages/pong.html:24
 msgid "Room Code"
 msgstr "房间号码"
+
+#: templates/components/pages/pong.html:24
+msgid "Code"
+msgstr "号码"
+
+#: templates/components/pages/pong.html:28
+msgid "Current"
+msgstr "当前"
+
+#: templates/components/pages/pong.html:32
+#: templates/components/pages/pong.html:43
+msgid "VS"
+msgstr "对决"
+
+#: templates/components/pages/pong.html:39
+msgid "Next"
+msgstr "接下来"
 
 #~ msgid "Error requesting OTP. Please try again."
 #~ msgstr "请求 OTP 时出错，请重试。"

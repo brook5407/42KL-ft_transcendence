@@ -47,7 +47,7 @@
 
 		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'pong.match-history-drawer' %}">{% trans 'See Match History' %}</button>
 
-		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">Edit Profile</button>
+		<button id="edit-profile-btn" class="btn btn-primary" data-drawer="profile-edit" data-drawer-url="{% url 'profile-edit.drawer' %}">{% trans 'Edit Profile' %}</button>
 	</div>
 {% endblock %}
 
@@ -61,23 +61,30 @@
 		};
 		reader.readAsDataURL(event.target.files[0]);
 
-		// submit the avatar form in a spa manner
-		document.querySelector('#avatar-form input[type="file"]').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const maxSize = 1024 * 1024; // 1 MB in bytes
-        
-            if (file) {
-                if (!file.type.startsWith('image/')) {
-                    alert("{% trans 'Please select a valid image file.' %}");
-                    this.value = ''; // Clear the file input
-                } else if (file.size > maxSize) {
-                    alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
-                    this.value = ''; // Clear the file input
-                } else {
-                    document.querySelector('#avatar-form input[type="submit"]').click(); // Submit if it's a valid image
-                }
-            }
-        });
+		const fileInput = document.querySelector('#avatar-form input[type="file"]');
+
+		fileInput.removeEventListener('change', handleFileChange);
+
+		fileInput.addEventListener('change', handleFileChange);
 	}
+
+	function handleFileChange(event) {
+		const file = event.target.files[0];
+		const maxSize = 1024 * 1024; // 1 MB in bytes
+
+		if (file) {
+			if (!file.type.startsWith('image/')) {
+				alert("{% trans 'Please select a valid image file.' %}");
+				this.value = ''; // Clear the file input
+			} else if (file.size > maxSize) {
+				alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
+				this.value = ''; // Clear the file input
+			} else {
+				document.querySelector('#avatar-form input[type="submit"]').click(); // Submit if it's a valid image
+			}
+		}
+	}
+
+	document.querySelector('#avatar-form input[type="file"]').addEventListener('change', handleFileChange);
 </script>
 {% endblock %}
