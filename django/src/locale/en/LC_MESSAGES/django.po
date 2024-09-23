@@ -1,20 +1,20 @@
-#: base/views.py:124
+#: base/views.py:123
 msgid "Invalid language"
 msgstr ""
 
-#: base/views.py:137 base/views.py:139
+#: base/views.py:136 base/views.py:138
 msgid "Invalid intensity value"
 msgstr ""
 
-#: core/settings.py:191
+#: core/settings.py:208
 msgid "English"
 msgstr ""
 
-#: core/settings.py:192
+#: core/settings.py:209
 msgid "Malay"
 msgstr ""
 
-#: core/settings.py:193
+#: core/settings.py:210
 msgid "Chinese"
 msgstr ""
 
@@ -30,23 +30,23 @@ msgstr ""
 msgid "There was an error verifying your email."
 msgstr ""
 
-#: drf_auth/views.py:88
+#: drf_auth/views.py:89 drf_auth/views.py:98
 msgid "OTP sent. Please check your email."
 msgstr ""
 
-#: drf_auth/views.py:92
+#: drf_auth/views.py:93
 msgid "User email is not verified."
 msgstr ""
 
-#: drf_auth/views.py:96
+#: drf_auth/views.py:102
 msgid "User does not exist."
 msgstr ""
 
-#: drf_auth/views.py:119 drf_auth/views.py:128
+#: drf_auth/views.py:125 drf_auth/views.py:134
 msgid "OTP is invalid"
 msgstr ""
 
-#: drf_auth/views.py:124
+#: drf_auth/views.py:130
 msgid "OTP has expired, Please request a new one"
 msgstr ""
 
@@ -107,6 +107,10 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
+#: templates/components/drawers/chat-room.html:31
+msgid "Type a message or type /invite"
+msgstr ""
+
 #: templates/components/drawers/friend/list.html:10
 msgid "Friends"
 msgstr ""
@@ -131,43 +135,44 @@ msgstr ""
 msgid "This user didn't say anything"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:40
+#: templates/components/drawers/friend/profile.html:46
+#: templates/components/drawers/profile.html:48
 msgid "See Match History"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:45
+#: templates/components/drawers/friend/profile.html:52
 msgid "Unblock"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:47
+#: templates/components/drawers/friend/profile.html:54
 msgid "Block"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:49
+#: templates/components/drawers/friend/profile.html:56
 msgid "Delete"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:52
+#: templates/components/drawers/friend/profile.html:59
 msgid "Add Friend"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:66
+#: templates/components/drawers/friend/profile.html:73
 msgid "Friend deleted successfully"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:97
+#: templates/components/drawers/friend/profile.html:104
 msgid "Friend blocked successfully"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:119
+#: templates/components/drawers/friend/profile.html:126
 msgid "Friend unblocked successfully"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:122
+#: templates/components/drawers/friend/profile.html:129
 msgid "Failed to unblock friend"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:147
+#: templates/components/drawers/friend/profile.html:154
 #: templates/components/drawers/friend/search-friend.html:92
 msgid "Friend request sent successfully"
 msgstr ""
@@ -188,11 +193,11 @@ msgstr ""
 msgid "Friend Request Sent"
 msgstr ""
 
-#: templates/components/drawers/friend/search-friend.html:105
+#: templates/components/drawers/friend/search-friend.html:106
 msgid "Already friend"
 msgstr ""
 
-#: templates/components/drawers/friend/search-friend.html:109
+#: templates/components/drawers/friend/search-friend.html:110
 msgid "Requested"
 msgstr ""
 
@@ -201,6 +206,7 @@ msgid "Match History"
 msgstr ""
 
 #: templates/components/drawers/pong/tournament/create.html:9
+#: templates/components/drawers/pong/tournament/list.html:19
 msgid "Create Tournament"
 msgstr ""
 
@@ -221,6 +227,10 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
+#: templates/components/drawers/pong/tournament/create.html:44
+msgid "Tournament created successfully"
+msgstr ""
+
 #: templates/components/drawers/pong/tournament/list.html:10
 msgid "Tournaments"
 msgstr ""
@@ -229,11 +239,16 @@ msgstr ""
 msgid "Shuffle Rooms"
 msgstr ""
 
+#: templates/components/drawers/pong/tournament/room.html:66
+msgid "Start"
+msgstr ""
+
 #: templates/components/drawers/pong/tournament/room.html:70
 msgid "Leave"
 msgstr ""
 
 #: templates/components/drawers/profile-edit.html:10
+#: templates/components/drawers/profile.html:50
 msgid "Edit Profile"
 msgstr ""
 
@@ -249,11 +264,11 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: templates/components/drawers/profile.html:69
+#: templates/components/drawers/profile.html:71
 msgid "Please select a valid image file."
 msgstr ""
 
-#: templates/components/drawers/profile.html:72
+#: templates/components/drawers/profile.html:74
 msgid "The selected file is too large. Please select a file smaller than 1 MB."
 msgstr ""
 
@@ -347,16 +362,16 @@ msgstr ""
 msgid "Forgot Password?"
 msgstr ""
 
-#: templates/components/modals/signin.html:64
+#: templates/components/modals/signin.html:60
 msgid "OTP sent to your email!"
 msgstr ""
 
-#: templates/components/modals/signin.html:86
-#: templates/components/modals/signin.html:93
+#: templates/components/modals/signin.html:76
+#: templates/components/modals/signin.html:83
 msgid "Resend OTP in "
 msgstr ""
 
-#: templates/components/modals/signin.html:97
+#: templates/components/modals/signin.html:86
 msgid "Resend OTP"
 msgstr ""
 
@@ -380,10 +395,31 @@ msgstr ""
 msgid "PVE"
 msgstr ""
 
-#: templates/components/pages/pong.html:17
+#: templates/components/pages/pong.html:7
 msgid "Searching for opponent..."
 msgstr ""
 
-#: templates/components/pages/pong.html:18
+#: templates/components/pages/pong.html:15
+msgid "[Winner]"
+msgstr ""
+
+#: templates/components/pages/pong.html:24
 msgid "Room Code"
+msgstr ""
+
+#: templates/components/pages/pong.html:24
+msgid "Code"
+msgstr ""
+
+#: templates/components/pages/pong.html:28
+msgid "Current"
+msgstr ""
+
+#: templates/components/pages/pong.html:32
+#: templates/components/pages/pong.html:43
+msgid "VS"
+msgstr ""
+
+#: templates/components/pages/pong.html:39
+msgid "Next"
 msgstr ""

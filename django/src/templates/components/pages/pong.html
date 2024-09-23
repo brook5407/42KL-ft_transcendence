@@ -12,7 +12,7 @@
         <div id="canvasContainer">
             <canvas id="gameCanvas"></canvas>
             <div id="overlay">
-                <div id="winnerText">[Winner]</div>
+                <div id="winnerText">{% trans '[Winner]' %}</div>
                 <div id="countdownText">3</div>
             </div>
         </div>
@@ -21,26 +21,26 @@
 
     <div class="details-area" style="display: none;">
         <div class="room-code">
-            <h2>Room Code</h2><div id="roomCode">Code</div>
+            <h2>{% trans 'Room Code' %}</h2><div id="roomCode">{% trans 'Code' %}</div>
         </div>
 
         <div class="current-match">
-            <h2>Current</h2>
+            <h2>{% trans 'Current' %}</h2>
             <div class="players">
                 <div class="player">
                     <img src="empty_user.png" alt="Player 1">
-                    <span class="players">VS</span>
+                    <span class="players">{% trans 'VS' %}</span>
                     <img src="empty_user.png" alt="Player 2">
                 </div>
             </div>
         </div>
 
         <div class="next-match">
-            <h2>Next</h2>
+            <h2>{% trans 'Next' %}</h2>
             <div class="players">
                 <div class="player">
                     <img src="empty_user.png" alt="Player 3">
-                    <span class="players">VS</span>
+                    <span class="players">{% trans 'VS' %}</span>
                     <img src="empty_user.png" alt="Player 4">
                 </div>
             </div>
