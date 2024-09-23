@@ -16,7 +16,7 @@
 <div class="drawer-bottom-right-icon">
 	<img src="{% static 'images/icons/add.svg' %}" alt="Create tournament"
 		data-drawer="tournament-create" data-drawer-url="{% url 'pong.tournament-create-drawer' %}"
-		data-bs-toggle="tooltip" title="Create Tournament"
+		data-bs-toggle="tooltip" title="{% trans 'Create Tournament' %}"
 		/>
 </div>
 {% endblock %}
