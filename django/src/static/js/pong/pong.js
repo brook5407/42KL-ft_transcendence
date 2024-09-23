@@ -2,6 +2,7 @@ import { Paddle } from './classes/paddle.js';
 import { Ball } from './classes/ball.js';
 import { Table } from './classes/table.js';
 import { getWSHost } from '../websocket.js';
+import { navigateTo } from '../spa/navigation.js';
 
 const wsHost = getWSHost();
 
@@ -270,6 +271,19 @@ export class TournamentClient {
 			default:
 				console.error('Unknown message type:', data.type);
 		}
+	}
+
+	startTournament(participantsNicknames) {
+		console.log('start_tournament');
+		if (!participantsNicknames || participantsNicknames.length === 0) {
+			navigateTo('/');
+			return;
+		}
+		this.overlay.style.display = 'flex';
+		this.winnerText.style.display = 'flex';
+		this.winnerText.innerText = `Participants: ${participantsNicknames.join(
+			', '
+		)}`;
 	}
 
 	nextMatch(data) {

@@ -13,6 +13,8 @@ class TournamentController {
 		this.socket.onclose = this._onClose.bind(this);
 		this.socket.onerror = this._onError.bind(this);
 
+		this.participantsNicknames = [];
+
 		this.currentTournamentId = null;
 		this.isOwner = false;
 	}
@@ -27,6 +29,7 @@ class TournamentController {
 		this.tournamentClientMessageHandler =
 			tournamentClient.onMessage.bind(tournamentClient);
 		this.tournamentClient.socket = this.socket;
+		this.tournamentClient.startTournament(this.participantsNicknames);
 	}
 
 	detachTournamentClient() {
@@ -86,11 +89,13 @@ class TournamentController {
 			case 'tournament_started':
 				showInfoToast(data.message);
 				navigateTo(`/pong/tournament/?tournament_id=${data.tournament_id}`);
+				this.participantsNicknames = data.participants_nicknames;
+				console.log("Participants' nicknames:", this.participantsNicknames);
 				break;
 			case 'tournament_ended':
 				showInfoToast(data.message);
 				this.tournamentClientMessageHandler(e);
-				this.setCurrentTournamentId(null);
+				this.reset();
 				this.detachTournamentClient();
 				break;
 			case 'error':
