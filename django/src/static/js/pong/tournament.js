@@ -89,8 +89,9 @@ class TournamentController {
 				break;
 			case 'tournament_ended':
 				showInfoToast(data.message);
+				this.tournamentClientMessageHandler(e);
+				this.setCurrentTournamentId(null);
 				this.detachTournamentClient();
-				navigateTo('/');
 				break;
 			case 'error':
 				showErrorToast(data.message);

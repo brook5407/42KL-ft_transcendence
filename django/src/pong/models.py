@@ -6,7 +6,7 @@ from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKe
 from django.contrib.contenttypes.models import ContentType
 from datetime import timedelta
 from django.utils import timezone
-from django.db.models import F, ExpressionWrapper, fields
+from django.db.models import F
 
 
 User = get_user_model()
@@ -158,14 +158,15 @@ class TournamentRoom(BaseModel):
             self.winner = self.players_left.first().player
             self.save()
             return None # winner found, tournament ended
-        players_left_sorted = self.players_left.all()
-        next_2_players = players_left_sorted[:2]
+        next_2_players = list(self.players_left.order_by(F('last_match_at').asc(nulls_first=True))[:2])
         match = Match.objects.create(
             winner=next_2_players[0].player, loser=next_2_players[1].player, type=Match.MatchType.TOURNAMENT
         )
         self.matches.add(match)
         next_2_players[0].last_match_at = timezone.now()
         next_2_players[1].last_match_at = timezone.now()
+        next_2_players[0].save()
+        next_2_players[1].save()
         return match
 
     def finish_match(self, match):
@@ -178,7 +179,13 @@ class TournamentRoom(BaseModel):
         self.players_left.remove(TournamentPlayer.objects.get(player=match.loser, tournament=self))
 
     def end(self):
+        # only_player_left = self.players_left.first()
+        # if only_player_left:
+        #     self.winner = only_player_left.player
+        self.ended_at = timezone.now()
         self.status = self.Status.COMPLETED
+        # set all players user active tournament to null
+        UserActiveTournament.objects.filter(tournament=self).update(tournament=None)
         self.save()
 
     def __str__(self):
@@ -193,9 +200,6 @@ class TournamentPlayer(BaseModel):
         TournamentRoom, on_delete=models.CASCADE, related_name="tournament_player"
     )
     last_match_at = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        ordering = ["last_match_at"]
 
     def __str__(self):
         return f"Player {self.player} in {self.tournament}"
