@@ -41,7 +41,7 @@
 
 		window.tournamentController.createTournament(name, description).then((tournamentRoomId) => {
             window.tournamentController.setCurrentTournamentId(tournamentRoomId);
-            showSuccessMessage('Tournament created successfully');
+            showSuccessMessage('{% trans "Tournament created successfully" %}');
 			openDrawer('tournament-room', {
                 url: '{% url "pong.tournament-room-drawer" %}',
                 queryParams: {
