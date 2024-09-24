@@ -45,3 +45,4 @@ myproject/local_settings.py
 .env
 .env*.local
 
+certbot/conf/*

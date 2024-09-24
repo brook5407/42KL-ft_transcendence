@@ -42,31 +42,37 @@ services:
 
   nginx:
     image: nginx:latest
+    restart: unless-stopped
     container_name: tcd_nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - static_files:/var/www/html/static
       - media_files:/var/www/html/media
-      - cert:/cert
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     ports:
       - "80:80"
       - "443:443"
     depends_on:
       - django
-      - cert
       - kibana
     networks:
       default_network:
         aliases:
           - nginx
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
-  cert:
-    build:
-      context: ./openssl-cert
-      dockerfile: Dockerfile
-    container_name: tcd_cert
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    container_name: tcd_certbot
     volumes:
-      - cert:/cert
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/certbot-init-renew.sh:/certbot-init-renew.sh
+    depends_on:
+      - nginx
+    entrypoint: "/bin/sh -c '/certbot-init-renew.sh; trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   redis:
     image: redis:latest
@@ -145,7 +151,6 @@ volumes:
   postgres_data:
   static_files:
   media_files:
-  cert:
 
 networks:
   default_network:
