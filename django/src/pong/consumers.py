@@ -93,6 +93,8 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.wait_for_opponent()
         elif (self.game_mode == "pve"):
             await self.pve_mode()
+        elif (self.game_mode == "local"):
+            await self.local_mode()
             
     @database_sync_to_async
     def get_player(self, user):
@@ -110,6 +112,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+        paddle = data.get('paddle')
         movement = data.get('movement')
         if not movement:
             return
@@ -123,9 +126,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             velocity = 0
 
         # Update the paddle's velocity
-        if self.paddle == 'paddle1':
+        if paddle == 'paddle1':
             self.manager.paddle1.velocity = velocity
-        elif self.paddle == 'paddle2':
+        elif paddle == 'paddle2':
             self.manager.paddle2.velocity = velocity
 
     async def pvp_mode(self):
@@ -156,6 +159,21 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'paddle_assignment',
             'message': 'You are Paddle 1!',
             'paddle': 'paddle1',
+        })
+        await self.channel_layer.group_send(
+        self.room_group_name,
+        {
+            'type': 'start_game',
+            'message': 'channel_layer.group_send: start_game',
+        })
+
+    async def local_mode(self):
+        self.player1 = self.channel_name
+        self.player2 = self.channel_name
+        await self.channel_layer.send(self.channel_name, {
+            'type': 'paddle_assignment',
+            'message': 'Assign Local Paddle1 and Paddle2',
+            'paddle': 'localpaddles',
         })
         await self.channel_layer.group_send(
         self.room_group_name,
@@ -242,7 +260,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
             # End the game if a player reaches a score of winningScore
             if self.manager.score1 >= winningScore or self.manager.score2 >= winningScore:
-                winner = 'Player 1' if self.manager.score1 >= winningScore else 'Player 2'
+                winner = 'Left Player' if self.manager.score1 >= winningScore else 'Right Player'
                 loser = self.player2 if self.manager.score1 >= winningScore else self.player1
                 winner_channel = self.player1 if self.manager.score1 >= winningScore else self.player2
                 winner_score = self.manager.score1 if self.manager.score1 >= winningScore else self.manager.score2

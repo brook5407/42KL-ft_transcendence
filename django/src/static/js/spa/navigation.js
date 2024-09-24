@@ -20,6 +20,10 @@ export const ROUTES = {
 		component: PongPage,
 		data: { url: '/pong/pve/' },
 	},
+	'/pong/local': {
+		component: PongPage,
+		data: { url: '/pong/local/' },
+	},
 	'/pong/tournament': {
 		component: PongPage,
 		data: { url: '/pong/tournament/' },
