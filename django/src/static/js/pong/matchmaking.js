@@ -15,7 +15,7 @@ export class MatchMakingManager {
 	}
 
 	onOpen() {
-		console.log('Matchmaking WebSocket connection established');
+		// console.log('Matchmaking WebSocket connection established');
 	}
 
 	onError(error) {
@@ -23,12 +23,12 @@ export class MatchMakingManager {
 	}
 
 	onClose(event) {
-		console.log('Matchmaking WebSocket connection closed:', event);
+		// console.log('Matchmaking WebSocket connection closed:', event);
 	}
 
 	onMessage(event) {
 		const data = JSON.parse(event.data);
-		console.log(data);
+		// console.log(data);
 
 		switch (data.type) {
 			case 'start_match':
@@ -40,7 +40,7 @@ export class MatchMakingManager {
 	}
 
 	startMatch(matchId) {
-		console.log(`Match started with ID: ${matchId}`);
+		// console.log(`Match started with ID: ${matchId}`);
 		if (this.startMatchCallback) {
 			this.startMatchCallback(matchId);
 		}

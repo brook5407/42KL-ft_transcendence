@@ -68,7 +68,7 @@ export class Component {
 		// Find and execute all script tags
 		const scripts = this.wrapper.getElementsByTagName('script');
 		for (let i = 0; i < scripts.length; i++) {
-			console.log('executing script', scripts[i].src || 'custom script');
+			// console.log('executing script', scripts[i].src || 'custom script');
 			const script = document.createElement('script');
 			script.type = scripts[i].type || 'text/javascript';
 			if (scripts[i].src) {
@@ -152,11 +152,11 @@ export class Component {
 
 	cleanupComponent() {
 		this.scripts.forEach((script) => {
-			console.log('removing script', script.src || 'custom script');
+			// console.log('removing script', script.src || 'custom script');
 			script.remove();
 		});
 		this.styles.forEach((link) => {
-			console.log('removing link', link.href);
+			// console.log('removing link', link.href);
 			link.remove();
 		});
 	}

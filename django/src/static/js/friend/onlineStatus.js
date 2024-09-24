@@ -9,7 +9,7 @@ export class FriendsOnlineStatus {
 		this.socket = new WebSocket(`${wsHost}/ws/online-status/`);
 
 		this.socket.onopen = () => {
-			console.log('Friends online status socket opened');
+			// console.log('Friends online status socket opened');
 		};
 
 		this.socket.onmessage = this.onmessage.bind(this);
@@ -18,7 +18,7 @@ export class FriendsOnlineStatus {
 
 	onmessage(event) {
 		const data = JSON.parse(event.data);
-		console.log('Friends online status data', data);
+		// console.log('Friends online status data', data);
 
 		if (data.online_friend_ids) {
 			// the initial online friend list
@@ -51,7 +51,7 @@ export class FriendsOnlineStatus {
 	}
 
 	onclose(event) {
-		console.log('Friends online status socket closed');
+		// console.log('Friends online status socket closed');
 	}
 
 	destroy() {

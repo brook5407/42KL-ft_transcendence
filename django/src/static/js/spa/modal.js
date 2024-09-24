@@ -45,7 +45,7 @@ export async function openModal(modalName, data = {}) {
 	data.name = modalName;
 	const modal = new modalClass(data);
 
-	console.log('modalName:', modalName);
+	// console.log('modalName:', modalName);
 
 	if (modal) {
 		currentModal = modal;

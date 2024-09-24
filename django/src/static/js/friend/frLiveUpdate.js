@@ -9,7 +9,7 @@ export class FriendRequestsLiveUpdate {
 		this.socket = new WebSocket(`${wsHost}/ws/friend-requests/`);
 
 		this.socket.onopen = () => {
-			console.log('Friend requests live update socket opened');
+			// console.log('Friend requests live update socket opened');
 		};
 
 		this.socket.onmessage = this.onmessage.bind(this);
@@ -18,7 +18,7 @@ export class FriendRequestsLiveUpdate {
 
 	onmessage(event) {
 		const data = JSON.parse(event.data);
-		console.log('Friend requests live update data', data);
+		// console.log('Friend requests live update data', data);
 		if (data.status === 'P') {
 			if (data.receiver !== this.username) return;
 			showInfoMessage(
@@ -47,7 +47,7 @@ export class FriendRequestsLiveUpdate {
 	}
 
 	onclose(event) {
-		console.log('Friend requests live update socket closed');
+		// console.log('Friend requests live update socket closed');
 	}
 
 	destroy() {

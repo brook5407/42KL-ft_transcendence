@@ -20,7 +20,7 @@
 	document.addEventListener('drawer-opened', () => {
 		const tournamentRoomContainer = document.querySelector('#tournament-room');
 		const tournamentRoom = JSON.parse(document.querySelector('#tournament_room_json').textContent);
-		console.log(tournamentRoom);
+		// console.log(tournamentRoom);
 		const tournamentRoomElement = createTournamentRoom(tournamentRoom);
 		tournamentRoomContainer.appendChild(tournamentRoomElement);
 	}, { once: true });

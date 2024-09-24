@@ -124,7 +124,7 @@ export async function openDrawer(drawerName, data = {}, pushStack = true) {
 	data.name = drawerName;
 	const drawer = new drawerClass(data);
 
-	console.log('drawerName:', drawerName);
+	// console.log('drawerName:', drawerName);
 
 	if (!drawer) {
 		console.error('Drawer not found:', drawerName);

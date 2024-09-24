@@ -45,7 +45,7 @@ export class TournamentListDrawer extends GenericDrawer {
 		}
 
 		const data = await res.json();
-		console.log(data);
+		// console.log(data);
 
 		/** @type {TournamentRoom[]} */
 		const tournamentRooms = data;
@@ -59,7 +59,7 @@ export class TournamentListDrawer extends GenericDrawer {
 
 		this.tournamentListContainer.innerHTML = '<div>Loading...</div>';
 		const tournamentRooms = await this.fetchShuffledTournamentRooms();
-		console.log(tournamentRooms);
+		// console.log(tournamentRooms);
 		this.tournamentListContainer.innerHTML = '';
 
 		this.appendTournamentRooms(tournamentRooms);

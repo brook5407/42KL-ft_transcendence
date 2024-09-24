@@ -38,7 +38,7 @@ class TournamentController {
 	}
 
 	_onOpen() {
-		console.log('Tournament Websocket connection established');
+		// console.log('Tournament Websocket connection established');
 		if (window.currentUser.active_tournament_id) {
 			// if user has active tournament, rejoin
 			this.currentTournamentId = window.currentUser.active_tournament_id;
@@ -51,7 +51,7 @@ class TournamentController {
 	}
 
 	_onClose(event) {
-		console.log('Tournament WebSocket connection closed:');
+		// console.log('Tournament WebSocket connection closed:');
 	}
 
 	_onMessage(e) {
@@ -60,7 +60,7 @@ class TournamentController {
 		// console.log('Tournament WS message:', data);
 
 		if (data.user_id === window.currentUser.id) {
-			console.log('Ignoring own message');
+			// console.log('Ignoring own message');
 			return;
 		}
 
@@ -125,7 +125,7 @@ class TournamentController {
 		if (!tournamentRoom) {
 			return;
 		}
-		console.log(tournamentRoom);
+		// console.log(tournamentRoom);
 
 		if (tournamentRoom.status !== 'W') {
 			navigateTo(`/pong/tournament/?tournament_id=${data.tournament_id}`);
@@ -198,7 +198,7 @@ class TournamentController {
 			if (!tournamentRoom) {
 				return false;
 			}
-			console.log('rejoin');
+			// console.log('rejoin');
 			this.socket.send(
 				JSON.stringify({
 					type: 'rejoin_tournament',
@@ -214,7 +214,7 @@ class TournamentController {
 			});
 		} else {
 			// new join
-			console.log('Joining tournament:', tournamentId);
+			// console.log('Joining tournament:', tournamentId);
 			const res = await ajaxWithAuth(
 				`/api/tournament-room/${tournamentId}/join/`,
 				{
@@ -223,7 +223,7 @@ class TournamentController {
 			);
 			if (!res.ok) {
 				const error = await res.json();
-				console.log(error);
+				console.error(error);
 				showErrorToast('Failed to join tournament');
 				return false;
 			}
@@ -246,7 +246,7 @@ class TournamentController {
 			console.error('No tournament to leave');
 			return;
 		}
-		console.log('Leaving tournament');
+		// console.log('Leaving tournament');
 		ajaxWithAuth(`/api/tournament-room/${this.currentTournamentId}/leave/`, {
 			method: 'POST',
 		})
@@ -275,7 +275,7 @@ class TournamentController {
 
 	async createTournament(name, description) {
 		this.isOwner = true;
-		console.log('Creating tournament');
+		// console.log('Creating tournament');
 		const res = await ajaxWithAuth('/api/tournament-room/', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -287,7 +287,7 @@ class TournamentController {
 			},
 		});
 		const tournamentRoomId = await res.json();
-		console.log(tournamentRoomId);
+		// console.log(tournamentRoomId);
 		this.tournamentRoomId = tournamentRoomId;
 
 		this.socket.send(
@@ -306,7 +306,7 @@ class TournamentController {
 			console.error('Not the owner of the tournament');
 			return;
 		}
-		console.log('Starting tournament');
+		// console.log('Starting tournament');
 		ajaxWithAuth(`/api/tournament-room/${this.currentTournamentId}/start/`, {
 			method: 'POST',
 		}).then((res) => {

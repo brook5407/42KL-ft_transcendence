@@ -53,38 +53,41 @@
 
 {% block drawerScripts %}
 <script>
+	document.addEventListener('drawer-opened', function() {
+		const avatarInput = document.querySelector('#avatar-input');
+		const avatarForm = document.querySelector('#avatar-form');
+		
+		// Ensure the event listener is added only once
+		avatarInput.addEventListener('change', function(event) {
+			const file = event.target.files[0];
+			const maxSize = 1024 * 1024; // 1 MB in bytes
+			const closeLoadingEffect = showLoadingEffect();
+
+			if (file) {
+				if (!file.type.startsWith('image/')) {
+					alert("{% trans 'Please select a valid image file.' %}");
+					this.value = ''; // Clear the file input
+				} else if (file.size > maxSize) {
+					alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
+					this.value = ''; // Clear the file input
+				} else {
+					previewAvatar(event); // Preview the selected image
+					avatarForm.querySelector('input[type="submit"]').click(); // Submit the form
+				}
+			}
+			closeLoadingEffect();
+		});
+	});
+
 	function previewAvatar(event) {
+		const closeLoadingEffect = showLoadingEffect();
 		const reader = new FileReader();
-		reader.onload = function(){
+		reader.onload = function() {
 			const output = document.querySelector('.profile-avatar');
 			output.src = reader.result;
 		};
 		reader.readAsDataURL(event.target.files[0]);
-
-		const fileInput = document.querySelector('#avatar-form input[type="file"]');
-
-		fileInput.removeEventListener('change', handleFileChange);
-
-		fileInput.addEventListener('change', handleFileChange);
+		closeLoadingEffect();
 	}
-
-	function handleFileChange(event) {
-		const file = event.target.files[0];
-		const maxSize = 1024 * 1024; // 1 MB in bytes
-
-		if (file) {
-			if (!file.type.startsWith('image/')) {
-				alert("{% trans 'Please select a valid image file.' %}");
-				this.value = ''; // Clear the file input
-			} else if (file.size > maxSize) {
-				alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
-				this.value = ''; // Clear the file input
-			} else {
-				document.querySelector('#avatar-form input[type="submit"]').click(); // Submit if it's a valid image
-			}
-		}
-	}
-
-	document.querySelector('#avatar-form input[type="file"]').addEventListener('change', handleFileChange);
 </script>
 {% endblock %}

@@ -59,7 +59,7 @@
 {% block drawerScripts %}
 <script>
     function switchLanguage(languageCode) {
-        console.log('switchLanguage called with:', languageCode);
+        // console.log('switchLanguage called with:', languageCode);
         ajaxWithAuth(`/api/set_language/?language=${languageCode}`, {
             method: 'GET',
             credentials: 'include', // This is important for including cookies
@@ -89,7 +89,6 @@
         if (snowIntensitySlider) {
             snowIntensitySlider.addEventListener('change', function () {
                 const intensity = parseInt(this.value, 10);
-                console.log('Snow intensity changed to:', intensity);
                 saveSnowIntensity(intensity);
             });
         }
@@ -107,15 +106,12 @@
                 if (data.status === 'success') {
                     //refresh the snow in spa
                     document.cookie = `snow_intensity=${intensity}; path=/; SameSite=Lax;`;
-                    console.log('Snow intensity saved successfully');
                 } else {
                     console.error('Error saving snow intensity:', data.message);
-                    showErrorMessage(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                showErrorMessage(error.message);
             });
         }
     }

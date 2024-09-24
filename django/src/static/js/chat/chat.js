@@ -18,11 +18,11 @@ class ChatController {
 	}
 
 	_onOpen() {
-		console.log('Chat socket opened');
+		// console.log('Chat socket opened');
 	}
 
 	_onMessage(event) {
-		console.log('Chat socket message:', event.data);
+		// console.log('Chat socket message:', event.data);
 
 		/** @type {WSChatMessage} */
 		const data = JSON.parse(event.data);
@@ -57,7 +57,7 @@ class ChatController {
 				showErrorToast('Your friend rejected your invitation');
 			} else if (data.action === 'accept_acknowledgement') {
 				showSuccessToast('Both player ready! Starting the game...');
-				console.log('match id: ', data.match_id);
+				// console.log('match id: ', data.match_id);
 				navigateTo(`/pong/pvp/?match_id=${data.match_id}`);
 			}
 			return;
@@ -90,11 +90,11 @@ class ChatController {
 	}
 
 	_onClose() {
-		console.log('Chat socket closed');
+		// console.log('Chat socket closed');
 	}
 
 	_onError() {
-		console.log('Chat socket error');
+		// console.log('Chat socket error');
 	}
 
 	async sendMessage(message, roomId) {

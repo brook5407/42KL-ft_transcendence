@@ -39,7 +39,7 @@ export class GameClient {
 	}
 
 	onOpen() {
-		console.log('Pong game WebSocket connection established ' + this.roomId);
+		// console.log('Pong game WebSocket connection established ' + this.roomId);
 		this.socket.send(JSON.stringify({ game_mode: this.gameMode }));
 	}
 
@@ -48,7 +48,7 @@ export class GameClient {
 	}
 
 	onClose(event) {
-		console.log('Pong game WebSocket connection closed:', event);
+		// console.log('Pong game WebSocket connection closed:', event);
 	}
 
 	onMessage(e) {
@@ -76,12 +76,12 @@ export class GameClient {
 	}
 
 	handlePaddleAssignment(data) {
-		console.log('paddle_assignment: ' + data.paddle);
+		// console.log('paddle_assignment: ' + data.paddle);
 		this.assignedPaddle = data.paddle;
 	}
 
 	startGame(data) {
-		console.log('start_game');
+		// console.log('start_game');
 		this.canvasContainer.height = data.gameHeight;
 		this.canvasContainer.width = data.gameWidth;
 		this.gameCanvas.height = data.gameHeight;
@@ -130,7 +130,7 @@ export class GameClient {
 	}
 
 	countdownGame(data) {
-		console.log('countdown_game');
+		// console.log('countdown_game');
 		const countdownValue = data.message;
 		this.countdownText.style.display = 'block';
 		this.countdownText.innerHTML = countdownValue;
@@ -148,7 +148,7 @@ export class GameClient {
 	}
 
 	updateGameState(data) {
-		console.log('update_game_state');
+		// console.log('update_game_state');
 		this.paddle1.y = data.paddle1.y;
 		this.paddle2.y = data.paddle2.y;
 		this.ball.x = data.ball.x;
@@ -160,7 +160,7 @@ export class GameClient {
 	}
 
 	endGame(data) {
-		console.log('end_game');
+		// console.log('end_game');
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
 		this.winnerText.innerText = data.message;
@@ -273,7 +273,7 @@ export class TournamentClient {
 	}
 
 	nextMatch(data) {
-		console.log('next_match');
+		// console.log('next_match');
 		this.assignedPaddle = null;
 
 		const player1 = data.player1;
@@ -285,12 +285,12 @@ export class TournamentClient {
 	}
 
 	handlePaddleAssignment(data) {
-		console.log('paddle_assignment: ' + data.paddle);
+		// console.log('paddle_assignment: ' + data.paddle);
 		this.assignedPaddle = data.paddle;
 	}
 
 	startGame(data) {
-		console.log('start_game');
+		// console.log('start_game');
 		this.canvasContainer.height = data.gameHeight;
 		this.canvasContainer.width = data.gameWidth;
 		this.gameCanvas.height = data.gameHeight;
@@ -339,7 +339,7 @@ export class TournamentClient {
 	}
 
 	countdownGame(data) {
-		console.log('countdown_game');
+		// console.log('countdown_game');
 		const countdownValue = data.message;
 		this.countdownText.style.display = 'block';
 		this.countdownText.innerHTML = countdownValue;
@@ -357,7 +357,7 @@ export class TournamentClient {
 	}
 
 	updateGameState(data) {
-		console.log('update_game_state');
+		// console.log('update_game_state');
 		this.paddle1.y = data.paddle1.y;
 		this.paddle2.y = data.paddle2.y;
 		this.ball.x = data.ball.x;
@@ -369,14 +369,14 @@ export class TournamentClient {
 	}
 
 	endGame(data) {
-		console.log('end_game');
+		// console.log('end_game');
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
 		this.winnerText.innerText = data.message;
 	}
 
 	tournamentEnd(data) {
-		console.log('tournament_end');
+		// console.log('tournament_end');
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
 		this.winnerText.innerText = data.message;
