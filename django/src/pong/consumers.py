@@ -151,6 +151,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 'type': 'start_game',
                 'message': 'Game had started!',
             })
+        asyncio.create_task(self.game_loop())
 
     async def pve_mode(self):
         self.player1 = self.channel_name
@@ -166,6 +167,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'start_game',
             'message': 'channel_layer.group_send: start_game',
         })
+        asyncio.create_task(self.game_loop())
 
     async def local_mode(self):
         self.player1 = self.channel_name
@@ -181,6 +183,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'start_game',
             'message': 'channel_layer.group_send: start_game',
         })
+        asyncio.create_task(self.game_loop())
 
     async def paddle_assignment(self, event):
         self.paddle = event['paddle']
@@ -207,14 +210,13 @@ class PongConsumer(AsyncWebsocketConsumer):
                 'message': i,
             }))
             await asyncio.sleep(1)
-        asyncio.create_task(self.game_loop())
 
     async def game_loop(self):
         winner_channel = None
         winner_score = 0
         loser_score = 0
         ai_last_update = 0
-        await asyncio.sleep(1)
+        await asyncio.sleep(4)
 
         while True:
             # Update game state
@@ -274,7 +276,6 @@ class PongConsumer(AsyncWebsocketConsumer):
                     }
                 )
                 break  # Exit the game loop
-
             await asyncio.sleep(1/60)  # Run at ~60 FPS
         winner_player_id = self.manager.get_player_id_from_channel_name(winner_channel)
         await self.set_match_end(winner_player_id, winner_score, loser_score)
