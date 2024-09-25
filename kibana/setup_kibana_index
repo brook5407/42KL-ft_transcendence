@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sleep 100
+sleep 120
 
 curl -XPOST -D- "http://kibana:5601/api/saved_objects/index-pattern" \
     -H "Content-Type: application/json" \
