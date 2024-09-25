@@ -266,6 +266,8 @@ export class TournamentClient {
 		this.keyDownHandler = this.handleKeyDown.bind(this);
 		this.keyUpHandler = this.handleKeyUp.bind(this);
 		this.attachEventListeners();
+
+		this.matchmaking.textContent = 'Tournament Starting...';
 	}
 
 	onMessage(e) {
@@ -288,11 +290,26 @@ export class TournamentClient {
 				this.endGame(data);
 				break;
 			case 'next_match':
-				// this.nextMatch(data);
+				this.nextMatch(data);
+				break;
+			case 'tournament_ended':
+				this.tournamentEnd(data);
 				break;
 			default:
 				console.error('Unknown message type:', data.type);
 		}
+	}
+
+	nextMatch(data) {
+		console.log('next_match');
+		this.assignedPaddle = null;
+
+		const player1 = data.player1;
+		const player2 = data.player2;
+
+		this.overlay.style.display = 'flex';
+		this.winnerText.style.display = 'flex';
+		this.winnerText.innerText = `Next Match: ${player1.nickname} vs ${player2.nickname}`;
 	}
 
 	handlePaddleAssignment(data) {
@@ -384,19 +401,26 @@ export class TournamentClient {
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
 		this.winnerText.innerText = data.message;
+	}
 
-		// let countdown = 11;
-		// const countdownInterval = setInterval(() => {
-		// 	countdown -= 1;
-		// 	this.countdownText.style.fontSize = '12px';
-		// 	this.countdownText.innerText = `Returning to the main menu in ${countdown} seconds...`;
-		// 	this.countdownText.style.display = 'flex';
+	tournamentEnd(data) {
+		console.log('tournament_end');
+		this.overlay.style.display = 'flex';
+		this.winnerText.style.display = 'flex';
+		this.winnerText.innerText = data.message;
 
-		// 	if (countdown === 0) {
-		// 		clearInterval(countdownInterval);
-		// 		navigateTo('/');
-		// 	}
-		// }, 1000);
+		let countdown = 11;
+		const countdownInterval = setInterval(() => {
+			countdown -= 1;
+			this.countdownText.style.fontSize = '12px';
+			this.countdownText.innerText = `Tournament Ended, Returning to the main menu in ${countdown} seconds...`;
+			this.countdownText.style.display = 'flex';
+
+			if (countdown === 0) {
+				clearInterval(countdownInterval);
+				navigateTo('/');
+			}
+		}, 1000);
 	}
 
 	attachEventListeners() {
@@ -417,8 +441,6 @@ export class TournamentClient {
 		} else if (event.key === 's') {
 			movement = 'down';
 		}
-
-		console.log('movement: ' + movement);
 
 		if (movement !== null && this.socket && this.assignedPaddle) {
 			this.socket.send(

@@ -3,7 +3,7 @@ from django.db import models
 
 class RandomStringIDField(models.CharField):
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = kwargs.get('max_length', 32)
+        kwargs['max_length'] = kwargs.get('max_length', 64)
         kwargs['unique'] = True
         super().__init__(*args, **kwargs)
 
