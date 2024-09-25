@@ -82,6 +82,7 @@ export class GameClient {
 
 	startGame(data) {
 		console.log('start_game');
+		window.audioAssets.pauseALL();
         window.audioAssets.bgmSound.loop = true;
         window.audioAssets.bgmSound.play();
 
@@ -156,16 +157,19 @@ export class GameClient {
 		this.paddle2.y = data.paddle2.y;
 		this.ball.x = data.ball.x;
 		this.ball.y = data.ball.y;
+		if (data.score1 > this.score1.innerText || data.score2 > this.score2.innerText) {
+			window.audioAssets.scoreSound.play();
+		}
 		this.score1.innerText = data.score1;
 		this.score2.innerText = data.score2;
 
 		// Sound Effect
-		if ((this.ball.x - this.ball.radius) <= 0 ) {
-			window.audioAssets.scoreSound.play();
-		} 
-		if (this.ball.x >= this.gameCanvas.width - this.ball.radius) {
-			window.audioAssets.scoreSound.play();
-		}  
+		// if ((this.ball.x - this.ball.radius) <= 0 ) {
+		// 	window.audioAssets.scoreSound.play();
+		// } 
+		// if (this.ball.x >= this.gameCanvas.width - this.ball.radius) {
+		// 	window.audioAssets.scoreSound.play();
+		// }  
 		if (this.ball.x <= (this.paddle1.x + this.paddle1.width + this.ball.radius)) {
 			if (this.ball.y > this.paddle1.y && this.ball.y < this.paddle1.y + this.paddle1.height)
 				window.audioAssets.hitSound.play();
@@ -179,16 +183,18 @@ export class GameClient {
 	}
 
 	endGame(data) {
-		if (this.score1 > this.score2 && (this.assignedPaddle === 'paddle1')) {
+		if (this.score1 !== this.score2) {
+			if ((this.score1 > this.score2 && this.assignedPaddle === 'paddle1') ||
+				(this.score1 < this.score2 && this.assignedPaddle === 'paddle2')) {
 				window.audioAssets.winSound.play();
-		} else if (this.score1 < this.score2 && (this.assignedPaddle === 'paddle2')) {
-			window.audioAssets.winSound.play();
-		} else if (this.score1 != this.score2) {
-			window.audioAssets.loseSound.play();
+			} else {
+				window.audioAssets.loseSound.play();
+			}
 		} else {
 			window.audioAssets.drawSound.play();
-		}
+		}		
 		console.log('end_game');
+		window.audioAssets.pauseALL();
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
 		this.winnerText.innerText = data.message;
@@ -398,6 +404,7 @@ export class TournamentClient {
 
 	endGame(data) {
 		console.log('end_game');
+		window.audioAssets.bgmSound.pause();
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
 		this.winnerText.innerText = data.message;
