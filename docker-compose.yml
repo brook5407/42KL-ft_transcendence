@@ -42,6 +42,7 @@ services:
 
   nginx:
     image: nginx:latest
+    restart: unless-stopped
     container_name: tcd_nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
@@ -67,7 +68,6 @@ services:
     container_name: tcd_cert
     volumes:
       - cert:/cert
-
   redis:
     image: redis:latest
     container_name: tcd_redis
@@ -77,9 +77,7 @@ services:
           - redis
 
   elasticsearch:
-    build:
-      context: elasticsearch
-      dockerfile: Dockerfile
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.0
     container_name: tcd_elasticsearch
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
@@ -94,9 +92,7 @@ services:
           - elasticsearch
 
   logstash:
-    build:
-      context: logstash
-      dockerfile: Dockerfile
+    image: docker.elastic.co/logstash/logstash-oss:6.1.0
     container_name: tcd_logstash
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
@@ -107,16 +103,14 @@ services:
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
-      default_network:
+      default_network:  
         aliases:
           - logstash
     depends_on:
       - elasticsearch
 
   kibana:
-    build:
-      context: kibana
-      dockerfile: Dockerfile
+    image: docker.elastic.co/kibana/kibana-oss:6.1.0
     container_name: tcd_kibana
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
@@ -128,25 +122,21 @@ services:
           - kibana
     depends_on:
       - elasticsearch
+    healthcheck:
+      test: curl --output /dev/null --silent --head --fail http://kibana:5601/api/status
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   setup-kibana-index:
     image: curlimages/curl:7.70.0
     container_name: setup_kibana_index
+    volumes:
+      - ./kibana/setup_kibana_index.sh:/setup_kibana_index.sh
     depends_on:
       kibana:
-        condition: service_started
-    command: >
-      sh -c '
-        until $(curl --output /dev/null --silent --head --fail http://kibana:5601/api/status); do
-            printf "."
-            sleep 5
-        done &&
-        curl -XPOST -D- "http://kibana:5601/api/saved_objects/index-pattern" \
-        -H "Content-Type: application/json" \
-        -H "kbn-version: 6.1.0" \
-        -d "{\"attributes\":{\"title\":\"logstash-*\",\"timeFieldName\":\"@timestamp\"}}" &&
-        echo "Index pattern created."
-      '
+        condition: service_healthy
+    command: ["/bin/sh", "-c", "./setup_kibana_index.sh"]
     networks:
       default_network:
 
