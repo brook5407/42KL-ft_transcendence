@@ -2,7 +2,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	/* justify-content: center; */
 	padding: 20px;
 	max-width: 400px;
 	margin: auto;
@@ -46,6 +46,16 @@
 .profile-nickname {
 	font-size: 32px;
 	color: var(--color-brand-4);
+}
+
+.card {
+    background: linear-gradient(135deg, #C0EDFA, #0E7899);
+	border: 1px solid var(--color-info-2);
+	border-radius: 5px;
+	font-size: 16px;
+	color: var(--color-text-7);
+	line-height: 1.5;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile-bio {
@@ -120,4 +130,9 @@ textarea.form-control {
 
 .add-friend-btn {
 	background-color: var(--color-success-5);
+}
+
+#gameOutcomesChart {
+    width: 200px;
+    height: 200px;
 }

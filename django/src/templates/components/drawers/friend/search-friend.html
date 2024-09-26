@@ -60,7 +60,7 @@
 			const searchFriendResult = document.getElementById('search-friend-result');
 			searchFriendResult.innerHTML = `
 				<div class="error-search-result">
-					${error.toString()}
+					<span>{% trans 'No Results Found' %}</span>
 				</div>
 			`
 		});

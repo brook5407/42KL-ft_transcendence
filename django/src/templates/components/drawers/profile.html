@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block drawerContent %}
-	<div class="profile-info">
+	<div class="profile-info" style="max-height: 90%; overflow-y: auto;">
 		<div class="profile-info-item">
 			<img src="{{ user.profile.get_avatar_url }}" alt="Profile Image" class="profile-avatar" />
 			<span class="edit-icon" onclick="document.getElementById('avatar-input').click()">✏️</span>
@@ -33,7 +33,17 @@
 			<p class="profile-joined">Joined: {{ user.date_joined|date:"d M Y" }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="">{% trans 'Wins:' %} {{ wins }}, {% trans 'Losses:' %} {{ losses }}</p>
+			<p class="">{% trans 'Total Games:' %} {{ total_games }}, {% trans 'Win Rate:' %} {{ win_rate }}%</p>
+		</div>
+		<div class="profile-info-item">
+			<div class="card">
+				<div class="card-header">
+					Game Outcomes
+				</div>
+				<div class="card-body">
+					<canvas id="gameOutcomesChart" ></canvas>
+				</div>
+			</div>
 		</div>
 		<div class="profile-info-item">
 			<p class="profile-bio">
@@ -52,39 +62,63 @@
 {% endblock %}
 
 {% block drawerScripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+
+	document.addEventListener('drawer-opened', function() {
+		const avatarInput = document.querySelector('#avatar-input');
+		const avatarForm = document.querySelector('#avatar-form');
+		
+		// Ensure the event listener is added only once
+		avatarInput.addEventListener('change', function(event) {
+			const file = event.target.files[0];
+			const maxSize = 1024 * 1024; // 1 MB in bytes
+			const closeLoadingEffect = showLoadingEffect();
+
+			if (file) {
+				if (!file.type.startsWith('image/')) {
+					alert("{% trans 'Please select a valid image file.' %}");
+					this.value = ''; // Clear the file input
+				} else if (file.size > maxSize) {
+					alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
+					this.value = ''; // Clear the file input
+				} else {
+					previewAvatar(event); // Preview the selected image
+					avatarForm.querySelector('input[type="submit"]').click(); // Submit the form
+				}
+			}
+			closeLoadingEffect();
+		});
+	});
+
 	function previewAvatar(event) {
+		const closeLoadingEffect = showLoadingEffect();
 		const reader = new FileReader();
-		reader.onload = function(){
+		reader.onload = function() {
 			const output = document.querySelector('.profile-avatar');
 			output.src = reader.result;
 		};
 		reader.readAsDataURL(event.target.files[0]);
-
-		const fileInput = document.querySelector('#avatar-form input[type="file"]');
-
-		fileInput.removeEventListener('change', handleFileChange);
-
-		fileInput.addEventListener('change', handleFileChange);
+		closeLoadingEffect();
 	}
 
-	function handleFileChange(event) {
-		const file = event.target.files[0];
-		const maxSize = 1024 * 1024; // 1 MB in bytes
+	document.addEventListener('drawer-opened', function() {
+		const gameOutcomes = [
+			{ name: '{% trans "Wins" %}', value: Number('{{ wins }}') },
+			{ name: '{% trans "Losses" %}', value: Number('{{ losses }}') },
+		];
 
-		if (file) {
-			if (!file.type.startsWith('image/')) {
-				alert("{% trans 'Please select a valid image file.' %}");
-				this.value = ''; // Clear the file input
-			} else if (file.size > maxSize) {
-				alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
-				this.value = ''; // Clear the file input
-			} else {
-				document.querySelector('#avatar-form input[type="submit"]').click(); // Submit if it's a valid image
-			}
-		}
-	}
-
-	document.querySelector('#avatar-form input[type="file"]').addEventListener('change', handleFileChange);
+		const gameOutcomesCtx = document.getElementById('gameOutcomesChart').getContext('2d');
+			new Chart(gameOutcomesCtx, {
+			type: 'pie',
+			data: {
+				labels: gameOutcomes.map(outcome => outcome.name),
+				datasets: [{
+				data: gameOutcomes.map(outcome => outcome.value),
+				backgroundColor: ['#0A8F17', '#990C0C'],
+				}],
+			},
+		});
+	});
 </script>
 {% endblock %}
