@@ -18,7 +18,9 @@ def profile_drawer(request):
         return render(request, 'components/drawers/profile.html', {
             'profile': profile,
             'wins': wins,
-            'losses': losses
+            'losses': losses,
+            'total_games': wins + losses,
+            'win_rate': round(wins / (wins + losses) * 100) if wins + losses > 0 else 0
         })
     return HttpResponseBadRequest("Error: This endpoint only accepts AJAX requests.")
 

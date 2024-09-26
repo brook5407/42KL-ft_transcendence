@@ -148,7 +148,9 @@ def friend_profile_drawer(request):
         'friend_profile': profile,
         'is_friend': False,
         'wins': wins,
-        'losses': losses
+        'losses': losses,
+        'total_games': wins + losses,
+        'win_rate': round(wins / (wins + losses) * 100) if wins + losses > 0 else 0
     })
     is_blocked = UserRelation.objects.filter(user=request.user, friend=friend_user, blocked=True).exists()
     return render(request, 'components/drawers/friend/profile.html', {
@@ -156,7 +158,9 @@ def friend_profile_drawer(request):
         'is_friend': True,
         'friend_is_blocked': is_blocked,
         'wins': wins,
-        'losses': losses
+        'losses': losses,
+        'total_games': wins + losses,
+        'win_rate': round(wins / (wins + losses) * 100) if wins + losses > 0 else 0
     })
 
 @api_view(['GET'])
