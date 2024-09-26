@@ -16,7 +16,7 @@
 			<img src="{{ user.profile.get_avatar_url }}" alt="Profile Image" class="profile-avatar" />
 			<span class="edit-icon" onclick="document.getElementById('avatar-input').click()">✏️</span>
 			<form id="avatar-form" action="{% url 'profile.detail' %}" class="spa-form" method="PUT" style="display: none;">
-				<input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="previewAvatar(event)">
+				<input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="handleAvatarChange(event)">
 				<input type="submit">
 			</form>
 		</div>
@@ -33,6 +33,15 @@
 			<p class="profile-joined">Joined: {{ user.date_joined|date:"d M Y" }}</p>
 		</div>
 		<div class="profile-info-item">
+            <p class="profile-bio">
+				{% if friend_profile.bio %}
+					{{ friend_profile.bio }}
+				{% else %}
+					{% trans "This user didn't say anything" %}
+				{% endif %}
+			</p>
+		</div>
+		<div class="profile-info-item">
 			<p class="">{% trans 'Total Games:' %} {{ total_games }}, {% trans 'Win Rate:' %} {{ win_rate }}%</p>
 		</div>
 		<div class="profile-info-item">
@@ -40,19 +49,12 @@
 				<div class="card-header">
 					Game Outcomes
 				</div>
+				{% if total_games > 0 %}
 				<div class="card-body">
 					<canvas id="gameOutcomesChart" ></canvas>
 				</div>
-			</div>
-		</div>
-		<div class="profile-info-item">
-			<p class="profile-bio">
-				{% if user.profile.bio %}
-					{{ user.profile.bio }}
-				{% else %}
-					{% trans "This user didn't say anything" %}
 				{% endif %}
-			</p>
+			</div>
 		</div>
 
 		<button id="see-match-history-btn" class="btn btn-primary" data-drawer="match-history" data-drawer-url="{% url 'pong.match-history-drawer' %}">{% trans 'See Match History' %}</button>
@@ -65,31 +67,27 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 
-	document.addEventListener('drawer-opened', function() {
-		const avatarInput = document.querySelector('#avatar-input');
+	function handleAvatarChange(event) {
+		const avatarInput = event.target;
 		const avatarForm = document.querySelector('#avatar-form');
-		
-		// Ensure the event listener is added only once
-		avatarInput.addEventListener('change', function(event) {
-			const file = event.target.files[0];
-			const maxSize = 1024 * 1024; // 1 MB in bytes
-			const closeLoadingEffect = showLoadingEffect();
+		const file = avatarInput.files[0];
+		const maxSize = 1024 * 1024; // 1 MB in bytes
+		const closeLoadingEffect = showLoadingEffect();
 
-			if (file) {
-				if (!file.type.startsWith('image/')) {
-					alert("{% trans 'Please select a valid image file.' %}");
-					this.value = ''; // Clear the file input
-				} else if (file.size > maxSize) {
-					alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
-					this.value = ''; // Clear the file input
-				} else {
-					previewAvatar(event); // Preview the selected image
-					avatarForm.querySelector('input[type="submit"]').click(); // Submit the form
-				}
+		if (file) {
+			if (!file.type.startsWith('image/')) {
+				alert("{% trans 'Please select a valid image file.' %}");
+				avatarInput.value = ''; // Clear the file input
+			} else if (file.size > maxSize) {
+				alert("{% trans 'The selected file is too large. Please select a file smaller than 1 MB.' %}");
+				avatarInput.value = ''; // Clear the file input
+			} else {
+				previewAvatar(event); // Preview the selected image
+				avatarForm.querySelector('input[type="submit"]').click(); // Submit the form
 			}
-			closeLoadingEffect();
-		});
-	});
+		}
+		closeLoadingEffect();
+	}
 
 	function previewAvatar(event) {
 		const closeLoadingEffect = showLoadingEffect();
@@ -102,23 +100,39 @@
 		closeLoadingEffect();
 	}
 
-	document.addEventListener('drawer-opened', function() {
+	function initGameOutcomesChart() {
 		const gameOutcomes = [
 			{ name: '{% trans "Wins" %}', value: Number('{{ wins }}') },
 			{ name: '{% trans "Losses" %}', value: Number('{{ losses }}') },
 		];
 
-		const gameOutcomesCtx = document.getElementById('gameOutcomesChart').getContext('2d');
-			new Chart(gameOutcomesCtx, {
-			type: 'pie',
-			data: {
-				labels: gameOutcomes.map(outcome => outcome.name),
-				datasets: [{
-				data: gameOutcomes.map(outcome => outcome.value),
-				backgroundColor: ['#0A8F17', '#990C0C'],
-				}],
-			},
-		});
-	});
+		if (gameOutcomes.length > 0) {
+			const gameOutcomesCtx = document.getElementById('gameOutcomesChart').getContext('2d');
+			
+			if (gameOutcomesChart) {
+				gameOutcomesChart.destroy();
+			}
+			
+			gameOutcomesChart = new Chart(gameOutcomesCtx, {
+				type: 'pie',
+				data: {
+					labels: gameOutcomes.map(outcome => outcome.name),
+					datasets: [{
+					data: gameOutcomes.map(outcome => outcome.value),
+					backgroundColor: ['#0A8F17', '#990C0C'],
+					}],
+				},
+			});
+		}
+	}
+
+	function destroyGameOutcomesChart() {
+		if (gameOutcomesChart) {
+			gameOutcomesChart.destroy();
+			gameOutcomesChart = null; // Reset the chart reference
+		}
+	}
+
+	initGameOutcomesChart();
 </script>
 {% endblock %}
