@@ -393,7 +393,7 @@ export class TournamentClient {
 		console.log('tournament_end');
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
-		this.winnerText.innerText = data.message;
+		this.winnerText.innerText = `${data.winner_nickname} is the winner!`;
 
 		let countdown = 11;
 		const countdownInterval = setInterval(() => {

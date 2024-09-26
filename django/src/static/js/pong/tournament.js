@@ -36,6 +36,7 @@ class TournamentController {
 		if (!this.tournamentClient) {
 			return;
 		}
+		this.tournamentClient.destroy();
 		this.tournamentClient = null;
 		this.tournamentClientMessageHandler = null;
 	}
@@ -322,6 +323,8 @@ class TournamentController {
 	reset() {
 		this.setCurrentTournamentId(null);
 		this.isOwner = false;
+		this.participantsNicknames = [];
+
 	}
 
 	destroy() {

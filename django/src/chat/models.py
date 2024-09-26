@@ -12,7 +12,7 @@ class ChatRoom(BaseModel):
     name = models.CharField(max_length=255)
     members = models.ManyToManyField(User, blank=True, related_name='chatroom_members')
     is_public = models.BooleanField(default=False)
-    cover_image = models.ImageField(upload_to='chatroom_covers/', null=True)
+    cover_image = models.ImageField(upload_to='chatroom_covers/', null=True, default='lobby.svg')
     is_group_chat = models.BooleanField(default=False)
 
     def __str__(self):

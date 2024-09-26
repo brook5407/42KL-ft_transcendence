@@ -805,7 +805,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         if self.is_in_tournament():
             return
         tournament = await self.set_consumer_active_tournament(event['tournament_id'])
-        await self.channel_layer.group_add(self.tournament_group_name, self.channel_name)
     
     async def join_tournament(self, event):
         if self.is_in_tournament():
@@ -848,7 +847,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 'tournament_id': self.tournament_id,
             }
         )
-        await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
         await self.clear_tournament()
         
     async def start_tournament(self, event):
@@ -993,6 +991,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         self.paddle = None
 
     async def tournament_game_loop(self):
+        # only owner runs this
         while True:
             await asyncio.sleep(1)
             if not await self.start_next_match():
@@ -1003,9 +1002,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'winner_nickname': await self.tournament_manager.get_tournament_winner_nickname(),
             'tournament_id': self.tournament_id,
         })
-        await self.set_tournament_ended()
         TournamentsManager.remove_tournament(self.tournament_id)
-        await self.clear_tournament()
+        await self.set_tournament_ended()
 
     async def game_loop(self):
         winner_player_id = None
@@ -1133,6 +1131,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'winner_nickname': event['winner_nickname'],
             'tournament_id': event['tournament_id'],
         }))
+        await self.clear_tournament()
 
     async def paddle_assignment(self, event):
         self.paddle = event['paddle']
