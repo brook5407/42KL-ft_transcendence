@@ -78,6 +78,7 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.0
+    restart: unless-stopped
     container_name: tcd_elasticsearch
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
@@ -94,6 +95,7 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash-oss:6.1.0
     container_name: tcd_logstash
+    restart: unless-stopped
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
@@ -112,6 +114,7 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:6.1.0
     container_name: tcd_kibana
+    restart: unless-stopped
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     ports:
