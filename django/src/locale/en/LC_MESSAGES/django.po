@@ -122,59 +122,69 @@ msgstr ""
 
 #: templates/components/drawers/friend/profile.html:28
 #: templates/components/drawers/profile.html:36
-msgid "Wins:"
+msgid "Total Games:"
 msgstr ""
 
 #: templates/components/drawers/friend/profile.html:28
 #: templates/components/drawers/profile.html:36
-msgid "Losses:"
+msgid "Win Rate:"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:35
-#: templates/components/drawers/profile.html:43
+#: templates/components/drawers/friend/profile.html:45
+#: templates/components/drawers/profile.html:53
 msgid "This user didn't say anything"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:46
-#: templates/components/drawers/profile.html:48
+#: templates/components/drawers/friend/profile.html:56
+#: templates/components/drawers/profile.html:58
 msgid "See Match History"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:52
+#: templates/components/drawers/friend/profile.html:62
 msgid "Unblock"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:54
+#: templates/components/drawers/friend/profile.html:64
 msgid "Block"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:56
+#: templates/components/drawers/friend/profile.html:66
 msgid "Delete"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:59
+#: templates/components/drawers/friend/profile.html:69
 msgid "Add Friend"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:73
+#: templates/components/drawers/friend/profile.html:83
 msgid "Friend deleted successfully"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:104
+#: templates/components/drawers/friend/profile.html:114
 msgid "Friend blocked successfully"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:126
+#: templates/components/drawers/friend/profile.html:136
 msgid "Friend unblocked successfully"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:129
+#: templates/components/drawers/friend/profile.html:139
 msgid "Failed to unblock friend"
 msgstr ""
 
-#: templates/components/drawers/friend/profile.html:154
+#: templates/components/drawers/friend/profile.html:164
 #: templates/components/drawers/friend/search-friend.html:92
 msgid "Friend request sent successfully"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:170
+#: templates/components/drawers/profile.html:107
+msgid "Wins"
+msgstr ""
+
+#: templates/components/drawers/friend/profile.html:171
+#: templates/components/drawers/profile.html:108
+msgid "Losses"
 msgstr ""
 
 #: templates/components/drawers/friend/requests.html:10
@@ -187,6 +197,10 @@ msgstr ""
 
 #: templates/components/drawers/friend/search-friend.html:17
 msgid "Search new friends..."
+msgstr ""
+
+#: templates/components/drawers/friend/search-friend.html:63
+msgid "No Results Found"
 msgstr ""
 
 #: templates/components/drawers/friend/search-friend.html:90
@@ -248,7 +262,7 @@ msgid "Leave"
 msgstr ""
 
 #: templates/components/drawers/profile-edit.html:10
-#: templates/components/drawers/profile.html:50
+#: templates/components/drawers/profile.html:60
 msgid "Edit Profile"
 msgstr ""
 
@@ -264,11 +278,11 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: templates/components/drawers/profile.html:71
+#: templates/components/drawers/profile.html:80
 msgid "Please select a valid image file."
 msgstr ""
 
-#: templates/components/drawers/profile.html:74
+#: templates/components/drawers/profile.html:83
 msgid "The selected file is too large. Please select a file smaller than 1 MB."
 msgstr ""
 
