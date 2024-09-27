@@ -43,7 +43,7 @@
 				</div>
 				{% if total_games > 0 %}
 				<div class="card-body">
-					<canvas id="gameOutcomesChart" ></canvas>
+					<canvas id="gameOutcomesChart" data-wins="{{ wins }}" data-losses="{{ losses }}"></canvas>
 				</div>
 				{% endif %}
 			</div>
@@ -86,7 +86,7 @@
 				showSuccessMessage("{% trans 'Friend deleted successfully' %}");
 				return;
 			}
-			throw new Error("{% trans 'Failed to delete friend' % }");
+			throw new Error("{% trans 'Failed to delete friend' %}");
 		}).catch(error => {
 			console.error(error);
 		});
@@ -167,44 +167,5 @@
 			showSuccessMessage("{% trans 'Friend request sent successfully' %}");
 		});
 	}
-
-		// Initialize or reinitialize the chart
-	function initGameOutcomesChart() {
-		const gameOutcomes = [
-			{ name: '{% trans "Wins" %}', value: Number('{{ wins }}') },
-			{ name: '{% trans "Losses" %}', value: Number('{{ losses }}') },
-		];
-
-		if (gameOutcomes.length > 0) {
-			const gameOutcomesCtx = document.getElementById('gameOutcomesChart').getContext('2d');
-			
-			// Destroy the previous chart if it exists to avoid duplicates
-			if (gameOutcomesChart) {
-				gameOutcomesChart.destroy();
-			}
-			
-			gameOutcomesChart = new Chart(gameOutcomesCtx, {
-				type: 'pie',
-				data: {
-					labels: gameOutcomes.map(outcome => outcome.name),
-					datasets: [{
-					data: gameOutcomes.map(outcome => outcome.value),
-					backgroundColor: ['#0A8F17', '#990C0C'],
-					}],
-				},
-			});
-		}
-	}
-
-	// Clean up the chart when the drawer is closed
-	function destroyGameOutcomesChart() {
-		if (gameOutcomesChart) {
-			gameOutcomesChart.destroy();
-			gameOutcomesChart = null; // Reset the chart reference
-		}
-	}
-
-	// Immediately initialize the chart when the page is loaded
-	initGameOutcomesChart();
 </script>
 {% endblock %}

@@ -51,7 +51,7 @@
 				</div>
 				{% if total_games > 0 %}
 				<div class="card-body">
-					<canvas id="gameOutcomesChart" ></canvas>
+					<canvas id="gameOutcomesChart" data-wins="{{ wins }}" data-losses="{{ losses }}"></canvas>
 				</div>
 				{% endif %}
 			</div>
@@ -66,7 +66,6 @@
 {% block drawerScripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-
 	function handleAvatarChange(event) {
 		const avatarInput = event.target;
 		const avatarForm = document.querySelector('#avatar-form');
@@ -99,40 +98,6 @@
 		reader.readAsDataURL(event.target.files[0]);
 		closeLoadingEffect();
 	}
-
-	function initGameOutcomesChart() {
-		const gameOutcomes = [
-			{ name: '{% trans "Wins" %}', value: Number('{{ wins }}') },
-			{ name: '{% trans "Losses" %}', value: Number('{{ losses }}') },
-		];
-
-		if (gameOutcomes.length > 0) {
-			const gameOutcomesCtx = document.getElementById('gameOutcomesChart').getContext('2d');
-			
-			if (gameOutcomesChart) {
-				gameOutcomesChart.destroy();
-			}
-			
-			gameOutcomesChart = new Chart(gameOutcomesCtx, {
-				type: 'pie',
-				data: {
-					labels: gameOutcomes.map(outcome => outcome.name),
-					datasets: [{
-					data: gameOutcomes.map(outcome => outcome.value),
-					backgroundColor: ['#0A8F17', '#990C0C'],
-					}],
-				},
-			});
-		}
-	}
-
-	function destroyGameOutcomesChart() {
-		if (gameOutcomesChart) {
-			gameOutcomesChart.destroy();
-			gameOutcomesChart = null; // Reset the chart reference
-		}
-	}
-
-	initGameOutcomesChart();
+    
 </script>
 {% endblock %}

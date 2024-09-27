@@ -6,16 +6,18 @@ import { FriendListDrawer } from './components/drawer/FriendListDrawer.js';
 import { FriendRequestsDrawer } from './components/drawer/FriendRequestsDrawer.js';
 import { checkNearestMatch } from './utils.js';
 import { TournamentListDrawer } from './components/drawer/TournamentListDrawer.js';
+import { ProfileDrawer } from "./components/drawer/ProfileDrawer.js";
+import { FriendProfileDrawer } from "./components/drawer/FriendProfileDrawer.js";
 
 export const DRAWERS = {
-	profile: GenericDrawer,
+	profile: ProfileDrawer,
 	settings: GenericDrawer,
 	'chat-list': ChatListDrawer,
 	'chat-room': ChatRoomDrawer,
 	'friend-list': FriendListDrawer,
 	'friend-requests': FriendRequestsDrawer,
 	'search-friend': GenericDrawer,
-	'friend-profile': GenericDrawer,
+	'friend-profile': FriendProfileDrawer,
 	'profile-edit': GenericDrawer,
 	'match-history': GenericDrawer,
 	'tournament-list': TournamentListDrawer,
