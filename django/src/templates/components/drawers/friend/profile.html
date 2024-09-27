@@ -25,19 +25,6 @@
 			<p class="profile-email">{{ friend_profile.user.email }}</p>
 		</div>
 		<div class="profile-info-item">
-			<p class="">{% trans 'Total Games:' %} {{ total_games }}, {% trans 'Win Rate:' %} {{ win_rate }}%</p>
-		</div>
-		<div class="profile-info-item">
-			<div class="card">
-				<div class="card-header">
-					Game Outcomes
-				</div>
-				<div class="card-body">
-					<canvas id="gameOutcomesChart" ></canvas>
-				</div>
-			</div>
-		</div>
-		<div class="profile-info-item">
             <p class="profile-bio">
 				{% if friend_profile.bio %}
 					{{ friend_profile.bio }}
@@ -45,6 +32,21 @@
 					{% trans "This user didn't say anything" %}
 				{% endif %}
 			</p>
+		</div>
+		<div class="profile-info-item">
+			<p class="">{% trans 'Total Games:' %} {{ total_games }}, {% trans 'Win Rate:' %} {{ win_rate }}%</p>
+		</div>
+		<div class="profile-info-item">
+			<div class="card">
+				<div class="card-header">
+					Game Outcomes
+				</div>
+				{% if total_games > 0 %}
+				<div class="card-body">
+					<canvas id="gameOutcomesChart" data-wins="{{ wins }}" data-losses="{{ losses }}"></canvas>
+				</div>
+				{% endif %}
+			</div>
 		</div>
 
 		<button id="see-match-history-btn"
@@ -72,6 +74,7 @@
 {% endblock %}
 
 {% block drawerScripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 	function deleteFriend(friendId) {
 		ajaxWithAuth('{% url "friends-delete" %}', {
@@ -83,7 +86,7 @@
 				showSuccessMessage("{% trans 'Friend deleted successfully' %}");
 				return;
 			}
-			throw new Error("{% trans 'Failed to delete friend' % }");
+			throw new Error("{% trans 'Failed to delete friend' %}");
 		}).catch(error => {
 			console.error(error);
 		});
@@ -164,24 +167,5 @@
 			showSuccessMessage("{% trans 'Friend request sent successfully' %}");
 		});
 	}
-
-	document.addEventListener('drawer-opened', function() {
-		const gameOutcomes = [
-			{ name: '{% trans "Wins" %}', value: Number('{{ wins }}') },
-			{ name: '{% trans "Losses" %}', value: Number('{{ losses }}') },
-		];
-
-		const gameOutcomesCtx = document.getElementById('gameOutcomesChart').getContext('2d');
-			new Chart(gameOutcomesCtx, {
-			type: 'pie',
-			data: {
-				labels: gameOutcomes.map(outcome => outcome.name),
-				datasets: [{
-				data: gameOutcomes.map(outcome => outcome.value),
-				backgroundColor: ['#0A8F17', '#990C0C'],
-				}],
-			},
-		});
-	});
 </script>
 {% endblock %}
