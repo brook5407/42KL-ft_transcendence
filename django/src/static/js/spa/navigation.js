@@ -86,7 +86,7 @@ export async function router(data) {
 	document.dispatchEvent(new Event('page-loaded'));
 }
 
-export function navigateTo(url, title = 'AIsPong') {
+export async function navigateTo(url, title = 'AIsPong') {
 	if (typeof window.closeDrawer === 'function') {
 		window.closeDrawer();
 	}
@@ -95,8 +95,8 @@ export function navigateTo(url, title = 'AIsPong') {
 		window.closeModal();
 	}
 	history.pushState(null, null, url);
-	router();
 	document.title = title;
+	await router();
 }
 
 window.navigateTo = navigateTo;
