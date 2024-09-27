@@ -6,7 +6,8 @@ export class ProfileDrawer extends GenericDrawer {
 
         this.boundHandleDrawerOpened = this.handleDrawerOpened.bind(this);
         this.boundInitGameOutcomesChart = this.initGameOutcomesChart.bind(this);
-        this.chart = null; // To store the Chart instance
+        this.chart = null;
+        this.noGamesMessage = null;
     }
 
     async handleDrawerOpened(e) {
@@ -72,14 +73,22 @@ export class ProfileDrawer extends GenericDrawer {
                         }
                     }
                 });
+                gameOutcomesCanvas.style.display = 'block';
+
+                if (this.noGamesMessage) {
+                    this.noGamesMessage.remove();
+                    this.noGamesMessage = null;
+                }
             } else {
                 gameOutcomesCanvas.style.display = 'none';
-                const noGamesMessage = document.createElement('p');
-                noGamesMessage.textContent = "No games played yet.";
+
+                if (!this.noGamesMessage) {
+                    this.noGamesMessage = document.createElement('p');
+                    this.noGamesMessage.className = 'no-games-message';
+                    this.noGamesMessage.textContent = "No games played yet.";
+                    gameOutcomesCanvas.parentNode.appendChild(this.noGamesMessage);
+                }
             }
-        } else {
-            console.warn('Canvas for game outcomes chart not found.');
         }
     }
-
 }

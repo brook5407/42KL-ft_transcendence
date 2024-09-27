@@ -34,8 +34,8 @@
 		</div>
 		<div class="profile-info-item">
             <p class="profile-bio">
-				{% if friend_profile.bio %}
-					{{ friend_profile.bio }}
+				{% if user.profile.bio %}
+					{{ user.profile.bio }}
 				{% else %}
 					{% trans "This user didn't say anything" %}
 				{% endif %}
@@ -49,11 +49,9 @@
 				<div class="card-header">
 					Game Outcomes
 				</div>
-				{% if total_games > 0 %}
 				<div class="card-body">
 					<canvas id="gameOutcomesChart" data-wins="{{ wins }}" data-losses="{{ losses }}"></canvas>
 				</div>
-				{% endif %}
 			</div>
 		</div>
 
