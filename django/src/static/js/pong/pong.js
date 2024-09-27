@@ -2,6 +2,7 @@ import { Paddle } from './classes/paddle.js';
 import { Ball } from './classes/ball.js';
 import { Table } from './classes/table.js';
 import { getWSHost } from '../websocket.js';
+import { navigateTo } from '../spa/navigation.js';
 
 const wsHost = getWSHost();
 
@@ -272,6 +273,19 @@ export class TournamentClient {
 		}
 	}
 
+	startTournament(participantsNicknames) {
+		console.log('start_tournament');
+		if (!participantsNicknames || participantsNicknames.length === 0) {
+			navigateTo('/');
+			return;
+		}
+		this.overlay.style.display = 'flex';
+		this.winnerText.style.display = 'flex';
+		this.winnerText.innerText = `Participants: ${participantsNicknames.join(
+			', '
+		)}`;
+	}
+
 	nextMatch(data) {
 		console.log('next_match');
 		this.assignedPaddle = null;
@@ -379,7 +393,7 @@ export class TournamentClient {
 		console.log('tournament_end');
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
-		this.winnerText.innerText = data.message;
+		this.winnerText.innerText = `${data.winner_nickname} is the winner!`;
 
 		let countdown = 11;
 		const countdownInterval = setInterval(() => {
