@@ -228,11 +228,17 @@ export class ChatRoomDrawer extends GenericDrawer {
 	 */
 	renderMessageBubble(message) {
 		let invitationExpiresAt = null;
+		if (message.message.startsWith('/invite') && (message.type === 'group_chat_message' || (message.room && message.room.is_group_chat))){
+			return `
+					<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
+						message.message
+					)}</div>
+				`;
+		}
 		if (message.match_invitation && message.match_invitation.expired_at) {
 			invitationExpiresAt = new Date(message.match_invitation.expired_at);
 		} else if (
-			!message.match_invitation &&
-			message.message.startsWith('/invite')
+			!message.match_invitation && message.message.startsWith('/invite')
 		) {
 			invitationExpiresAt = new Date();
 			invitationExpiresAt.setMinutes(invitationExpiresAt.getMinutes() + 5);
@@ -304,7 +310,8 @@ export class ChatRoomDrawer extends GenericDrawer {
 			});
 		}
 
-		if (message.match_invitation || message.message.startsWith('/invite')) {
+		// if (message.match_invitation || message.message.startsWith('/invite')) {
+		if (message.match_invitation) {
 			const invitationCard = messageElem.querySelector(
 				'.chat-room__message-card'
 			);

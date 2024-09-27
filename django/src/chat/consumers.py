@@ -191,7 +191,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'created_at': timezone.now().isoformat(),
                 }
             )
-            chat_message = await self.create_chat_message(message, room)
+            chat_message = await self.create_chat_message(message, room, True)
         else:
             other_member = await self.get_other_member(room)
             if not other_member:
@@ -248,10 +248,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return ChatRoom.objects.get(id=room_id)
 
     @database_sync_to_async
-    def create_chat_message(self, message, room):
-        if message.startswith('/invite'):
-            match_invitation = MatchInvitation.objects.create(sender=self.user, receiver=room.members.exclude(id=self.user.id).first())
-            return ChatMessage.objects.create(message=message, sender=self.user, room=room, match_invitation=match_invitation)
+    def create_chat_message(self, message, room, isGroupChat=False):
+        if not isGroupChat:
+            if message.startswith('/invite'):
+                match_invitation = MatchInvitation.objects.create(sender=self.user, receiver=room.members.exclude(id=self.user.id).first())
+                return ChatMessage.objects.create(message=message, sender=self.user, room=room, match_invitation=match_invitation)
         return ChatMessage.objects.create(message=message, sender=self.user, room=room)
 
     @database_sync_to_async

@@ -68,6 +68,7 @@ services:
     container_name: tcd_cert
     volumes:
       - cert:/cert
+
   redis:
     image: redis:latest
     container_name: tcd_redis

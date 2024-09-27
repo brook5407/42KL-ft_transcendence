@@ -169,7 +169,7 @@ class ChatController {
 				room_id: data.room_id,
 			};
 			showInfoToast(
-				`${data.sender.nickname}: ${data.message}`,
+				`${data.sender.profile.nickname}: ${data.message}`,
 				`${data.room_name}`,
 				data.cover_image,
 				toOpen

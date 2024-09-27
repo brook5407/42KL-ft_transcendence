@@ -615,6 +615,13 @@ class TournamentManager:
         if self.tournament.winner is None:
             return None
         return self.tournament.winner.user.profile.nickname
+    
+    @database_sync_to_async
+    def get_participants_nicknames(self):
+        if self.tournament is None:
+            return []
+        participants = TournamentPlayer.objects.filter(tournament=self.tournament)
+        return [participant.player.user.profile.nickname for participant in participants]
         
     def set_tournament(self, tournament):
         self.tournament = tournament
@@ -660,12 +667,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         self.tournament_group_name = None
         self.tournament : TournamentRoom|None = None
         
-        self.tournament_manager = TournamentsManager.get_tournament_manager(self.tournament_id)
-        self.player = await self.get_player(self.user)
-        self.tournament_manager.add_player(self.channel_name, self.player.id)
+        self.tournament_manager = None
+        self.player = None
         self.paddle = None
         
-        await self.set_user_active_tournament()
+        await self.rejoin_user_to_tournament()
         await self.accept()
         
     @database_sync_to_async
@@ -674,8 +680,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         if self.is_in_tournament():
-            await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
-            self.clear_tournament()
+            await self.clear_tournament()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -720,16 +725,29 @@ class TournamentConsumer(AsyncWebsocketConsumer):
     
     def is_in_tournament(self):
         return self.tournament_group_name is not None
+
+    async def set_consumer_active_tournament(self, tournament_id):
+        self.tournament_id = tournament_id
+        self.tournament_group_name = f'tournament_{self.tournament_id}'
+        tournament = await database_sync_to_async(TournamentRoom.objects.get)(id=tournament_id)
+        self.tournament = tournament
+        self.tournament_manager = TournamentsManager.get_tournament_manager(self.tournament_id)
+        self.tournament_manager.set_tournament(tournament)
+        self.player = await self.get_player(self.user)
+        self.tournament_manager.add_player(self.channel_name, self.player.id)        
+        await self.channel_layer.group_add(self.tournament_group_name, self.channel_name)
+        return tournament
     
     @database_sync_to_async
-    def set_user_active_tournament(self):
-        active_tournament = UserActiveTournament.objects.get(user=self.user)
-        if active_tournament.tournament is not None:
-            self.tournament_id = active_tournament.tournament.id
-            self.tournament_group_name = f'tournament_{self.tournament_id}'
-            self.tournament = active_tournament.tournament
-            async_to_sync(self.channel_layer.group_add)(self.tournament_group_name, self.channel_name)
-            async_to_sync(self.channel_layer.group_send)(
+    def get_user_active_tournament(self):
+        return UserActiveTournament.objects.get(user=self.user).tournament
+
+    async def rejoin_user_to_tournament(self):
+        active_tournament = await self.get_user_active_tournament()
+        if active_tournament is not None:
+            await self.set_consumer_active_tournament(active_tournament.id)
+            await self.channel_layer.group_add(self.tournament_group_name, self.channel_name)
+            await self.channel_layer.group_send(
                 self.tournament_group_name,
                 {
                     'type': 'player_rejoined',
@@ -762,22 +780,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
     async def create_tournament(self, event):
         if self.is_in_tournament():
             return
-        tournament_id = event['tournament_id']
-        self.tournament_id = tournament_id
-        self.tournament_group_name = f'tournament_{self.tournament_id}'
-        tournament = await database_sync_to_async(TournamentRoom.objects.get)(id=tournament_id)
-        self.tournament_manager.set_tournament(tournament)
-        await self.channel_layer.group_add(self.tournament_group_name, self.channel_name)
+        tournament = await self.set_consumer_active_tournament(event['tournament_id'])
     
     async def join_tournament(self, event):
         if self.is_in_tournament():
             return
-        tournament_id = event['tournament_id']
-        self.tournament_id = tournament_id
-        self.tournament_group_name = f'tournament_{self.tournament_id}'
-        # tournament = await database_sync_to_async(TournamentRoom.objects.get)(id=tournament_id)
-        # self.tournament_manager.set_tournament(tournament)
-        await self.channel_layer.group_add(self.tournament_group_name, self.channel_name)
+        await self.set_consumer_active_tournament(event['tournament_id'])
 
         await self.channel_layer.group_send(
             self.tournament_group_name,
@@ -803,8 +811,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                     'tournament_id': self.tournament_id,
                 }
             )
-            await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
-            self.clear_tournament()
+            await self.clear_tournament()
             return
 
         await self.channel_layer.group_send(
@@ -816,8 +823,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 'tournament_id': self.tournament_id,
             }
         )
-        await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
-        self.clear_tournament()
+        await self.clear_tournament()
         
     async def start_tournament(self, event):
         if not self.is_in_tournament():
@@ -830,12 +836,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 'type': 'tournament_started',
                 'message': 'Tournament has started.',
                 'tournament_id': self.tournament_id,
+                'participants_nicknames': await self.tournament_manager.get_participants_nicknames(),
             }
         )
-        # await self.tournament_started({
-        #     'message': 'Tournament has started.',
-        #     'tournament_id': self.tournament_id,
-        # })
         asyncio.create_task(self.tournament_game_loop())
     
     @database_sync_to_async
@@ -943,11 +946,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
     async def rejoin_tournament(self, event):
         if self.is_in_tournament():
             return
-        tournament_id = event['tournament_id']
-        self.tournament_id = tournament_id
-        self.tournament_group_name = f'tournament_{self.tournament_id}'
-        # tournament = await database_sync_to_async(TournamentRoom.objects.get)(id=tournament_id)
-        # self.tournament_manager.set_tournament(tournament)
         await self.channel_layer.group_add(self.tournament_group_name, self.channel_name)
         await self.channel_layer.group_send(
             self.tournament_group_name,
@@ -959,12 +957,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             }
         )
         
-    def clear_tournament(self):
+    async def clear_tournament(self):
         self.tournament_id = None
+        await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
         self.tournament_group_name = None
-        # self.tournament_manager.reset()
+        self.tournament = None
+        self.tournament_manager = None
+        self.player = None
+        self.paddle = None
 
     async def tournament_game_loop(self):
+        # only owner runs this
         while True:
             await asyncio.sleep(1)
             if not await self.start_next_match():
@@ -975,9 +978,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'winner_nickname': await self.tournament_manager.get_tournament_winner_nickname(),
             'tournament_id': self.tournament_id,
         })
-        await self.set_tournament_ended()
-        self.clear_tournament()
         TournamentsManager.remove_tournament(self.tournament_id)
+        await self.set_tournament_ended()
 
     async def game_loop(self):
         winner_player_id = None
@@ -1095,6 +1097,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'type': 'tournament_started',
             'message': event['message'],
             'tournament_id': event['tournament_id'],
+            'participants_nicknames': event['participants_nicknames'],
         }))
 
     async def tournament_ended(self, event):
@@ -1104,6 +1107,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             'winner_nickname': event['winner_nickname'],
             'tournament_id': event['tournament_id'],
         }))
+        await self.clear_tournament()
 
     async def paddle_assignment(self, event):
         self.paddle = event['paddle']
