@@ -10,6 +10,7 @@ router.register(r"match-history", views.MatchHistoryViewSet)
 urlpatterns = [
     path("pong/pvp/", views.pvp_view, name="pong.pvp"),
     path("pong/pve/", views.pve_view, name="pong.pve"),
+    path("pong/local/", views.local_view, name="pong.local"),
     path("pong/tournament/", views.tournament_view, name="pong.tournament"),
     path("api/", include(router.urls)),
     # drawers
