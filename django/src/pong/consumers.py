@@ -93,6 +93,8 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.wait_for_opponent()
         elif (self.game_mode == "pve"):
             await self.pve_mode()
+        elif (self.game_mode == "local"):
+            await self.local_mode()
             
     @database_sync_to_async
     def get_player(self, user):
@@ -110,6 +112,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+        paddle = data.get('paddle')
         movement = data.get('movement')
         if not movement:
             return
@@ -123,9 +126,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             velocity = 0
 
         # Update the paddle's velocity
-        if self.paddle == 'paddle1':
+        if paddle == 'paddle1':
             self.manager.paddle1.velocity = velocity
-        elif self.paddle == 'paddle2':
+        elif paddle == 'paddle2':
             self.manager.paddle2.velocity = velocity
 
     async def pvp_mode(self):
@@ -148,6 +151,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 'type': 'start_game',
                 'message': 'Game had started!',
             })
+        asyncio.create_task(self.game_loop())
 
     async def pve_mode(self):
         self.player1 = self.channel_name
@@ -163,6 +167,23 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'start_game',
             'message': 'channel_layer.group_send: start_game',
         })
+        asyncio.create_task(self.game_loop())
+
+    async def local_mode(self):
+        self.player1 = self.channel_name
+        self.player2 = self.channel_name
+        await self.channel_layer.send(self.channel_name, {
+            'type': 'paddle_assignment',
+            'message': 'Assign Local Paddle1 and Paddle2',
+            'paddle': 'localpaddles',
+        })
+        await self.channel_layer.group_send(
+        self.room_group_name,
+        {
+            'type': 'start_game',
+            'message': 'channel_layer.group_send: start_game',
+        })
+        asyncio.create_task(self.game_loop())
 
     async def paddle_assignment(self, event):
         self.paddle = event['paddle']
@@ -189,14 +210,13 @@ class PongConsumer(AsyncWebsocketConsumer):
                 'message': i,
             }))
             await asyncio.sleep(1)
-        asyncio.create_task(self.game_loop())
 
     async def game_loop(self):
         winner_channel = None
         winner_score = 0
         loser_score = 0
         ai_last_update = 0
-        await asyncio.sleep(1)
+        await asyncio.sleep(4)
 
         while True:
             # Update game state
@@ -242,7 +262,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
             # End the game if a player reaches a score of winningScore
             if self.manager.score1 >= winningScore or self.manager.score2 >= winningScore:
-                winner = 'Player 1' if self.manager.score1 >= winningScore else 'Player 2'
+                winner = 'Left Player' if self.manager.score1 >= winningScore else 'Right Player'
                 loser = self.player2 if self.manager.score1 >= winningScore else self.player1
                 winner_channel = self.player1 if self.manager.score1 >= winningScore else self.player2
                 winner_score = self.manager.score1 if self.manager.score1 >= winningScore else self.manager.score2
@@ -256,7 +276,6 @@ class PongConsumer(AsyncWebsocketConsumer):
                     }
                 )
                 break  # Exit the game loop
-
             await asyncio.sleep(1/60)  # Run at ~60 FPS
         winner_player_id = self.manager.get_player_id_from_channel_name(winner_channel)
         await self.set_match_end(winner_player_id, winner_score, loser_score)
@@ -442,49 +461,6 @@ class Ball:
             self.speed = min(self.speed + 10, 15)
         self.speed = min(self.speed + 1, 15)
         print("ball speed: " + str(self.speed))
-
-# class PongAI:
-#     def __init__(self, paddle, ball, game_height):
-#         self.paddle = paddle  # The AI's paddle
-#         self.ball = ball  # The ball object
-#         self.game_height = game_height  # Height of the game area
-#         self.last_known_ball_position = None
-#         self.last_known_ball_velocity = None
-#         self.update_interval = 1  # AI updates once per second
-    
-#     def update(self):
-#         """Update the AI's view of the game once per second."""
-#         self.last_known_ball_position = (self.ball.x, self.ball.y)
-#         self.last_known_ball_velocity = (self.ball.vx, self.ball.vy)
-        
-#         # Predict where the ball will be when it reaches the AI's side
-#         predicted_y = self.predict_ball_position()
-        
-#         # Move the paddle towards the predicted position
-#         self.move_paddle(predicted_y)
-    
-#     def predict_ball_position(self):
-#         """Predict the ball's future position based on its velocity and position."""
-#         time_until_ball_reaches_paddle = (self.paddle.x - self.ball.x) / self.ball.vx
-        
-#         # Predict future Y position by projecting the ball's trajectory
-#         predicted_y = self.ball.y + self.ball.vy * time_until_ball_reaches_paddle
-        
-#         # Handle ball bounces off the top or bottom walls
-#         if predicted_y < 0 or predicted_y > self.game_height:
-#             predicted_y = self.game_height - abs(predicted_y % self.game_height)  # Reflect the bounce
-        
-#         return predicted_y
-    
-#     def move_paddle(self, predicted_y):
-#         """Move the paddle towards the predicted Y position, simulating key inputs."""
-#         if predicted_y < self.paddle.y:
-#             # Simulate 'up' key input
-#             self.paddle.move_up()
-#         elif predicted_y > self.paddle.y:
-#             # Simulate 'down' key input
-#             self.paddle.move_down()
-
 
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     """

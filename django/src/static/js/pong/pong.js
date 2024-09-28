@@ -127,6 +127,11 @@ export class GameClient {
 			this.score1.style.color = '#EC4242';
 			this.paddle2.color = '#4FCDF0';
 			this.score2.style.color = '#4FCDF0';
+		} else if (this.assignedPaddle === 'localpaddles') {
+			this.paddle1.color = '#4FCDF0';
+			this.score1.style.color = '#4FCDF0';
+			this.paddle2.color = '#EC4242';
+			this.score2.style.color = '#EC4242';
 		}
 	}
 
@@ -192,22 +197,43 @@ export class GameClient {
 
 	handleKeyDown(event) {
 		let movement = null;
-
-		if (event.key === 'w') {
-			movement = 'up';
-		} else if (event.key === 's') {
-			movement = 'down';
+		
+		if (this.assignedPaddle === "localpaddles") {
+			if (event.key === 'w')
+				this.socket.send(JSON.stringify({ paddle: "paddle1", movement: "up" }));
+			else if (event.key === 's')
+				this.socket.send(JSON.stringify({ paddle: "paddle1", movement: "down" }));
+			if (event.key === 'ArrowUp')
+				this.socket.send(JSON.stringify({ paddle: "paddle2", movement: "up" }));
+			else if (event.key === 'ArrowDown')
+				this.socket.send(JSON.stringify({ paddle: "paddle2", movement: "down" }));
 		}
+		else {
+			if (event.key === 'w')
+				movement = 'up';
+			else if (event.key === 's')
+				movement = 'down';
 
-		if (movement !== null) {
-			this.socket.send(
-				JSON.stringify({ paddle: this.assignedPaddle, movement: movement })
-			);
+			if (movement !== null) {
+				this.socket.send(
+					JSON.stringify({ paddle: this.assignedPaddle, movement: movement })
+				);
+			}
 		}
 	}
 
 	handleKeyUp(event) {
-		if (event.key === 'w' || event.key === 's') {
+		if (this.assignedPaddle === "localpaddles") {
+			if (event.key === 'w' || event.key === 's')
+				this.socket.send(
+					JSON.stringify({ paddle: 'paddle1', movement: 'stop'})
+				);
+			if (event.key === 'ArrowUp' || event.key === 'ArrowDown')
+				this.socket.send(
+					JSON.stringify({ paddle: 'paddle2', movement: 'stop'})
+				);
+		}
+		else if (event.key === 'w' || event.key === 's') {
 			this.socket.send(
 				JSON.stringify({ paddle: this.assignedPaddle, movement: 'stop' })
 			);
