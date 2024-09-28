@@ -132,9 +132,11 @@ export class ChatRoomDrawer extends GenericDrawer {
 			if (!message) {
 				const chatInput = this.element.querySelector('#message-input');
 				message = chatInput.value;
-      }
+			}
 			if (message.length > MAX_MESSAGE_LENGTH) {
-				alert(`Message is too long! Please limit your message to ${MAX_MESSAGE_LENGTH} characters.`);
+				alert(
+					`Message is too long! Please limit your message to ${MAX_MESSAGE_LENGTH} characters.`
+				);
 				return;
 			}
 			if (!message) {
@@ -228,17 +230,20 @@ export class ChatRoomDrawer extends GenericDrawer {
 	 */
 	renderMessageBubble(message) {
 		let invitationExpiresAt = null;
-		if (message.message.startsWith('/invite') && (message.type === 'group_chat_message' || (message.room && message.room.is_group_chat))){
+		if (
+			message.message.startsWith('/invite') &&
+			(message.type === 'group_chat_message' ||
+				(message.room && message.room.is_group_chat))
+		) {
 			return `
-					<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
-						message.message
-					)}</div>
+					<div class="chat-room__message-bubble">${escapeHTML(message.message)}</div>
 				`;
 		}
 		if (message.match_invitation && message.match_invitation.expired_at) {
 			invitationExpiresAt = new Date(message.match_invitation.expired_at);
 		} else if (
-			!message.match_invitation && message.message.startsWith('/invite')
+			!message.match_invitation &&
+			message.message.startsWith('/invite')
 		) {
 			invitationExpiresAt = new Date();
 			invitationExpiresAt.setMinutes(invitationExpiresAt.getMinutes() + 5);
@@ -258,9 +263,7 @@ export class ChatRoomDrawer extends GenericDrawer {
 			`;
 		} else {
 			return `
-				<div class="chat-room__message-bubble">${this.wrapUrlsWithAnchorTags(
-					message.message
-				)}</div>
+				<div class="chat-room__message-bubble">${escapeHTML(message.message)}</div>
 			`;
 		}
 	}

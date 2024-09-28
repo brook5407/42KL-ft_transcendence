@@ -147,6 +147,7 @@ class ChatController {
 	}
 
 	showToastNotification(data) {
+		console.log(data);
 		let toOpen = {
 			type: 'drawer',
 			name: 'chat-room',

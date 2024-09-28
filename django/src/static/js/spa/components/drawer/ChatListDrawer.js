@@ -142,8 +142,9 @@ export class ChatListDrawer extends GenericDrawer {
 				// Update the element with the new data
 				chatRoomElement.querySelector('.last-message-sender').textContent =
 					wsChatMessage.sender.profile.nickname;
-				chatRoomElement.querySelector('.last-message').textContent =
-					wsChatMessage.message;
+				chatRoomElement.querySelector('.last-message').textContent = escapeHTML(
+					wsChatMessage.message
+				);
 				chatRoomElement
 					.querySelector('.chat-time')
 					.setAttribute('data-timestamp', Date.now());
@@ -223,9 +224,9 @@ export class ChatListDrawer extends GenericDrawer {
                         <div class="last-message-sender">${
 													chatRoom.last_message?.sender.profile.nickname || ''
 												}</div>
-                        <div class="last-message">${
+                        <div class="last-message">${escapeHTML(
 													chatRoom.last_message?.message || ''
-												}</div>
+												)}</div>
                     </div>
             </div>
             <div class="chat-time" data-timestamp="${

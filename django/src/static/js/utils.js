@@ -22,3 +22,12 @@ window.isHTMLElement = function (str) {
 window.sleep = function (ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
+window.escapeHTML = function (str) {
+	return str
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&apos;');
+};
