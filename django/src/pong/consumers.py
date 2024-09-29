@@ -593,6 +593,8 @@ class TournamentManager:
             }
         '''
         self.players = {}
+        self.in_game = False
+        self.in_game_lock = asyncio.Lock()
     
     def add_player(self, channel_name, player_id):
         self.players[channel_name] = player_id
@@ -645,6 +647,14 @@ class TournamentManager:
         
     def set_paddle2_velocity(self, velocity):
         self.match_manager.paddle2.velocity = velocity
+    
+    async def set_in_game(self, value):
+        async with self.in_game_lock:
+            self.in_game = value
+
+    async def get_in_game(self):
+        async with self.in_game_lock:
+            return self.in_game
 
 class TournamentsManager:
     tournaments = {}
@@ -856,6 +866,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def set_tournament_ended(self):
         self.tournament_manager.tournament.end()
+        
+    @database_sync_to_async
+    def tournament_ongoing(self):
+        return self.tournament_manager.tournament.status == TournamentRoom.Status.ONGOING
     
     async def announce_next_match(self, current_player1_channel, current_player2_channel):
         player1 = await self.get_player_from_id(self.tournament_manager.get_player_id(current_player1_channel))
@@ -893,6 +907,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         self.tournament_manager.set_current_player_channels(current_player1_channel, current_player2_channel)
         await self.announce_next_match(current_player1_channel, current_player2_channel)
         await asyncio.sleep(2)
+        await self.tournament_manager.set_in_game(True)
         await self.channel_layer.send(self.tournament_manager.current_player1_channel, {
             'type': 'paddle_assignment',
             'message': 'You are Paddle 1!',
@@ -910,6 +925,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 'message': 'Game had started!',
             })
         await self.game_loop()
+        await self.tournament_manager.set_in_game(False)
         return True
     
     async def start_game(self, event):
@@ -957,6 +973,18 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             }
         )
         
+        if await self.tournament_manager.get_in_game():
+            await self.channel_layer.send(self.tournament_manager.current_player1_channel, {
+                'type': 'paddle_assignment',
+                'message': 'You are Paddle 1!',
+                'paddle': 'paddle1',
+            })
+            await self.channel_layer.send(self.tournament_manager.current_player2_channel, {
+                'type': 'paddle_assignment',
+                'message': 'You are Paddle 2!',
+                'paddle': 'paddle2',
+            })
+        
     async def clear_tournament(self):
         self.tournament_id = None
         await self.channel_layer.group_discard(self.tournament_group_name, self.channel_name)
@@ -973,13 +1001,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             if not await self.start_next_match():
                 break
             
+        await self.set_tournament_ended()
         await self.end_tournament({
             'message': 'Tournament has ended.',
             'winner_nickname': await self.tournament_manager.get_tournament_winner_nickname(),
             'tournament_id': self.tournament_id,
         })
         TournamentsManager.remove_tournament(self.tournament_id)
-        await self.set_tournament_ended()
 
     async def game_loop(self):
         winner_player_id = None

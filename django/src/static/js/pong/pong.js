@@ -197,22 +197,23 @@ export class GameClient {
 
 	handleKeyDown(event) {
 		let movement = null;
-		
-		if (this.assignedPaddle === "localpaddles") {
+
+		if (this.assignedPaddle === 'localpaddles') {
 			if (event.key === 'w')
-				this.socket.send(JSON.stringify({ paddle: "paddle1", movement: "up" }));
+				this.socket.send(JSON.stringify({ paddle: 'paddle1', movement: 'up' }));
 			else if (event.key === 's')
-				this.socket.send(JSON.stringify({ paddle: "paddle1", movement: "down" }));
+				this.socket.send(
+					JSON.stringify({ paddle: 'paddle1', movement: 'down' })
+				);
 			if (event.key === 'ArrowUp')
-				this.socket.send(JSON.stringify({ paddle: "paddle2", movement: "up" }));
+				this.socket.send(JSON.stringify({ paddle: 'paddle2', movement: 'up' }));
 			else if (event.key === 'ArrowDown')
-				this.socket.send(JSON.stringify({ paddle: "paddle2", movement: "down" }));
-		}
-		else {
-			if (event.key === 'w')
-				movement = 'up';
-			else if (event.key === 's')
-				movement = 'down';
+				this.socket.send(
+					JSON.stringify({ paddle: 'paddle2', movement: 'down' })
+				);
+		} else {
+			if (event.key === 'w') movement = 'up';
+			else if (event.key === 's') movement = 'down';
 
 			if (movement !== null) {
 				this.socket.send(
@@ -223,17 +224,16 @@ export class GameClient {
 	}
 
 	handleKeyUp(event) {
-		if (this.assignedPaddle === "localpaddles") {
+		if (this.assignedPaddle === 'localpaddles') {
 			if (event.key === 'w' || event.key === 's')
 				this.socket.send(
-					JSON.stringify({ paddle: 'paddle1', movement: 'stop'})
+					JSON.stringify({ paddle: 'paddle1', movement: 'stop' })
 				);
 			if (event.key === 'ArrowUp' || event.key === 'ArrowDown')
 				this.socket.send(
-					JSON.stringify({ paddle: 'paddle2', movement: 'stop'})
+					JSON.stringify({ paddle: 'paddle2', movement: 'stop' })
 				);
-		}
-		else if (event.key === 'w' || event.key === 's') {
+		} else if (event.key === 'w' || event.key === 's') {
 			this.socket.send(
 				JSON.stringify({ paddle: this.assignedPaddle, movement: 'stop' })
 			);
@@ -301,15 +301,11 @@ export class TournamentClient {
 
 	startTournament(participantsNicknames) {
 		console.log('start_tournament');
-		if (!participantsNicknames || participantsNicknames.length === 0) {
-			navigateTo('/');
-			return;
-		}
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
-		this.winnerText.innerText = `Participants: ${participantsNicknames.join(
-			', '
-		)}`;
+		// this.matchmaking.innerText = `Participants: ${participantsNicknames.join(
+		// 	', '
+		// )}`;
 	}
 
 	nextMatch(data) {

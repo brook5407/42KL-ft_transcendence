@@ -44,9 +44,22 @@ class TournamentController {
 	_onOpen() {
 		console.log('Tournament Websocket connection established');
 		if (window.currentUser.active_tournament_id) {
+			console.warn('Rejoining tournament');
 			// if user has active tournament, rejoin
-			this.currentTournamentId = window.currentUser.active_tournament_id;
-			this.joinTournament(window.currentUser.active_tournament_id);
+			// this.currentTournamentId = window.currentUser.active_tournament_id;
+			// this.joinTournament(window.currentUser.active_tournament_id);
+
+			this.fetchTournamentRoomDetails(
+				window.currentUser.active_tournament_id
+			).then((tournamentRoom) => {
+				console.log(tournamentRoom);
+				if (tournamentRoom.status === 'O') {
+					console.log("redirecting to the tournament's page");
+					navigateTo(
+						`/pong/tournament/?tournament_id=${window.currentUser.active_tournament_id}`
+					);
+				}
+			});
 		}
 	}
 
@@ -324,7 +337,6 @@ class TournamentController {
 		this.setCurrentTournamentId(null);
 		this.isOwner = false;
 		this.participantsNicknames = [];
-
 	}
 
 	destroy() {
