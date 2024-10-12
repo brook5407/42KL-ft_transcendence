@@ -83,6 +83,10 @@ export class GameClient {
 
 	startGame(data) {
 		console.log('start_game');
+		window.audioAssets.pauseALL();
+        window.audioAssets.bgmSound.loop = true;
+        window.audioAssets.bgmSound.play();
+
 		this.canvasContainer.height = data.gameHeight;
 		this.canvasContainer.width = data.gameWidth;
 		this.gameCanvas.height = data.gameHeight;
@@ -159,14 +163,44 @@ export class GameClient {
 		this.paddle2.y = data.paddle2.y;
 		this.ball.x = data.ball.x;
 		this.ball.y = data.ball.y;
+		if (data.score1 > this.score1.innerText || data.score2 > this.score2.innerText) {
+			window.audioAssets.scoreSound.play();
+		}
 		this.score1.innerText = data.score1;
 		this.score2.innerText = data.score2;
+
+		// Sound Effect
+		// if ((this.ball.x - this.ball.radius) <= 0 ) {
+		// 	window.audioAssets.scoreSound.play();
+		// } 
+		// if (this.ball.x >= this.gameCanvas.width - this.ball.radius) {
+		// 	window.audioAssets.scoreSound.play();
+		// }  
+		if (this.ball.x <= (this.paddle1.x + this.paddle1.width + this.ball.radius)) {
+			if (this.ball.y > this.paddle1.y && this.ball.y < this.paddle1.y + this.paddle1.height)
+				window.audioAssets.hitSound.play();
+		}
+		if (this.ball.x >= (this.paddle2.x - this.ball.radius)) {
+			if (this.ball.y > this.paddle2.y && this.ball.y < this.paddle2.y + this.paddle2.height)
+				window.audioAssets.hitSound.play();
+		}
 
 		this.table.draw();
 	}
 
 	endGame(data) {
+		if (this.score1 !== this.score2) {
+			if ((this.score1 > this.score2 && this.assignedPaddle === 'paddle1') ||
+				(this.score1 < this.score2 && this.assignedPaddle === 'paddle2')) {
+				window.audioAssets.winSound.play();
+			} else {
+				window.audioAssets.loseSound.play();
+			}
+		} else {
+			window.audioAssets.drawSound.play();
+		}		
 		console.log('end_game');
+		window.audioAssets.pauseALL();
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
 		this.winnerText.innerText = data.message;
@@ -406,6 +440,7 @@ export class TournamentClient {
 
 	endGame(data) {
 		console.log('end_game');
+		window.audioAssets.bgmSound.pause();
 		this.overlay.style.display = 'flex';
 		this.winnerText.style.display = 'flex';
 		this.winnerText.innerText = data.message;
@@ -477,6 +512,10 @@ export class TournamentClient {
 	}
 
 	destroy() {
+		if (window.audioAssets && window.audioAssets.bgmSound) {
+			window.audioAssets.bgmSound.pause();
+			window.audioAssets.bgmSound.currentTime = 0;
+		}
 		this.detachEventListeners();
 	}
 }

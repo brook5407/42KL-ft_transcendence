@@ -79,7 +79,29 @@
     <div id="drawer-container"></div>
 
     <div id="toast-container"></div>
-    
+
+    <audio id="background-music" autoplay loop>
+      <source src="{% static 'audio/bgm2.mp3' %}" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/pong/preload.js' %}"></script>
+    <script type="module" src="{% static 'js/script.js' %}"></script>
+    <script type="module" src="{% static 'js/utils.js' %}"></script>
+    <script type="module" src="{% static 'js/oauth.js' %}"></script>
+    <script type="module" src="{% static 'js/message.js' %}"></script>
+    <script type="module" src="{% static 'js/toast.js' %}"></script>
+    <script type="module" src="{% static 'js/websocket.js' %}"></script>
+    <script type="module" src="{% static 'js/chat/chat.js' %}"></script>
+    <script type="module" src="{% static 'js/spa/modal.js' %}"></script>
+    <script type="module" src="{% static 'js/spa/drawer.js' %}"></script>
+    <script type="module" src="{% static 'js/spa/form.js' %}"></script>
+    <script type="module" src="{% static 'js/notification.js' %}"></script>
+    <script type="module" src="{% static 'js/loading.js' %}"></script>
+    <script type="module" src="{% static 'js/onlineStatus.js' %}"></script>
+    <script type="module" src="{% static 'js/friend/frLiveUpdate.js' %}"></script>
+    <script type="module" src="{% static 'js/pong/tournament.js' %}"></script>
     {% if store_reset_params %}
     <script>
       // Store UID and token in localStorage
