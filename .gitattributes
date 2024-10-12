@@ -12,7 +12,6 @@
 # Declare binary files that should not be modified (Git will not attempt any normalization)
 *.png binary
 *.jpg binary
-*.gif binary
 
 # # Set specific handling for files in a directory
 # docs/*.txt text eol=lf

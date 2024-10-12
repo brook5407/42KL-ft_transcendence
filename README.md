@@ -88,7 +88,7 @@ https://www.chenshiyang.com/archives/696
 # 42-KL Project Ft_transcendence: AIS PONG
 
 <p align="center">
-  <image alt="aispongpng" src="files/aispong.png">
+  <image alt="aispongpng" src="files/aispong.gif">
 </p>
 
 ## Overview
@@ -114,10 +114,6 @@ docker compose -f ./docker-compose.yml up -d
 ```
 >  You can also use the makefile command to run the docker env <br>
     
-```bash
-make build-up
-```
-
 ```bash
 make build-up
 ```
