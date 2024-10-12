@@ -1,112 +1,113 @@
-# Ft_transcendence
+<h1 align="center">
+    🎮ft_transcendence
+</h1>
 
-- Python Version: 3.12.0
-- Created by: <b>Brook, Qixeo, Joseph, Xuerui, Mark </b>
+<p align="center">
+	<b><i>This project is about doing something you’ve never done before.
+ Remind yourself the beginning of your journey in computer science.
+ Look at you now. Time to shine!</i></b><br>
+</p>
 
+<p align="center">
+  <image alt="aispong" src="files/aispong.gif"></image>
+</p>
 
-## Dev Setup
+<p align="center">
+	<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/brook5407/ft_transcendence">
+	<img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/brook5407/ft_transcendence">
+	<img alt="GitHub language count" src="https://img.shields.io/github/languages/count/brook5407/ft_transcendence">
+	<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/brook5407/ft_transcendence">
+	<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/brook5407/ft_transcendence">
+</p>
 
-```bash
-# Setup and activate python virtual environment for dev
-$ python3 -m venv .venv
-$ source .venv/bin/activate # use the deactivate command to deactivate the venv
-$ pip install -r requirements.txt
+<h3 align="center">
+	<a href="#-about">About</a>
+	<span> · </span>
+    <a href="#-modules">Modules</a>
+    <span> · </span>
+  	<a href="#-content">Content</a>
+	<span> · </span>
+	<a href="#-usage">Usage</a>
+	<span> · </span>
+	<a href="#-screenshots">Screenshots</a>
 
-# create the .env file
-$ cp .env.example .env
+</h3>
 
-# generate the secret key for django and copy it, paste to .env DJANGO_SECRET_KEY
-$ python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())'
+## 💡 About
 
-# spawn all docker containers, networks and volumes
-$ make build-up
+ > This project is about creating a website for the mighty Pong contest!
 
-# When you change any of the django files, the django dev server will reload thanks to docker volume and watchdog
+## 📚 Modules
 
-# stop all containers
-$ make down
-```
-
-
-## Modules
-
-### Web
+### 🌐 Web
 - [x] Major module: Use a Framework as backend.
 - [x] Minor module: Use a front-end framework or toolkit.
 - [x] Minor module: Use a database for the backend.
-- [x] Major module: Store the score of a tournament in the Blockchain.
+- [ ] Major module: Store the score of a tournament in the Blockchain.
 
-### User Management
+### 👤 User Management
 - [x] Major module: Standard user management, authentication, users across
-tournaments. - -**By Brook (WIP)**
-- [x] Major module: Implementing a remote authentication. -**By Brook**
+tournaments.
+- [x] Major module: Implementing a remote authentication.
 
-### Gameplay and user experience
+### 🕹️ Gameplay and user experience
 - [x] Major module: Remote players
 - [ ] Major module: Multiplayers (more than 2 in the same game).
-- [x] Major module: Add Another Game with User History and Matchmaking.
+- [ ] Major module: Add Another Game with User History and Matchmaking.
 - [ ] Minor module: Game Customization Options.
 - [x] Major module: Live chat.
 
-### AI-Algo
+### 👾 AI-Algo
 - [x] Major module: Introduce an AI Opponent.
-- [ ] Minor module: User and Game Stats Dashboards
+- [x] Minor module: User and Game Stats Dashboards
 
-### Cybersecurity
+### 🛡️ Cybersecurity
 - [ ] Major module: ImplementWAF/ModSecurity with Hardened Configuration
 and HashiCorp Vault for Secrets Management.
 - [ ] Minor module: GDPR Compliance Options with User Anonymization, Local
 Data Management, and Account Deletion.
 - [x] Major module: Implement Two-Factor Authentication (2FA) and JWT.
 
-### Devops
-- [ ] Major module: Infrastructure Setup for Log Management.
+### 🏗️ Devops
+- [x] Major module: Infrastructure Setup for Log Management.
 - [ ] Minor module: Monitoring system.
 - [ ] Major module: Designing the Backend as Microservices.
 
-### Graphics
+### 🖥️ Graphics
 - [ ] Major module: Use of advanced 3D techniques.
 
-### Accessibility
+### 📲 Accessibility
 - [ ] Minor module: Support on all devices.
 - [x] Minor module: Expanding Browser Compatibility.
-- [ ] Minor module: Multiple language supports.
+- [x] Minor module: Multiple language supports.
 - [ ] Minor module: Add accessibility for Visually Impaired Users.
-- [ ] Minor module: Server-Side Rendering (SSR) Integration.
+- [x] Minor module: Server-Side Rendering (SSR) Integration.
 
-### Server-Side Pong
+### 🗄️ Server-Side Pong
 - [ ] Major module: Replacing Basic Pong with Server-Side Pong and Implementing
 an API.
 - [ ] Major module: Enabling Pong Gameplay via CLI against Web Users with
 API Integration.
 
-## Reference
+## 🚀 Content
 
-AllAuth Provider - 
-https://www.chenshiyang.com/archives/696
+### 🛠️ Tech Stack
 
-# 42-KL Project Ft_transcendence: AIS PONG
+- **Frontend**: Vanilla JS
+- **Backend**: Django
+- **Database**: PostgreSQL
+- **DevOps**: Docker
+- **Cloud**: DigitalOcean Droplet
 
-<p align="center">
-  <image alt="aispongpng" src="files/aispong.gif">
-</p>
+### ⚡ Game Features:
+- Lobby chat
+- Private messages
+- Friends list
+- User Profiles
+- Match-making
+- Game Modes: PVP, PVE, Tournament
 
-## Overview
-
-Ft_transcendence is the last project in 42KL Core Program. AIS PONG is a multiplayer pong game with a onepage fullstack website.
-It has implemented the following technologies:
-- Frontend: HTML, CSS, JavaScript, React, Redux, Webpack, Babel, ESLint, Prettier, Jest, React Testing Library, Docker, GitHub Pages
-- Backend: Python, Django, Docker, PostgresSQL, OAuth, 2Fa & JWT, Log Management, Microservices, Server-Side Rendering (SSR)
-
-Game Features:
-- lobby chat
-- private messages
-- friends list
-- profiles
-- match-making
-- gamemodes: pvp, pve, tournament
-
-## Usage
+## ▶️ Usage
 >  You need to have docker installed on your machine to run the project <br>
 
 ```bash
@@ -115,14 +116,12 @@ docker compose -f ./docker-compose.yml up -d
 >  You can also use the makefile command to run the docker env <br>
     
 ```bash
-make build-up
+make up
 ```
 
-you should be able to access the website at `http://localhost:8000`.
+> You could also test the AIS PONG on https://42pong.brookchin.tech/
 
-### **Test server**: You could also test the AIS PONG on https://42pong.brookchin.tech/
-
-# Screenshots
+## 📸 Screenshots
 
 ![loginpng](files/login.png)
 ![2falogin](files/2falogin.png)
