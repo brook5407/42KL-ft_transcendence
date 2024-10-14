@@ -14,17 +14,17 @@
 
 <p align="center">
 	<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/brook5407/ft_transcendence">
-	<img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/brook5407/ft_transcendence">
 	<img alt="GitHub language count" src="https://img.shields.io/github/languages/count/brook5407/ft_transcendence">
 	<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/brook5407/ft_transcendence">
+	<img alt="Github contributors" src="https://img.shields.io/github/contributors/brook5407/ft_transcendence">
 	<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/brook5407/ft_transcendence">
 </p>
 
 <h3 align="center">
 	<a href="#-about">About</a>
 	<span> · </span>
-    <a href="#-modules">Modules</a>
-    <span> · </span>
+	<a href="#-modules">Modules</a>
+	<span> · </span>
   	<a href="#-content">Content</a>
 	<span> · </span>
 	<a href="#-usage">Usage</a>
@@ -108,6 +108,7 @@ API Integration.
 - Game Modes: PVP, PVE, Tournament
 
 ## ▶️ Usage
+
 >  You need to have docker installed on your machine to run the project <br>
 
 ```bash
@@ -119,7 +120,7 @@ docker compose -f ./docker-compose.yml up -d
 make up
 ```
 
-> You could also test the AIS PONG on https://42pong.brookchin.tech/
+> You could also test the AIS PONG on https://aispong.brookchin.tech/
 
 ## 📸 Screenshots
 
@@ -134,7 +135,8 @@ make up
 ![profilepng](files/profile.png)
 ![gamepng](files/pong.png)
 
-## Team Members:
+## Team Members
+
 <table>
   <tr>
     <td align="center"><a href="https://github.com/brook5407/"><img src="https://avatars.githubusercontent.com/u/100013115?v=4" width="100px;" alt=""/><br /><sub><b>brook5407 (chchin)</b></sub></a><br /><a href="https://profile.intra.42.fr/users/chchin" title="Intra 42"><img src="https://img.shields.io/badge/KL-FFFFFF?style=plastic&logo=42&logoColor=000000" alt="Intra 42"/></a></td>
