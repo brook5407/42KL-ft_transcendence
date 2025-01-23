@@ -13,11 +13,11 @@
 </p>
 
 <p align="center">
-	<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/brook5407/ft_transcendence">
-	<img alt="GitHub language count" src="https://img.shields.io/github/languages/count/brook5407/ft_transcendence">
-	<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/brook5407/ft_transcendence">
-	<img alt="Github contributors" src="https://img.shields.io/github/contributors/brook5407/ft_transcendence">
-	<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/brook5407/ft_transcendence">
+	<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/brook5407/42KL_ft_transcendence">
+	<img alt="GitHub language count" src="https://img.shields.io/github/languages/count/brook5407/42KL_ft_transcendence">
+	<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/brook5407/42KL_ft_transcendence">
+	<img alt="Github contributors" src="https://img.shields.io/github/contributors/brook5407/42KL_ft_transcendence">
+	<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/brook5407/42KL_ft_transcendence">
 </p>
 
 <h3 align="center">
